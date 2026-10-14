@@ -4,7 +4,7 @@ contextBridge.exposeInMainWorld('meshlineLayout',{setCompact:compact=>ipcRendere
 contextBridge.exposeInMainWorld('meshlineMaps',{attribution:()=>ipcRenderer.send('maps:attribution')});
 contextBridge.exposeInMainWorld('meshlineDM',{
  update:(data,open)=>ipcRenderer.send('dm:publish',{data,open}),clear:()=>ipcRenderer.send('dm:clear'),
- onReply:listener=>subscribe('dm:owner-reply',listener),onContact:listener=>subscribe('dm:owner-contact',listener),onClosed:listener=>subscribe('dm:closed',listener)
+ onAction:listener=>subscribe('dm:owner-action',listener),onReply:listener=>subscribe('dm:owner-reply',listener),onContact:listener=>subscribe('dm:owner-contact',listener),onClosed:listener=>subscribe('dm:closed',listener)
 });
 contextBridge.exposeInMainWorld('meshlineBluetooth',{
  onDevices:listener=>subscribe('ble:devices',listener),

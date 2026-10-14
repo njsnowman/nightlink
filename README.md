@@ -65,10 +65,14 @@ Street tiles load automatically from OpenStreetMap and can use the browser's nor
 
 ## Validation
 
-`node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs` exercises transport and protocol behavior. `smoke.test.cjs` tests the UI against a fake GATT radio using the development machine's bundled Playwright and Microsoft Edge; its runtime paths are machine-specific. Tests never transmit over RF. A user confirmed basic Bluetooth connection with physical hardware. New synchronization and messaging need field verification with that radio and another peer.
+`node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs` exercises transport and protocol behavior. `smoke.test.cjs` tests the UI against a fake GATT radio using the development machine's bundled Playwright and Microsoft Edge; its runtime paths are machine-specific. Tests never transmit over RF. A user confirmed basic Bluetooth connection with physical hardware. New synchronization and messaging need field verification with that radio and another peer.
 
 ## Current limits
 
-Radio frequency and power settings are read-only. USB/TCP transports, repeater administration, bulk offline tile caching, and message attachments are not implemented. Street maps load automatically; uncached tiles require internet. A timestamp or recent advertisement does not establish that a contact is currently online. Timeouts disconnect the transport to avoid matching late responses to later commands. Failed sends are never automatically retried.
+Radio frequency and power settings are read-only. USB/TCP transports, repeater administration, bulk offline tile caching, and message attachments are not implemented. Street maps load automatically; uncached tiles require internet. A timestamp or recent advertisement does not establish that a contact is currently online. Timeouts disconnect the transport to avoid matching late responses to later commands. Direct messages have bounded automatic retries with a final flood fallback, cancellation, and delivery details. Retries stop on connection changes and are never replayed after reconnect or restart. Channel broadcasts do not use recipient ACK retries.
 
 Protocol references: [MeshCore companion protocol](https://github.com/meshcore-dev/MeshCore/blob/main/docs/companion_protocol.md), [companion firmware](https://github.com/meshcore-dev/MeshCore/blob/main/examples/companion_radio/MyMesh.cpp), [Electron device access](https://www.electronjs.org/docs/latest/tutorial/devices).
+
+## Nightlink 0.8.0
+
+Compact contact popups show name/photo and Send message, with editing and radio details in a secondary menu. Overview shows local favorite nodes and follows incoming messages. Direct messages default to four saved-route attempts and one flood fallback (two flood attempts when no route exists), with configurable budgets. The original timestamp is preserved while the protocol attempt byte increases. ACKs from any attempt confirm one logical message; missing ACKs remain unconfirmed. Main and separate DM windows expose Delivery details and Cancel attempts. See SEND_RETRIES.md for protocol research and FIELD_TEST.md for pending physical checks.

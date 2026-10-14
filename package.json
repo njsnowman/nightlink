@@ -1,13 +1,13 @@
 {
   "name": "meshline",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
     "start": "electron .",
     "preview": "node server.cjs",
     "dist": "electron-builder --win portable",
-    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs"
+    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs"
   },
   "devDependencies": {
     "electron": "^42.0.0",
@@ -43,7 +43,10 @@
       "vendor/leaflet.js",
       "vendor/leaflet.css",
       "vendor/LEAFLET-LICENSE",
-      "street-maps.js"
+      "street-maps.js",
+      "overview-ui.js",
+      "delivery.js",
+      "delivery-ui.js"
     ],
     "win": {
       "target": "portable",
