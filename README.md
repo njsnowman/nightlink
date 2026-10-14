@@ -76,3 +76,7 @@ Protocol references: [MeshCore companion protocol](https://github.com/meshcore-d
 ## Nightlink 0.8.0
 
 Compact contact popups show name/photo and Send message, with editing and radio details in a secondary menu. Overview shows local favorite nodes and follows incoming messages. Direct messages default to four saved-route attempts and one flood fallback (two flood attempts when no route exists), with configurable budgets. The original timestamp is preserved while the protocol attempt byte increases. ACKs from any attempt confirm one logical message; missing ACKs remain unconfirmed. Main and separate DM windows expose Delivery details and Cancel attempts. See SEND_RETRIES.md for protocol research and FIELD_TEST.md for pending physical checks.
+
+## Nightlink 0.8.1
+
+Send message from a contact popup now explicitly opens the native Windows or browser DM window. Incoming DMs open/restore the conversation, show a notification, and sound when enabled; each DM window has a sound toggle. Channel composers offer contact/nickname autocomplete after typing @, with keyboard selection and byte-limit checks. Selected mentions send the advertised radio name as @[name]; received mentions display clickable chips.

@@ -19,7 +19,7 @@ app.whenReady().then(()=>{
  });
  const childRecord=e=>[...dmWindows.values()].find(r=>r.window.webContents===e.sender&&e.senderFrame===r.window.webContents.mainFrame);
  ipcMain.on('dm:ready',e=>{const record=childRecord(e);if(record){record.ready=true;record.window.webContents.send('dm:update',record.data);record.data.sound=false;}});
- ipcMain.on('dm:action',(e,data)=>{const record=childRecord(e);if(!record||!data||!['cancel','details'].includes(data.action)||!record.data.messages.some(m=>m.id===data.id&&m.own))return;if(data.action==='details'){if(win.isMinimized())win.restore();if(!app.commandLine.hasSwitch('meshline-test'))win.show();}win.webContents.send('dm:owner-action',{radio:record.data.radio,key:record.data.key,...data});});
+ ipcMain.on('dm:action',(e,data)=>{const record=childRecord(e);if(!record||!data||!['cancel','details','sound'].includes(data.action)||(data.action!=='sound'&&!record.data.messages.some(m=>m.id===data.id&&m.own)))return;if(data.action==='details'){if(win.isMinimized())win.restore();if(!app.commandLine.hasSwitch('meshline-test'))win.show();}win.webContents.send('dm:owner-action',{radio:record.data.radio,key:record.data.key,...data});});
  ipcMain.on('dm:reply',(e,text)=>{const record=childRecord(e);if(record&&typeof text==='string'&&text.length<=1024)win.webContents.send('dm:owner-reply',{radio:record.data.radio,key:record.data.key,text});});
  ipcMain.on('dm:contact',e=>{const record=childRecord(e);if(record){if(win.isMinimized())win.restore();if(!app.commandLine.hasSwitch('meshline-test'))win.show();win.webContents.send('dm:owner-contact',{radio:record.data.radio,key:record.data.key});}});
  ipcMain.on('dm:clear',e=>{if(trusted(e))clearDMs();});

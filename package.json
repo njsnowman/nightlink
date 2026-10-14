@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -46,7 +46,8 @@
       "street-maps.js",
       "overview-ui.js",
       "delivery.js",
-      "delivery-ui.js"
+      "delivery-ui.js",
+      "mentions-ui.js"
     ],
     "win": {
       "target": "portable",
