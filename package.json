@@ -1,0 +1,55 @@
+{
+  "name": "meshline",
+  "version": "0.7.1",
+  "private": true,
+  "main": "desktop.cjs",
+  "scripts": {
+    "start": "electron .",
+    "preview": "node server.cjs",
+    "dist": "electron-builder --win portable",
+    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs"
+  },
+  "devDependencies": {
+    "electron": "^42.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "local.meshline.desktop",
+    "productName": "Nightlink",
+    "files": [
+      "index.html",
+      "app.js",
+      "style.css",
+      "desktop.cjs",
+      "preload.cjs",
+      "bluetooth.js",
+      "bluetooth-ui.js",
+      "radio.js",
+      "live-ui.js",
+      "icon.svg",
+      "icon.ico",
+      "routes.js",
+      "contacts-ui.js",
+      "dm-ui.js",
+      "dm.html",
+      "dm.js",
+      "dm-preload.cjs",
+      "dm.wav",
+      "glass.css",
+      "design-ui.js",
+      "recovery.js",
+      "recovery-ui.js",
+      "route-map.js",
+      "vendor/leaflet.js",
+      "vendor/leaflet.css",
+      "vendor/LEAFLET-LICENSE",
+      "street-maps.js"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico"
+    }
+  },
+  "description": "Nightlink — a Bluetooth MeshCore desktop client",
+  "author": "Nightlink"
+}

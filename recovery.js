@@ -1,0 +1,11 @@
+(function(root){
+ class MeshlineRecovery extends EventTarget{
+  constructor(ble,{delays=[1000,2000,4000,8000,16000,30000],setTimer=(fn,delay)=>setTimeout(fn,delay),clearTimer=id=>clearTimeout(id)}={}){super();this.ble=ble;this.delays=delays;this.setTimer=setTimer;this.clearTimer=clearTimer;this.enabled=true;this.wanted=false;this.attempt=0;this.timer=null;this.running=false;this.epoch=0;ble.addEventListener('identity',()=>{this.wanted=true;this.publish({state:'connected'});});ble.addEventListener('interruption',e=>{if(['manual','switch'].includes(e.detail.reason))this.pause();else if(this.wanted)this.schedule();});}
+  publish(detail){this.dispatchEvent(new CustomEvent('recovery',{detail}));}
+  pause(){this.wanted=false;this.epoch++;if(this.timer!==null)this.clearTimer(this.timer);this.timer=null;this.publish({state:'paused'});}
+  setEnabled(enabled){this.enabled=!!enabled;if(!this.enabled)this.pause();else if(this.ble.device&&this.ble.state!=='connected'){this.wanted=true;this.attempt=0;this.schedule();}}
+  markReady(){this.attempt=0;this.publish({state:'ready'});}
+  schedule(){if(!this.enabled||!this.wanted||!this.ble.device||this.timer!==null||this.running)return;if(this.attempt>=this.delays.length){this.publish({state:'exhausted',attempt:this.attempt});return;}const delay=this.delays[this.attempt++],epoch=this.epoch;this.publish({state:'waiting',attempt:this.attempt,delay});this.timer=this.setTimer(async()=>{this.timer=null;if(epoch!==this.epoch||!this.enabled||!this.wanted)return;this.running=true;this.publish({state:'retrying',attempt:this.attempt});try{await this.ble.connect(true);}catch(error){this.publish({state:'failed',message:error.message,attempt:this.attempt});}finally{this.running=false;if(epoch===this.epoch&&this.enabled&&this.wanted&&this.ble.state!=='connected')this.schedule();}},delay);}
+ }
+ root.MeshlineRecovery=MeshlineRecovery;if(typeof module!=='undefined')module.exports={MeshlineRecovery};
+})(globalThis);
