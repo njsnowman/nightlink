@@ -7,3 +7,5 @@ test('manual disconnect and disabling recovery cancel queued attempts',()=>{for(
 test('pausing during a failed in-flight retry prevents rescheduling',async()=>{const f=setup();let reject;f.ble.connect=()=>new Promise((_,r)=>reject=r);f.loss('link-loss');const running=f.run();f.recovery.pause();reject(Error('cancelled'));await running;assert.equal(f.jobs.size,0);});
 
 test('brief successful reconnects keep backoff until connection is stable',async()=>{const f=setup();f.recovery.stableMs=60000;f.loss('link-loss');await f.run();f.recovery.markReady();assert.equal(f.recovery.attempt,1);f.loss('link-loss');assert.equal([...f.jobs.values()][0].delay,2);await f.run();f.recovery.markReady();assert.equal(f.recovery.attempt,2);await f.run();assert.equal(f.recovery.attempt,0);f.recovery.pause();});
+
+test('synchronization command failure pauses recovery instead of cycling',()=>{const f=setup();let state;f.recovery.addEventListener('recovery',e=>state=e.detail.state);f.loss('sync-failed');assert.equal(f.jobs.size,0);assert.equal(f.recovery.wanted,false);assert.equal(state,'sync-failed');});

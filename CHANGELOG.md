@@ -1,0 +1,24 @@
+# Changelog
+
+## Unreleased
+
+### Fixed
+- Pause automatic reconnect after an initial synchronization command failure, with the failed command shown for manual retry. Physical-radio verification remains pending. [#1](https://github.com/njsnowman/nightlink/issues/1)
+- Prevent errors from an obsolete synchronization attempt from overwriting a newer connection state.
+
+### Maintenance
+- Require an issue, changelog, validation record, matching source commit, and artifact checksum before Nightlink release publication.
+- Consolidate repository documentation around supported behavior and explicit limitations.
+
+## 0.8.4 — 2026-10-15 (local build)
+- Serialize background polling and retain reconnect backoff until the connection is stable.
+- Retrieve queued messages before contact and telemetry refresh, with no 1,000-frame catch-up cutoff.
+- Disable desktop background timer throttling and record command failures in diagnostics.
+- Known issue: connection cycling during initial synchronization; see issue #1.
+
+## 0.8.0 — 2026-10-14 (GitHub preview)
+- Add bounded DM retries, flood fallback, cancellation, and delivery details.
+- Add compact contact popups, local favorites, and Overview message scrolling improvements.
+
+## 0.7.1 — 2026-10-14 (GitHub preview)
+- Initial published Windows preview with Bluetooth messaging, contact cards, maps, and local history.
