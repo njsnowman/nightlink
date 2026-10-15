@@ -80,3 +80,9 @@ Compact contact popups show name/photo and Send message, with editing and radio 
 ## Nightlink 0.8.1
 
 Send message from a contact popup now explicitly opens the native Windows or browser DM window. Incoming DMs open/restore the conversation, show a notification, and sound when enabled; each DM window has a sound toggle. Channel composers offer contact/nickname autocomplete after typing @, with keyboard selection and byte-limit checks. Selected mentions send the advertised radio name as @[name]; received mentions display clickable chips.
+
+## Nightlink 0.8.4
+
+Background radio polls run sequentially and start their next timer only after completing. Optional statistics are queried at synchronization, not on every poll, and unsupported statistics remain disabled for the app session. Desktop background timer throttling is disabled. Reconnect backoff resets only after 60 seconds of stable synchronization, preventing rapid repeated reconnect loops. Diagnostic exports identify failed command codes without message contents or secrets.
+
+On reconnect, channel metadata is loaded first, then all retained messages are drained before contacts and telemetry. A second drain catches messages received during synchronization. Progress and recovered queue counts are shown; concurrent drains share completion and no longer stop at 1000 frames. Direct messages recovered before contacts are reconciled to full identities afterward. Only messages received and retained by the powered radio can be recovered. Firmware queue limits, reboots and RF outages can cause unrecoverable gaps; this is not a server-side channel history service. Physical long-duration Bluetooth verification remains pending.
