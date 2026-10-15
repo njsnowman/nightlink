@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Changed
+- Add a terminal-style radio connection window with event-driven discovery, verification, synchronization, ready/error states, cancellation, queue counts, and reduced-motion support. [#3](https://github.com/njsnowman/nightlink/issues/3)
 - Increase default message text to 16 px, raise secondary text sizes and contrast, and add persistent Standard/Large/Extra large text settings shared by DM windows. [#2](https://github.com/njsnowman/nightlink/issues/2)
 
 ### Fixed
