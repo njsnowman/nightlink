@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.5-rc.1",
+  "version": "0.8.5-rc.2",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -48,7 +48,9 @@
       "delivery.js",
       "delivery-ui.js",
       "mentions-ui.js",
-      "dm-inbox.js"
+      "dm-inbox.js",
+      "readability.css",
+      "readability-ui.js"
     ],
     "win": {
       "target": "portable",

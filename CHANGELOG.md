@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- Increase default message text to 16 px, raise secondary text sizes and contrast, and add persistent Standard/Large/Extra large text settings shared by DM windows. [#2](https://github.com/njsnowman/nightlink/issues/2)
+
 ### Fixed
 - Pause automatic reconnect after an initial synchronization command failure, with the failed command shown for manual retry. Physical-radio verification remains pending. [#1](https://github.com/njsnowman/nightlink/issues/1)
 - Prevent errors from an obsolete synchronization attempt from overwriting a newer connection state.
