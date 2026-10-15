@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-No changes recorded.
+- Add persistent unread counts, reading positions and new-message dividers for channels and direct messages. Add per-channel mute controls, independent DM and mention sounds, and conversation notification actions. Tracked in [#5](https://github.com/njsnowman/nightlink/issues/5).
 
 ## 0.8.5 — 2026-10-15
 
