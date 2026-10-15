@@ -1,5 +1,5 @@
 /* Conversation attention and notification controls; scoped to the current companion identity. */
-let attention,attentionOwner,readingConversation=null,readingBoundary=null,attentionFrame=0,restoringReading=false;
+let attention,attentionOwner,readingConversation=null,readingBoundary=null,attentionFrame=0,restoringReading=false,pendingReadingJump=null;
 const chatReadingLog=$('#chat-log');
 const chatIsVisible=()=>['Overview','Messages'].includes(current)&&!document.hidden&&document.hasFocus();
 const atReadingEnd=el=>el.scrollHeight-el.clientHeight-el.scrollTop<36;
@@ -17,7 +17,7 @@ function captureReading(){
  ensureAttention().position(readingConversation,{anchor:anchor?.dataset.messageId,offset:anchor?anchor.getBoundingClientRect().top-rect.top:0,bottom:atReadingEnd(chatReadingLog)});
 }
 function markVisibleReading(){
- if(!chatIsVisible()||restoringReading||!readingConversation)return;
+ if(!chatIsVisible()||restoringReading||pendingReadingJump||!readingConversation)return;
  const rect=chatReadingLog.getBoundingClientRect(),rows=[...chatReadingLog.querySelectorAll('.message')];
  const visible=rows.filter(row=>row.getBoundingClientRect().top<rect.bottom&&row.getBoundingClientRect().bottom<=rect.bottom+2);
  const last=visible.at(-1);if(last)ensureAttention().mark(live.messages,readingConversation,last.dataset.messageId);
@@ -128,4 +128,4 @@ function decoratePopupReading(key){
 }
 const attentionPopupUpdate=updatePopup;updatePopup=function(key,options={}){attentionPopupUpdate(key,options);decoratePopupReading(key);};
 window.meshlineDM?.onRead(data=>{if(data.radio!==live.identity?.key)return;const messages=live.messages.filter(m=>m.conversation==='direct:'+data.key);if(messages.some(m=>m.id===data.through))markDMRead(data.key,data.through);if(data.position)ensureAttention().position('direct:'+data.key,data.position);});
-ensureAttention();const savedAttentionView=attention.data.view,savedAttentionTarget=attention.data.selected;if(savedAttentionTarget&&['channel','direct'].includes(savedAttentionTarget.kind))live.selected=savedAttentionTarget;if(['Overview','Messages','Direct Messages','Nodes','Activity','Network map','Settings'].includes(savedAttentionView))view(savedAttentionView);else renderMessages();refreshUnreadBadges();
+ensureAttention();const savedAttentionView=attention.data.view,savedAttentionTarget=attention.data.selected;if(savedAttentionTarget&&['channel','direct'].includes(savedAttentionTarget.kind))live.selected=savedAttentionTarget;if(['Overview','Messages','Direct Messages','Nodes','Activity','Network map','Settings','Search'].includes(savedAttentionView))view(savedAttentionView);else renderMessages();refreshUnreadBadges();

@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-No changes recorded.
+- Add local message search with contact, channel, date and mention filters, and navigation to matching messages. Tracked in [#8](https://github.com/njsnowman/nightlink/issues/8).
 
 ## 0.8.6 — 2026-10-15
 
