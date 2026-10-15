@@ -34,7 +34,7 @@ Contact cards, favorites, and message history are stored on the local computer. 
 
 ## Validation and releases
 
-The Bluetooth reconnect regression is tracked in [issue #1](https://github.com/njsnowman/nightlink/issues/1). Automated and simulated checks do not establish physical-radio stability. Hardware checks and outstanding limitations are recorded separately.
+The Bluetooth reconnect regression is documented in [issue #1](https://github.com/njsnowman/nightlink/issues/1). The user reported more than four hours of continuous connection and successful retained-message recovery on the tested radio. Automated and simulated checks are recorded separately from this physical evidence. DM retry/flood behavior has not received additional physical two-radio verification.
 
 Every Nightlink release must have a linked tracking issue, changelog entry, validation record, source commit, and artifact checksum before publication. See [release process](RELEASE_PROCESS.md), [changelog](CHANGELOG.md), and [field test procedure](FIELD_TEST.md).
 
