@@ -7,7 +7,7 @@
     "start": "electron .",
     "preview": "node server.cjs",
     "dist": "electron-builder --win portable",
-    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs"
+    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs"
   },
   "devDependencies": {
     "electron": "^42.0.0",
@@ -55,7 +55,10 @@
       "connection-window.css",
       "attention.js",
       "attention-ui.js",
-      "attention.css"
+      "attention.css",
+      "search.js",
+      "search-ui.js",
+      "search.css"
     ],
     "win": {
       "target": "portable",
