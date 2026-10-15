@@ -6,6 +6,7 @@
 - Increase default message text to 16 px, raise secondary text sizes and contrast, and add persistent Standard/Large/Extra large text settings shared by DM windows. [#2](https://github.com/njsnowman/nightlink/issues/2)
 
 ### Fixed
+- Retain the BLE command lock until both the GATT write and companion response complete. Prevent notifications arriving before write completion from starting overlapping writes during handshake or channel synchronization. [#1](https://github.com/njsnowman/nightlink/issues/1)
 - Retry transient GATT disconnects during initial service discovery with fresh service and characteristic handles; stop after three attempts and honor cancellation. [#1](https://github.com/njsnowman/nightlink/issues/1)
 - Pause automatic reconnect after an initial synchronization command failure, with the failed command shown for manual retry. Physical-radio verification remains pending. [#1](https://github.com/njsnowman/nightlink/issues/1)
 - Prevent errors from an obsolete synchronization attempt from overwriting a newer connection state.
