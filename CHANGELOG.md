@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add Radio Health with session connection uptime, successful reconnections, synchronization activity and separate local-history and radio-queue counts. Tracked in [#21](https://github.com/njsnowman/nightlink/issues/21).
+
 ## 0.8.10 — 2026-10-16
 
 - Clarify message delivery states and add guarded retry confirmation in main and DM windows. Radio acceptance of a channel broadcast does not imply recipient acknowledgement. Tracked in [#18](https://github.com/njsnowman/nightlink/issues/18).
