@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Consolidate sidebar navigation, bound channel/recent-chat shortcuts, add searchable conversation browsing and fit the application frame within the window with contained panel scrolling. Tracked in [#30](https://github.com/njsnowman/nightlink/issues/30).
+
 ## 0.8.13 — 2026-10-16
 
 - Add weekly local backup reminders with snooze and distinguish confirmed desktop saves from browser export starts. Tracked in [#27](https://github.com/njsnowman/nightlink/issues/27).
