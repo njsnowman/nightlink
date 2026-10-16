@@ -2,7 +2,13 @@
 
 ## Unreleased
 
+No changes recorded.
+
+## 0.8.8 — 2026-10-16
+
 - Add local backup export and restore preview, message deduplication, contact/preference preservation, and interrupted-restore recovery. Tracked in [#12](https://github.com/njsnowman/nightlink/issues/12).
+
+Contact storage upgrades to IndexedDB version 2. Older Nightlink versions requesting version 1 may not open upgraded contact cards.
 
 ## 0.8.7 — 2026-10-15
 

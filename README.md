@@ -44,10 +44,10 @@ Every Nightlink release must have a linked tracking issue, changelog entry, vali
 - [Electron device access](https://www.electronjs.org/docs/latest/tutorial/devices)
 - Leaflet is distributed under its [BSD license](vendor/LEAFLET-LICENSE).
 
-## Local backup and restore (unreleased)
+## Local backup and restore
 
 Open Settings → Backup and restore to save a local JSON backup. On Windows, choose a destination in the Save dialog. Backups contain private messages and contact information and are not encrypted.
 
 Disconnect the radio before choosing a backup to restore. Review the counts before confirming. Existing contact cards and preferences are kept, favorites are combined, and duplicate messages are skipped. Messages beyond the per-radio retention limit are reported and skipped without removing current history. The app reloads when finished. If a restore is interrupted, use Recover previous data at startup or Recover interrupted restore in Settings.
 
-This feature upgrades contact storage to version 2; older Nightlink versions may not open upgraded contact cards. The published 0.8.7 download does not include backup/restore yet.
+This feature upgrades contact storage to version 2; older Nightlink versions may not open upgraded contact cards. Backup and restore is available starting in 0.8.8.
