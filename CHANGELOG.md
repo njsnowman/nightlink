@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Preserve per-radio conversation drafts and DM reading anchors, add DM navigation to newest messages, and keep active mention selection during background renders. Tracked in [#24](https://github.com/njsnowman/nightlink/issues/24).
+
 ## 0.8.11 — 2026-10-16
 
 - Add Radio Health with session connection uptime, successful reconnections, synchronization activity and separate local-history and radio-queue counts. Tracked in [#21](https://github.com/njsnowman/nightlink/issues/21).

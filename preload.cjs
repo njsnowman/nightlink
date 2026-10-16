@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld('meshlineLayout',{focusWindow:()=>ipcRenderer.se
 contextBridge.exposeInMainWorld('meshlineMaps',{attribution:()=>ipcRenderer.send('maps:attribution')});
 contextBridge.exposeInMainWorld('meshlineDM',{
  update:(data,open)=>ipcRenderer.send('dm:publish',{data,open}),clear:()=>ipcRenderer.send('dm:clear'),
- onRead:listener=>subscribe('dm:owner-read',listener),onAction:listener=>subscribe('dm:owner-action',listener),onReply:listener=>subscribe('dm:owner-reply',listener),onContact:listener=>subscribe('dm:owner-contact',listener),onClosed:listener=>subscribe('dm:closed',listener)
+ onDraft:listener=>subscribe('dm:owner-draft',listener),onRead:listener=>subscribe('dm:owner-read',listener),onAction:listener=>subscribe('dm:owner-action',listener),onReply:listener=>subscribe('dm:owner-reply',listener),onContact:listener=>subscribe('dm:owner-contact',listener),onClosed:listener=>subscribe('dm:closed',listener)
 });
 contextBridge.exposeInMainWorld('meshlineBluetooth',{
  onDevices:listener=>subscribe('ble:devices',listener),
