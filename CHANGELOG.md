@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.12 — 2026-10-16
 
 - Preserve per-radio conversation drafts and DM reading anchors, add DM navigation to newest messages, and keep active mention selection during background renders. Tracked in [#24](https://github.com/njsnowman/nightlink/issues/24).
 
