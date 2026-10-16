@@ -52,10 +52,10 @@ Disconnect the radio before choosing a backup to restore. Review the counts befo
 
 This feature upgrades contact storage to version 2; older Nightlink versions may not open upgraded contact cards. Backup and restore is available starting in 0.8.8.
 
-## Windows installer and update checks (unreleased)
+## Windows installer and update checks
 
 Build with npm run dist to produce Nightlink-Setup-<version>.exe and Nightlink-Portable-<version>.exe. The installer is per user with a Start menu shortcut and optional desktop shortcut. It keeps the existing %APPDATA%/Meshline data location and retains local data on normal uninstall. Close Nightlink before installing an update.
 
 Settings → Nightlink updates shows the running version, offers manual checks and optional checks while the app is open. Updates are never installed automatically. The repository is private, so anonymous checks cannot currently discover releases; use Open GitHub releases in a signed-in browser. No credentials are embedded in the application.
 
-These installer/update changes are not included in the published 0.8.8 download yet.
+Installer and update controls are available starting in 0.8.9.

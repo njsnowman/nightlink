@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.9 — 2026-10-16
 
 - Add per-user Windows installer and optional update checks with signed-in GitHub fallback for private releases. Retain the portable build and existing user-data location. Tracked in [#15](https://github.com/njsnowman/nightlink/issues/15).
 
@@ -50,3 +50,4 @@ Contact storage upgrades to IndexedDB version 2. Older Nightlink versions reques
 
 ## 0.7.1 — 2026-10-14 (GitHub preview)
 - Initial published Windows preview with Bluetooth messaging, contact cards, maps, and local history.
+
