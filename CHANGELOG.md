@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.11 — 2026-10-16
 
 - Add Radio Health with session connection uptime, successful reconnections, synchronization activity and separate local-history and radio-queue counts. Tracked in [#21](https://github.com/njsnowman/nightlink/issues/21).
 
