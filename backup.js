@@ -1,0 +1,44 @@
+/* Versioned, local-only backup validation and non-destructive merge planning. */
+(function(root){
+const MAX_BYTES=50*1024*1024,MAX_MESSAGES=3000;
+const simple=['accent','notifications','reduced-motion','dm-sound','meshline.compact','meshline.auto-reconnect','nightlink.text-scale','nightlink.mention-sound','nightlink.delivery','meshline.map-view','nightlink.sender-links'];
+const radioKey=k=>/^[a-f0-9]{64}$/.test(k),historyKey=k=>/^meshline\.history\.[a-f0-9]{64}$/.test(k);
+const allowed=k=>simple.includes(k)||k==='meshline.profile'||k==='nightlink.favorites'||historyKey(k)||/^nightlink\.attention\.[a-f0-9]{64}$/.test(k);
+const fail=message=>{throw new Error(message);};
+const bounded=(s,n)=>typeof s==='string'&&s.length<=n;
+function validEntity(p){if(!p||!bounded(p.name,512))return false;for(const key of ['lat','lon','lastAdvert','lastModified'])if(p[key]!=null&&!Number.isFinite(p[key]))return false;if(p.located&&(!Number.isFinite(p.lat)||!Number.isFinite(p.lon)||Math.abs(p.lat)>90||Math.abs(p.lon)>180))return false;if(p.pathLength!=null&&(!Number.isInteger(p.pathLength)||p.pathLength<0||p.pathLength>255))return false;if(p.path!=null&&(typeof p.path!=='string'||!/^([a-f0-9]{2}){0,64}$/.test(p.path)))return false;return true;}
+function target(t){if(!t||!bounded(t.name||'',512))fail('Invalid conversation target.');if(t.kind==='channel'&&Number.isInteger(t.slot)&&t.slot>=0&&t.slot<64&&(/^[a-f0-9]{24}$/.test(t.id)||t.id==='unconfigured'))return{kind:'channel',slot:t.slot,id:t.id,name:t.name||'Saved channel'};if(t.kind==='direct'&&/^(?:[a-f0-9]{12}|[a-f0-9]{64})$/.test(t.key))return{kind:'direct',key:t.key,name:t.name||t.key.slice(0,12)};fail('Invalid conversation target.');}
+const conversation=t=>t.kind==='channel'?'channel:'+t.slot+':'+t.id:'direct:'+t.key;
+function message(m){const t=target(m?.target);if(!bounded(m.id,20000)||!m.id||!bounded(m.text,10000)||!bounded(m.sender||'',512)||typeof m.own!=='boolean'||!Number.isFinite(m.timestamp)||m.timestamp<0||m.conversation!==conversation(t))fail('Invalid message in backup.');
+const out={id:m.id,text:m.text,sender:m.sender||'',own:m.own,timestamp:m.timestamp,conversation:m.conversation,target:t,kind:t.kind,status:bounded(m.status,512)?m.status:'Restored history',pending:false,attempts:[]};
+if(m.pending||m.status==='Sending…'||m.status?.includes('awaiting ACK'))out.status='Restored · delivery unconfirmed';
+if(Number.isFinite(m.snr))out.snr=m.snr;if(Number.isInteger(m.pathLength)&&m.pathLength>=0&&m.pathLength<=255)out.pathLength=m.pathLength;
+if(/^[a-f0-9]{12}$/.test(m.prefix))out.prefix=m.prefix;if(/^[a-f0-9]{8}$/.test(m.signature))out.signature=m.signature;
+if(m.observedRoute&&Array.isArray(m.observedRoute.path)&&m.observedRoute.path.length<=64&&m.observedRoute.path.every(v=>typeof v==='string'&&/^(?:[a-f0-9]{2}){1,3}$/.test(v)))out.observedRoute={path:m.observedRoute.path.slice(),direct:m.observedRoute.direct===true,rssi:Number.isFinite(m.observedRoute.rssi)?m.observedRoute.rssi:null,snr:Number.isFinite(m.observedRoute.snr)?m.observedRoute.snr:null};
+return out;}
+function card(c){if(!c||!bounded(c.key,1024)||!c.key||!bounded(c.nickname||'',512)||!bounded(c.notes||'',100000)||!bounded(c.photo||'',2*1024*1024)||(c.photo&&!/^data:image\/jpeg;base64,[A-Za-z0-9+/=\r\n]+$/.test(c.photo)))fail('Invalid contact card or photo.');return{key:c.key,nickname:c.nickname||'',notes:c.notes||'',photo:c.photo||'',updated:Number.isFinite(c.updated)?c.updated:0};}
+function validateValue(key,raw){if(typeof raw!=='string')fail('Invalid stored preference.');let v;
+if(historyKey(key)){v=JSON.parse(raw);if(!Array.isArray(v)||v.length>MAX_MESSAGES)fail('History exceeds the 3,000-message limit per radio.');return JSON.stringify(v.map(message));}
+if(key==='meshline.profile'){v=JSON.parse(raw);if(!radioKey(v?.identity?.key)||!validEntity(v.identity)||!Number.isFinite(v.identity.frequency)||!Number.isFinite(v.identity.txPower)||!Array.isArray(v.contacts)||v.contacts.length>20000||!v.contacts.every(c=>radioKey(c.key)&&validEntity(c)&&Number.isInteger(c.type)&&c.type>=1&&c.type<=4)||!Array.isArray(v.channels)||v.channels.length>64)fail('Invalid cached radio profile.');v.channels.forEach(c=>target({kind:'channel',...c}));return raw;}
+if(key==='nightlink.favorites'){v=JSON.parse(raw);if(!Array.isArray(v)||!v.every(radioKey))fail('Invalid favorites.');return JSON.stringify([...new Set(v)]);}
+if(key.startsWith('nightlink.attention.')){v=JSON.parse(raw);if(!v||!Array.isArray(v.read)||!v.read.every(id=>bounded(id,20000))||!Array.isArray(v.muted)||!v.muted.every(id=>bounded(id,1024)&&/^(channel|direct):/.test(id))||!v.positions||typeof v.positions!=='object'||Array.isArray(v.positions))fail('Invalid reading preferences.');for(const [id,p]of Object.entries(v.positions))if(!/^(channel|direct):/.test(id)||!p||!Number.isFinite(p.offset)||typeof p.bottom!=='boolean'||(p.anchor!=null&&!bounded(p.anchor,20000)))fail('Invalid reading position.');if(v.selected)target(v.selected);return raw;}
+if(['notifications','reduced-motion','dm-sound','meshline.compact','meshline.auto-reconnect','nightlink.mention-sound'].includes(key)){if(!['true','false'].includes(raw))fail('Invalid boolean preference.');}
+else if(key==='accent'){if(!/^#[a-f0-9]{6}$/i.test(raw))fail('Invalid accent color.');}
+else if(key==='nightlink.text-scale'){if(!['1','1.15','1.3'].includes(raw))fail('Invalid text size.');}
+else {v=JSON.parse(raw);if(v===null||typeof v!=='object')fail('Invalid preference data.');if(key==='nightlink.sender-links'&&!Object.entries(v).every(([k,value])=>k.startsWith('sender:')&&radioKey(value)))fail('Invalid sender associations.');}
+return raw;}
+function validate(input){if(!input||input.format!=='nightlink-backup'||input.version!==1||!bounded(input.createdAt,64)||!Number.isFinite(Date.parse(input.createdAt))||!input.storage||typeof input.storage!=='object'||Array.isArray(input.storage)||!Array.isArray(input.cards)||input.cards.length>10000||Object.keys(input.storage).length>200)fail('This is not a supported Nightlink backup.');
+const storage=Object.create(null);for(const [key,value]of Object.entries(input.storage)){if(!allowed(key))fail('Unsupported backup field: '+key);storage[key]=validateValue(key,value);}
+return{format:'nightlink-backup',version:1,createdAt:input.createdAt,storage,cards:input.cards.map(card)};}
+function parse(text){if(new TextEncoder().encode(text).length>MAX_BYTES)fail('Backup exceeds the 50 MB limit.');try{return validate(JSON.parse(text));}catch(error){if(error instanceof SyntaxError)fail('The backup file contains invalid JSON.');throw error;}}
+const fingerprint=m=>JSON.stringify([m.conversation,m.own,m.timestamp,m.own||m.target?.kind==='direct'?'':m.sender||'',m.signature||'',m.text]);
+function plan(current,currentCards,incoming){const backup=validate(incoming),writes=Object.create(null),summary={added:0,duplicates:0,capacitySkipped:0,cardsAdded:0,cardsKept:0,radios:0,preferencesAdded:0};
+for(const [key,value]of Object.entries(backup.storage)){
+ if(historyKey(key)){summary.radios++;const old=current[key]?JSON.parse(current[key]):[];if(!Array.isArray(old))fail('Existing history cannot be read. Export or recover it before restoring.');const rows=old.slice(),ids=new Set(rows.map(m=>m.id)),prints=new Set(rows.map(fingerprint));for(const m of JSON.parse(value)){if(ids.has(m.id)||prints.has(fingerprint(m))){summary.duplicates++;continue;}if(rows.length>=MAX_MESSAGES){summary.capacitySkipped++;continue;}rows.push(m);ids.add(m.id);prints.add(fingerprint(m));summary.added++;}rows.sort((a,b)=>a.timestamp-b.timestamp);if(summary.added||current[key]==null)writes[key]=JSON.stringify(rows);}
+ else if(key==='nightlink.favorites'){const values=[...new Set([...(JSON.parse(current[key]||'[]')), ...JSON.parse(value)])];writes[key]=JSON.stringify(values);}
+ else if(current[key]==null){writes[key]=value;if(key!=='meshline.profile')summary.preferencesAdded++;}
+}
+const existing=new Set(currentCards.map(c=>c.key)),cards=[];for(const c of backup.cards){if(existing.has(c.key)){summary.cardsKept++;continue;}cards.push(c);existing.add(c.key);summary.cardsAdded++;}
+return{writes,cards,summary};}
+const api={MAX_BYTES,allowed,validate,parse,plan,message,card};if(typeof module!=='undefined')module.exports=api;else root.NightlinkBackup=api;
+})(globalThis);

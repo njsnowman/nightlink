@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-No changes recorded.
+- Add local backup export and restore preview, message deduplication, contact/preference preservation, and interrupted-restore recovery. Tracked in [#12](https://github.com/njsnowman/nightlink/issues/12).
 
 ## 0.8.7 — 2026-10-15
 
