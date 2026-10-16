@@ -1,5 +1,6 @@
-const {app,BrowserWindow,ipcMain,screen,nativeTheme,shell}=require('electron');
+const {app,BrowserWindow,ipcMain,screen,nativeTheme,shell,dialog}=require('electron');
 const path=require('node:path');
+const fsBackup=require('node:fs/promises'),cryptoBackup=require('node:crypto');
 app.setPath('userData',path.join(app.getPath('appData'),'Meshline'));
 app.whenReady().then(()=>{
  nativeTheme.themeSource='dark';
@@ -7,6 +8,14 @@ app.whenReady().then(()=>{
  let select=null,pair=null,devices=new Set(),scanTimer,pairTimer;
  const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
  ipcMain.on('layout:focus',e=>{if(!trusted(e))return;if(win.isMinimized())win.restore();win.show();win.focus();});
+ ipcMain.handle('backup:save',async(e,text)=>{
+  if(!trusted(e)||typeof text!=='string'||Buffer.byteLength(text,'utf8')>50*1024*1024)throw new Error('Invalid backup data.');
+  const parsed=JSON.parse(text);if(parsed.format!=='nightlink-backup'||parsed.version!==1)throw new Error('Unsupported backup format.');
+  const choice=await dialog.showSaveDialog(win,{title:'Save Nightlink backup',defaultPath:path.join(app.getPath('documents'),'nightlink-backup-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json'),filters:[{name:'Nightlink backup',extensions:['json']}]});
+  if(choice.canceled||!choice.filePath)return{saved:false,cancelled:true};
+  const temporary=choice.filePath+'.'+cryptoBackup.randomUUID()+'.tmp';
+  try{await fsBackup.writeFile(temporary,text,{encoding:'utf8',flag:'wx'});await fsBackup.rename(temporary,choice.filePath);return{saved:true};}catch(error){await fsBackup.unlink(temporary).catch(()=>{});throw new Error('Could not save backup: '+error.message);}
+ });
  ipcMain.on('maps:attribution',e=>{if(trusted(e))shell.openExternal('https://www.openstreetmap.org/copyright');});
  let normalBounds=null,wasMaximized=false,compactWindow=false;
  ipcMain.on('layout:compact',(e,compact)=>{if(!trusted(e)||typeof compact!=='boolean'||compact===compactWindow)return;compactWindow=compact;if(compact){wasMaximized=win.isMaximized();normalBounds=win.getNormalBounds();if(wasMaximized)win.unmaximize();const area=screen.getDisplayMatching(win.getBounds()).workArea;const width=Math.min(920,area.width),height=Math.min(740,area.height);win.setBounds({width,height,x:Math.max(area.x,Math.min(normalBounds.x,area.x+area.width-width)),y:Math.max(area.y,Math.min(normalBounds.y,area.y+area.height-height))});}else if(normalBounds){win.setBounds(normalBounds);if(wasMaximized)win.maximize();normalBounds=null;}});
