@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add manual local/flood adverts and signed contact sharing/import by link and QR image. Imports require radio contact readback; exports omit local contact-card data. Tracked in [#33](https://github.com/njsnowman/nightlink/issues/33).
+
 ## 0.8.14 — 2026-10-16
 
 - Consolidate sidebar navigation, bound channel/recent-chat shortcuts, add searchable conversation browsing and fit the application frame within the window with contained panel scrolling. Tracked in [#30](https://github.com/njsnowman/nightlink/issues/30).
