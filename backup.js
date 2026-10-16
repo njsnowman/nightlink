@@ -3,7 +3,7 @@
 const MAX_BYTES=50*1024*1024,MAX_MESSAGES=3000;
 const simple=['nightlink.update-checks','accent','notifications','reduced-motion','dm-sound','meshline.compact','meshline.auto-reconnect','nightlink.text-scale','nightlink.mention-sound','nightlink.delivery','meshline.map-view','nightlink.sender-links'];
 const radioKey=k=>/^[a-f0-9]{64}$/.test(k),historyKey=k=>/^meshline\.history\.[a-f0-9]{64}$/.test(k);
-const allowed=k=>simple.includes(k)||k==='meshline.profile'||k==='nightlink.favorites'||historyKey(k)||/^nightlink\.attention\.[a-f0-9]{64}$/.test(k);
+const allowed=k=>simple.includes(k)||/^nightlink\.drafts\.[a-f0-9]{64}$/.test(k)||k==='meshline.profile'||k==='nightlink.favorites'||historyKey(k)||/^nightlink\.attention\.[a-f0-9]{64}$/.test(k);
 const fail=message=>{throw new Error(message);};
 const bounded=(s,n)=>typeof s==='string'&&s.length<=n;
 function validEntity(p){if(!p||!bounded(p.name,512))return false;for(const key of ['lat','lon','lastAdvert','lastModified'])if(p[key]!=null&&!Number.isFinite(p[key]))return false;if(p.located&&(!Number.isFinite(p.lat)||!Number.isFinite(p.lon)||Math.abs(p.lat)>90||Math.abs(p.lon)>180))return false;if(p.pathLength!=null&&(!Number.isInteger(p.pathLength)||p.pathLength<0||p.pathLength>255))return false;if(p.path!=null&&(typeof p.path!=='string'||!/^([a-f0-9]{2}){0,64}$/.test(p.path)))return false;return true;}
@@ -18,6 +18,7 @@ if(m.observedRoute&&Array.isArray(m.observedRoute.path)&&m.observedRoute.path.le
 return out;}
 function card(c){if(!c||!bounded(c.key,1024)||!c.key||!bounded(c.nickname||'',512)||!bounded(c.notes||'',100000)||!bounded(c.photo||'',2*1024*1024)||(c.photo&&!/^data:image\/jpeg;base64,[A-Za-z0-9+/=\r\n]+$/.test(c.photo)))fail('Invalid contact card or photo.');return{key:c.key,nickname:c.nickname||'',notes:c.notes||'',photo:c.photo||'',updated:Number.isFinite(c.updated)?c.updated:0};}
 function validateValue(key,raw){if(typeof raw!=='string')fail('Invalid stored preference.');let v;
+if(key.startsWith('nightlink.drafts.')){v=JSON.parse(raw);if(!v||typeof v!=='object'||Array.isArray(v)||Object.keys(v).length>2000||!Object.entries(v).every(([id,text])=>/^(channel|direct):/.test(id)&&id.length<=200&&bounded(text,4096)))fail('Invalid saved drafts.');return JSON.stringify(v);}
 if(historyKey(key)){v=JSON.parse(raw);if(!Array.isArray(v)||v.length>MAX_MESSAGES)fail('History exceeds the 3,000-message limit per radio.');return JSON.stringify(v.map(message));}
 if(key==='meshline.profile'){v=JSON.parse(raw);if(!radioKey(v?.identity?.key)||!validEntity(v.identity)||!Number.isFinite(v.identity.frequency)||!Number.isFinite(v.identity.txPower)||!Array.isArray(v.contacts)||v.contacts.length>20000||!v.contacts.every(c=>radioKey(c.key)&&validEntity(c)&&Number.isInteger(c.type)&&c.type>=1&&c.type<=4)||!Array.isArray(v.channels)||v.channels.length>64)fail('Invalid cached radio profile.');v.channels.forEach(c=>target({kind:'channel',...c}));return raw;}
 if(key==='nightlink.favorites'){v=JSON.parse(raw);if(!Array.isArray(v)||!v.every(radioKey))fail('Invalid favorites.');return JSON.stringify([...new Set(v)]);}

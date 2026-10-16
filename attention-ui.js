@@ -65,7 +65,7 @@ renderMessages=function(){
   else if(changed&&readingBoundary){const divider=chatReadingLog.querySelector('.new-messages-divider');if(divider)chatReadingLog.scrollTop+=divider.getBoundingClientRect().top-chatReadingLog.getBoundingClientRect().top;}
   else chatReadingLog.scrollTop=chatReadingLog.scrollHeight;
  }
- restorePosition();attentionFrame=requestAnimationFrame(()=>{restorePosition();restoringReading=false;markVisibleReading();captureReading();jumpNewest.hidden=atReadingEnd(chatReadingLog)||!next;});
+ restorePosition();attentionFrame=requestAnimationFrame(()=>{restorePosition();restoringReading=false;markVisibleReading();captureReading();jumpNewest.hidden=atReadingEnd(chatReadingLog)||!next;const count=next?state.unread(live.messages,next).length:0;jumpNewest.textContent=count?'New messages ('+count+') ↓':'Jump to latest ↓';});
  refreshUnreadBadges();
 };
 chatReadingLog.addEventListener('scroll',()=>{if(restoringReading)return;captureReading();markVisibleReading();jumpNewest.hidden=atReadingEnd(chatReadingLog);},{passive:true});
@@ -126,6 +126,6 @@ function decoratePopupReading(key){
  };
  thread.onscroll=read;popup.onfocusin=()=>requestAnimationFrame(read);popup.onclick=e=>{if(!e.target.closest('button,input'))popup.querySelector('input').focus();read();};
 }
-const attentionPopupUpdate=updatePopup;updatePopup=function(key,options={}){attentionPopupUpdate(key,options);decoratePopupReading(key);};
+const attentionPopupUpdate=updatePopup;updatePopup=function(key,options={}){const popup=dmPopups.get(key);if(popup instanceof HTMLElement){const thread=popup.querySelector('.dm-thread'),rect=thread.getBoundingClientRect(),anchor=[...thread.querySelectorAll('.dm-bubble')].find(r=>r.getBoundingClientRect().bottom>rect.top);if(anchor&&thread.getClientRects().length&&!popup.classList.contains('minimized'))ensureAttention().position('direct:'+key,{anchor:anchor.dataset.messageId,offset:anchor.getBoundingClientRect().top-rect.top,bottom:atReadingEnd(thread)});}attentionPopupUpdate(key,options);decoratePopupReading(key);const updated=dmPopups.get(key);if(updated instanceof HTMLElement){const thread=updated.querySelector('.dm-thread');let jump=updated.querySelector('.dm-reading-jump');if(!jump){jump=document.createElement('button');jump.className='reading-jump dm-reading-jump';jump.textContent='New messages ↓';thread.after(jump);jump.onclick=()=>{thread.scrollTop=thread.scrollHeight;thread.dispatchEvent(new Event('scroll'));};thread.addEventListener('scroll',()=>jump.hidden=atReadingEnd(thread));}jump.hidden=atReadingEnd(thread);}};
 window.meshlineDM?.onRead(data=>{if(data.radio!==live.identity?.key)return;const messages=live.messages.filter(m=>m.conversation==='direct:'+data.key);if(messages.some(m=>m.id===data.through))markDMRead(data.key,data.through);if(data.position)ensureAttention().position('direct:'+data.key,data.position);});
 ensureAttention();const savedAttentionView=attention.data.view,savedAttentionTarget=attention.data.selected;if(savedAttentionTarget&&['channel','direct'].includes(savedAttentionTarget.kind))live.selected=savedAttentionTarget;if(['Overview','Messages','Direct Messages','Nodes','Activity','Network map','Settings','Search'].includes(savedAttentionView))view(savedAttentionView);else renderMessages();refreshUnreadBadges();
