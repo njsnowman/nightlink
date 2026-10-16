@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-No changes recorded.
+- Add per-user Windows installer and optional update checks with signed-in GitHub fallback for private releases. Retain the portable build and existing user-data location. Tracked in [#15](https://github.com/njsnowman/nightlink/issues/15).
 
 ## 0.8.8 — 2026-10-16
 

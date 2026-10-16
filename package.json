@@ -6,8 +6,8 @@
   "scripts": {
     "start": "electron .",
     "preview": "node server.cjs",
-    "dist": "electron-builder --win portable",
-    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs"
+    "dist": "electron-builder --win nsis portable",
+    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs"
   },
   "devDependencies": {
     "electron": "^42.0.0",
@@ -61,11 +61,43 @@
       "search.css",
       "backup.js",
       "backup-ui.js",
-      "backup.css"
+      "backup.css",
+      "updates.cjs",
+      "updates-ui.js",
+      "updates.css"
     ],
     "win": {
-      "target": "portable",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": true,
+      "createStartMenuShortcut": true,
+      "createDesktopShortcut": false,
+      "shortcutName": "Nightlink",
+      "runAfterFinish": false,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "Nightlink-Setup-${version}.${ext}",
+      "include": "installer.nsh"
+    },
+    "portable": {
+      "artifactName": "Nightlink-Portable-${version}.${ext}"
     }
   },
   "description": "Nightlink — a Bluetooth MeshCore desktop client",
