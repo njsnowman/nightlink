@@ -1,5 +1,6 @@
 const {contextBridge,ipcRenderer}=require('electron');
 const subscribe=(channel,listener)=>{const handler=(_event,value)=>listener(value);ipcRenderer.on(channel,handler);return()=>ipcRenderer.removeListener(channel,handler);};
+contextBridge.exposeInMainWorld('meshlineUpdates',{info:()=>ipcRenderer.invoke('updates:info'),check:()=>ipcRenderer.invoke('updates:check'),open:download=>ipcRenderer.invoke('updates:open',download===true)});
 contextBridge.exposeInMainWorld('meshlineBackup',{reload:()=>ipcRenderer.send('backup:reload'),save:text=>ipcRenderer.invoke('backup:save',text)});
 contextBridge.exposeInMainWorld('meshlineLayout',{focusWindow:()=>ipcRenderer.send('layout:focus'),setCompact:compact=>ipcRenderer.send('layout:compact',compact===true)});
 contextBridge.exposeInMainWorld('meshlineMaps',{attribution:()=>ipcRenderer.send('maps:attribution')});

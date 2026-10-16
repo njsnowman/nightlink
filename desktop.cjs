@@ -1,5 +1,6 @@
 const {app,BrowserWindow,ipcMain,screen,nativeTheme,shell,dialog}=require('electron');
 const path=require('node:path');
+const nightlinkUpdates=require('./updates.cjs');
 const fsBackup=require('node:fs/promises'),cryptoBackup=require('node:crypto');
 app.setPath('userData',path.join(app.getPath('appData'),'Meshline'));
 app.whenReady().then(()=>{
@@ -7,6 +8,20 @@ app.whenReady().then(()=>{
  const win=new BrowserWindow({show:!app.commandLine.hasSwitch('meshline-test'),width:1320,height:900,minWidth:760,minHeight:560,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),backgroundThrottling:false,contextIsolation:true,nodeIntegration:false,sandbox:true}});
  let select=null,pair=null,devices=new Set(),scanTimer,pairTimer;
  const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
+
+ let updateResult=null,updateCheck=null,updateCheckedAt=0;
+ const updateMode=process.env.PORTABLE_EXECUTABLE_DIR?'portable':'installer';
+ ipcMain.handle('updates:info',e=>{if(!trusted(e))return null;return{version:app.getVersion(),mode:updateMode,releases:nightlinkUpdates.RELEASES};});
+ ipcMain.handle('updates:check',async e=>{
+  if(!trusted(e))return null;if(updateCheck)return updateCheck;
+  if(updateResult&&Date.now()-updateCheckedAt<60000)return{...updateResult,checkedAt:updateCheckedAt,cached:true};
+  updateCheck=nightlinkUpdates.check(app.getVersion(),updateMode).then(result=>{updateResult=result;updateCheckedAt=Date.now();return{...result,checkedAt:updateCheckedAt};}).finally(()=>updateCheck=null);return updateCheck;
+ });
+ ipcMain.handle('updates:open',async(e,download)=>{
+  if(!trusted(e))return false;
+  const url=download===true&&updateResult?.status==='available'?(updateResult.download||updateResult.url):nightlinkUpdates.RELEASES;
+  await shell.openExternal(url);return true;
+ });
  ipcMain.on('layout:focus',e=>{if(!trusted(e))return;if(win.isMinimized())win.restore();win.show();win.focus();});
  ipcMain.on('backup:reload',e=>{if(trusted(e))win.webContents.reload();});
  ipcMain.handle('backup:save',async(e,text)=>{
