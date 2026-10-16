@@ -1,7 +1,7 @@
 # Backup and restore validation
 
 Tracking: https://github.com/njsnowman/nightlink/issues/12
-Status: implemented in source and local preview; no release published for this change.
+Status: included in release preparation for 0.8.8.
 
 ## Behavior
 
@@ -18,7 +18,7 @@ Restore requires a disconnected radio. New cards and a rollback journal are stag
 - Full Node suite: 68 passed, including nine backup validation/merge tests.
 - Existing GATT, attention and search browser integrations: passed.
 - Backup browser integration: passed existing contact DB migration, export and restore into a clean profile, both radio histories, JPEG photo/notes/preferences, repeated restore preview, invalid-file rejection, existing-data precedence, interrupted recovery across restart, simulated quota failure with staged-card rollback, pending-send guard and compact layouts.
-- Windows package built. Packaged app assets ran with an isolated history copy under matching Electron 42.11.12. Native Save produced a valid backup file containing both histories; cancelling Save preserved the last successful timestamp. The Save dialog response was stubbed to a local test path; original user storage was not changed.
+- Windows package built. Packaged app assets ran with an isolated history copy under matching Electron 42.11.12. Native Save produced a valid backup file containing both histories; cancelling Save preserved the last successful timestamp. The Save dialog response was stubbed to a local test path; original user storage was not changed.\n- Packaged restore regression: backup.native.test.cjs checks automatic desktop reload, restored history, native Save and cancellation in a clean synthetic profile. Desktop reload uses a trusted IPC request because renderer navigation is restricted.
 
 ## Limits
 
