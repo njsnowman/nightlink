@@ -1,5 +1,6 @@
 /* Backups stay local. Cards and the recovery journal commit in one IndexedDB transaction. */
 let backupBusy=false,restoreRecoveryPending=false;
+function reloadBackupView(){if(window.meshlineBackup?.reload)window.meshlineBackup.reload();else location.reload();}
 function backupStorage(){const storage=Object.create(null);for(const key of Object.keys(localStorage))if(NightlinkBackup.allowed(key))storage[key]=localStorage.getItem(key);return storage;}
 function maintenanceRead(key){return new Promise((resolve,reject)=>{const r=cardDB.transaction('maintenance').objectStore('maintenance').get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
 function maintenanceWrite(key,value){return new Promise((resolve,reject)=>{const tx=cardDB.transaction('maintenance','readwrite');if(value===undefined)tx.objectStore('maintenance').delete(key);else tx.objectStore('maintenance').put(value,key);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('Storage transaction cancelled.'));});}
@@ -40,11 +41,11 @@ async function previewBackupFile(file){
  $('#backup-preview-date').textContent='Backup created '+new Date(backup.createdAt).toLocaleString();
  for(const [label,value]of [['Messages to add',s.added],['Duplicate messages',s.duplicates],['Skipped at history limit',s.capacitySkipped],['Contact cards to add',s.cardsAdded],['Existing cards kept',s.cardsKept],['Radio histories',s.radios],['Preferences to add',s.preferencesAdded]]){const row=document.createElement('div');row.textContent=label;const number=document.createElement('strong');number.textContent=value;row.append(number);$('#backup-preview-counts').append(row);}
  $('#backup-cancel-restore').onclick=()=>$('#dialog').close();
- $('#backup-confirm-restore').onclick=async()=>{const button=$('#backup-confirm-restore');button.disabled=true;backupBusy=true;try{await applyBackup(backup);location.reload();}catch(error){$('#backup-restore-error').textContent=error.message;button.disabled=false;await refreshBackupMetadata();}finally{backupBusy=false;}};
+ $('#backup-confirm-restore').onclick=async()=>{const button=$('#backup-confirm-restore');button.disabled=true;backupBusy=true;try{await applyBackup(backup);reloadBackupView();}catch(error){$('#backup-restore-error').textContent=error.message;button.disabled=false;await refreshBackupMetadata();}finally{backupBusy=false;}};
  }catch(error){toast('Restore could not be prepared: '+error.message);}finally{backupBusy=false;}
 }
 async function recoverBackupJournal(){
- try{await cardsReady;await rollbackRestore();location.reload();}catch(error){toast('Recovery could not complete: '+error.message);}
+ try{await cardsReady;await rollbackRestore();reloadBackupView();}catch(error){toast('Recovery could not complete: '+error.message);}
 }
 async function refreshBackupMetadata(){
  await cardsReady;const last=await maintenanceRead('last-export'),pending=await maintenanceRead('restore-journal');restoreRecoveryPending=!!pending;

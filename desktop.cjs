@@ -8,6 +8,7 @@ app.whenReady().then(()=>{
  let select=null,pair=null,devices=new Set(),scanTimer,pairTimer;
  const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
  ipcMain.on('layout:focus',e=>{if(!trusted(e))return;if(win.isMinimized())win.restore();win.show();win.focus();});
+ ipcMain.on('backup:reload',e=>{if(trusted(e))win.webContents.reload();});
  ipcMain.handle('backup:save',async(e,text)=>{
   if(!trusted(e)||typeof text!=='string'||Buffer.byteLength(text,'utf8')>50*1024*1024)throw new Error('Invalid backup data.');
   const parsed=JSON.parse(text);if(parsed.format!=='nightlink-backup'||parsed.version!==1)throw new Error('Unsupported backup format.');
