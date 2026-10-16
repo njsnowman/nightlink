@@ -70,7 +70,9 @@
       "drafts.js",
       "drafts-ui.js",
       "backup-reminders.js",
-      "backup-reminders-ui.js"
+      "backup-reminders-ui.js",
+      "navigation-ui.js",
+      "window-fit.css"
     ],
     "win": {
       "target": [

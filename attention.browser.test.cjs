@@ -58,7 +58,7 @@ const assert=require('node:assert/strict');
  await page.locator('.dm-floating').waitFor();assert.equal(await page.locator('nav [data-view="Direct Messages"] .unread-badge').textContent(),'2');
  await page.locator('.dm-floating input').click();await page.waitForFunction(()=>attention.unread(live.messages,'direct:'+'ab'.repeat(32)).length===0);
  await page.locator('.dm-floating .dm-close').click();
- await page.locator('nav [data-view="Direct Messages"]').click();
+ if(!await page.locator('nav [data-sidebar-group="tools"]').evaluate(e=>e.open))await page.locator('nav [data-sidebar-group="tools"] summary').click();await page.locator('nav [data-view="Direct Messages"]').click();
  await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-attention-inbox.png'});
  await page.locator('.settings').click();await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-attention-settings.png'});
  assert.equal(errors.length,0,errors.join('\n'));
