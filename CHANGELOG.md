@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Clarify message delivery states and add guarded retry confirmation in main and DM windows. Radio acceptance of a channel broadcast does not imply recipient acknowledgement. Tracked in [#18](https://github.com/njsnowman/nightlink/issues/18).
+
 ## 0.8.9 — 2026-10-16
 
 - Add per-user Windows installer and optional update checks with signed-in GitHub fallback for private releases. Retain the portable build and existing user-data location. Tracked in [#15](https://github.com/njsnowman/nightlink/issues/15).
