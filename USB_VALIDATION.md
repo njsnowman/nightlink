@@ -14,6 +14,6 @@ Physical source validation with user-authorized Heltec V4.3 OLED on COM23, USB V
 - Nightlink source app in isolated Electron profile selected COM23, completed identity/contacts/channels synchronization (284 contacts, one channel, zero queued messages), read telemetry, disconnected and reconnected using the remembered port.
 - No firmware, frequency, power, channel or contact configuration changed. No mesh message or advert was transmitted during this USB test.
 
-The physical test covers this device/firmware/cable combination. Automated stream-end tests simulate unplug; physical unplug and USB over-the-air messaging have not been tested. Packaged Windows validation and release artifact evidence are recorded separately before shipment.
+The physical test covers this device/firmware/cable combination. Automated stream-end tests simulate unplug; physical unplug and USB over-the-air messaging have not been tested. The packaged application repeated the same synchronization, telemetry, disconnect and reconnect test successfully in isolated profile nightlink-navigation-native-KDrdHX. Release artifact evidence is recorded separately before shipment.
 
 Protocol references: https://github.com/meshcore-dev/meshcore.js/blob/master/src/connection/serial_connection.js and https://github.com/meshcore-dev/meshcore.js/blob/master/src/connection/web_serial_connection.js. Electron selection/permissions: https://www.electronjs.org/docs/latest/api/session#event-select-serial-port.

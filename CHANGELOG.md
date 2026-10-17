@@ -2,7 +2,7 @@
 
 ## 0.8.15 — 2026-10-16
 
-- Add dark technical artwork and olive and amber accents to the Windows installer while preserving installation-folder and shortcut options. [#39](https://github.com/njsnowman/nightlink/issues/39)
+- Add black technical artwork and cyan and ice blue accents to the Windows installer while preserving installation-folder and shortcut options. [#39](https://github.com/njsnowman/nightlink/issues/39)
 
 - Add USB serial companion connections alongside Bluetooth, explicit connection selection, bounded serial parsing and disconnect/reconnect handling. Tracked in [#37](https://github.com/njsnowman/nightlink/issues/37).
 
