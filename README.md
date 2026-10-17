@@ -1,6 +1,6 @@
 # Nightlink
 
-Windows desktop client for MeshCore companion radios over Bluetooth LE. Built with Electron and a local HTML/CSS/JavaScript interface.
+Windows desktop client for MeshCore companion radios over Bluetooth LE or USB serial. Built with Electron and a local HTML/CSS/JavaScript interface.
 
 ## Features
 
@@ -21,6 +21,12 @@ Run `npm test` for protocol, transport, delivery, and recovery tests. `smoke.tes
 ## Bluetooth connection
 
 Use MeshCore BLE companion firmware and enable Windows Bluetooth. Connect one client to the radio at a time. Nightlink synchronizes channels, retrieves retained messages, and refreshes contacts and telemetry. Transport failures during initial synchronization pause automatic reconnect and identify the failed command. Unexpected link loss after synchronization uses bounded reconnect backoff.
+
+## USB connection
+
+Connect the radio with a data-capable USB cable. In Connect radio, choose USB cable, then Choose USB port and select the radio’s COM port. Nightlink uses 115200 baud and MeshCore companion framing. The radio must expose the USB companion protocol; a charge-only cable or unrelated serial console cannot connect. Close other serial applications first. No firmware flashing is performed.
+
+Only one radio connection is active at a time. Disconnect or select the other connection type to switch. USB and Bluetooth use the radio’s public identity for the same local history. The selected USB port is remembered for reconnects during this app session. Unexpected link loss uses bounded retries; synchronization failures pause retries.
 
 ## Message delivery and recovery
 

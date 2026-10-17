@@ -1,13 +1,13 @@
 {
   "name": "meshline",
-  "version": "0.8.15-rc.4",
+  "version": "0.8.15",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
     "start": "electron .",
     "preview": "node server.cjs",
     "dist": "electron-builder --win nsis portable",
-    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs"
+    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs"
   },
   "devDependencies": {
     "electron": "^42.0.0",
@@ -82,7 +82,12 @@
       "vendor/JSQR-LICENSE",
       "vendor/QR-SOURCES.md",
       "corescope-ui.js",
-      "corescope.css"
+      "corescope.css",
+      "serial.js",
+      "transport.js",
+      "serial-ui.js",
+      "serial.css",
+      "serial-desktop.cjs"
     ],
     "win": {
       "target": [
