@@ -117,12 +117,15 @@
       "runAfterFinish": false,
       "deleteAppDataOnUninstall": false,
       "artifactName": "Nightlink-Setup-${version}.${ext}",
-      "include": "installer.nsh"
+      "include": "installer.nsh",
+      "installerHeader": "installer-assets/header.bmp",
+      "installerSidebar": "installer-assets/sidebar.bmp",
+      "uninstallerSidebar": "installer-assets/sidebar.bmp"
     },
     "portable": {
       "artifactName": "Nightlink-Portable-${version}.${ext}"
     }
   },
-  "description": "Nightlink — a Bluetooth MeshCore desktop client",
+  "description": "Nightlink — a Bluetooth and USB MeshCore desktop client",
   "author": "Nightlink"
 }

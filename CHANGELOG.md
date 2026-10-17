@@ -2,6 +2,8 @@
 
 ## 0.8.15 — 2026-10-16
 
+- Add dark technical artwork and olive and amber accents to the Windows installer while preserving installation-folder and shortcut options. [#39](https://github.com/njsnowman/nightlink/issues/39)
+
 - Add USB serial companion connections alongside Bluetooth, explicit connection selection, bounded serial parsing and disconnect/reconnect handling. Tracked in [#37](https://github.com/njsnowman/nightlink/issues/37).
 
 - Add the OKI Mesh CoreScope online view as the default Overview and Network map, with a radio-map switch, remote-content isolation and offline guidance. Tracked in [#35](https://github.com/njsnowman/nightlink/issues/35).
