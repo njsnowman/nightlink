@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Close the connection window and show Overview after successful Bluetooth/USB synchronization, without a second confirmation.
 - Keep one connection button in the top-right header, changing to Connected when linked.
 - Move radio connection actions above the progress display and fit the connection dialog without scrolling at supported window sizes.
 
