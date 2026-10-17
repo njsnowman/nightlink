@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.21-rc.1",
+  "version": "0.8.21-rc.2",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -100,7 +100,9 @@
       "voice-desktop.cjs",
       "OFFLINE_MAPS.md",
       "LOCAL_VOICE.md",
-      "offline-maps-desktop.cjs"
+      "offline-maps-desktop.cjs",
+      "signal-console.css",
+      "signal-console-ui.js"
     ],
     "win": {
       "target": [

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.21-rc.2 — local candidate
+
+- Apply the approved cyan glass theme, original SVG navigation icons, readable message bubbles, compact icon rail and a connection-state signal indicator. Match native direct-message surfaces. Retain dedicated Radio tools, regional CoreScope start and no outer workspace scrolling. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
+- Presentation changes only; no reconnect fix or physical-radio validation claim.
+
+
 ## 0.8.21-rc.1 — local candidate
 
 - Move device status and maintenance controls to a main Radio page. Remove radio and contacts panels from Overview; prioritize messages beside a compact map, with expandable map preview at smaller widths.
