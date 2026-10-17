@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.16 — 2026-10-16
+
+- Keep the desktop radio session running when closing to the tray; add unread DM/mention counts, native conversation notifications, local quiet hours and explicit disconnect-on-quit. Tracked in [#40](https://github.com/njsnowman/nightlink/issues/40).
+
 ## 0.8.15 — 2026-10-16
 
 - Add black technical artwork and cyan and ice blue accents to the Windows installer while preserving installation-folder and shortcut options. [#39](https://github.com/njsnowman/nightlink/issues/39)
