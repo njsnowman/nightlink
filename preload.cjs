@@ -15,3 +15,5 @@ contextBridge.exposeInMainWorld('meshlineBluetooth',{
  select:id=>ipcRenderer.send('ble:select',id),
  pairingResponse:response=>ipcRenderer.send('ble:pairing-response',response)
 });
+
+contextBridge.exposeInMainWorld('meshlineSerial',{onPorts:listener=>subscribe('usb:ports',listener),onEnded:listener=>subscribe('usb:ended',listener),select:id=>ipcRenderer.send('usb:select',id)});
