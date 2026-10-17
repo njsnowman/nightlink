@@ -60,7 +60,7 @@ renderMessages=function(){
  muteChannel.hidden=live.selected?.kind!=='channel';
  const muted=next&&state.muted.has(next);muteChannel.textContent=muted?'Muted · Unmute':'Mute channel';muteChannel.setAttribute('aria-pressed',String(!!muted));
  cancelAnimationFrame(attentionFrame);restoringReading=true;
- function restorePosition(){chatReadingLog.scrollTop=chatReadingLog.scrollHeight;}
+ function restorePosition(){chatReadingLog.scrollTop=chatReadingLog.scrollHeight;jumpNewest.hidden=true;}
  restorePosition();attentionFrame=requestAnimationFrame(()=>{restorePosition();restoringReading=false;markVisibleReading();captureReading();jumpNewest.hidden=atReadingEnd(chatReadingLog)||!next;const count=next?state.unread(live.messages,next).length:0;jumpNewest.textContent=count?'New messages ('+count+') ↓':'Jump to latest ↓';});
  refreshUnreadBadges();
 };
