@@ -1,13 +1,13 @@
 {
   "name": "meshline",
-  "version": "0.8.18",
+  "version": "0.8.19",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
     "start": "electron .",
     "preview": "node server.cjs",
     "dist": "electron-builder --win nsis portable",
-    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs"
+    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs"
   },
   "devDependencies": {
     "electron": "^42.0.0",
@@ -90,7 +90,17 @@
       "serial-desktop.cjs",
       "desktop-shell.cjs",
       "tray-policy.js",
-      "tray-ui.js"
+      "tray-ui.js",
+      "diagnostics.js",
+      "diagnostics-ui.js",
+      "diagnostics.css",
+      "offline-maps.js",
+      "offline-maps-ui.js",
+      "voice-ui.js",
+      "voice-desktop.cjs",
+      "OFFLINE_MAPS.md",
+      "LOCAL_VOICE.md",
+      "offline-maps-desktop.cjs"
     ],
     "win": {
       "target": [

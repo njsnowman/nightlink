@@ -12,6 +12,8 @@ else app.whenReady().then(()=>{
  let select=null,pair=null,devices=new Set(),scanTimer,pairTimer;
  const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
 
+ require('./voice-desktop.cjs').install({app,win,ipcMain,dialog,trusted});
+ require('./offline-maps-desktop.cjs').install({win,ipcMain,dialog,trusted});
  let updateResult=null,updateCheck=null,updateCheckedAt=0;
  const updateMode=process.env.PORTABLE_EXECUTABLE_DIR?'portable':'installer';
  ipcMain.handle('updates:info',e=>{if(!trusted(e))return null;return{version:app.getVersion(),mode:updateMode,releases:nightlinkUpdates.RELEASES};});

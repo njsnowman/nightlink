@@ -1,13 +1,19 @@
 # Changelog
 
+## 0.8.19 — 2026-10-17
+
+- Add a compact Diagnostics workspace with per-radio recorded event replay, raw RX packet field inspection, passive placement comparisons and reception summaries. Evidence and map packs use separate IndexedDB storage.
+- Import attributed raster MBTiles or JSON packs, show coverage and open the downloaded area. Fall back from CoreScope to local maps when offline or initial frame loading fails; coverage depends on the imported pack.
+- Add optional local whisper.cpp dictation with transcript review and local-system-voice DM reading. Runtime and model are configured separately.
+- Track implementation and validation in [#43](https://github.com/njsnowman/nightlink/issues/43). Validation is recorded in releases/0.8.19.md.
+
 ## 0.8.18 — 2026-10-17
 
-- Open Overview and main Messages at the newest message instead of restoring an older anchor/unread boundary. Follow incoming messages without requiring Jump to latest. Separate DM-window reading behavior is unchanged. [#47](https://github.com/njsnowman/nightlink/issues/47)
+- Open Overview and main Messages at the newest message and follow incoming messages without requiring Jump to latest. [#47](https://github.com/njsnowman/nightlink/issues/47)
 
 ## 0.8.17 — 2026-10-17
 
-- Keep a single top-right connection action with connected status. Move discovery actions above progress and fit the dialog without scrolling.
-- Close the connection dialog and enter Overview after successful synchronization. Errors remain visible; background refreshes do not redirect the workspace. Tracked in [#45](https://github.com/njsnowman/nightlink/issues/45).
+- Keep one top-right connection action with connected status, fit discovery controls above progress without scrolling, and enter Overview automatically after successful synchronization. [#45](https://github.com/njsnowman/nightlink/issues/45)
 
 ## 0.8.16 — 2026-10-16
 

@@ -11,5 +11,5 @@ function renderDesktopSettings(){if(window.meshlineDesktop&&$('#notifications'))
 }
 const desktopView=view;view=function(name){desktopView(name);if(name==='Settings')renderDesktopSettings();};
 window.meshlineDesktop?.onOpen(data=>{if(data.radio!==live.identity?.key)return;const message=live.messages.findLast(m=>m.conversation===data.conversation);if(!message)return;if(message.target.kind==='direct')openDM(message.target.key);else{view('Messages');selectConversation({...message.target});}});
-window.meshlineDesktop?.onQuit(async()=>{captureReading();recovery.pause();try{await ble.disconnect();}finally{window.meshlineDesktop.readyToQuit();}});
+window.meshlineDesktop?.onQuit(async()=>{captureReading();recovery.pause();try{await ble.disconnect();}finally{if(typeof persistEvidence==='function')await persistEvidence();window.meshlineDesktop.readyToQuit();}});
 for(const event of ['identity','sync'])radioSession.addEventListener(event,publishDesktopState);ble.addEventListener('state',publishDesktopState);setInterval(publishDesktopState,60000);publishDesktopState();
