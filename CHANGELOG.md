@@ -11,6 +11,10 @@
 - Add optional local whisper.cpp dictation with transcript review and local-system-voice DM reading. Runtime and model are configured separately.
 - Track implementation and remaining packaged/physical validation in [#43](https://github.com/njsnowman/nightlink/issues/43). No release is approved by these source changes.
 
+## 0.8.17 — 2026-10-17
+
+- Keep one top-right connection action with connected status, fit discovery controls above progress without scrolling, and enter Overview automatically after successful synchronization. [#45](https://github.com/njsnowman/nightlink/issues/45)
+
 ## 0.8.16 — 2026-10-16
 
 - Keep the desktop radio session running when closing to the tray; add unread DM/mention counts, native conversation notifications, local quiet hours and explicit disconnect-on-quit. Tracked in [#40](https://github.com/njsnowman/nightlink/issues/40).
