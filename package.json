@@ -1,13 +1,13 @@
 {
   "name": "meshline",
-  "version": "0.8.14",
+  "version": "0.8.15-rc.2",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
     "start": "electron .",
     "preview": "node server.cjs",
     "dist": "electron-builder --win nsis portable",
-    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs"
+    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs"
   },
   "devDependencies": {
     "electron": "^42.0.0",
@@ -72,7 +72,15 @@
       "backup-reminders.js",
       "backup-reminders-ui.js",
       "navigation-ui.js",
-      "window-fit.css"
+      "window-fit.css",
+      "radio-tools.js",
+      "radio-tools-ui.js",
+      "radio-tools.css",
+      "vendor/qrcode.js",
+      "vendor/jsQR.js",
+      "vendor/QRCODE-LICENSE",
+      "vendor/JSQR-LICENSE",
+      "vendor/QR-SOURCES.md"
     ],
     "win": {
       "target": [
