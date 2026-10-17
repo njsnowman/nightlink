@@ -14,3 +14,7 @@ Nightlink 0.8.17 shipped the connection flow separately through #45 / PR #46. Ad
 No physical microphone capture or new physical RF capture was performed. COM23 access was denied during a read-only availability check; the owning application was not interrupted. Physical RX capture/capability review remains a release gate for the advanced batch. Offline coverage is confined to installed packs; the validation extract is not a global basemap or a default user map. End-user pack provisioning still needs usability review.
 
 Public test assets and private app profiles remain in separate cache directories. Neither radio messages nor the user's normal profile were uploaded. Model/runtime and map extract are not bundled into the application.
+
+## Current implementation follow-up
+
+Added standard raster MBTiles import with required attribution, read-only SQLite access, TMS-to-XYZ conversion and input limits. Added explicit coverage summary and Show downloaded area. Packaged-runtime source integration passed with a 58-tile OSM-derived extract and a test-owned picker. Added recording duration, cancel/discard and serialized microphone startup/cleanup. Physical radio handoff is being prepared through normal Quit; no process kill or live-profile editing is used.

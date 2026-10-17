@@ -21,3 +21,5 @@ contextBridge.exposeInMainWorld('meshlineSerial',{onPorts:listener=>subscribe('u
 if(process.isMainFrame)contextBridge.exposeInMainWorld('meshlineDesktop',{state:data=>ipcRenderer.send('desktop:state',data),notify:data=>ipcRenderer.send('desktop:notice',data),quit:()=>ipcRenderer.send('desktop:quit'),readyToQuit:()=>ipcRenderer.send('desktop:quit-ready'),onOpen:listener=>subscribe('desktop:open',listener),onQuit:listener=>subscribe('desktop:quit-request',listener)});
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld("nightlinkVoice",{status:()=>ipcRenderer.invoke("voice:status"),configure:()=>ipcRenderer.invoke("voice:configure"),transcribe:data=>ipcRenderer.invoke("voice:transcribe",Array.from(data))});
+
+if(process.isMainFrame)contextBridge.exposeInMainWorld("nightlinkOfflineMaps",{open:()=>ipcRenderer.invoke("offline-maps:open")});
