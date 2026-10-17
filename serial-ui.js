@@ -1,6 +1,11 @@
 // Connection choice uses the shared protocol session and per-radio history.
 const transportChoice=document.createElement('div');transportChoice.className='transport-choice';transportChoice.setAttribute('role','group');transportChoice.setAttribute('aria-label','Radio connection type');transportChoice.innerHTML='<button id="transport-bluetooth" aria-pressed="true">Bluetooth</button><button id="transport-usb" aria-pressed="false">USB cable</button>';
 bleSheet.querySelector('.dialog-heading').after(transportChoice);
+// Primary connection actions stay above the progress visualization.
+const connectActions=document.createElement('div');connectActions.className='connect-primary-actions';
+connectActions.append($('#ble-connect'),$('#ble-reconnect'),$('#ble-disconnect'));
+transportChoice.after($('#ble-status'),connectActions);
+bleSheet.querySelector(':scope > p:not([id]):not(.ble-note)')?.setAttribute('hidden','');
 const usbPicker=document.createElement('dialog');usbPicker.innerHTML='<div class="dialog-heading"><h2>USB companion ports</h2></div><p>Choose the radio connected by USB. It must run MeshCore USB companion firmware.</p><div id="usb-ports"></div><button id="usb-cancel" class="radio-manage">Cancel</button>';document.body.append(usbPicker);
 function refreshTransportChoice(){for(const kind of ['bluetooth','usb']){const button=$('#transport-'+kind);button.setAttribute('aria-pressed',String(ble.kind===kind));button.disabled=['scanning','connecting','initializing'].includes(ble.state);}bleSheet.querySelector('.link-terminal-bar>span:last-child').textContent=ble.label.toUpperCase()+' / MESHCORE';$('#ble-close').setAttribute('aria-label','Close radio connection dialog');}
 for(const kind of ['bluetooth','usb'])$('#transport-'+kind).onclick=()=>{try{ble.select(kind);updateRadioState();refreshTransportChoice();$('#ble-help').textContent=kind==='usb'?'Connect the radio with a USB data cable. It must run MeshCore USB companion firmware.':'Power on your radio and enable Bluetooth. Close other apps using the radio.';}catch(error){toast(error.message);}};
