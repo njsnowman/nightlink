@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Keep one connection button in the top-right header, changing to Connected when linked.
 - Move radio connection actions above the progress display and fit the connection dialog without scrolling at supported window sizes.
 
 - Add a compact Diagnostics workspace with per-radio recorded event replay, raw RX packet field inspection, passive placement comparisons and reception summaries. Evidence and map packs use separate IndexedDB storage.
