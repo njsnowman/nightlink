@@ -60,11 +60,7 @@ renderMessages=function(){
  muteChannel.hidden=live.selected?.kind!=='channel';
  const muted=next&&state.muted.has(next);muteChannel.textContent=muted?'Muted · Unmute':'Mute channel';muteChannel.setAttribute('aria-pressed',String(!!muted));
  cancelAnimationFrame(attentionFrame);restoringReading=true;
- function restorePosition(){
-  if(position&&!position.bottom){const anchor=[...chatReadingLog.querySelectorAll('.message')].find(row=>row.dataset.messageId===position.anchor);if(anchor)chatReadingLog.scrollTop+=anchor.getBoundingClientRect().top-chatReadingLog.getBoundingClientRect().top-position.offset;else chatReadingLog.scrollTop=0;}
-  else if(changed&&readingBoundary){const divider=chatReadingLog.querySelector('.new-messages-divider');if(divider)chatReadingLog.scrollTop+=divider.getBoundingClientRect().top-chatReadingLog.getBoundingClientRect().top;}
-  else chatReadingLog.scrollTop=chatReadingLog.scrollHeight;
- }
+ function restorePosition(){chatReadingLog.scrollTop=chatReadingLog.scrollHeight;}
  restorePosition();attentionFrame=requestAnimationFrame(()=>{restorePosition();restoringReading=false;markVisibleReading();captureReading();jumpNewest.hidden=atReadingEnd(chatReadingLog)||!next;const count=next?state.unread(live.messages,next).length:0;jumpNewest.textContent=count?'New messages ('+count+') ↓':'Jump to latest ↓';});
  refreshUnreadBadges();
 };
