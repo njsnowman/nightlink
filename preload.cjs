@@ -19,3 +19,5 @@ contextBridge.exposeInMainWorld('meshlineBluetooth',{
 contextBridge.exposeInMainWorld('meshlineSerial',{onPorts:listener=>subscribe('usb:ports',listener),onEnded:listener=>subscribe('usb:ended',listener),select:id=>ipcRenderer.send('usb:select',id)});
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('meshlineDesktop',{state:data=>ipcRenderer.send('desktop:state',data),notify:data=>ipcRenderer.send('desktop:notice',data),quit:()=>ipcRenderer.send('desktop:quit'),readyToQuit:()=>ipcRenderer.send('desktop:quit-ready'),onOpen:listener=>subscribe('desktop:open',listener),onQuit:listener=>subscribe('desktop:quit-request',listener)});
+
+if(process.isMainFrame)contextBridge.exposeInMainWorld("nightlinkVoice",{status:()=>ipcRenderer.invoke("voice:status"),configure:()=>ipcRenderer.invoke("voice:configure"),transcribe:data=>ipcRenderer.invoke("voice:transcribe",Array.from(data))});

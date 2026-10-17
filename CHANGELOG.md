@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Move radio connection actions above the progress display and fit the connection dialog without scrolling at supported window sizes.
+
+- Add a compact Diagnostics workspace with per-radio recorded event replay, raw RX packet field inspection, passive placement comparisons and reception summaries. Evidence and map packs use separate IndexedDB storage.
+- Add explicit offline raster-pack imports and automatic CoreScope-to-local map fallback when offline or initial frame loading fails. Coverage depends on the imported pack.
+- Add optional local whisper.cpp dictation with transcript review and local-system-voice DM reading. Runtime and model are configured separately.
+- Track implementation and remaining packaged/physical validation in [#43](https://github.com/njsnowman/nightlink/issues/43). No release is approved by these source changes.
+
 ## 0.8.16 — 2026-10-16
 
 - Keep the desktop radio session running when closing to the tray; add unread DM/mention counts, native conversation notifications, local quiet hours and explicit disconnect-on-quit. Tracked in [#40](https://github.com/njsnowman/nightlink/issues/40).
