@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Add the OKI Mesh CoreScope online view as the default Network map, with a radio-map switch, remote-content isolation and offline guidance. Tracked in [#35](https://github.com/njsnowman/nightlink/issues/35).
+- Add the OKI Mesh CoreScope online view as the default Overview and Network map, with a radio-map switch, remote-content isolation and offline guidance. Tracked in [#35](https://github.com/njsnowman/nightlink/issues/35).
 
 - Finish advert actions with an explicit result and Done button; clear the busy cursor on success and error. Physical M1 testing confirmed command acceptance for local and flood adverts.
 

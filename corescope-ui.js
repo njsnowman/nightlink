@@ -25,22 +25,23 @@
   timer=setTimeout(()=>{status.textContent='If CoreScope is blank or unavailable, reload or choose Radio map. This online view depends on the OKI Mesh service.';},15000);
  }
  function show(){
-  if(current!=='Network map')return;
-  const host=$('#alternate');host.classList.add('network-source-view');host.prepend(bar);
+  if(!['Overview','Network map'].includes(current))return;
+  const overview=current==='Overview';const host=overview?mapPanel:$('#alternate');if(!overview)host.classList.add('network-source-view');if(overview)host.querySelector('.panel-heading').after(bar);else host.prepend(bar);mapPanel.classList.toggle('overview-corescope',overview&&mode==='corescope');
   bar.querySelector('#network-corescope').setAttribute('aria-pressed',String(mode==='corescope'));
   bar.querySelector('#network-radio').setAttribute('aria-pressed',String(mode==='radio'));
   bar.querySelector('#network-source-note').textContent=mode==='corescope'?'OKI Mesh · online observer data':'Your radio contacts · street tiles need internet';
-  bar.querySelector('#network-reload').hidden=mode!=='corescope';
-  if(mode==='corescope'){mapPanel.hidden=true;host.append(pane);start();}
-  else{stop();pane.remove();mapPanel.hidden=false;host.append(mapPanel);requestAnimationFrame(()=>networkStreetMap?.invalidateSize());}
+  bar.querySelector('#network-reload').hidden=mode!=='corescope';mapPanel.querySelector('.live').textContent=mode==='corescope'?'OKI MESH':live.sync==='ready'?'RADIO':'OFFLINE';
+  if(mode==='corescope'){mapPanel.hidden=!overview;host.append(pane);start();}
+  else{stop();pane.remove();mapPanel.hidden=false;if(!overview)host.append(mapPanel);requestAnimationFrame(()=>networkStreetMap?.invalidateSize());}
  }
  function choose(next){mode=next;try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
  bar.querySelector('#network-corescope').onclick=()=>choose('corescope');
  bar.querySelector('#network-radio').onclick=()=>choose('radio');
  bar.querySelector('#network-reload').onclick=start;
- window.addEventListener('offline',()=>{if(current==='Network map'&&mode==='corescope'){stop();status.textContent='CoreScope needs an internet connection. Choose Radio map to view saved or connected-radio contacts.';}});
- window.addEventListener('online',()=>{if(current==='Network map'&&mode==='corescope'&&!frame)status.textContent='Internet connection available. Reload CoreScope to reconnect, or choose Radio map.';});
+ window.addEventListener('offline',()=>{if(['Overview','Network map'].includes(current)&&mode==='corescope'){stop();status.textContent='CoreScope needs an internet connection. Choose Radio map to view saved or connected-radio contacts.';}});
+ window.addEventListener('online',()=>{if(['Overview','Network map'].includes(current)&&mode==='corescope'&&!frame)status.textContent='Internet connection available. Reload CoreScope to reconnect, or choose Radio map.';});
+ const sourceRenderMap=renderMap;renderMap=function(){sourceRenderMap();if(current==='Overview'&&mode==='corescope')mapPanel.querySelector('.live').textContent='OKI MESH';};
  const sourceView=view;
- view=function(name){stop();mapPanel.hidden=false;$('#alternate').classList.remove('network-source-view');sourceView(name);if(name==='Network map')show();};
- if(current==='Network map')show();
+ view=function(name){stop();bar.remove();pane.remove();mapPanel.hidden=false;mapPanel.classList.remove('overview-corescope');$('#alternate').classList.remove('network-source-view');sourceView(name);if(['Overview','Network map'].includes(name))show();};
+ if(['Overview','Network map'].includes(current))show();
 })();
