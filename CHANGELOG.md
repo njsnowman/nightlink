@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.21-rc.4 — local candidate
+
+- Re-resolve channel sender identity when opening a contact card or starting a DM. Saved companion, prior link and unique name/nickname matches open the addressed DM directly. Replace the companion chooser with inline one-time full-key setup for unresolved senders.
+- Present contact portrait, displayed/advertised name, node type, local received-message evidence, last advert, stored route and read-only notes; keep editing and full identity secondary. Track in [#53](https://github.com/njsnowman/nightlink/issues/53).
+- Serve the new theme/message helper in browser preview and update integration checks for boxed hop/portrait placement.
+
+
 ## 0.8.21-rc.3 — local candidate
 
 - Match Signal Console message anatomy across Overview, Messages and direct messages: circular contact image, name/time/hop label header and message bubble below. Keep contact-card and channel route actions; preserve delivery controls and use unknown/outgoing labels when no received hop count exists. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
