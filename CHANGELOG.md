@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.21-rc.6 — local candidate
+
+- Use ice blue as the default display accent, with persistent amber, emerald and violet options in Settings. Apply the selection to native DMs and use angular panel corner accents while preserving semantic status colors. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
+
 ## 0.8.21-rc.5 — local candidate
 
 - Release native DM window ownership while a workspace dialog is open so contact cards, secondary menus and delivery details can appear in front. Restore normal ownership on dismissal. Tracked in [#53](https://github.com/njsnowman/nightlink/issues/53).
