@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.21-rc.1 — local candidate
+
+- Move device status and maintenance controls to a main Radio page. Remove radio and contacts panels from Overview; prioritize messages beside a compact map, with expandable map preview at smaller widths.
+- Start CoreScope over the Batesville–Cincinnati–Indianapolis region on Overview and Network. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
+- This layout candidate does not include the pending reconnect patch in #50.
+
+
 ## 0.8.19 — 2026-10-17
 
 - Add a compact Diagnostics workspace with per-radio recorded event replay, raw RX packet field inspection, passive placement comparisons and reception summaries. Evidence and map packs use separate IndexedDB storage.

@@ -8,3 +8,27 @@ html,body{height:100%;min-height:0;overflow:hidden}body{width:100%;min-width:0}m
 #overview .empty-chat{min-height:0;padding:10px 0;margin:0;font-size:12px}#overview .reading-jump{font-size:11px;padding:4px 8px;margin:3px auto;background:#223347;color:#d9eaff;border:1px solid #58708e}
 
 @media(max-height:650px){header,body.compact header{min-height:48px;height:48px}.content,body.compact .content{padding-top:8px;padding-bottom:8px}.page-heading,body.compact .page-heading{margin-bottom:8px}.page-heading .primary{padding:7px 10px}.stats article,body.compact .stats article{padding:6px 10px}.stats strong,body.compact .stats strong{font-size:20px;margin:2px 0 0}#overview>.stats,body.compact #overview>.stats{margin-bottom:8px}#overview>.dashboard-grid,body.compact #overview>.dashboard-grid{grid-template-rows:minmax(0,1fr) minmax(105px,.48fr);gap:8px}#overview .chat-channel>span{display:none}#overview .chat-channel{flex-wrap:nowrap}#overview .chat-channel strong{font-size:13px}#overview .channel-mute{font-size:11px;padding:3px 5px}#overview .conversation-tools{padding:4px 8px}#overview .panel-heading{min-height:38px;height:38px;padding:5px 10px}#overview .panel-heading h2{font-size:12px}#overview .map-footer{display:none}#overview .radio-device{padding:6px 10px}#overview .radio-device p{font-size:11px}#overview .radio-details{padding:6px 10px}}
+
+/* Overview prioritizes conversation height; device maintenance has its own page. */
+.nodes-panel[hidden],.radio-panel[hidden]{display:none!important}
+#overview>.stats,body.compact #overview>.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:10px;gap:8px}
+#overview>.stats article,body.compact #overview>.stats article{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:8px 12px}
+#overview>.stats article>div:first-child{font-size:11px;min-width:0}#overview>.stats article>div:first-child span{display:none}
+#overview>.stats strong,body.compact #overview>.stats strong{font-size:20px;margin:0;letter-spacing:0}#overview>.stats strong small{float:none;font-size:11px;margin:0}
+#overview>.dashboard-grid,body.compact #overview>.dashboard-grid{grid-template-columns:minmax(0,2fr) minmax(230px,1fr);grid-template-rows:minmax(0,1fr);gap:12px}
+#overview .conversation{grid-column:1;grid-row:1}#overview .map-panel{grid-column:2;grid-row:1}
+#overview-map-toggle{display:none}
+#alternate>.radio-panel,body.compact #alternate>.radio-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;max-width:1000px;margin:0 auto;padding-bottom:12px}
+#alternate>.radio-panel>.panel-heading,#alternate>.radio-panel>.radio-device,#alternate>.radio-panel>.radio-details,#alternate>.radio-panel>.sync-status{grid-column:1/-1}
+#alternate>.radio-panel>.radio-manage{width:auto;margin:4px 14px;padding:12px;font-size:13px}
+#alternate>.radio-panel>.radio-details{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1000px){
+#overview>.dashboard-grid,body.compact #overview>.dashboard-grid{grid-template-columns:minmax(0,1fr);grid-template-rows:42px minmax(0,1fr);gap:8px}
+#overview .map-panel{grid-column:1;grid-row:1}#overview .conversation{grid-column:1;grid-row:2}
+#overview .map-panel>.panel-heading{height:40px;min-height:40px}#overview-map-toggle{display:block}
+#overview:not(.map-expanded) .map-panel>:not(.panel-heading){display:none!important}
+#overview.map-expanded>.dashboard-grid,body.compact #overview.map-expanded>.dashboard-grid{grid-template-rows:150px minmax(0,1fr)}
+#overview .map-panel>.panel-heading>button[data-view]{margin-left:auto;margin-right:12px}
+#overview>.stats article,body.compact #overview>.stats article{padding:6px 8px;gap:4px}#overview>.stats article>div:first-child{font-size:10px}#overview>.stats strong,body.compact #overview>.stats strong{font-size:17px}
+}
+@media(max-height:650px){#overview>.stats article,body.compact #overview>.stats article{min-height:36px}#overview .conversation>.panel-heading{display:none}#overview .conversation-tools{display:none}#overview .voice-actions{margin-top:2px;margin-bottom:2px}}

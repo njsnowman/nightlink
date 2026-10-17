@@ -1,6 +1,6 @@
 /* Remote observer data stays separate from local radio contacts. */
 (function(){
- const URL='https://map.okimesh.org/#/live';
+ const URL='https://map.okimesh.org/#/live?lat=39.44&lon=-85.35&zoom=8';
  let mode='corescope';
  try{if(localStorage.getItem('nightlink.network-map')==='radio')mode='radio';}catch{}
  let frame=null,timer=null,serviceFailed=false;
