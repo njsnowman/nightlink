@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.17 — 2026-10-17
+
+- Keep a single top-right connection action with connected status. Move discovery actions above progress and fit the dialog without scrolling.
+- Close the connection dialog and enter Overview after successful synchronization. Errors remain visible; background refreshes do not redirect the workspace. Tracked in [#45](https://github.com/njsnowman/nightlink/issues/45).
+
 ## 0.8.16 — 2026-10-16
 
 - Keep the desktop radio session running when closing to the tray; add unread DM/mention counts, native conversation notifications, local quiet hours and explicit disconnect-on-quit. Tracked in [#40](https://github.com/njsnowman/nightlink/issues/40).
