@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Finish advert actions with an explicit result and Done button; clear the busy cursor on success and error. Physical M1 testing confirmed command acceptance for local and flood adverts.
+
 - Add manual local/flood adverts and signed contact sharing/import by link and QR image. Imports require radio contact readback; exports omit local contact-card data. Tracked in [#33](https://github.com/njsnowman/nightlink/issues/33).
 
 ## 0.8.14 — 2026-10-16
