@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Preserve message-waiting notifications received while an empty-queue request completes, and fetch again before ending catch-up. Record zero-frame queue completions in diagnostics. Tracked in [#49](https://github.com/njsnowman/nightlink/issues/49); the reported M1 incident still requires physical confirmation.
+
 ## 0.8.19 — 2026-10-17
 
 - Add a compact Diagnostics workspace with per-radio recorded event replay, raw RX packet field inspection, passive placement comparisons and reception summaries. Evidence and map packs use separate IndexedDB storage.
