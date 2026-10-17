@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.18 — 2026-10-17
+
+- Open Overview and main Messages at the newest message instead of restoring an older anchor/unread boundary. Follow incoming messages without requiring Jump to latest. Separate DM-window reading behavior is unchanged. [#47](https://github.com/njsnowman/nightlink/issues/47)
+
 ## 0.8.17 — 2026-10-17
 
 - Keep a single top-right connection action with connected status. Move discovery actions above progress and fit the dialog without scrolling.
