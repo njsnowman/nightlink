@@ -21,3 +21,11 @@ window.meshlineDM?.onReply(data=>{if(data.radio===live.identity?.key)sendPopupDM
 const prefsView=view;view=function(name){prefsView(name);if(name==='Settings'){const label=document.createElement('label');label.append('Direct message sound');const input=document.createElement('input');input.type='checkbox';input.checked=localStorage.getItem('dm-sound')!=='false';input.onchange=()=>{localStorage.setItem('dm-sound',input.checked);if(input.checked)soundDM();};label.append(input);$('.settings-grid').prepend(label);}};
 
 window.meshlineDM?.onAction(data=>{if(data.radio!==live.identity?.key)return;if(data.action==='sound'){localStorage.setItem('dm-sound',String(localStorage.getItem('dm-sound')==='false'));updateDMs();return;}const m=live.messages.find(m=>m.id===data.id&&m.target?.key===data.key&&m.own);if(!m)return;if(data.action==='retry')retryMessage(m);else if(data.action==='cancel')delivery.cancel(m.id);else showDeliveryDetails(m);});
+
+// Observe the shared dialog so nested contact menus retain foreground ownership.
+if(window.meshlineDM?.ownerDialog){
+ const ownerDialog=document.querySelector('#dialog');
+ const publishDialog=()=>window.meshlineDM.ownerDialog(ownerDialog.open);
+ new MutationObserver(publishDialog).observe(ownerDialog,{attributes:true,attributeFilter:['open']});
+ publishDialog();
+}

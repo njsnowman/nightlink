@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.21-rc.5 — local candidate
+
+- Release native DM window ownership while a workspace dialog is open so contact cards, secondary menus and delivery details can appear in front. Restore normal ownership on dismissal. Tracked in [#53](https://github.com/njsnowman/nightlink/issues/53).
+
 ## 0.8.21-rc.4 — local candidate
 
 - Open only the compact DM window from contact actions, preserving the main page and reusing the existing window for that person.
