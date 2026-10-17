@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.21-rc.3 — local candidate
+
+- Match Signal Console message anatomy across Overview, Messages and direct messages: circular contact image, name/time/hop label header and message bubble below. Keep contact-card and channel route actions; preserve delivery controls and use unknown/outgoing labels when no received hop count exists. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
+
+
 ## 0.8.21-rc.2 — local candidate
 
 - Apply the approved cyan glass theme, original SVG navigation icons, readable message bubbles, compact icon rail and a connection-state signal indicator. Match native direct-message surfaces. Retain dedicated Radio tools, regional CoreScope start and no outer workspace scrolling. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
