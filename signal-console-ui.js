@@ -5,5 +5,6 @@
  for(const b of document.querySelectorAll('aside [data-view]')){const name=b.dataset.view,path=paths[name];if(!path)continue;for(const n of [...b.childNodes])if(n.nodeType===Node.TEXT_NODE)n.remove();const s=icon(path);if(name==='Settings')s.classList.add('signal-settings-icon');b.prepend(s);if(name==='Settings'){const label=document.createElement('span');label.textContent='Settings';b.append(label);}b.title=name==='Nodes'?'Contacts':name;b.setAttribute('aria-label',b.title);}
  const iris=document.createElement('span');iris.className='signal-iris';iris.setAttribute('aria-hidden','true');$('#connection').before(iris);
  function state(){const working=['scanning','connecting','initializing'].includes(ble.state)||live.sync==='syncing';iris.dataset.state=working?'working':live.sync==='error'?'error':ble.state==='connected'?'connected':'offline';$('#connection').dataset.signalState=ble.state;}
+ function placeMore(){const top=Math.max(12,Math.min(radioNav.getBoundingClientRect().bottom+8,innerHeight-150));moreGroup.style.setProperty('--signal-menu-top',top+'px');}moreGroup.addEventListener('toggle',placeMore);window.addEventListener('resize',placeMore);placeMore();
  ble.addEventListener('state',state);radioSession.addEventListener('sync',state);state();
 })();
