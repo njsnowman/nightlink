@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.21-rc.6",
+  "version": "0.8.21-rc.7",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -105,7 +105,9 @@
       "signal-console-ui.js",
       "signal-message-layout.js",
       "accent-theme.js",
-      "accent-theme.css"
+      "accent-theme.css",
+      "echo-workspace.js",
+      "echo-workspace.css"
     ],
     "win": {
       "target": [

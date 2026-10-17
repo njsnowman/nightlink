@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.21-rc.7 — local candidate
+
+- Open an adjustable chat/CoreScope split only for the selected #echo channel, with Chat/Map/Split controls, regional observer map, and local street-map fallback offline. Observer activity remains separate from delivery status. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
+
 ## 0.8.21-rc.6 — local candidate
 
 - Use ice blue as the default display accent, with persistent amber, emerald and violet options in Settings. Apply the selection to native DMs and use angular panel corner accents while preserving semantic status colors. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
