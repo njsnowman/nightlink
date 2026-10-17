@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.15-rc.2",
+  "version": "0.8.15-rc.4",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -80,7 +80,9 @@
       "vendor/jsQR.js",
       "vendor/QRCODE-LICENSE",
       "vendor/JSQR-LICENSE",
-      "vendor/QR-SOURCES.md"
+      "vendor/QR-SOURCES.md",
+      "corescope-ui.js",
+      "corescope.css"
     ],
     "win": {
       "target": [
