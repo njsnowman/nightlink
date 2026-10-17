@@ -37,6 +37,8 @@ FunctionEnd
 Function NightlinkThemePage
   FindWindow $0 "#32770" "" $HWNDPARENT
   SetCtlColors $0 EDF7FC 000000
+  GetDlgItem $2 $0 1020
+  System::Call 'uxtheme::SetWindowTheme(p r2, w "", w "")'
   System::Call 'user32::GetWindow(p r0, i 5) p .r1'
   loop:
     StrCmp $1 0 done
@@ -48,11 +50,19 @@ FunctionEnd
 !endif
 !macro customWelcomePage
   !insertmacro MUI_PAGE_WELCOME
-  !define MUI_PAGE_CUSTOMFUNCTION_SHOW NightlinkThemePage
 !macroend
 !include "nsDialogs.nsh"
 !include "LogicLib.nsh"
 !include "MUI2.nsh"
+; Attach the theme at directory-page declaration, after the install-mode page.
+!ifndef BUILD_UNINSTALLER
+!macroundef MUI_PAGE_DIRECTORY
+!macro MUI_PAGE_DIRECTORY
+  !define MUI_PAGE_CUSTOMFUNCTION_SHOW NightlinkThemePage
+  !insertmacro MUI_PAGE_INIT
+  !insertmacro MUI_PAGEDECLARATION_DIRECTORY
+!macroend
+!endif
 !macro customInstallMode
   StrCpy $isForceCurrentInstall "1"
 !macroend
