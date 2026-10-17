@@ -81,14 +81,16 @@ function renderAttentionSettings(){
  const explanation=document.createElement('p');explanation.className='attention-help';explanation.textContent='Mute individual channels from the conversation header. Muted channels keep unread counts but suppress notifications and mention sounds. Recovered messages do not play alerts.';grid.append(explanation);
 }
 const mentionAudio=new Audio('dm.wav');mentionAudio.preload='auto';
-function soundMention(){if(localStorage.getItem('nightlink.mention-sound')==='false')return;mentionAudio.currentTime=0;mentionAudio.play().catch(()=>toast('Mention received · interact with Nightlink to enable sound.'));}
+function soundMention(){if(typeof quietHoursActive==='function'&&quietHoursActive())return;if(localStorage.getItem('nightlink.mention-sound')==='false')return;mentionAudio.currentTime=0;mentionAudio.play().catch(()=>toast('Mention received · interact with Nightlink to enable sound.'));}
 const attentionAlerts=document.createElement('div');attentionAlerts.id='conversation-alerts';attentionAlerts.setAttribute('aria-live','polite');document.body.append(attentionAlerts);
 function navigateAttention(target){if(target.kind==='direct')openDM(target.key);else selectConversation({...target});}
 function showConversationAlert(m,mention){
+ if(typeof quietHoursActive==='function'&&quietHoursActive())return;
  const button=document.createElement('button');button.className='conversation-alert';
  const title=m.target.kind==='channel'?(mention?'Mention in ':'Message in ')+m.target.name:'DM from '+cardName(m.target.key,m.sender);button.textContent=title+' · '+m.text;
  button.onclick=()=>{navigateAttention(m.target);button.remove();};button.setAttribute('aria-label','Open '+(m.target.name||m.sender)+' conversation');attentionAlerts.append(button);
  while(attentionAlerts.children.length>3)attentionAlerts.firstChild.remove();setTimeout(()=>button.remove(),12000);
+ if(window.meshlineDesktop){if(localStorage.getItem('notifications')==='true')window.meshlineDesktop.notify({radio:live.identity?.key,conversation:m.conversation,title:'Nightlink · '+title,body:m.text});return;}
  if(localStorage.getItem('notifications')==='true'&&'Notification'in window&&Notification.permission==='granted'&&(!document.hasFocus()||document.hidden)){
   const notice=new Notification('Nightlink · '+title,{body:m.text,tag:m.conversation,silent:true});
   notice.onclick=()=>{window.meshlineLayout?.focusWindow();window.focus();navigateAttention(m.target);notice.close();};
@@ -99,7 +101,7 @@ function handleIncomingAttention(){
  const state=ensureAttention();
  for(const m of live.messages){if(attentionSeen.has(m.id))continue;attentionSeen.add(m.id);if(m.own)continue;
   if(live.sync!=='ready'||state.muted.has(m.conversation))continue;
-  if(m.target?.kind==='direct'){openDM(m.target.key,true);showConversationAlert(m,false);}
+  if(m.target?.kind==='direct'){if(!(typeof quietHoursActive==='function'&&quietHoursActive()))openDM(m.target.key,true);showConversationAlert(m,false);}
   else if(state.isMention(m.text,live.identity?.name)){soundMention();showConversationAlert(m,true);}else if(!chatIsVisible()||m.conversation!==readingConversation)showConversationAlert(m,false);
  }
  state.save(live.messages);refreshUnreadBadges();

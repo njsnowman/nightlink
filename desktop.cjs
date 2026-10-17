@@ -1,9 +1,11 @@
 const {app,BrowserWindow,ipcMain,screen,nativeTheme,shell,dialog}=require('electron');
 const path=require('node:path');
+if(process.platform==='win32')app.setAppUserModelId('local.meshline.desktop');
 const nightlinkUpdates=require('./updates.cjs');
 const fsBackup=require('node:fs/promises'),cryptoBackup=require('node:crypto');
 app.setPath('userData',path.join(app.getPath('appData'),'Meshline'));
-app.whenReady().then(()=>{
+if(!app.requestSingleInstanceLock())app.quit();
+else app.whenReady().then(()=>{
  nativeTheme.themeSource='dark';
  const win=new BrowserWindow({show:!app.commandLine.hasSwitch('meshline-test'),width:1320,height:900,minWidth:760,minHeight:560,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),backgroundThrottling:false,contextIsolation:true,nodeIntegration:false,sandbox:true}});
  require('./serial-desktop.cjs').installSerial(win,ipcMain);
@@ -52,7 +54,8 @@ app.whenReady().then(()=>{
  ipcMain.on('dm:reply',(e,text)=>{const record=childRecord(e);if(record&&typeof text==='string'&&text.length<=1024)win.webContents.send('dm:owner-reply',{radio:record.data.radio,key:record.data.key,text});});
  ipcMain.on('dm:contact',e=>{const record=childRecord(e);if(record){if(win.isMinimized())win.restore();if(!app.commandLine.hasSwitch('meshline-test'))win.show();win.webContents.send('dm:owner-contact',{radio:record.data.radio,key:record.data.key});}});
  ipcMain.on('dm:clear',e=>{if(trusted(e))clearDMs();});
- win.on('close',clearDMs);
+ win.on('closed',clearDMs);
+ require('./desktop-shell.cjs').install({app,win,ipcMain,...require('electron'),icon:path.join(__dirname,'icon.ico'),hideChildren:()=>{for(const record of dmWindows.values())record.window.hide();}});
  function cancelScan(){clearTimeout(scanTimer);scanTimer=null;const cb=select;select=null;devices.clear();if(cb)cb('');}
  function cancelPair(){clearTimeout(pairTimer);const cb=pair;pair=null;if(cb)cb({confirmed:false});}
  win.webContents.on('select-bluetooth-device',(event,list,callback)=>{event.preventDefault();select=callback;devices=new Set(list.map(d=>d.deviceId));if(!scanTimer)scanTimer=setTimeout(()=>{cancelScan();if(!win.isDestroyed())win.webContents.send('ble:scan-ended');},60000);win.webContents.send('ble:devices',list.map(({deviceId,deviceName})=>({deviceId,deviceName})));});
