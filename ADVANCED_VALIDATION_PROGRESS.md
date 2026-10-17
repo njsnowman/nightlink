@@ -18,3 +18,9 @@ Public test assets and private app profiles remain in separate cache directories
 ## Current implementation follow-up
 
 Added standard raster MBTiles import with required attribution, read-only SQLite access, TMS-to-XYZ conversion and input limits. Added explicit coverage summary and Show downloaded area. Packaged-runtime source integration passed with a 58-tile OSM-derived extract and a test-owned picker. Added recording duration, cancel/discard and serialized microphone startup/cleanup. Physical radio handoff is being prepared through normal Quit; no process kill or live-profile editing is used.
+
+## Physical receive validation completed
+
+The production 0.8.18 app was quit normally after checking that no send was active. Candidate source 87008d7733220d8f3fa480f7bca351b877d21b7a, packaged with Electron 42.11.12, synchronized with the Heltec V4.3 OLED on USB COM23 (firmware v1.17.1-d929643). Over 122 seconds it remained connected/ready with zero disconnects and captured one valid RX-log packet, one placement sample and one observed path group. This validates basic capture plumbing on this radio, not statistical placement accuracy or multi-hour endurance. No test messages, adverts or settings writes were initiated.
+
+Normal Quit exited the test; read-only COM23 open/close with DTR/RTS disabled confirmed port release. A private validated backup was merged through the installed app's normal restore path; zero new messages were present, no capacity skips occurred, and all existing message IDs survived reload. The normal installed app was reopened and reconnected to USB, showing its 25 retained messages. No private backup or packet content was uploaded.

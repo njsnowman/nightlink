@@ -1,15 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.8.19 — 2026-10-17
 
 - Close the connection window and show Overview after successful Bluetooth/USB synchronization, without a second confirmation.
 - Keep one connection button in the top-right header, changing to Connected when linked.
 - Move radio connection actions above the progress display and fit the connection dialog without scrolling at supported window sizes.
 
 - Add a compact Diagnostics workspace with per-radio recorded event replay, raw RX packet field inspection, passive placement comparisons and reception summaries. Evidence and map packs use separate IndexedDB storage.
+- Import attributed raster MBTiles or JSON packs, show tile/zoom coverage and open the downloaded area.
 - Add explicit offline raster-pack imports and automatic CoreScope-to-local map fallback when offline or initial frame loading fails. Coverage depends on the imported pack.
 - Add optional local whisper.cpp dictation with transcript review and local-system-voice DM reading. Runtime and model are configured separately.
-- Track implementation and remaining packaged/physical validation in [#43](https://github.com/njsnowman/nightlink/issues/43). No release is approved by these source changes.
+- Track implementation and remaining packaged/physical validation in [#43](https://github.com/njsnowman/nightlink/issues/43). Validation is recorded in releases/0.8.19.md.
 
 ## 0.8.18 — 2026-10-17
 

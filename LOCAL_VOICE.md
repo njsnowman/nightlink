@@ -7,3 +7,5 @@ Dictate captures up to 60 seconds from the microphone, converts it to 16 kHz mon
 Optional incoming-DM reading uses only system voices reported as local. It respects quiet hours, muted conversations and the DM sound switch, and excludes messages recovered during synchronization. Voice preferences are off by default. This is speech-to-text messaging, not voice audio over LoRa. Browser preview has no transcription bridge.
 
 Recording shows elapsed time and a Cancel recording control. Cancelling stops the stream and discards buffered audio without inference. Microphone startup is serialized; setup failures stop any acquired stream. The original radio/conversation is captured when Dictate is clicked, before permission/setup waits.
+
+Validation used whisper.cpp v1.9.2 CPU and ggml-tiny.en with public sample audio and simulated microphone input through the complete capture/review path. This is not physical microphone accuracy evidence, and model quality varies.
