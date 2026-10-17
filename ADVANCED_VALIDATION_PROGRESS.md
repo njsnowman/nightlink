@@ -1,7 +1,7 @@
 # Advanced feature validation progress
 Tracked in [#43](https://github.com/njsnowman/nightlink/issues/43), draft [PR #44](https://github.com/njsnowman/nightlink/pull/44).
 
-Nightlink 0.8.17 shipped the connection flow separately through #45 / PR #46. Advanced branch version is now 0.8.18-rc.1; no 0.8.18 download has been built or published.
+Nightlink 0.8.17 shipped the connection flow separately through #45 / PR #46. Advanced branch version is now 0.8.19-rc.1; no advanced 0.8.19 download has been built or published. The independent scrolling fix shipped as 0.8.18 through #47 / PR #48.
 
 ## Additional evidence
 - Real whisper.cpp v1.9.2 Windows CPU runtime with ggml-tiny.en model transcribed the upstream public jfk.wav sample successfully.
