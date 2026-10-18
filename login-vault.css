@@ -57,3 +57,6 @@
 @media(prefers-reduced-motion:reduce){#login-vault .nlv-door,#login-vault .nlv-bolt,#login-vault .nlv-lock-ring{animation:none!important}#login-vault .nlv-chamber span{transition:none}}
 
 #login-vault[hidden]{display:none}#login-vault{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;background:#05090d}#login-vault .nlv-window{width:min(720px,100%);max-height:100%;position:relative}#login-vault .nlv-header{padding:16px 24px}#login-vault .nlv-stage{padding:20px 16px 26px}#login-vault .nlv-vault{width:min(310px,34vh,70vw);margin-bottom:20px}#login-vault .nlv-steps{font-size:11px}#login-vault #vault-skip{display:block;margin:0 auto 16px;padding:8px 16px;background:#0a1822;color:#bce9f5;border:1px solid #3e6578;border-radius:4px;font:14px Segoe UI,sans-serif}#login-vault button:focus-visible{outline:2px solid #87e3f8;outline-offset:3px}
+
+/* Vault interior statement scales with the door diameter, including compact windows. */
+#login-vault .nlv-vault{container-type:inline-size}#login-vault .nlv-chamber{gap:12px}#login-vault .nlv-welcome{font:800 clamp(22px,14cqw,44px)/.96 Segoe UI,sans-serif;letter-spacing:-.04em;text-align:center;color:var(--nlv-ice);text-shadow:0 0 24px #87e3f85c}#login-vault .nlv-workspace{font-size:clamp(8px,3cqw,10px);letter-spacing:1px}
