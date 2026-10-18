@@ -106,5 +106,4 @@ FunctionEnd
 
 !macro customHeader
   BrandingText " "
-  Font "Segoe UI" 9
 !macroend
