@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.22-rc.1 — local candidate
+
+- Add full public-key comparison records and identity QR display/import, with familiar-name/different-key warnings and explicit channel-name authentication limits.
+- Add passive RF Trends with time buckets, SNR medians/ranges, observation counts and data-gap/last-link limitations.
+- Add private local map points with editable coordinates/notes, safe rendering and backup merge support.
+- Refine the angular Signal Console surfaces, focus states and compact dialogs across all accent palettes. Tracked in [#54](https://github.com/njsnowman/nightlink/issues/54).
+- Integrate the queue-notification catch-up fix and prevent stopped/replaced queue fetches from reporting stale completion. Physical nonempty M1 backlog confirmation remains pending under [#49](https://github.com/njsnowman/nightlink/issues/49).
+
 ## 0.8.21-rc.8 — local candidate
 
 - Center CoreScope on valid radio-reported coordinates at zoom 11, use a labeled regional fallback at zoom 9, and provide Recenter in Overview, Network and #echo. Reposition on radio identity/location changes without resetting on ordinary messages. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).

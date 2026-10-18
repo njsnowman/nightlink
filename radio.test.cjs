@@ -1,6 +1,8 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const {MeshlineRadio,contact,identity,message}=require('./radio.js');
 const enc=new TextEncoder();
+test('Bluetooth identity reconnect automatically recovers queued messages without manual refresh',async()=>{const b=new FakeBLE(),r=new MeshlineRadio(b);await r.start(hello());b.disconnect();const msg=frame(17,12);msg[11]=65;b.received.push(msg);let received=0;r.addEventListener('message',()=>received++);const done=new Promise(resolve=>r.addEventListener('sync',e=>{if(e.detail.state==='ready')resolve();}));b.state='connected';b.emit('identity',hello());try{await done;assert.equal(received,1);assert.equal(b.received.length,0);assert.equal(b.maxActive,1);}finally{r.stop();}});
+test('message-waiting at the queue-empty boundary triggers another fetch before catch-up completes',async()=>{const b=new FakeBLE(),r=new MeshlineRadio(b);await r.start(hello());const original=b.command.bind(b);let inject=true,received=0;r.addEventListener('message',()=>received++);b.command=async(bytes,types)=>{const d=await original(bytes,types);if(bytes[0]===10&&d[0]===10&&inject){inject=false;const next=frame(17,12);next[11]=65;b.received.push(next);b.emit('packet',frame(0x83,1));}return d;};try{await r.drain();assert.equal(received,1);assert.equal(b.received.length,0);assert.equal(b.maxActive,1);}finally{r.stop();}});
 function frame(type,size){const d=new Uint8Array(size);d[0]=type;return d;}
 function contactFrame(){const d=frame(3,148),v=new DataView(d.buffer);d.fill(0xab,1,33);d[33]=1;d[35]=255;d.set(enc.encode('Field radio'),100);v.setUint32(132,1700000000,true);v.setInt32(136,39768400,true);v.setInt32(140,-86158100,true);return d;}
 function hello(){const self=frame(5,64),info=frame(13,80);self.fill(0xcd,4,36);self[2]=22;new DataView(self.buffer).setUint32(48,906875,true);self.set(enc.encode('Base'),58);info[1]=3;info[3]=2;info.set(enc.encode('Heltec V3'),20);return{selfInfo:self,deviceInfo:info};}
@@ -39,3 +41,25 @@ test('concurrent catch-up callers await the same queue completion',async()=>{con
 test('sustained short-interval polling stays serialized without optional stats or disconnects',async()=>{const b=new FakeBLE(),r=new MeshlineRadio(b,{pollInterval:1});await r.start(hello());const before=b.writes.length;await new Promise(resolve=>setTimeout(resolve,500));assert.ok(b.writes.length>before+10);assert.equal(b.maxActive,1);assert.equal(b.state,'connected');assert.equal(r.ready,true);r.stop();});
 
 test('startup command timeout disconnects with sync-failed rather than auto-reconnect reason',async()=>{const b=new FakeBLE(),r=new MeshlineRadio(b);let reason;b.disconnect=value=>{reason=value;b.state='disconnected';};b.command=async()=>{throw Error('Radio did not respond');};await assert.rejects(r.start(hello()),/did not respond/);assert.equal(reason,'sync-failed');assert.equal(b.state,'disconnected');r.stop();});
+
+test('stopped queue fetch cannot report catch-up completion or clear a replacement drain',async()=>{
+ for(const replace of [false,true]){
+  const b=new FakeBLE(),r=new MeshlineRadio(b),pending=[];let began;
+  const entered=new Promise(resolve=>began=resolve),completed=[];
+  b.command=()=>{began();return new Promise(resolve=>pending.push(resolve));};
+  r.ready=true;r.addEventListener('catchup',e=>completed.push(e.detail));
+  const old=r.drain();await entered;r.stop();
+  let replacement;if(replace){r.ready=true;replacement=r.drain();}
+  pending.shift()(frame(10,1));await old;
+  assert.deepEqual(completed,[],'Old generation must not emit completion after stop');
+  if(replace){
+   assert.equal(r.draining,true,'Old finalizer must leave replacement drain active');
+   assert.ok(r.drainPromise,'Replacement promise must remain registered');
+   while(!pending.length)await Promise.resolve();
+   pending.shift()(frame(10,1));await replacement;
+   assert.deepEqual(completed,[{count:0,complete:true}]);
+   assert.equal(r.draining,false);
+  }
+  r.stop();
+ }
+});
