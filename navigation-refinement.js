@@ -6,7 +6,7 @@
  moreGroup.querySelector('summary').firstChild.textContent='Tools';
  sidebarState.recent=false;
  const savedChannels=renderChannels;
- renderChannels=function(){savedChannels();const recent=$('#channels [data-sidebar-group="recent"]');if(recent)recent.hidden=true;const channels=$('#channels [data-sidebar-group="channels"]');if(channels){channels.querySelector('summary').firstChild.textContent='Conversations';channels.querySelector('#sidebar-add-channel')?.remove();}};
+ renderChannels=function(){savedChannels();const recent=$('#channels [data-sidebar-group="recent"]');if(recent)recent.hidden=true;const channels=$('#channels [data-sidebar-group="channels"]');if(channels){channels.querySelector('summary').firstChild.textContent='Conversations';const add=channels.querySelector('#sidebar-add-channel');if(add)add.onclick=showAddChannel;}};
  // Start with a quiet sidebar; retain the user's explicit expansion choice thereafter.
  try{if(!localStorage.getItem('nightlink.navigation.v2')){sidebarState.channels=false;localStorage.setItem('nightlink.navigation.v2','1');}}catch{sidebarState.channels=false;}
  const tools=$('.conversation-tools');tools.replaceChildren();
@@ -17,8 +17,8 @@
  function refresh(){
   const signature=JSON.stringify([current,live.selected?.kind,live.selected?.slot,live.channels.map(c=>[c.slot,c.name])]);
   if(signature!==toolsSignature){toolsSignature=signature;tools.replaceChildren();
-   if(current==='Messages'){tools.append(tabs(),channelPicker(),button('+ Channel',()=>sidebarAdd.click()));}
-   else if(current==='Overview'){tools.append(channelPicker(),button('All messages',()=>view('Messages')));}
+   if(current==='Messages'){tools.append(tabs(),channelPicker(),button('Add channel',showAddChannel));}
+   else if(current==='Overview'){tools.append(channelPicker(),button('All messages',()=>view('Messages')),button('Add channel',showAddChannel));}
   }
   if(current==='Direct Messages'){const panel=$('.dm-inbox');if(panel&&!panel.querySelector('.workspace-message-tabs'))panel.querySelector('.panel-heading').after(tabs());}
   const messaging=['Messages','Direct Messages','Search'].includes(current);

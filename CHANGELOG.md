@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add session-only CLI Terminal in Radio Tools for supported companion firmware and authenticated repeater/room commands. Restore visible Add channel actions in Messages, Overview and Conversations. [#61](https://github.com/njsnowman/nightlink/issues/61)
+
 - Display bounded HTTPS image and Giphy previews in channel messages and direct conversations, retaining original text and a source link. Images load over the viewer’s Internet connection, not over the radio. [#60](https://github.com/njsnowman/nightlink/issues/60)
 
 - Center Radio map on valid radio-reported coordinates at zoom12, preserve user panning across contact updates, and recenter on source entry or request. Add Network-only MeshMapper CVG coverage embed, fixed full-map link and local fallback on service/offline failure. Tracked in [#59](https://github.com/njsnowman/nightlink/issues/59).
