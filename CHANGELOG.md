@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Always open the main workspace on Overview at startup while retaining the saved conversation and other preferences. [#64](https://github.com/njsnowman/nightlink/issues/64)
+
 - Apply Signal Bridge branding to application and Windows icons, and revise installer artwork and wizard styling in true black and ice blue. Preserve existing install location, profile identity and update behavior. [#63](https://github.com/njsnowman/nightlink/issues/63)
 
 - Save a three-letter MeshMapper region code locally, defaulting to CVG; apply it to map labels, embed, reachability checks and full-map link. Configure from Network or Settings. [#62](https://github.com/njsnowman/nightlink/issues/62)

@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.10",
+  "version": "0.8.22-rc.11",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
