@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use regional zoom9 on initial display and Recenter across CoreScope, Radio map and MeshMapper. Preserve manual viewport adjustments and message-path route fitting. [#67](https://github.com/njsnowman/nightlink/issues/67)
+
 - Show lazy compact webpage cards with site-provided thumbnails and metadata in channels and DMs, with a Settings opt-out. Native public-HTTPS fetches are bounded and do not execute website scripts or use signed-in cookies. [#66](https://github.com/njsnowman/nightlink/issues/66)
 
 - Add an opt-in startup password and authenticator-code lock with verified enrollment, one-time recovery codes, replay prevention and persisted attempt limits. Credentials use password-derived encryption plus Windows DPAPI. Existing history is not encrypted by this feature. [#65](https://github.com/njsnowman/nightlink/issues/65)

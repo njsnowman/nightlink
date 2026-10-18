@@ -2,7 +2,7 @@
 
 Tracked in [#35](https://github.com/njsnowman/nightlink/issues/35).
 
-Overview and Network open OKI Mesh CoreScope by default. Network uses radio-reported coordinates at zoom9 (two levels wider than before); Overview and echo retain zoom11. Without valid radio coordinates, the regional fallback remains zoom9. The CoreScope / Radio map switch remembers the selected source on this computer. Message-path maps continue to use connected/saved radio contacts and street tiles. The Overview preview uses the same sandboxed frame at half scale so CoreScope’s controls fit its smaller panel.
+Overview and Network open OKI Mesh CoreScope by default. All map views use radio-reported coordinates at zoom9 by default. Without valid radio coordinates, the regional fallback remains zoom9. The CoreScope / Radio map switch remembers the selected source on this computer. Message-path maps continue to use connected/saved radio contacts and street tiles. The Overview preview uses the same sandboxed frame at half scale so CoreScope’s controls fit its smaller panel.
 
 CoreScope is the remote service at https://map.okimesh.org/#/live and displays observer-collected network data. It requires internet and service availability; it is not a complete representation of everything received by the attached radio. The remote site may change independently of Nightlink.
 
@@ -15,9 +15,9 @@ Validation: isolated browser tests cover default/persisted source selection, ori
 
 ## Radio map location and MeshMapper CVG
 
-Radio map prefers valid radio-reported coordinates at zoom12. Contact updates do not fit the map to distant nodes or override user panning. Opening the local source or Recenter restores the radio view; without valid radio coordinates the saved viewport is used, then the regional fallback. Coordinates can be configured/stale and are not described as a fresh GPS fix.
+Radio map prefers valid radio-reported coordinates at zoom9. Contact updates do not fit the map to distant nodes or override user panning. Opening the local source or Recenter restores the radio view; without valid radio coordinates the saved viewport is used, then the regional fallback. Coordinates can be configured/stale and are not described as a fresh GPS fix.
 
-Network offers MeshMapper CVG using the documented read-only https://cvg.meshmapper.net/embed.php endpoint. Valid radio coordinates set the center at zoom12; otherwise the embed uses its region center. geofence=0 retains regional coverage rather than limiting data to the embed default radius. Branding/attribution remain visible; Open full map opens the fixed CVG site. The Network-only source is remembered; Overview uses CoreScope or Radio map. Both remote origins are explicitly allowed by frame-src and receive no native preload/bridges. Source-specific endpoint checks and offline events fall back locally. A working embed endpoint does not prove complete coverage or successful WebGL/tile rendering. See https://wiki.meshmapper.net/embedding/.
+Network offers MeshMapper CVG using the documented read-only https://cvg.meshmapper.net/embed.php endpoint. Valid radio coordinates set the center at zoom9; otherwise the embed uses its region center at zoom9. geofence=0 retains regional coverage rather than limiting data to the embed default radius. Branding/attribution remain visible; Open full map opens the fixed CVG site. The Network-only source is remembered; Overview uses CoreScope or Radio map. Both remote origins are explicitly allowed by frame-src and receive no native preload/bridges. Source-specific endpoint checks and offline events fall back locally. A working embed endpoint does not prove complete coverage or successful WebGL/tile rendering. See https://wiki.meshmapper.net/embedding/.
 
 ## Saved MeshMapper region
 

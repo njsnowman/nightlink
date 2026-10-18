@@ -15,7 +15,7 @@
  function remoteURL(source){
   if(source==='corescope')return NightlinkCoreScopeLocation.url(context());
   const p=MeshlineStreetMaps.radioView();
-  return NightlinkMeshMapperRegion.base(region())+'embed.php?geofence=0'+(p?'&lat='+p.center[0].toFixed(6)+'&lon='+p.center[1].toFixed(6)+'&zoom='+p.zoom:'');
+  return NightlinkMeshMapperRegion.base(region())+'embed.php?geofence=0'+(p?'&lat='+p.center[0].toFixed(6)+'&lon='+p.center[1].toFixed(6)+'&zoom='+p.zoom:'&zoom=9');
  }
  function stop(){stopHealth?.();stopHealth=null;clearTimeout(timer);timer=null;frame?.remove();frame=null;holder.replaceChildren();}
  function start(){
