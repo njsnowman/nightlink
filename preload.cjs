@@ -1,6 +1,6 @@
 const {contextBridge,ipcRenderer}=require('electron');
 const lockedDocument=location.pathname.endsWith('/security-lock.html');
-if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkSecurity',Object.fromEntries((lockedDocument?['info','unlock','quit']:['info','begin','confirm','cancel','disable']).map(name=>[name,async(...args)=>{const result=await ipcRenderer.invoke('security:'+name,...args);if(result?.error)throw Error(result.error);return result?.value;}])));
+if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkSecurity',Object.fromEntries((lockedDocument?['info','unlock','enter','quit']:['info','begin','confirm','cancel','disable']).map(name=>[name,async(...args)=>{const result=await ipcRenderer.invoke('security:'+name,...args);if(result?.error)throw Error(result.error);return result?.value;}])));
 if(!lockedDocument){
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkLinks',{preview:url=>ipcRenderer.invoke('links:preview',url),open:url=>ipcRenderer.invoke('links:open',url)});
 const subscribe=(channel,listener)=>{const handler=(_event,value)=>listener(value);ipcRenderer.on(channel,handler);return()=>ipcRenderer.removeListener(channel,handler);};

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Show the approved vault-unlock transition after successful app-lock authentication, with keyboard skip, reduced-motion bypass and a bounded native fallback to Overview. [#69](https://github.com/njsnowman/nightlink/issues/69)
+
 - Give MeshMapper a separate zoom12 and Windows PC-location center; enable green and red coverage layers, with labeled region fallback when location is unavailable. Start the main window maximized while retaining manual compact controls. [#68](https://github.com/njsnowman/nightlink/issues/68)
 
 - Use regional zoom9 on initial display and Recenter across CoreScope, Radio map and MeshMapper. Preserve manual viewport adjustments and message-path route fitting. [#67](https://github.com/njsnowman/nightlink/issues/67)

@@ -1,1 +1,33 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; form-action 'none'; base-uri 'none'"><title>Unlock Nightlink</title><link rel="icon" href="icon.svg"><link rel="stylesheet" href="security.css"></head><body class="security-lock"><main class="security-lock-card"><div class="security-lock-brand"><img src="icon.svg" alt="">Nightlink</div><h1>Unlock your workspace</h1><p class="security-note">Enter your password and a fresh authenticator code. A saved recovery code can replace the authenticator code.</p><form class="security-form" id="security-unlock"><label for="unlock-password">Password</label><input id="unlock-password" type="password" autocomplete="off" required maxlength="512" autofocus><label for="unlock-code">Authenticator or recovery code</label><input id="unlock-code" type="text" autocomplete="off" spellcheck="false" required maxlength="128"><div id="security-lock-error" class="security-error" role="status"></div><div class="security-actions"><button id="security-unlock-button">Unlock</button><button id="security-quit" type="button">Quit</button></div></form><p><small>Offline verification · Your phone and computer clocks must agree. Recovery codes still require your password.</small></p></main><script src="security-lock.js"></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; form-action 'none'; base-uri 'none'"><title>Unlock Nightlink</title><link rel="icon" href="icon.svg"><link rel="stylesheet" href="security.css"><link rel="stylesheet" href="login-vault.css"></head><body class="security-lock"><main class="security-lock-card"><div class="security-lock-brand"><img src="icon.svg" alt="">Nightlink</div><h1>Unlock your workspace</h1><p class="security-note">Enter your password and a fresh authenticator code. A saved recovery code can replace the authenticator code.</p><form class="security-form" id="security-unlock"><label for="unlock-password">Password</label><input id="unlock-password" type="password" autocomplete="off" required maxlength="512" autofocus><label for="unlock-code">Authenticator or recovery code</label><input id="unlock-code" type="text" autocomplete="off" spellcheck="false" required maxlength="128"><div id="security-lock-error" class="security-error" role="status"></div><div class="security-actions"><button id="security-unlock-button">Unlock</button><button id="security-quit" type="button">Quit</button></div></form><p><small>Offline verification · Your phone and computer clocks must agree. Recovery codes still require your password.</small></p></main><div id="login-vault" hidden>
+  <section class="nlv-window" aria-label="Nightlink workspace opening">
+    <header class="nlv-header"><span class="nlv-wordmark">nightlink<span class="nlv-dot">.</span></span><span class="nlv-caption">ACCESS GRANTED</span></header>
+    <div class="nlv-stage">
+      <div class="nlv-cross nlv-cross-a"></div><div class="nlv-cross nlv-cross-b"></div>
+      <div class="nlv-vault" role="img" aria-label="A steel vault with an illuminated locking ring and six retracting bolts opens to reveal Nightlink">
+        <div class="nlv-aura"></div>
+        <div class="nlv-frame"></div>
+        <div class="nlv-chamber"><span class="nlv-logo">N</span><span class="nlv-welcome">Welcome back.</span><span class="nlv-workspace">NIGHTLINK / OVERVIEW</span></div>
+        <div class="nlv-door">
+          <div class="nlv-steel"></div><div class="nlv-groove"></div>
+          <div class="nlv-bolts">
+            <div class="nlv-bolt-arm" style="--angle:0deg"><div class="nlv-bolt"></div></div>
+            <div class="nlv-bolt-arm" style="--angle:60deg"><div class="nlv-bolt"></div></div>
+            <div class="nlv-bolt-arm" style="--angle:120deg"><div class="nlv-bolt"></div></div>
+            <div class="nlv-bolt-arm" style="--angle:180deg"><div class="nlv-bolt"></div></div>
+            <div class="nlv-bolt-arm" style="--angle:240deg"><div class="nlv-bolt"></div></div>
+            <div class="nlv-bolt-arm" style="--angle:300deg"><div class="nlv-bolt"></div></div>
+          </div>
+          <div class="nlv-light-ring"></div><div class="nlv-ticks"></div>
+          <div class="nlv-lock-ring"><span></span><span></span><span></span></div>
+          <div class="nlv-hub"><div class="nlv-hub-ring"></div><span class="nlv-hub-mark">N</span></div>
+          <div class="nlv-pin nlv-pin-a"></div><div class="nlv-pin nlv-pin-b"></div>
+        </div>
+        <div class="nlv-hinge nlv-hinge-a"></div><div class="nlv-hinge nlv-hinge-b"></div>
+      </div>
+      <div class="nlv-status"><span class="nlv-status-light"></span><span class="nlv-status-text" aria-live="polite">Authentication successful</span></div>
+      <div class="nlv-steps"><span data-step="1">01 / RELEASE</span><span data-step="2">02 / RETRACT</span><span data-step="3">03 / OPEN</span></div>
+    </div>
+    <button id="vault-skip" type="button">Skip animation</button>
+  </section>
+</div>
+<script src="login-vault.js"></script><script src="security-lock.js"></script></body></html>

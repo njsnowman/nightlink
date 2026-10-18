@@ -1,0 +1,59 @@
+
+#login-vault{padding:16px 0;font-family:Inter,Segoe UI,sans-serif}
+#login-vault .nlv-window{--nlv-ice:#87e3f8;--nlv-duration:2.4s;max-width:720px;margin:auto;background:#05090d;color:#e4f4fb;border:1px solid #243c47;border-radius:12px;overflow:hidden;box-shadow:0 24px 70px #0005}
+#login-vault .nlv-header{padding:20px 24px;display:flex;align-items:center;gap:16px;justify-content:space-between;border-bottom:1px solid #17252e;background:#090f15}
+#login-vault .nlv-wordmark{font-size:23px;font-weight:650;letter-spacing:-1px}
+#login-vault .nlv-dot{color:var(--nlv-ice)}
+#login-vault .nlv-caption,#login-vault .nlv-timing{font:11px Consolas,monospace;letter-spacing:1.4px;color:#90a7b5}
+#login-vault .nlv-stage{position:relative;display:flex;align-items:center;flex-direction:column;padding:34px 22px 28px;background:radial-gradient(ellipse at 50% 38%,#112633 0%,#080f16 43%,#05090d 75%);overflow:hidden}
+#login-vault .nlv-stage:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#78c4e106 1px,transparent 1px),linear-gradient(90deg,#78c4e106 1px,transparent 1px);background-size:38px 38px;pointer-events:none}
+#login-vault .nlv-cross{position:absolute;width:16px;height:16px;border-left:1px solid #446574;border-top:1px solid #446574;top:28px;left:24px}
+#login-vault .nlv-cross-b{top:auto;left:auto;right:24px;bottom:28px;transform:rotate(180deg)}
+#login-vault .nlv-vault{position:relative;width:min(310px,78%);aspect-ratio:1;perspective:1000px;margin:0 0 26px}
+#login-vault .nlv-aura{position:absolute;inset:-9%;border-radius:50%;background:radial-gradient(circle,transparent 55%,#77dcf510 67%,transparent 72%)}
+#login-vault .nlv-frame{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 35deg,#1d3440,#4d6b7b,#111c25,#5a7180,#182935,#375564,#15242e);box-shadow:0 0 0 1px #54717e,0 18px 30px #000b,inset 0 0 0 7px #12202a,inset 0 0 0 9px #48616e,inset 0 0 0 17px #0a1119}
+#login-vault .nlv-chamber{position:absolute;inset:6%;border-radius:50%;background:radial-gradient(circle at 50% 42%,#163647,#071017 68%);box-shadow:inset 0 0 40px 10px #000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;overflow:hidden}
+#login-vault .nlv-logo{font-size:64px;font-weight:750;line-height:1;color:var(--nlv-ice);text-shadow:0 0 30px #87e3f86b;transform:translateY(12px);opacity:0;transition:opacity .45s,transform .6s}
+#login-vault .nlv-welcome{font-size:20px;opacity:0;transition:opacity .45s}
+#login-vault .nlv-workspace{font:10px Consolas,monospace;letter-spacing:2px;color:#8caaba;opacity:0;transition:opacity .45s}
+#login-vault .nlv-door{position:absolute;inset:6%;border-radius:50%;transform-origin:3% 50%;transform-style:preserve-3d;will-change:transform;box-shadow:4px 7px 12px #000c}
+#login-vault .nlv-steel{position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from 25deg,#ffffff00 0deg 1deg,#cde8f003 1deg 2deg),conic-gradient(from 35deg,#1f303d,#536978,#1b2b38,#405868,#172832,#3e5361,#20323e);border:2px solid #617c8c;box-shadow:inset 0 0 0 6px #0e1c26,inset 0 0 0 8px #4d6473,inset 0 0 25px #000b;backface-visibility:hidden}
+#login-vault .nlv-groove{position:absolute;inset:13%;border:1px solid #7e99aa70;border-radius:50%;box-shadow:0 0 0 2px #080f18,0 0 0 4px #4c647353}
+#login-vault .nlv-light-ring{position:absolute;inset:8%;border:2px solid #3d7687;border-radius:50%;transition:border-color .35s,box-shadow .35s}
+#login-vault .nlv-ticks{position:absolute;inset:17%;border-radius:50%;background:repeating-conic-gradient(#a1bac5a0 0 1deg,transparent 1deg 10deg);mask:radial-gradient(transparent 67%,#000 68% 70%,transparent 71%)}
+#login-vault .nlv-lock-ring{position:absolute;inset:23%;border-radius:50%;border:9px solid #1a2b36;box-shadow:0 0 0 2px #597380,inset 0 0 0 2px #7894a1,0 5px 15px #0008;background:conic-gradient(#5e7887,#233744,#5c7481,#263a49,#6e8795,#293d4c)}
+#login-vault .nlv-lock-ring span{position:absolute;left:44%;top:-10%;width:12%;height:21%;border-radius:2px;background:var(--nlv-ice);box-shadow:0 0 9px #87e3f878;transform-origin:50% 291%}
+#login-vault .nlv-lock-ring span:nth-child(2){transform:rotate(120deg)}
+#login-vault .nlv-lock-ring span:nth-child(3){transform:rotate(240deg)}
+#login-vault .nlv-hub{position:absolute;inset:35%;border-radius:50%;background:linear-gradient(135deg,#516b7a,#1b2d3a 65%);border:1px solid #7895a3;box-shadow:0 4px 10px #000a;display:grid;place-items:center}
+#login-vault .nlv-hub-ring{position:absolute;inset:9%;border:1px solid #7da9b660;border-radius:50%}
+#login-vault .nlv-hub-mark{font-size:33px;font-weight:750;color:var(--nlv-ice);text-shadow:0 0 16px #87e3f85e}
+#login-vault .nlv-bolts{position:absolute;inset:0;border-radius:50%;overflow:visible}
+#login-vault .nlv-bolt-arm{position:absolute;inset:0;transform:rotate(var(--angle));pointer-events:none}
+#login-vault .nlv-bolt{position:absolute;left:45.5%;top:-3%;width:9%;height:16%;border:1px solid #8da4af;border-radius:3px;background:linear-gradient(90deg,#283e4b,#9aafba 47%,#3c5360);box-shadow:2px 2px 4px #0009}
+#login-vault .nlv-pin{position:absolute;width:2%;height:2%;border-radius:50%;background:#b4c6cf;box-shadow:inset 0 0 0 1px #344c5a}
+#login-vault .nlv-pin-a{top:16%;left:23%}#login-vault .nlv-pin-b{bottom:16%;right:23%}
+#login-vault .nlv-hinge{position:absolute;left:1%;width:7%;height:17%;border:1px solid #65818d;border-radius:3px;background:linear-gradient(90deg,#172a35,#7c94a0,#273e4c);box-shadow:2px 2px 6px #0008}
+#login-vault .nlv-hinge-a{top:22%}#login-vault .nlv-hinge-b{bottom:22%}
+#login-vault .nlv-status{position:relative;display:flex;gap:9px;align-items:center;min-height:24px;color:#cdeef6;font-size:15px}
+#login-vault .nlv-status-light{width:6px;height:6px;background:var(--nlv-ice);box-shadow:0 0 12px #87e3f877;border-radius:50%}
+#login-vault .nlv-steps{position:relative;display:flex;gap:22px;margin-top:14px;color:#708897;font:10px Consolas,monospace;letter-spacing:1px}
+#login-vault .nlv-steps .is-active{color:var(--nlv-ice)}
+#login-vault .nlv-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 24px;border-top:1px solid #20313d;background:#090f15}
+#login-vault .nlv-play{display:flex;gap:24px;align-items:center;padding:10px 16px;border:1px solid #6dc5dd;background:#112b37;color:#c9f3ff;border-radius:4px;font:500 13px Segoe UI,sans-serif}
+#login-vault .nlv-play:disabled{opacity:.55}
+#login-vault .nlv-window.is-playing .nlv-light-ring,#login-vault .nlv-window.is-open .nlv-light-ring{border-color:var(--nlv-ice);box-shadow:0 0 14px #87e3f84a,inset 0 0 9px #87e3f830}
+#login-vault .is-playing .nlv-lock-ring{animation:nlv-ring var(--nlv-duration) cubic-bezier(.4,0,.2,1) forwards}
+#login-vault .is-playing .nlv-bolt{animation:nlv-bolt var(--nlv-duration) cubic-bezier(.4,0,.2,1) forwards}
+#login-vault .is-playing .nlv-door{animation:nlv-door var(--nlv-duration) cubic-bezier(.3,0,.2,1) forwards}
+#login-vault .is-open .nlv-door{transform:translateX(-4%) rotateY(-108deg)}
+#login-vault .is-open .nlv-bolt{transform:translateY(72%)}
+#login-vault .is-open .nlv-lock-ring{transform:rotate(100deg)}
+#login-vault .is-revealing .nlv-logo,#login-vault .is-revealing .nlv-welcome,#login-vault .is-revealing .nlv-workspace{opacity:1;transform:translateY(0)}
+@keyframes nlv-ring{0%,8%{transform:rotate(0)}34%,100%{transform:rotate(100deg)}}
+@keyframes nlv-bolt{0%,34%{transform:translateY(0)}51%,100%{transform:translateY(72%)}}
+@keyframes nlv-door{0%,53%{transform:translateX(0) rotateY(0)}100%{transform:translateX(-4%) rotateY(-108deg)}}
+@media(max-width:480px){#login-vault .nlv-header{padding:16px;align-items:flex-start;flex-direction:column;gap:6px}#login-vault .nlv-caption{font-size:10px;letter-spacing:1px}#login-vault .nlv-vault{width:78%}#login-vault .nlv-footer{padding:14px 16px;flex-wrap:wrap}#login-vault .nlv-steps{gap:12px;font-size:9px}#login-vault .nlv-stage{padding-top:30px}#login-vault .nlv-welcome{font-size:16px}#login-vault .nlv-workspace{font-size:8px}#login-vault .nlv-logo{font-size:48px}}
+@media(prefers-reduced-motion:reduce){#login-vault .nlv-door,#login-vault .nlv-bolt,#login-vault .nlv-lock-ring{animation:none!important}#login-vault .nlv-chamber span{transition:none}}
+
+#login-vault[hidden]{display:none}#login-vault{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;background:#05090d}#login-vault .nlv-window{width:min(720px,100%);max-height:100%;position:relative}#login-vault .nlv-header{padding:16px 24px}#login-vault .nlv-stage{padding:20px 16px 26px}#login-vault .nlv-vault{width:min(310px,34vh,70vw);margin-bottom:20px}#login-vault .nlv-steps{font-size:11px}#login-vault #vault-skip{display:block;margin:0 auto 16px;padding:8px 16px;background:#0a1822;color:#bce9f5;border:1px solid #3e6578;border-radius:4px;font:14px Segoe UI,sans-serif}#login-vault button:focus-visible{outline:2px solid #87e3f8;outline-offset:3px}
