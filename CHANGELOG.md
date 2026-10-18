@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Open Network CoreScope centered on radio-reported coordinates at zoom9, two levels wider; keep Overview/echo zoom11 and regional fallback zoom9. Add bounded Windows service health checks and automatic local-map fallback for unavailable CoreScope, even when Windows reports online. Tracked in [#58](https://github.com/njsnowman/nightlink/issues/58).
+
 - Standardize the top-right Search, layout, connection and startup action controls with one SVG icon family, matching dimensions and focus states. Fold radio status into the connection control and remove redundant badge/decoration. Tracked in [#57](https://github.com/njsnowman/nightlink/issues/57).
 
 - Add an opt-in Windows startup connection to the last synchronized Bluetooth or uniquely identified USB radio. Limit startup attempts, expose Cancel/Retry, and pause on synchronization failure. USB devices without a hardware serial require manual selection. Tracked in [#56](https://github.com/njsnowman/nightlink/issues/56).

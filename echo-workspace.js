@@ -1,9 +1,9 @@
 /* #echo observer workspace. CoreScope activity is not a delivery acknowledgment. */
 (function(){
  let locationSignature='';
- let shell=null,mapHost=null,status=null,frame=null,timer=null,failed=false,layout='split',lastTarget='',ratio=60;
+ let shell=null,mapHost=null,status=null,frame=null,timer=null,failed=false,layout='split',lastTarget='',ratio=60,stopHealth=null;
  const isEcho=()=>current==='Messages'&&live.selected?.kind==='channel'&&String(live.selected.name||'').trim().replace(/^#/,'').toLowerCase()==='echo';
- function removeFrame(){clearTimeout(timer);timer=null;if(frame){frame.remove();frame=null;}}
+ function removeFrame(){stopHealth?.();stopHealth=null;clearTimeout(timer);timer=null;if(frame){frame.remove();frame=null;}}
  function restoreMap(){if(mapHost?.contains(mapPanel)){homes.get(mapPanel).after(mapPanel);mapPanel.hidden=true;}}
  function cleanup(){removeFrame();restoreMap();if(shell?.contains(chatPanel))alternate.append(chatPanel);shell?.remove();shell=null;mapHost=null;status=null;alternate.classList.remove('echo-active');}
  function setLayout(next){layout=next;shell.dataset.layout=next;const expand=shell.querySelector('#echo-expand');if(expand)expand.textContent=next==='map'?'Restore split':'Expand map';for(const b of shell.querySelectorAll('[data-echo-layout]'))b.setAttribute('aria-pressed',String(b.dataset.echoLayout===next));requestAnimationFrame(()=>{networkStreetMap?.invalidateSize();window.dispatchEvent(new Event('resize'));});}
@@ -15,7 +15,7 @@
   status.textContent='Loading CoreScope · observer activity is separate from radio delivery status.';
   frame=document.createElement('iframe');frame.id='echo-corescope-frame';frame.title='OKI Mesh CoreScope for echo testing';frame.setAttribute('sandbox','allow-scripts allow-same-origin');frame.referrerPolicy='no-referrer';frame.allowFullscreen=true;
   frame.onload=()=>{clearTimeout(timer);status.textContent=NightlinkCoreScopeLocation.viewport().source+' · Observer activity is not delivery acknowledgment. Use Local map or Reload if unavailable.';};
-  frame.onerror=()=>{failed=true;displayMap();};locationSignature=NightlinkCoreScopeLocation.signature();frame.src=NightlinkCoreScopeLocation.url();mapHost.append(frame);timer=setTimeout(()=>{failed=true;displayMap();},15000);
+  frame.onerror=()=>{failed=true;displayMap();};locationSignature=NightlinkCoreScopeLocation.signature();frame.src=NightlinkCoreScopeLocation.url();mapHost.append(frame);stopHealth=NightlinkCoreScopeAvailability.watch(()=>{failed=true;displayMap();});timer=setTimeout(()=>{failed=true;displayMap();},15000);
  }
  function create(){
   shell=document.createElement('section');shell.id='echo-workspace';shell.className='echo-workspace';shell.style.setProperty('--echo-chat-share',ratio+'%');
