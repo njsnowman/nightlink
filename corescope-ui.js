@@ -1,13 +1,13 @@
 /* Remote observer data stays separate from local radio contacts. */
 (function(){
- const URL='https://map.okimesh.org/#/live?lat=39.44&lon=-85.35&zoom=8';
+ let locationSignature='';
  let mode='corescope';
  try{if(localStorage.getItem('nightlink.network-map')==='radio')mode='radio';}catch{}
  let frame=null,timer=null,serviceFailed=false;
  const effective=()=>mode==='corescope'&&navigator.onLine&&!serviceFailed?'corescope':'radio';
  const bar=document.createElement('section');
  bar.className='network-source-bar';
- bar.innerHTML='<div class="network-source-switch" role="group" aria-label="Map source"><button id="network-corescope">CoreScope</button><button id="network-radio">Radio map</button></div><span id="network-source-note"></span><button id="network-reload">Reload CoreScope</button>';
+ bar.innerHTML='<div class="network-source-switch" role="group" aria-label="Map source"><button id="network-corescope">CoreScope</button><button id="network-radio">Radio map</button></div><span id="network-source-note"></span><button id="network-center">Recenter</button><button id="network-reload">Reload CoreScope</button>';
  const pane=document.createElement('section');pane.className='corescope-pane';pane.id='corescope-pane';
  const holder=document.createElement('div');holder.className='corescope-frame-holder';
  const status=document.createElement('p');status.id='corescope-status';status.setAttribute('role','status');
@@ -20,9 +20,9 @@
   frame=document.createElement('iframe');frame.title='OKI Mesh CoreScope live map';frame.id='corescope-frame';
   frame.setAttribute('sandbox','allow-scripts allow-same-origin');
   frame.referrerPolicy='no-referrer';frame.setAttribute('allow','fullscreen');frame.allowFullscreen=true;
-  frame.onload=()=>{clearTimeout(timer);status.textContent='OKI Mesh observer data · If the map is unavailable, reload or choose Radio map.';};
+  frame.onload=()=>{clearTimeout(timer);status.textContent='OKI Mesh observer data · '+NightlinkCoreScopeLocation.viewport().source+' · Reload or choose Radio map if unavailable.';};
   frame.onerror=()=>{serviceFailed=true;show();};
-  frame.src=URL;holder.append(frame);
+  locationSignature=NightlinkCoreScopeLocation.signature();frame.src=NightlinkCoreScopeLocation.url();holder.append(frame);
   timer=setTimeout(()=>{serviceFailed=true;show();},15000);
  }
  function show(){
@@ -38,6 +38,8 @@
  function choose(next){serviceFailed=false;mode=next;try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
  bar.querySelector('#network-corescope').onclick=()=>choose('corescope');
  bar.querySelector('#network-radio').onclick=()=>choose('radio');
+ bar.querySelector('#network-center').onclick=()=>{if(effective()==='corescope')start();else if(networkStreetMap){const p=NightlinkCoreScopeLocation.viewport();networkStreetMap.setView([p.lat,p.lon],p.zoom);}};
+ radioSession.addEventListener('identity',()=>{if(frame&&locationSignature!==NightlinkCoreScopeLocation.signature())start();});
  bar.querySelector('#network-reload').onclick=()=>{serviceFailed=false;show();};
  window.addEventListener('offline',show);
  window.addEventListener('online',()=>{serviceFailed=false;show();});

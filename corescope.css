@@ -3,3 +3,5 @@
 .corescope-frame-holder{color-scheme:dark}
 
 #overview .map-panel>.network-source-bar{padding:0 10px 5px;gap:4px}#overview .network-source-switch{padding:2px;gap:2px}#overview .network-source-switch button,#overview #network-reload{padding:4px 7px;font-size:11px}#overview #network-source-note{display:none}#overview #network-reload{margin-left:auto}#overview .map-panel.overview-corescope>#map,#overview .map-panel.overview-corescope>.map-footer{display:none}#overview .map-panel>.corescope-pane{border:0;border-radius:0;min-height:0}#overview #corescope-status{font-size:10px;padding:4px 9px}#overview .corescope-frame-holder iframe{width:200%;height:200%;transform:scale(.5);transform-origin:top left}@media(max-height:650px){#overview #corescope-status{display:none}#overview .map-panel>.network-source-bar{padding:0 5px 3px}#overview .network-source-switch button,#overview #network-reload{font-size:10px;padding:3px 5px}}
+
+#network-center{padding:8px 12px;border:1px solid var(--accent-line,#72869d66);border-radius:4px;color:var(--text,#dce8f7);font-size:12px}#overview #network-center{padding:4px 7px;font-size:11px}

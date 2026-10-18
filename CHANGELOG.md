@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.21-rc.8 — local candidate
+
+- Center CoreScope on valid radio-reported coordinates at zoom 11, use a labeled regional fallback at zoom 9, and provide Recenter in Overview, Network and #echo. Reposition on radio identity/location changes without resetting on ordinary messages. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
+
 ## 0.8.21-rc.7 — local candidate
 
 - Open an adjustable chat/CoreScope split only for the selected #echo channel, with Chat/Map/Split controls, regional observer map, and local street-map fallback offline. Observer activity remains separate from delivery status. Tracked in [#51](https://github.com/njsnowman/nightlink/issues/51).
