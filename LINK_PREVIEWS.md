@@ -1,0 +1,13 @@
+# Webpage previews
+
+Visible HTTPS webpage links in channel/Overview messages, main direct conversations and detached DMs can display a compact card containing site-provided metadata and a thumbnail. This is a metadata preview, not a screenshot renderer or embedded live website. Original message text remains. Image/Giphy links continue using their existing image previews rather than duplicate webpage cards. At most two webpage cards are created per message. Fixed card height avoids late metadata/image layout shifts.
+
+Settings → Webpage previews turns cards off locally and updates open DM snapshots. Preview fetches start when cards approach the visible viewport. Requests already submitted may finish after turning the option off. Sites receive ordinary Internet requests, including their linked URL, but no browser cookies, authorization header, sign-in session or referrer is forwarded by the native metadata loader. No third-party screenshot service is used. Only the URL travels over MeshCore. Previews are not written into message history/backups; cache is in memory.
+
+Native fetches allow public HTTPS hostname destinations on port443. IP literals, local host suffixes and credential-bearing URLs are rejected. DNS IPv4 answers must all be public; a validated address is pinned to the TLS request while hostname certificate verification remains enabled. Every redirect and thumbnail destination is revalidated. IPv6-only, proxy-only, authenticated, bot-blocked or JavaScript-only pages may fall back to a domain/link card. No remote HTML/scripts are inserted into the conversation. Metadata uses Open Graph/Twitter tags or the HTML title. Server-provided metadata is not an endorsement or verified site identity.
+
+Limits: three active preview operations,64 queued operations,32 completed cached results,30-minute success/one-minute failure TTL, three redirects, a10-second operation budget,512KiB HTML and512KiB thumbnail bytes. PNG/JPEG/GIF/WebP signatures and dimensions are checked; images above8192pixels on either axis or16million pixels are omitted. SVG and arbitrary downloads are not embedded. The renderer receives only bounded text and a raster data URL from the native loader. Settings affect webpage cards only; existing direct image loading is separate.
+
+Native preview/open IPC accepts only the unlocked main window or registered DM main frames; remote map frames and the startup lock expose no preview bridge. External opening occurs only when the user clicks a card. Native fetch restrictions do not apply to later navigation in the user's external browser.
+
+Reference: https://ogp.me/

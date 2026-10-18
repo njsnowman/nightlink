@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Show lazy compact webpage cards with site-provided thumbnails and metadata in channels and DMs, with a Settings opt-out. Native public-HTTPS fetches are bounded and do not execute website scripts or use signed-in cookies. [#66](https://github.com/njsnowman/nightlink/issues/66)
+
 - Add an opt-in startup password and authenticator-code lock with verified enrollment, one-time recovery codes, replay prevention and persisted attempt limits. Credentials use password-derived encryption plus Windows DPAPI. Existing history is not encrypted by this feature. [#65](https://github.com/njsnowman/nightlink/issues/65)
 
 - Always open the main workspace on Overview at startup while retaining the saved conversation and other preferences. [#64](https://github.com/njsnowman/nightlink/issues/64)
