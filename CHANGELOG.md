@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Display bounded HTTPS image and Giphy previews in channel messages and direct conversations, retaining original text and a source link. Images load over the viewer’s Internet connection, not over the radio. [#60](https://github.com/njsnowman/nightlink/issues/60)
+
 - Center Radio map on valid radio-reported coordinates at zoom12, preserve user panning across contact updates, and recenter on source entry or request. Add Network-only MeshMapper CVG coverage embed, fixed full-map link and local fallback on service/offline failure. Tracked in [#59](https://github.com/njsnowman/nightlink/issues/59).
 
 - Open Network CoreScope centered on radio-reported coordinates at zoom9, two levels wider; keep Overview/echo zoom11 and regional fallback zoom9. Add bounded Windows service health checks and automatic local-map fallback for unavailable CoreScope, even when Windows reports online. Tracked in [#58](https://github.com/njsnowman/nightlink/issues/58).

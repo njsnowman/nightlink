@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.6",
+  "version": "0.8.22-rc.7",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -127,7 +127,9 @@
       "header-controls.css",
       "header-controls.js",
       "corescope-health.cjs",
-      "corescope-availability.js"
+      "corescope-availability.js",
+      "message-media.js",
+      "message-media.css"
     ],
     "win": {
       "target": [

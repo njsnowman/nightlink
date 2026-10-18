@@ -5,6 +5,7 @@
   const sender=row.querySelector('.sender'),route=[...row.querySelectorAll('.message-route')].find(b=>!b.classList.contains('retry-delivery')&&/hops?|Route details|View repeaters|Direct/i.test(b.textContent));
   if(route){route.title=route.textContent;route.textContent=MeshlineRoutes.hopSummary(m.pathLength);route.classList.add('signal-hop');route.setAttribute('aria-label','View message path · '+route.textContent);sender.append(route);}
   else if(m.own){const tag=document.createElement('span');tag.className='signal-hop signal-hop-own';tag.textContent=m.target?.kind==='channel'?'Broadcast':'Outgoing';sender.append(tag);}
+  NightlinkMessageMedia.attach(row,m.text);
   row.querySelector('p').title=m.status+(m.snr==null?'':' · '+m.snr+' dB');
  }
  function direct(row,m,data,openContact){
@@ -17,7 +18,7 @@
   const hop=document.createElement('span');hop.className='signal-hop';hop.textContent=m.own?'Outgoing':m.hopLabel||'Route unknown';header.append(name,stamp,hop);content.prepend(header);
   const meta=content.querySelector('small');if(meta&&!m.own)meta.textContent=m.status||'';else if(meta?.firstChild?.nodeType===Node.TEXT_NODE)meta.firstChild.remove();content.querySelector('p').title=m.status||'';
   const avatar=document.createElement(m.own?'span':'button');avatar.className='signal-message-avatar';avatar.append(image);if(!m.own){avatar.setAttribute('aria-label','Open contact card for '+data.name);avatar.onclick=openContact;}
-  row.append(avatar,content);
+  row.append(avatar,content);NightlinkMessageMedia.attach(row,m.text);
  }
  root.NightlinkMessageLayout={main,direct};
 })(globalThis);
