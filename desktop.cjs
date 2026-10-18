@@ -14,7 +14,7 @@ else app.whenReady().then(()=>{
  let select=null,pair=null,devices=new Set(),deviceDetails=new Map(),scanTimer,pairTimer;
  const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
 
- ipcMain.handle('meshmapper:open',async e=>{if(!trusted(e))return false;await shell.openExternal('https://cvg.meshmapper.net/');return true;});
+ ipcMain.handle('meshmapper:open',async(e,region='CVG')=>{if(!trusted(e))return false;try{const url=require('./meshmapper-region.js').base(region);await shell.openExternal(url);return true;}catch{return false;}});
  require('./voice-desktop.cjs').install({app,win,ipcMain,dialog,trusted});
  require('./offline-maps-desktop.cjs').install({win,ipcMain,dialog,trusted});
  let updateResult=null,updateCheck=null,updateCheckedAt=0;

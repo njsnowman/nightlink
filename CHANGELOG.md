@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Save a three-letter MeshMapper region code locally, defaulting to CVG; apply it to map labels, embed, reachability checks and full-map link. Configure from Network or Settings. [#62](https://github.com/njsnowman/nightlink/issues/62)
+
 - Add session-only CLI Terminal in Radio Tools for supported companion firmware and authenticated repeater/room commands. Restore visible Add channel actions in Messages, Overview and Conversations. [#61](https://github.com/njsnowman/nightlink/issues/61)
 
 - Display bounded HTTPS image and Giphy previews in channel messages and direct conversations, retaining original text and a source link. Images load over the viewer’s Internet connection, not over the radio. [#60](https://github.com/njsnowman/nightlink/issues/60)

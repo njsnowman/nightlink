@@ -28,4 +28,4 @@ if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkStartup',{info:
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkCoreScope',{check:()=>ipcRenderer.invoke('corescope:health')});
 
-if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkMeshMapper',{check:()=>ipcRenderer.invoke('meshmapper:health'),open:()=>ipcRenderer.invoke('meshmapper:open')});
+if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkMeshMapper',{check:region=>ipcRenderer.invoke('meshmapper:health',region),open:region=>ipcRenderer.invoke('meshmapper:open',region)});
