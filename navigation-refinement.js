@@ -1,0 +1,37 @@
+/* Consolidated destinations; retain existing conversation and radio behavior. */
+(function(){
+ const directNav=sidebarNav.querySelector('[data-view="Direct Messages"]');
+ const searchNav=sidebarNav.querySelector('[data-view="Search"]');
+ directNav.hidden=true;searchNav.hidden=true;
+ moreGroup.querySelector('summary').firstChild.textContent='Tools';
+ sidebarState.recent=false;
+ const savedChannels=renderChannels;
+ renderChannels=function(){savedChannels();const recent=$('#channels [data-sidebar-group="recent"]');if(recent)recent.hidden=true;const channels=$('#channels [data-sidebar-group="channels"]');if(channels){channels.querySelector('summary').firstChild.textContent='Conversations';channels.querySelector('#sidebar-add-channel')?.remove();}};
+ // Start with a quiet sidebar; retain the user's explicit expansion choice thereafter.
+ try{if(!localStorage.getItem('nightlink.navigation.v2')){sidebarState.channels=false;localStorage.setItem('nightlink.navigation.v2','1');}}catch{sidebarState.channels=false;}
+ const tools=$('.conversation-tools');tools.replaceChildren();
+ function button(label,run){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=run;return b;}
+ function tabs(){const bar=document.createElement('div');bar.className='workspace-message-tabs';bar.setAttribute('aria-label','Message views');for(const [label,destination]of [['Channels','Messages'],['Direct messages','Direct Messages']]){const b=button(label,()=>{if(destination==='Messages'&&live.selected?.kind!=='channel'&&live.channels.length)selectConversation({kind:'channel',...live.channels[0]});else view(destination);});b.setAttribute('aria-pressed',String(current===destination));bar.append(b);}return bar;}
+ function channelPicker(){const select=document.createElement('select');select.setAttribute('aria-label','Choose channel');const prompt=document.createElement('option');prompt.value='';prompt.textContent=live.channels.length?'Choose channel':'No channels loaded';select.append(prompt);for(const c of live.channels){const option=document.createElement('option');option.value=String(c.slot);option.textContent='# '+c.name.replace(/^#\s*/,'');option.selected=live.selected?.kind==='channel'&&live.selected.slot===c.slot;select.append(option);}select.onchange=()=>{const c=live.channels.find(c=>String(c.slot)===select.value);if(c)selectConversation({kind:'channel',...c});};return select;}
+ let toolsSignature='';
+ function refresh(){
+  const signature=JSON.stringify([current,live.selected?.kind,live.selected?.slot,live.channels.map(c=>[c.slot,c.name])]);
+  if(signature!==toolsSignature){toolsSignature=signature;tools.replaceChildren();
+   if(current==='Messages'){tools.append(tabs(),channelPicker(),button('+ Channel',()=>sidebarAdd.click()));}
+   else if(current==='Overview'){tools.append(channelPicker(),button('All messages',()=>view('Messages')));}
+  }
+  if(current==='Direct Messages'){const panel=$('.dm-inbox');if(panel&&!panel.querySelector('.workspace-message-tabs'))panel.querySelector('.panel-heading').after(tabs());}
+  const messaging=['Messages','Direct Messages','Search'].includes(current);
+  sidebarNav.querySelector('[data-view="Messages"]').classList.toggle('active',messaging);
+  // Message updates must not close Tools while the user is choosing an action.
+  moreGroup.querySelector('summary').classList.toggle('active',['Activity','Diagnostics'].includes(current));
+  if(current==='Direct Messages')$('#crumb').textContent='Messages / Direct messages';
+  if(current==='Nodes')$('#crumb').textContent='Contacts';
+  sidebarNav.querySelector('[data-view="Messages"]').setAttribute('aria-label','Messages — channels and direct messages');
+ }
+ const previousView=view;view=function(name){previousView(name);moreGroup.open=['Activity','Diagnostics'].includes(name);refresh();};
+ const previousMessages=renderMessages;renderMessages=function(){previousMessages();refresh();};
+ const previousInbox=renderDMInbox;renderDMInbox=function(){previousInbox();refresh();};
+ const previousUnread=refreshUnreadBadges;refreshUnreadBadges=function(){previousUnread();const nav=sidebarNav.querySelector('[data-view="Messages"]');nav.querySelector('b')?.remove();const count=ensureAttention().unread(live.messages).length;if(count)nav.append(unreadBadge(count));moreGroup.querySelector('.sidebar-unread')?.remove();};
+ renderChannels();refresh();refreshUnreadBadges();
+})();

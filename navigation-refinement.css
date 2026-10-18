@@ -1,0 +1,7 @@
+aside nav button[hidden],#channels details[hidden]{display:none!important}
+.workspace-message-tabs{display:flex;gap:4px;padding:6px 10px;flex-shrink:0}
+.workspace-message-tabs button[aria-pressed="true"]{border-color:var(--accent,#8cbfff);background:var(--accent-soft,#172a3b);color:var(--accent,#8cbfff)}
+.conversation-tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.conversation-tools .workspace-message-tabs{padding:0}
+.conversation-tools select{min-width:110px;max-width:240px;width:auto;flex:1;background:#08141e;color:#d8e7ef;border:1px solid #345463;border-radius:5px;padding:8px;font:inherit}
+@media(max-width:850px){.conversation-tools{gap:4px;padding:6px}.conversation-tools button,.conversation-tools select{padding:6px}.conversation-tools select{max-width:180px}}

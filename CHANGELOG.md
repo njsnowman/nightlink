@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Consolidate channel and direct-message navigation under Messages; retain five main destinations, one top-bar search and optional collapsed conversation shortcuts. Group secondary Activity and Diagnostics tools. Preserve combined unread counts and channel selector state across message updates. Tracked in [#55](https://github.com/njsnowman/nightlink/issues/55).
+
+
 ## 0.8.22-rc.1 — local candidate
 
 - Add full public-key comparison records and identity QR display/import, with familiar-name/different-key warnings and explicit channel-name authentication limits.

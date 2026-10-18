@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.1",
+  "version": "0.8.22-rc.2",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -118,7 +118,9 @@
       "map-annotations.js",
       "map-annotations-ui.js",
       "map-annotations.css",
-      "console-refinement.css"
+      "console-refinement.css",
+      "navigation-refinement.js",
+      "navigation-refinement.css"
     ],
     "win": {
       "target": [
