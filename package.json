@@ -1,13 +1,13 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.2",
+  "version": "0.8.22-rc.3",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
     "start": "electron .",
     "preview": "node server.cjs",
     "dist": "electron-builder --win nsis portable",
-    "test": "node --test bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs"
+    "test": "node --test startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs"
   },
   "devDependencies": {
     "electron": "^42.0.0",
@@ -120,7 +120,10 @@
       "map-annotations.css",
       "console-refinement.css",
       "navigation-refinement.js",
-      "navigation-refinement.css"
+      "navigation-refinement.css",
+      "startup-desktop.cjs",
+      "startup-connect-ui.js",
+      "startup-connect.css"
     ],
     "win": {
       "target": [

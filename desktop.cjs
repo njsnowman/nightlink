@@ -8,8 +8,9 @@ if(!app.requestSingleInstanceLock())app.quit();
 else app.whenReady().then(()=>{
  nativeTheme.themeSource='dark';
  const win=new BrowserWindow({show:!app.commandLine.hasSwitch('meshline-test'),width:1320,height:900,minWidth:760,minHeight:560,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),backgroundThrottling:false,contextIsolation:true,nodeIntegration:false,sandbox:true}});
- require('./serial-desktop.cjs').installSerial(win,ipcMain);
- let select=null,pair=null,devices=new Set(),scanTimer,pairTimer;
+ const startup=require('./startup-desktop.cjs').install({app,win,ipcMain});
+ require('./serial-desktop.cjs').installSerial(win,ipcMain,startup);
+ let select=null,pair=null,devices=new Set(),deviceDetails=new Map(),scanTimer,pairTimer;
  const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
 
  require('./voice-desktop.cjs').install({app,win,ipcMain,dialog,trusted});
@@ -69,8 +70,8 @@ else app.whenReady().then(()=>{
  require('./desktop-shell.cjs').install({app,win,ipcMain,...require('electron'),icon:path.join(__dirname,'icon.ico'),hideChildren:()=>{for(const record of dmWindows.values())record.window.hide();}});
  function cancelScan(){clearTimeout(scanTimer);scanTimer=null;const cb=select;select=null;devices.clear();if(cb)cb('');}
  function cancelPair(){clearTimeout(pairTimer);const cb=pair;pair=null;if(cb)cb({confirmed:false});}
- win.webContents.on('select-bluetooth-device',(event,list,callback)=>{event.preventDefault();select=callback;devices=new Set(list.map(d=>d.deviceId));if(!scanTimer)scanTimer=setTimeout(()=>{cancelScan();if(!win.isDestroyed())win.webContents.send('ble:scan-ended');},60000);win.webContents.send('ble:devices',list.map(({deviceId,deviceName})=>({deviceId,deviceName})));});
- ipcMain.on('ble:select',(e,id)=>{if(!trusted(e)||!select)return;if(id!==''&&!devices.has(id))return;clearTimeout(scanTimer);scanTimer=null;const cb=select;select=null;devices.clear();cb(id);});
+ win.webContents.on('select-bluetooth-device',(event,list,callback)=>{event.preventDefault();select=callback;devices=new Set(list.map(d=>d.deviceId));deviceDetails=new Map(list.map(d=>[d.deviceId,d]));if(startup.select('bluetooth',list,id=>{clearTimeout(scanTimer);scanTimer=null;select=null;devices.clear();callback(id);})){if(select&&!scanTimer)scanTimer=setTimeout(cancelScan,12000);return;}if(!scanTimer)scanTimer=setTimeout(()=>{cancelScan();if(!win.isDestroyed())win.webContents.send('ble:scan-ended');},60000);win.webContents.send('ble:devices',list.map(({deviceId,deviceName})=>({deviceId,deviceName})));});
+ ipcMain.on('ble:select',(e,id)=>{if(!trusted(e)||!select)return;if(id!==''&&!devices.has(id))return;clearTimeout(scanTimer);scanTimer=null;const cb=select;select=null;startup.selected('bluetooth',deviceDetails.get(id));devices.clear();cb(id);});
  win.webContents.session.setBluetoothPairingHandler((details,callback)=>{cancelPair();pair=callback;pairTimer=setTimeout(cancelPair,60000);win.webContents.send('ble:pairing',details);});
  ipcMain.on('ble:pairing-response',(e,response)=>{if(!trusted(e)||!pair)return;const cb=pair;pair=null;clearTimeout(pairTimer);cb({confirmed:response?.confirmed===true,pin:typeof response?.pin==='string'?response.pin.slice(0,16):undefined});});
  win.webContents.on('will-navigate',e=>e.preventDefault());

@@ -23,3 +23,5 @@ if(process.isMainFrame)contextBridge.exposeInMainWorld('meshlineDesktop',{state:
 if(process.isMainFrame)contextBridge.exposeInMainWorld("nightlinkVoice",{status:()=>ipcRenderer.invoke("voice:status"),configure:()=>ipcRenderer.invoke("voice:configure"),transcribe:data=>ipcRenderer.invoke("voice:transcribe",Array.from(data))});
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld("nightlinkOfflineMaps",{open:()=>ipcRenderer.invoke("offline-maps:open")});
+
+if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkStartup',{info:()=>ipcRenderer.invoke('startup:info'),setEnabled:value=>ipcRenderer.invoke('startup:enabled',value),remember:kind=>ipcRenderer.invoke('startup:remember',kind),attempt:()=>ipcRenderer.invoke('startup:attempt'),cancel:()=>ipcRenderer.invoke('startup:cancel')});
