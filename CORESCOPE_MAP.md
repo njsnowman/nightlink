@@ -2,7 +2,7 @@
 
 Tracked in [#35](https://github.com/njsnowman/nightlink/issues/35).
 
-Overview and Network open OKI Mesh CoreScope by default. All map views use radio-reported coordinates at zoom9 by default. Without valid radio coordinates, the regional fallback remains zoom9. The CoreScope / Radio map switch remembers the selected source on this computer. Message-path maps continue to use connected/saved radio contacts and street tiles. The Overview preview uses the same sandboxed frame at half scale so CoreScope’s controls fit its smaller panel.
+Overview and Network open OKI Mesh CoreScope by default. CoreScope and Radio map use radio-reported coordinates at zoom9 by default; MeshMapper has separate PC-location defaults. Without valid radio coordinates, the regional fallback remains zoom9. The CoreScope / Radio map switch remembers the selected source on this computer. Message-path maps continue to use connected/saved radio contacts and street tiles. The Overview preview uses the same sandboxed frame at half scale so CoreScope’s controls fit its smaller panel.
 
 CoreScope is the remote service at https://map.okimesh.org/#/live and displays observer-collected network data. It requires internet and service availability; it is not a complete representation of everything received by the attached radio. The remote site may change independently of Nightlink.
 
@@ -22,3 +22,9 @@ Network offers MeshMapper CVG using the documented read-only https://cvg.meshmap
 ## Saved MeshMapper region
 
 Network → Region or Settings → MeshMapper region accepts a three-letter code (case-insensitive). CVG is the default; IND selects https://ind.meshmapper.net/embed.php. The uppercase code is stored in localStorage under nightlink.meshmapper-region and reused after restart. Embed labels, full-map links and native health checks follow the selected code. A syntactically valid code does not establish an active region; unavailable service falls back locally without replacing the choice. Health results are cached per region. Native IPC validates the same code format before constructing HTTPS MeshMapper URLs; arbitrary hosts/paths cannot be supplied. Remote frames have no native bridge. Radio-reported centering remains independent of the regional data source.
+
+## MeshMapper PC centering
+
+MeshMapper opens at zoom12, independent of radio coordinates, and requests a current Windows location on entry and Recenter. The bounded Windows provider respects system location permissions; no IP geolocation is used. A fix older than five minutes is rejected. Coordinates are held only in session memory and passed to the selected MeshMapper region in the embed URL. Region-center fallback is labeled when location is unavailable; enable Windows Location and use Recenter to retry. CoreScope and Radio map retain zoom9 and radio centering. Manual panning is retained across radio identity updates.
+
+Embed parameters cov_grid=1 and fail_grid=1 enable bidirectional green coverage and red dropped-packet coverage; other coverage layers remain at provider defaults. No red data is manufactured when the provider has no records. Remote frames receive no native/location bridge. See [MeshMapper embedding](https://wiki.meshmapper.net/embedding/) and [Windows location provider](https://learn.microsoft.com/en-us/dotnet/api/system.device.location.geocoordinatewatcher.trystart?view=netframework-4.8.1).

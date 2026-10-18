@@ -8,6 +8,7 @@ if(!app.requestSingleInstanceLock())app.quit();
 else app.whenReady().then(async()=>{
  nativeTheme.themeSource='dark';
  const win=new BrowserWindow({show:!app.commandLine.hasSwitch('meshline-test'),icon:path.join(__dirname,'icon.ico'),width:1320,height:900,minWidth:760,minHeight:560,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),backgroundThrottling:false,contextIsolation:true,nodeIntegration:false,sandbox:true}});
+ win.maximize();
  const security=await require('./security-desktop.cjs').install({app,win,ipcMain,safeStorage:require('electron').safeStorage});
  require('./corescope-health.cjs').install({win,ipcMain,net:require('electron').net});
  const startup=require('./startup-desktop.cjs').install({app,win,ipcMain});
@@ -15,6 +16,7 @@ else app.whenReady().then(async()=>{
  let select=null,pair=null,devices=new Set(),deviceDetails=new Map(),scanTimer,pairTimer;
  const trusted=e=>security.unlocked&&e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
 
+ require('./pc-location.cjs').install({ipcMain,trusted});
  ipcMain.handle('meshmapper:open',async(e,region='CVG')=>{if(!trusted(e))return false;try{const url=require('./meshmapper-region.js').base(region);await shell.openExternal(url);return true;}catch{return false;}});
  require('./voice-desktop.cjs').install({app,win,ipcMain,dialog,trusted});
  require('./offline-maps-desktop.cjs').install({win,ipcMain,dialog,trusted});

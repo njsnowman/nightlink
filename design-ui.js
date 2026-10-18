@@ -2,7 +2,7 @@ const compactToggle=document.createElement('button');compactToggle.id='compact-t
 function setCompact(compact,resize=true,persist=true){document.body.classList.toggle('compact',compact);compactToggle.setAttribute('aria-pressed',String(compact));compactToggle.querySelector('span').textContent=compact?'Expand':'Compact';const setting=document.querySelector('#compact-setting');if(setting)setting.checked=compact;try{if(persist)localStorage.setItem('meshline.compact',compact);}catch{}if(resize)window.meshlineLayout?.setCompact(compact);}
 compactToggle.onclick=()=>setCompact(!document.body.classList.contains('compact'));
 document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&e.code==='KeyC'){e.preventDefault();setCompact(!document.body.classList.contains('compact'));}});
-setCompact(localStorage.getItem('meshline.compact')==='true',true,false);
+setCompact(localStorage.getItem('meshline.compact')==='true',false,false);
 const designView=view;view=function(name){designView(name);if(name==='Settings'){const label=document.createElement('label');label.append('Compact layout');const input=document.createElement('input');input.id='compact-setting';input.type='checkbox';input.checked=document.body.classList.contains('compact');input.onchange=()=>setCompact(input.checked);label.append(input);$('.settings-grid').prepend(label);}};
 document.querySelectorAll('nav button').forEach(b=>b.title=b.querySelector('span')?.textContent||'');
 // Keep plotted labels and hit targets legible when the map panel shrinks.
