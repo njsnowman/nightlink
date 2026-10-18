@@ -28,3 +28,7 @@ Network → Region or Settings → MeshMapper region accepts a three-letter code
 MeshMapper opens at zoom12, independent of radio coordinates, and requests a current Windows location on entry and Recenter. The bounded Windows provider respects system location permissions; no IP geolocation is used. A fix older than five minutes is rejected. Coordinates are held only in session memory and passed to the selected MeshMapper region in the embed URL. Region-center fallback is labeled when location is unavailable; enable Windows Location and use Recenter to retry. CoreScope and Radio map retain zoom9 and radio centering. Manual panning is retained across radio identity updates.
 
 Embed parameters cov_grid=1 and fail_grid=1 enable bidirectional green coverage and red dropped-packet coverage; other coverage layers remain at provider defaults. No red data is manufactured when the provider has no records. Remote frames receive no native/location bridge. See [MeshMapper embedding](https://wiki.meshmapper.net/embedding/) and [Windows location provider](https://learn.microsoft.com/en-us/dotnet/api/system.device.location.geocoordinatewatcher.trystart?view=netframework-4.8.1).
+
+## Overview default
+
+Overview starts with CoreScope on launch and each entry, regardless of the saved Network source. A manual Radio map choice on Overview applies only to that visit and does not change the Network preference. CoreScope health/offline failure still falls back to Radio map; returning to Overview retries CoreScope.

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Default Overview Live mesh to CoreScope on startup and each visit, independently of the saved Network source. Preserve offline/service fallback. [#71](https://github.com/njsnowman/nightlink/issues/71)
+
 - Reveal prominent FOR THE MESH lettering inside the opening login vault. [#70](https://github.com/njsnowman/nightlink/issues/70)
 
 - Show the approved vault-unlock transition after successful app-lock authentication, with keyboard skip, reduced-motion bypass and a bounded native fallback to Overview. [#69](https://github.com/njsnowman/nightlink/issues/69)

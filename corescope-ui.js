@@ -1,13 +1,13 @@
 /* Remote sources are isolated from local radio contacts and private overlays. */
 (function(){
- let mode='corescope',frame=null,timer=null,stopHealth=null,locationSignature='';
+ let mode='corescope',overviewMode='corescope',frame=null,timer=null,stopHealth=null,locationSignature='';
  let pcPosition=null,pcPending=null,pcAttempted=false;
  function locatePC(){if(pcPending)return pcPending;pcAttempted=true;pcPending=Promise.resolve().then(()=>window.nightlinkMeshMapper?.location?.()).then(p=>{pcPosition=p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&Math.abs(p.lat)<=85&&Math.abs(p.lon)<=180?p:null;}).catch(()=>{pcPosition=null;}).finally(()=>{pcPending=null;if(current==='Network map'&&effective()==='meshmapper')show();});return pcPending;}
  const pcLabel=()=>pcPending?'Locating PC…':pcPosition?'PC location · Windows estimate':region()+' region center · PC location unavailable; enable Windows Location and Recenter';
  const region=()=>NightlinkMeshMapperRegion.get();
  const failed={corescope:false,meshmapper:false};
  try{const saved=localStorage.getItem('nightlink.network-map');if(['corescope','radio','meshmapper'].includes(saved))mode=saved;}catch{}
- const wanted=()=>mode==='meshmapper'&&current!=='Network map'?'corescope':mode;
+ const wanted=()=>current==='Overview'?overviewMode:mode;
  const effective=()=>{const source=wanted();return source!=='radio'&&navigator.onLine&&!failed[source]?source:'radio';};
  const context=()=>current==='Network map'?'network':undefined;
  const bar=document.createElement('section');bar.className='network-source-bar';
@@ -48,7 +48,7 @@
   if(active!=='radio'){mapPanel.hidden=!overview;host.append(pane);start();}
   else{stop();pane.remove();mapPanel.hidden=false;if(!overview)host.append(mapPanel);centerNetworkStreetMap();requestAnimationFrame(()=>networkStreetMap?.invalidateSize());}
  }
- function choose(source){failed[source]=false;mode=source;if(source==='meshmapper')locatePC();try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
+ function choose(source){failed[source]=false;if(current==='Overview'){overviewMode=source;show();return;}mode=source;if(source==='meshmapper')locatePC();try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
  for(const source of ['corescope','radio','meshmapper'])bar.querySelector('#network-'+source).onclick=()=>choose(source);
  bar.querySelector('#network-open-meshmapper').onclick=()=>window.nightlinkMeshMapper?.open(region());
  bar.querySelector('#network-meshmapper-region').onclick=()=>showMeshMapperRegion();
@@ -58,6 +58,6 @@
  radioSession.addEventListener('identity',()=>{if(frame&&effective()!=='meshmapper'&&locationSignature!==NightlinkCoreScopeLocation.signature(context()))start();});
  window.addEventListener('offline',show);window.addEventListener('online',()=>{failed.corescope=failed.meshmapper=false;show();});
  const sourceRenderMap=renderMap;renderMap=function(){sourceRenderMap();if(current==='Overview'&&effective()!=='radio')mapPanel.querySelector('.live').textContent='OKI MESH';};
- const sourceView=view;view=function(name){stop();bar.remove();pane.remove();mapPanel.hidden=false;mapPanel.classList.remove('overview-corescope');$('#alternate').classList.remove('network-source-view');sourceView(name);if(name==='Network map'&&wanted()==='meshmapper')locatePC();if(['Overview','Network map'].includes(name))show();};
+ const sourceView=view;view=function(name){stop();bar.remove();pane.remove();mapPanel.hidden=false;mapPanel.classList.remove('overview-corescope');$('#alternate').classList.remove('network-source-view');sourceView(name);if(name==='Overview'){overviewMode='corescope';failed.corescope=false;}if(name==='Network map'&&wanted()==='meshmapper')locatePC();if(['Overview','Network map'].includes(name))show();};
  if(['Overview','Network map'].includes(current))show();
 })();
