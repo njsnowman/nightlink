@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.9",
+  "version": "0.8.22-rc.10",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -167,7 +167,9 @@
       "include": "installer.nsh",
       "installerHeader": "installer-assets/header.bmp",
       "installerSidebar": "installer-assets/sidebar.bmp",
-      "uninstallerSidebar": "installer-assets/sidebar.bmp"
+      "uninstallerSidebar": "installer-assets/sidebar.bmp",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico"
     },
     "portable": {
       "artifactName": "Nightlink-Portable-${version}.${ext}"

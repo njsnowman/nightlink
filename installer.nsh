@@ -1,15 +1,15 @@
-; Tactical branding uses native NSIS controls and keyboard navigation.
+; Signal Bridge branding preserves native NSIS navigation and upgrade behavior.
 !define MUI_BGCOLOR "000000"
 !define MUI_TEXTCOLOR "EDF7FC"
 !define MUI_DIRECTORYPAGE_BGCOLOR "07131C"
-!define MUI_INSTFILESPAGE_COLORS "76DDFF 000000"
+!define MUI_INSTFILESPAGE_COLORS "87E3F8 000000"
 !ifdef BUILD_UNINSTALLER
   !define MUI_CUSTOMFUNCTION_UNGUIINIT un.NightlinkThemeWindow
 !else
   !define MUI_CUSTOMFUNCTION_GUIINIT NightlinkThemeWindow
 !endif
-!define MUI_WELCOMEPAGE_TITLE "Nightlink radio desktop"
-!define MUI_WELCOMEPAGE_TEXT "Connect to your MeshCore radio over Bluetooth or USB.$\r$\n$\r$\nChoose an installation folder and your shortcut preference to prepare this computer.$\r$\n$\r$\nPREPARE  /  INSTALL  /  COMPLETE"
+!define MUI_WELCOMEPAGE_TITLE "Install Nightlink"
+!define MUI_WELCOMEPAGE_TEXT "Your MeshCore workspace for Windows.$\r$\n$\r$\nConnect over Bluetooth or USB, follow your channels, and manage your radio from one desktop application.$\r$\n$\r$\nSetup installs Nightlink for your Windows account. Existing messages and contact details are retained."
 !define MUI_FINISHPAGE_TITLE "Nightlink is ready"
 !define MUI_FINISHPAGE_TEXT "Installation is complete.$\r$\n$\r$\nOpen Nightlink from the Start menu, then choose Bluetooth or USB to connect your radio.$\r$\n$\r$\nYour saved messages and contact details are retained during upgrades."
 !ifndef BUILD_UNINSTALLER
@@ -74,7 +74,7 @@ Function NightlinkShortcutPage
   nsDialogs::Create 1018
   Pop $0
   StrCmp $0 error done
-  !insertmacro MUI_HEADER_TEXT "Prepare your workspace" "Choose how to open Nightlink."
+  !insertmacro MUI_HEADER_TEXT "Workspace preferences" "Choose your desktop shortcut preference."
   SetCtlColors $0 EDF7FC 000000
   ${NSD_CreateCheckbox} 0 10u 100% 14u "Create a desktop shortcut"
   Pop $NightlinkShortcutControl
@@ -83,7 +83,7 @@ Function NightlinkShortcutPage
   ${NSD_SetState} $NightlinkShortcutControl ${BST_UNCHECKED}
   ${NSD_CreateLabel} 0 44u 100% 36u "A Start menu entry is created automatically. Your radio can connect over Bluetooth or a USB data cable."
   Pop $1
-  SetCtlColors $1 76DDFF 000000
+  SetCtlColors $1 87E3F8 000000
   nsDialogs::Show
   done:
 FunctionEnd
@@ -106,4 +106,5 @@ FunctionEnd
 
 !macro customHeader
   BrandingText " "
+  Font "Segoe UI" 9
 !macroend

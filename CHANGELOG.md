@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Apply Signal Bridge branding to application and Windows icons, and revise installer artwork and wizard styling in true black and ice blue. Preserve existing install location, profile identity and update behavior. [#63](https://github.com/njsnowman/nightlink/issues/63)
+
 - Save a three-letter MeshMapper region code locally, defaulting to CVG; apply it to map labels, embed, reachability checks and full-map link. Configure from Network or Settings. [#62](https://github.com/njsnowman/nightlink/issues/62)
 
 - Add session-only CLI Terminal in Radio Tools for supported companion firmware and authenticated repeater/room commands. Restore visible Add channel actions in Messages, Overview and Conversations. [#61](https://github.com/njsnowman/nightlink/issues/61)
