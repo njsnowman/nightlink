@@ -48,7 +48,7 @@
   if(active!=='radio'){mapPanel.hidden=!overview;host.append(pane);start();}
   else{stop();pane.remove();mapPanel.hidden=false;if(!overview)host.append(mapPanel);centerNetworkStreetMap();requestAnimationFrame(()=>networkStreetMap?.invalidateSize());}
  }
- function choose(source){failed[source]=false;mode=source;try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
+ function choose(source){failed[source]=false;mode=source;if(source==='meshmapper')locatePC();try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
  for(const source of ['corescope','radio','meshmapper'])bar.querySelector('#network-'+source).onclick=()=>choose(source);
  bar.querySelector('#network-open-meshmapper').onclick=()=>window.nightlinkMeshMapper?.open(region());
  bar.querySelector('#network-meshmapper-region').onclick=()=>showMeshMapperRegion();
