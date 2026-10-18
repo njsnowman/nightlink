@@ -144,7 +144,8 @@
       "link-preview.cjs",
       "link-preview-ui.js",
       "link-preview.css",
-      "link-preview-settings.js"
+      "link-preview-settings.js",
+      "pc-location.cjs"
     ],
     "win": {
       "target": [
