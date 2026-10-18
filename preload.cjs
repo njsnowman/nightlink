@@ -1,4 +1,7 @@
 const {contextBridge,ipcRenderer}=require('electron');
+const lockedDocument=location.pathname.endsWith('/security-lock.html');
+if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkSecurity',Object.fromEntries((lockedDocument?['info','unlock','quit']:['info','begin','confirm','cancel','disable']).map(name=>[name,async(...args)=>{const result=await ipcRenderer.invoke('security:'+name,...args);if(result?.error)throw Error(result.error);return result?.value;}])));
+if(!lockedDocument){
 const subscribe=(channel,listener)=>{const handler=(_event,value)=>listener(value);ipcRenderer.on(channel,handler);return()=>ipcRenderer.removeListener(channel,handler);};
 contextBridge.exposeInMainWorld('meshlineUpdates',{info:()=>ipcRenderer.invoke('updates:info'),check:()=>ipcRenderer.invoke('updates:check'),open:download=>ipcRenderer.invoke('updates:open',download===true)});
 contextBridge.exposeInMainWorld('meshlineBackup',{reload:()=>ipcRenderer.send('backup:reload'),save:text=>ipcRenderer.invoke('backup:save',text)});
@@ -29,3 +32,6 @@ if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkStartup',{info:
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkCoreScope',{check:()=>ipcRenderer.invoke('corescope:health')});
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkMeshMapper',{check:region=>ipcRenderer.invoke('meshmapper:health',region),open:region=>ipcRenderer.invoke('meshmapper:open',region)});
+
+
+}

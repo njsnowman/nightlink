@@ -5,14 +5,15 @@ const nightlinkUpdates=require('./updates.cjs');
 const fsBackup=require('node:fs/promises'),cryptoBackup=require('node:crypto');
 app.setPath('userData',path.join(app.getPath('appData'),'Meshline'));
 if(!app.requestSingleInstanceLock())app.quit();
-else app.whenReady().then(()=>{
+else app.whenReady().then(async()=>{
  nativeTheme.themeSource='dark';
  const win=new BrowserWindow({show:!app.commandLine.hasSwitch('meshline-test'),icon:path.join(__dirname,'icon.ico'),width:1320,height:900,minWidth:760,minHeight:560,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),backgroundThrottling:false,contextIsolation:true,nodeIntegration:false,sandbox:true}});
+ const security=await require('./security-desktop.cjs').install({app,win,ipcMain,safeStorage:require('electron').safeStorage});
  require('./corescope-health.cjs').install({win,ipcMain,net:require('electron').net});
  const startup=require('./startup-desktop.cjs').install({app,win,ipcMain});
  require('./serial-desktop.cjs').installSerial(win,ipcMain,startup);
  let select=null,pair=null,devices=new Set(),deviceDetails=new Map(),scanTimer,pairTimer;
- const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
+ const trusted=e=>security.unlocked&&e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
 
  ipcMain.handle('meshmapper:open',async(e,region='CVG')=>{if(!trusted(e))return false;try{const url=require('./meshmapper-region.js').base(region);await shell.openExternal(url);return true;}catch{return false;}});
  require('./voice-desktop.cjs').install({app,win,ipcMain,dialog,trusted});
@@ -78,6 +79,6 @@ else app.whenReady().then(()=>{
  ipcMain.on('ble:pairing-response',(e,response)=>{if(!trusted(e)||!pair)return;const cb=pair;pair=null;clearTimeout(pairTimer);cb({confirmed:response?.confirmed===true,pin:typeof response?.pin==='string'?response.pin.slice(0,16):undefined});});
  win.webContents.on('will-navigate',e=>e.preventDefault());
  win.on('closed',()=>{cancelScan();cancelPair();ipcMain.removeAllListeners('ble:select');ipcMain.removeAllListeners('ble:pairing-response');});
- win.loadFile('index.html');win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
+ win.loadFile(security.unlocked?'index.html':'security-lock.html');win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
 });
 app.on('window-all-closed',()=>app.quit());
