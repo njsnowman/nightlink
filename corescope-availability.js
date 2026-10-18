@@ -1,11 +1,12 @@
 /* Remote service reachability is checked by the Windows main process. */
 window.NightlinkCoreScopeAvailability={
- watch(onFailure){
+ watch(onFailure,source='corescope'){
   let active=true,busy=false;
   async function check(){
-   if(!active||busy||!window.nightlinkCoreScope)return;
+   const bridge=source==='meshmapper'?window.nightlinkMeshMapper:window.nightlinkCoreScope;
+   if(!active||busy||!bridge)return;
    busy=true;
-   try{if(!await window.nightlinkCoreScope.check()&&active)onFailure();}
+   try{if(!await bridge.check()&&active)onFailure();}
    catch{if(active)onFailure();}finally{busy=false;}
   }
   check();const timer=setInterval(check,30000);

@@ -27,3 +27,5 @@ if(process.isMainFrame)contextBridge.exposeInMainWorld("nightlinkOfflineMaps",{o
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkStartup',{info:()=>ipcRenderer.invoke('startup:info'),setEnabled:value=>ipcRenderer.invoke('startup:enabled',value),remember:kind=>ipcRenderer.invoke('startup:remember',kind),attempt:()=>ipcRenderer.invoke('startup:attempt'),cancel:()=>ipcRenderer.invoke('startup:cancel')});
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkCoreScope',{check:()=>ipcRenderer.invoke('corescope:health')});
+
+if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkMeshMapper',{check:()=>ipcRenderer.invoke('meshmapper:health'),open:()=>ipcRenderer.invoke('meshmapper:open')});

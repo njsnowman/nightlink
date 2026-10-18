@@ -14,6 +14,7 @@ else app.whenReady().then(()=>{
  let select=null,pair=null,devices=new Set(),deviceDetails=new Map(),scanTimer,pairTimer;
  const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
 
+ ipcMain.handle('meshmapper:open',async e=>{if(!trusted(e))return false;await shell.openExternal('https://cvg.meshmapper.net/');return true;});
  require('./voice-desktop.cjs').install({app,win,ipcMain,dialog,trusted});
  require('./offline-maps-desktop.cjs').install({win,ipcMain,dialog,trusted});
  let updateResult=null,updateCheck=null,updateCheckedAt=0;
