@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Standardize the top-right Search, layout, connection and startup action controls with one SVG icon family, matching dimensions and focus states. Fold radio status into the connection control and remove redundant badge/decoration. Tracked in [#57](https://github.com/njsnowman/nightlink/issues/57).
+
 - Add an opt-in Windows startup connection to the last synchronized Bluetooth or uniquely identified USB radio. Limit startup attempts, expose Cancel/Retry, and pause on synchronization failure. USB devices without a hardware serial require manual selection. Tracked in [#56](https://github.com/njsnowman/nightlink/issues/56).
 
 - Consolidate channel and direct-message navigation under Messages; retain five main destinations, one top-bar search and optional collapsed conversation shortcuts. Group secondary Activity and Diagnostics tools. Preserve combined unread counts and channel selector state across message updates. Tracked in [#55](https://github.com/njsnowman/nightlink/issues/55).

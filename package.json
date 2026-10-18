@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.3",
+  "version": "0.8.22-rc.4",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -123,7 +123,9 @@
       "navigation-refinement.css",
       "startup-desktop.cjs",
       "startup-connect-ui.js",
-      "startup-connect.css"
+      "startup-connect.css",
+      "header-controls.css",
+      "header-controls.js"
     ],
     "win": {
       "target": [
