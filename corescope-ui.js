@@ -35,6 +35,7 @@
  function show(){
   if(!['Overview','Network map'].includes(current))return;
   const active=effective(),overview=current==='Overview',host=overview?mapPanel:$('#alternate');
+  mapPanel.classList.remove('corescope-pending');
   if(!overview)host.classList.add('network-source-view');
   if(overview)host.querySelector('.panel-heading').after(bar);else host.prepend(bar);
   mapPanel.classList.toggle('overview-corescope',overview&&active!=='radio');
