@@ -1,0 +1,15 @@
+/* Dark black is the default surface palette. External map tiles keep provider styling. */
+:root:not([data-scheme=console]){color-scheme:dark;--bg:#000;--panel:#080808;--line:#303030;--text:#eeeeef;--muted:#b9b9bf;--console-surface:#080808;--console-copy:#eeeeef;--console-secondary:#b9b9bf;--console-edge:#343438;--accent-dim:color-mix(in srgb,var(--accent) 18%,#070707);--accent-soft:color-mix(in srgb,var(--accent) 6%,#080808);--accent-line:color-mix(in srgb,var(--accent) 28%,#292929)}
+:root:not([data-scheme=console]) body{background:#000;color:#eeeeef}
+:root:not([data-scheme=console]) :is(aside,body.compact aside,main,main>header,.content){background:#000}
+:root:not([data-scheme=console]) :is(.panel,.stats article,dialog,.dm-window,.dm-floating,.settings-grid,.contact-profile,.contact-card,.dm-inbox,.corescope-pane,.corescope-startup){background:#090909;color:#eeeeef}
+:root:not([data-scheme=console]) :is(.panel-heading,.dialog-heading,.dm-heading,.chat-channel,.conversation-tools,.workspace-message-tabs,.network-source-bar,.network-source-switch,.dm-compose,.dm-feedback,.composer-hint){background:#0d0d0e;color:#d9d9df}
+:root:not([data-scheme=console]) :is(input,select,textarea,#chat-form,.dm-compose input,dialog input,dialog select,.settings-grid select){background:#080808;color:#eeeeef;border-color:#414147}
+:root:not([data-scheme=console]) :is(.message p,.message.own p,body.compact .message p,.dm-bubble p,.dm-bubble.own p){background:#151516;color:#f0f0f3;border-color:#36363d}
+:root:not([data-scheme=console]) :is(.radio-manage,.conversation-tools button,.voice-actions button,.message-route,.layout-toggle,.header-search,.header-control,.network-source-switch button){background:#111112;color:#dedee5}
+:root:not([data-scheme=console]) :is(.message>.avatar,.message>.contact-avatar,.signal-message-avatar .avatar,.contact-profile #contact-quick-photo .avatar){background:#151516}
+:root:not([data-scheme=console]) :is(.link-preview,.webpage-preview){background:#101011}
+:root:not([data-scheme=console]) aside nav button.active{background:var(--accent-soft);color:var(--accent)}
+:root:not([data-scheme=console]) .network-source-switch button[aria-pressed=true]{background:var(--accent-dim);color:var(--accent)}
+
+html:root:not([data-scheme=console]) .header-actions button.header-control{background:#111112;color:#dedee5}html:root:not([data-scheme=console]) .header-actions #connection[data-signal-state=connected]{background:var(--accent-soft);color:var(--accent)}:root:not([data-scheme=console]) .web-preview{background:#101011}:root:not([data-scheme=console]) .web-preview-picture{background:#1a1a1d}

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Default workspace and detached DMs to a dark black surface scheme; Settings offers Dark black and Blue-black console independently of the display accent. Save and synchronize the selection locally. [#73](https://github.com/njsnowman/nightlink/issues/73)
+
 - Render a CoreScope loading surface before Overview map scripts initialize, preventing the initial Radio map flash. Retain explicit/offline/service fallback. [#72](https://github.com/njsnowman/nightlink/issues/72)
 
 - Default Overview Live mesh to CoreScope on startup and each visit, independently of the saved Network source. Preserve offline/service fallback. [#71](https://github.com/njsnowman/nightlink/issues/71)

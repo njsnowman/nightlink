@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.19",
+  "version": "0.8.22-rc.20",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -147,7 +147,9 @@
       "link-preview-settings.js",
       "pc-location.cjs",
       "login-vault.css",
-      "login-vault.js"
+      "login-vault.js",
+      "display-scheme.js",
+      "display-scheme.css"
     ],
     "win": {
       "target": [
