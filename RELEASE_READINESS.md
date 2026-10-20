@@ -10,8 +10,8 @@ The consolidated [changelog](CHANGELOG.md) describes final behavior rather than 
 
 | Area | Evidence | Status |
 | --- | --- | --- |
-| Protocol, transport, history, backup and safety logic | Full package unit suite | Automated; rerun on final source |
-| Workspace, maps, lock and detached DMs | Browser and native isolated fixtures | Automated; final app.asar checks required |
+| Protocol, transport, history, backup and safety logic | Full package unit suite | 173 tests passed on consolidated source |
+| Workspace, maps, lock and detached DMs | Browser and native isolated fixtures | Browser and packaged native checks passed |
 | Stable 0.8.19 → consolidated history/cards/preferences | Actual old/new app.asar with one isolated profile | Payload upgrade; not installer evidence |
 | Optional lock migration | rc.12 → consolidated DPAPI store and login | Payload upgrade; synthetic credentials |
 | Profile identity/retention | appId local.meshline.desktop; name meshline; userData Meshline; deleteAppDataOnUninstall false | Source-reviewed |
@@ -31,3 +31,7 @@ Neither test installs/uninstalls Nightlink or contacts a radio. New backup expor
 ## Publication rule
 
 Until both open physical/installer gates have recorded evidence, distribute only a clearly labeled local candidate. Do not create a stable tag or GitHub release. Final candidate record must identify source commit, test commands/results, artifact sizes and SHA-256 checksums. Do not claim comprehensive hardware compatibility or actual installer-upgrade preservation from synthetic/payload tests.
+
+## Consolidated candidate evidence
+
+The upgrade fixture retained two exact messages (channel and DM), one full custom contact card including image/notes, two channels, two drafts and four saved preferences. A new black default and an explicit console override both survived restart. The security fixture retained identical protected-store bytes at first post-upgrade lock, then verified recovery/TOTP login, disable and corrupt-state rejection. These are small controlled synthetic datasets; they do not establish arbitrary real-world profile or installer compatibility. Final source/artifact checksums and detailed commands are in releases/0.8.22-rc.21.md.
