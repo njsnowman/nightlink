@@ -1,44 +1,17 @@
 # Changelog
 
-## Unreleased
+## Unreleased — consolidated 0.8.22 candidate
 
-- Default workspace and detached DMs to a dark black surface scheme; Settings offers Dark black and Blue-black console independently of the display accent. Save and synchronize the selection locally. [#73](https://github.com/njsnowman/nightlink/issues/73)
+Release scope and validation gates: [#74](https://github.com/njsnowman/nightlink/issues/74), [release readiness](RELEASE_READINESS.md). Stable publication remains gated by physical M1 backlog confirmation and installer lifecycle validation.
 
-- Render a CoreScope loading surface before Overview map scripts initialize, preventing the initial Radio map flash. Retain explicit/offline/service fallback. [#72](https://github.com/njsnowman/nightlink/issues/72)
-
-- Default Overview Live mesh to CoreScope on startup and each visit, independently of the saved Network source. Preserve offline/service fallback. [#71](https://github.com/njsnowman/nightlink/issues/71)
-
-- Reveal prominent FOR THE MESH lettering inside the opening login vault. [#70](https://github.com/njsnowman/nightlink/issues/70)
-
-- Show the approved vault-unlock transition after successful app-lock authentication, with keyboard skip, reduced-motion bypass and a bounded native fallback to Overview. [#69](https://github.com/njsnowman/nightlink/issues/69)
-
-- Give MeshMapper a separate zoom12 and Windows PC-location center; enable green and red coverage layers, with labeled region fallback when location is unavailable. Start the main window maximized while retaining manual compact controls. [#68](https://github.com/njsnowman/nightlink/issues/68)
-
-- Use regional zoom9 on initial display and Recenter across CoreScope, Radio map and MeshMapper. Preserve manual viewport adjustments and message-path route fitting. [#67](https://github.com/njsnowman/nightlink/issues/67)
-
-- Show lazy compact webpage cards with site-provided thumbnails and metadata in channels and DMs, with a Settings opt-out. Native public-HTTPS fetches are bounded and do not execute website scripts or use signed-in cookies. [#66](https://github.com/njsnowman/nightlink/issues/66)
-
-- Add an opt-in startup password and authenticator-code lock with verified enrollment, one-time recovery codes, replay prevention and persisted attempt limits. Credentials use password-derived encryption plus Windows DPAPI. Existing history is not encrypted by this feature. [#65](https://github.com/njsnowman/nightlink/issues/65)
-
-- Always open the main workspace on Overview at startup while retaining the saved conversation and other preferences. [#64](https://github.com/njsnowman/nightlink/issues/64)
-
-- Apply Signal Bridge branding to application and Windows icons, and revise installer artwork and wizard styling in true black and ice blue. Preserve existing install location, profile identity and update behavior. [#63](https://github.com/njsnowman/nightlink/issues/63)
-
-- Save a three-letter MeshMapper region code locally, defaulting to CVG; apply it to map labels, embed, reachability checks and full-map link. Configure from Network or Settings. [#62](https://github.com/njsnowman/nightlink/issues/62)
-
-- Add session-only CLI Terminal in Radio Tools for supported companion firmware and authenticated repeater/room commands. Restore visible Add channel actions in Messages, Overview and Conversations. [#61](https://github.com/njsnowman/nightlink/issues/61)
-
-- Display bounded HTTPS image and Giphy previews in channel messages and direct conversations, retaining original text and a source link. Images load over the viewer’s Internet connection, not over the radio. [#60](https://github.com/njsnowman/nightlink/issues/60)
-
-- Center Radio map on valid radio-reported coordinates at zoom12, preserve user panning across contact updates, and recenter on source entry or request. Add Network-only MeshMapper CVG coverage embed, fixed full-map link and local fallback on service/offline failure. Tracked in [#59](https://github.com/njsnowman/nightlink/issues/59).
-
-- Open Network CoreScope centered on radio-reported coordinates at zoom9, two levels wider; keep Overview/echo zoom11 and regional fallback zoom9. Add bounded Windows service health checks and automatic local-map fallback for unavailable CoreScope, even when Windows reports online. Tracked in [#58](https://github.com/njsnowman/nightlink/issues/58).
-
-- Standardize the top-right Search, layout, connection and startup action controls with one SVG icon family, matching dimensions and focus states. Fold radio status into the connection control and remove redundant badge/decoration. Tracked in [#57](https://github.com/njsnowman/nightlink/issues/57).
-
-- Add an opt-in Windows startup connection to the last synchronized Bluetooth or uniquely identified USB radio. Limit startup attempts, expose Cancel/Retry, and pause on synchronization failure. USB devices without a hardware serial require manual selection. Tracked in [#56](https://github.com/njsnowman/nightlink/issues/56).
-
-- Consolidate channel and direct-message navigation under Messages; retain five main destinations, one top-bar search and optional collapsed conversation shortcuts. Group secondary Activity and Diagnostics tools. Preserve combined unread counts and channel selector state across message updates. Tracked in [#55](https://github.com/njsnowman/nightlink/issues/55).
+- Consolidate navigation under Overview, Messages, Network, Contacts and Radio; group secondary tools and unify top-right actions. Start maximized on Overview while preserving session compact controls. [#55](https://github.com/njsnowman/nightlink/issues/55), [#57](https://github.com/njsnowman/nightlink/issues/57), [#64](https://github.com/njsnowman/nightlink/issues/64)
+- Apply Signal Bridge icons and installer artwork; default workspace and detached DMs to Dark black, retain Blue-black console and four independent accents. [#63](https://github.com/njsnowman/nightlink/issues/63), [#73](https://github.com/njsnowman/nightlink/issues/73)
+- Open Overview directly with CoreScope loading, independent of Network selection. CoreScope/Radio map default to radio-centered zoom9. MeshMapper uses Windows PC location at zoom12 with green/red coverage layers, saved region and labeled fallback. Preserve automatic local-map fallback and the echo-only split. [#58](https://github.com/njsnowman/nightlink/issues/58), [#62](https://github.com/njsnowman/nightlink/issues/62), [#68](https://github.com/njsnowman/nightlink/issues/68), [#71](https://github.com/njsnowman/nightlink/issues/71), [#72](https://github.com/njsnowman/nightlink/issues/72)
+- Add bounded image/Giphy and webpage previews in channel/Overview/DM messages, with preview opt-out and native URL/fetch limits. [#60](https://github.com/njsnowman/nightlink/issues/60), [#66](https://github.com/njsnowman/nightlink/issues/66)
+- Add opt-in startup password/authenticator lock, recovery codes and post-login vault transition. This does not encrypt existing message history. [#65](https://github.com/njsnowman/nightlink/issues/65), [#69](https://github.com/njsnowman/nightlink/issues/69), [#70](https://github.com/njsnowman/nightlink/issues/70)
+- Add bounded opt-in startup connection to the last synchronized device, session-only radio CLI and restored Add channel actions. [#56](https://github.com/njsnowman/nightlink/issues/56), [#61](https://github.com/njsnowman/nightlink/issues/61)
+- Include identity comparisons, passive RF trends, private map points and queue-notification catch-up changes; physical nonempty M1 backlog confirmation remains pending. [#54](https://github.com/njsnowman/nightlink/issues/54), [#49](https://github.com/njsnowman/nightlink/issues/49)
+- Complete packaged web-asset serving in development preview, include validated MeshMapper region/webpage-preview choices in backup exports, and add isolated payload-upgrade checks for history, cards, drafts, preferences and security state. [#74](https://github.com/njsnowman/nightlink/issues/74)
 
 
 ## 0.8.22-rc.1 — local candidate

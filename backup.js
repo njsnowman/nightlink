@@ -1,7 +1,7 @@
 /* Versioned, local-only backup validation and non-destructive merge planning. */
 (function(root){
 const MAX_BYTES=50*1024*1024,MAX_MESSAGES=3000;
-const simple=['nightlink.accent','nightlink.display-scheme','nightlink.map-annotations.v1','nightlink.backup-reminders','nightlink.update-checks','accent','notifications','reduced-motion','dm-sound','meshline.compact','meshline.auto-reconnect','nightlink.text-scale','nightlink.mention-sound','nightlink.delivery','meshline.map-view','nightlink.sender-links'];
+const simple=['nightlink.accent','nightlink.meshmapper-region','nightlink.link-previews','nightlink.display-scheme','nightlink.map-annotations.v1','nightlink.backup-reminders','nightlink.update-checks','accent','notifications','reduced-motion','dm-sound','meshline.compact','meshline.auto-reconnect','nightlink.text-scale','nightlink.mention-sound','nightlink.delivery','meshline.map-view','nightlink.sender-links'];
 const radioKey=k=>/^[a-f0-9]{64}$/.test(k),historyKey=k=>/^meshline\.history\.[a-f0-9]{64}$/.test(k);
 const allowed=k=>simple.includes(k)||/^nightlink\.drafts\.[a-f0-9]{64}$/.test(k)||k==='meshline.profile'||k==='nightlink.favorites'||historyKey(k)||/^nightlink\.attention\.[a-f0-9]{64}$/.test(k);
 const fail=message=>{throw new Error(message);};
@@ -20,6 +20,8 @@ function card(c){if(!c||!bounded(c.key,1024)||!c.key||!bounded(c.nickname||'',51
 function mapPoints(raw){const points=JSON.parse(raw);if(!Array.isArray(points)||points.length>500)fail('Invalid map point collection.');const ids=new Set();return points.map(p=>{if(!p||!bounded(p.id,100)||!p.id||ids.has(p.id)||!bounded(p.name,80)||!p.name.trim()||!['Location','Coverage note','Measurement'].includes(p.type)||!bounded(p.notes,2000)||!Number.isFinite(p.lat)||Math.abs(p.lat)>85.05112878||!Number.isFinite(p.lon)||Math.abs(p.lon)>180)fail('Invalid map point.');ids.add(p.id);return{id:p.id,name:p.name.trim(),type:p.type,notes:p.notes,lat:p.lat,lon:p.lon};});}
 function validateValue(key,raw){if(typeof raw!=='string')fail('Invalid stored preference.');let v;
 if(key==='nightlink.map-annotations.v1')return JSON.stringify(mapPoints(raw));
+if(key==='nightlink.meshmapper-region'){if(!/^[A-Z]{3}$/.test(raw))fail('Invalid MeshMapper region.');return raw;}
+if(key==='nightlink.link-previews'){if(!['true','false'].includes(raw))fail('Invalid webpage preview preference.');return raw;}
 if(key==='nightlink.display-scheme'){if(!['black','console'].includes(raw))fail('Invalid display scheme.');return raw;}
 if(key==='nightlink.accent'){if(!['ice-blue','amber','emerald','violet'].includes(raw))fail('Invalid display accent.');return raw;}
 if(key.startsWith('nightlink.drafts.')){v=JSON.parse(raw);if(!v||typeof v!=='object'||Array.isArray(v)||Object.keys(v).length>2000||!Object.entries(v).every(([id,text])=>/^(channel|direct):/.test(id)&&id.length<=200&&bounded(text,4096)))fail('Invalid saved drafts.');return JSON.stringify(v);}

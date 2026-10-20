@@ -13,9 +13,12 @@ Windows desktop client for MeshCore companion radios over Bluetooth LE or USB se
 - Compact layout, connection diagnostics, and retained-message synchronization.
 - Passive RF trend summaries with sample counts and last-link limitations.
 - Private Radio map points with local notes and backup merge support.
-- An #echo-only chat/CoreScope split, radio-reported location centering and four display accents.
+- An #echo-only chat/CoreScope split, automatic local-map fallback and configurable MeshMapper region/PC centering.
+- Default dark black surfaces, an alternative console scheme and four independent display accents.
+- Optional startup password/authenticator lock with recovery codes; existing history remains unencrypted.
+- Bounded webpage/image previews and session-only radio CLI tools.
 
-See [local client tools](LOCAL_CLIENT_TOOLS.md) for access paths and limitations. These additions are in the 0.8.22 candidate branch; stable publication remains subject to the release record.
+See [local client tools](LOCAL_CLIENT_TOOLS.md) for access paths and limitations. These additions are in the 0.8.22 candidate branch; stable publication remains subject to the [release-readiness gates](RELEASE_READINESS.md).
 
 ## Development
 
