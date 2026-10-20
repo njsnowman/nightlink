@@ -4,7 +4,7 @@ Settings → App lock → Set up app lock enables a local password plus authenti
 
 ## Protection boundary
 
-The lock gates normal application startup before index.html, message history and automatic connection code load. A separate lock document exposes only security status/unlock/quit methods; workspace and radio bridges are not exposed there. Successful verification opens the Overview workspace. Disabling the feature requires both factors. It does not lock an already open session on idle, tray close, or renderer reload, and does not replace Windows sign-in/lock-screen protection.
+The lock gates normal application startup before index.html, message history and automatic connection code load. A separate lock document exposes only security status/unlock/verified-entry/quit methods; workspace and radio bridges are not exposed there. Successful verification opens the Overview workspace. Disabling the feature requires both factors. It does not lock an already open session on idle, tray close, or renderer reload, and does not replace Windows sign-in/lock-screen protection.
 
 This is **application access control, not an encrypted history vault**. Existing message/contact files and exported backups are not encrypted by this feature. It does not protect against malware running as the same Windows user, local administrators, a modified client, debugging, or deletion/replacement of the settings file. An absent settings file means the opt-in lock has not been configured. Protect the Windows account and disk separately. Restoring a normal Nightlink JSON backup on another computer does not enroll its startup lock.
 
