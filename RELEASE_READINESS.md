@@ -35,3 +35,7 @@ Until both open physical/installer gates have recorded evidence, distribute only
 ## Consolidated candidate evidence
 
 The upgrade fixture retained two exact messages (channel and DM), one full custom contact card including image/notes, two channels, two drafts and four saved preferences. A new black default and an explicit console override both survived restart. The security fixture retained identical protected-store bytes at first post-upgrade lock, then verified recovery/TOTP login, disable and corrupt-state rejection. These are small controlled synthetic datasets; they do not establish arbitrary real-world profile or installer compatibility. Final source/artifact checksums and detailed commands are in releases/0.8.22-rc.21.md.
+
+## Acceptance follow-up
+
+See [acceptance follow-up](releases/0.8.22-acceptance.md) for reverified rc.21 checksums and actual welcome/directory/shortcut-page inspection without installation. Full lifecycle, progress/finish and multiple-DPI evidence remain open. No production profile or radio was changed.
