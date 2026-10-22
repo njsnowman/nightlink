@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Group existing Settings controls by task and align contact cards, map selectors and messaging controls with Switchboard. Preserve providers and radio behavior. [#76](https://github.com/njsnowman/nightlink/issues/76)
+
 - Implement the Switchboard interface with amber defaults, compact channel navigation, flat message rows, and a passive signal summary. Preserve saved accents and radio behavior. Tracking: [#75](https://github.com/njsnowman/nightlink/issues/75).
 
 Release scope and validation gates: [#74](https://github.com/njsnowman/nightlink/issues/74), [release readiness](RELEASE_READINESS.md). Stable publication remains gated by physical M1 backlog confirmation and installer lifecycle validation.
