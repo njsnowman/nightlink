@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Retry the selected remote map automatically after transient fallback; require consecutive failed health checks and allow a bounded longer initial embed load. [#77](https://github.com/njsnowman/nightlink/issues/77)
+
 - Group existing Settings controls by task and align contact cards, map selectors and messaging controls with Switchboard. Preserve providers and radio behavior. [#76](https://github.com/njsnowman/nightlink/issues/76)
 
 - Implement the Switchboard interface with amber defaults, compact channel navigation, flat message rows, and a passive signal summary. Preserve saved accents and radio behavior. Tracking: [#75](https://github.com/njsnowman/nightlink/issues/75).
