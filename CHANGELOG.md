@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Keep a loaded CoreScope page open during health-only failures, warn without claiming a live feed, and allow up to 120 seconds for initial page loading. Offline and frame-error fallback remain available. [#77](https://github.com/njsnowman/nightlink/issues/77)
+
 - Retry the selected remote map automatically after transient fallback; require consecutive failed health checks and allow a bounded longer initial embed load. [#77](https://github.com/njsnowman/nightlink/issues/77)
 
 - Group existing Settings controls by task and align contact cards, map selectors and messaging controls with Switchboard. Preserve providers and radio behavior. [#76](https://github.com/njsnowman/nightlink/issues/76)

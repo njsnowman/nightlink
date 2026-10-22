@@ -33,13 +33,15 @@
  function start(){
   stop();const source=effective();if(source==='radio')return;
   const label=source==='meshmapper'?'MeshMapper '+region():'OKI Mesh CoreScope';
-  status.textContent='Opening '+label+' · internet service';
+  let loaded=false,healthWarning=false;
+  const paintStatus=()=>{if(frame!==active)return;status.textContent=healthWarning?label+' health check delayed or unavailable · keeping page open; live feed not verified':loaded?(source==='meshmapper'?'MeshMapper '+region()+' page loaded · '+pcLabel():'CoreScope page loaded · live packets supplied by CoreScope · '+NightlinkCoreScopeLocation.viewport(context()).source):'Opening '+label+' · allowing time for service startup';};
+  status.textContent='Opening '+label+' · allowing time for service startup';
   const active=document.createElement('iframe');frame=active;active.id=source==='meshmapper'?'meshmapper-frame':'corescope-frame';active.title=source==='meshmapper'?'MeshMapper '+region()+' coverage map':'OKI Mesh CoreScope live map';
   active.setAttribute('sandbox','allow-scripts allow-same-origin');active.referrerPolicy='no-referrer';active.setAttribute('allow','fullscreen');active.allowFullscreen=true;
   const unavailable=()=>{if(frame!==active)return;failed[source]=true;show();scheduleRecovery(source);};
-  active.onload=()=>{if(frame!==active)return;clearTimeout(timer);status.textContent=source==='meshmapper'?'MeshMapper '+region()+' · read-only regional coverage · '+pcLabel():'OKI Mesh observer data · '+NightlinkCoreScopeLocation.viewport(context()).source;};
+  active.onload=()=>{if(frame!==active)return;loaded=true;clearTimeout(timer);paintStatus();};
   active.onerror=unavailable;locationSignature=NightlinkCoreScopeLocation.signature(context());active.src=remoteURL(source);holder.append(active);
-  stopHealth=NightlinkCoreScopeAvailability.watch(unavailable,source,region());timer=setTimeout(unavailable,45000);
+  stopHealth=NightlinkCoreScopeAvailability.watch(source==='corescope'?()=>{if(frame!==active)return;healthWarning=true;paintStatus();}:unavailable,source,region(),()=>{if(frame!==active)return;healthWarning=false;paintStatus();});timer=setTimeout(unavailable,120000);
  }
  function show(){
   if(!['Overview','Network map'].includes(current))return;
@@ -51,7 +53,7 @@
   for(const source of ['corescope','radio','meshmapper'])bar.querySelector('#network-'+source).setAttribute('aria-pressed',String(active===source));
   bar.querySelector('#network-meshmapper').hidden=overview;bar.querySelector('#network-meshmapper').textContent='MeshMapper '+region();bar.querySelector('#network-meshmapper-region').hidden=overview;bar.querySelector('#network-meshmapper-region').textContent='Region: '+region();bar.querySelector('#network-open-meshmapper').hidden=active!=='meshmapper';
   const remote=wanted(),label=remote==='meshmapper'?'MeshMapper '+region():'CoreScope';
-  bar.querySelector('#network-source-note').textContent=active==='meshmapper'?pcLabel()+' · green coverage / red dropped packets':active==='corescope'?'OKI Mesh · online observer data':!navigator.onLine?'Offline radio map · downloaded street tiles':failed[remote]?label+' unavailable · local radio map · retrying automatically':'Local radio map · '+(MeshlineStreetMaps.radioView()?'radio-reported location':'saved or regional location');
+  bar.querySelector('#network-source-note').textContent=active==='meshmapper'?pcLabel()+' · green coverage / red dropped packets':active==='corescope'?'CoreScope · external live feed':!navigator.onLine?'Offline radio map · downloaded street tiles':failed[remote]?label+' unavailable · local radio map · retrying automatically':'Local radio map · '+(MeshlineStreetMaps.radioView()?'radio-reported location':'saved or regional location');
   const reload=bar.querySelector('#network-reload');reload.hidden=remote==='radio';reload.textContent='Reload '+label;
   mapPanel.querySelector('.live').textContent=active==='meshmapper'?'MESHMAPPER':active==='corescope'?'OKI MESH':live.sync==='ready'?'RADIO':'OFFLINE';
   if(active==='meshmapper'&&!pcAttempted)locatePC();

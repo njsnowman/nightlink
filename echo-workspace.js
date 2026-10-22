@@ -14,8 +14,9 @@
   restoreMap();if(frame?.isConnected)return;
   status.textContent='Loading CoreScope · observer activity is separate from radio delivery status.';
   frame=document.createElement('iframe');frame.id='echo-corescope-frame';frame.title='OKI Mesh CoreScope for echo testing';frame.setAttribute('sandbox','allow-scripts allow-same-origin');frame.referrerPolicy='no-referrer';frame.allowFullscreen=true;
-  frame.onload=()=>{clearTimeout(timer);status.textContent=NightlinkCoreScopeLocation.viewport().source+' · Observer activity is not delivery acknowledgment. Use Local map or Reload if unavailable.';};
-  frame.onerror=()=>{failed=true;displayMap();};locationSignature=NightlinkCoreScopeLocation.signature();frame.src=NightlinkCoreScopeLocation.url();mapHost.append(frame);stopHealth=NightlinkCoreScopeAvailability.watch(()=>{failed=true;displayMap();});timer=setTimeout(()=>{failed=true;displayMap();},15000);
+  const observed=frame;let loaded=false;const ready=()=>{if(frame===observed&&loaded)status.textContent='CoreScope page loaded · live feed supplied by CoreScope. Observer activity is not delivery acknowledgment.';};
+  frame.onload=()=>{if(frame!==observed)return;loaded=true;clearTimeout(timer);ready();};
+  frame.onerror=()=>{if(frame!==observed)return;failed=true;displayMap();};locationSignature=NightlinkCoreScopeLocation.signature();frame.src=NightlinkCoreScopeLocation.url();mapHost.append(frame);stopHealth=NightlinkCoreScopeAvailability.watch(()=>{if(frame===observed)status.textContent='CoreScope health check delayed or unavailable · keeping page open; live feed not verified.';},'corescope','CVG',ready);timer=setTimeout(()=>{if(frame===observed){failed=true;displayMap();}},120000);
  }
  function create(){
   shell=document.createElement('section');shell.id='echo-workspace';shell.className='echo-workspace';shell.style.setProperty('--echo-chat-share',ratio+'%');
