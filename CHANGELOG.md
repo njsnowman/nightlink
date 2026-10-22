@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Implement the Switchboard interface with amber defaults, compact channel navigation, flat message rows, and a passive signal summary. Preserve saved accents and radio behavior. Tracking: [#75](https://github.com/njsnowman/nightlink/issues/75).
+
 Release scope and validation gates: [#74](https://github.com/njsnowman/nightlink/issues/74), [release readiness](RELEASE_READINESS.md). Stable publication remains gated by physical M1 backlog confirmation and installer lifecycle validation.
 
 - Consolidate navigation under Overview, Messages, Network, Contacts and Radio; group secondary tools and unify top-right actions. Start maximized on Overview while preserving session compact controls. [#55](https://github.com/njsnowman/nightlink/issues/55), [#57](https://github.com/njsnowman/nightlink/issues/57), [#64](https://github.com/njsnowman/nightlink/issues/64)

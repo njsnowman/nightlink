@@ -1,0 +1,94 @@
+/* Switchboard industrial console. Loaded after legacy presentation styles. */
+html:root{--sb-bg:#080908;--sb-surface:#0d100c;--sb-edge:#34392f;--sb-copy:#eeeee6;--sb-muted:#afb4a7;--bg:var(--sb-bg);--panel:var(--sb-surface);--line:var(--sb-edge);--text:var(--sb-copy);--muted:var(--sb-muted);--console-copy:var(--sb-copy);--console-secondary:var(--sb-muted);--console-surface:var(--sb-surface);--console-edge:var(--sb-edge);--accent-soft:color-mix(in srgb,var(--accent) 7%,#0c0e0c);--accent-dim:color-mix(in srgb,var(--accent) 18%,#0c0e0c);--accent-line:color-mix(in srgb,var(--accent) 35%,#33372f)}
+html body{background:var(--sb-bg);color:var(--sb-copy);font-family:'Segoe UI Variable','Segoe UI',sans-serif;letter-spacing:.05px}
+html body::before{display:none}
+:root:not([data-scheme=console]) body{background:#000}
+html body aside,html body.compact aside{inset:12px auto 12px 12px;width:188px;padding:22px 12px 12px;border:1px solid var(--sb-edge);border-radius:2px;background:linear-gradient(135deg,#11140f,#090b09 65%);box-shadow:none;backdrop-filter:none}
+html body main,html body.compact main{margin-left:212px;background:var(--sb-bg);width:calc(100% - 212px)}
+html body main>header,html body.compact main>header{height:64px;min-height:64px;padding:0 22px;background:#0a0c0a;border-bottom:1px solid var(--sb-edge);backdrop-filter:none}
+html body .content,html body.compact .content{max-width:none;padding:16px 22px;background:var(--sb-bg)}
+html body aside .brand{padding:0 4px;margin-bottom:32px;font-size:25px;gap:9px;letter-spacing:-1px;font-weight:650;color:var(--sb-copy)}
+html body aside .brand-icon{width:34px;height:34px;filter:none}
+html body aside nav{gap:7px}
+html body aside nav button,html body.compact aside nav button{height:44px;min-height:44px;padding:0 12px;gap:12px;color:#b7bdaf;border:1px solid transparent;border-radius:2px;font-weight:500;background:transparent;box-shadow:none}
+html body aside nav button>span{font-size:15px;font-weight:500}
+html body aside nav button.active{color:var(--accent);background:linear-gradient(90deg,var(--accent-dim),transparent);border-color:var(--accent-line);box-shadow:inset 3px 0 var(--accent)}
+html body aside nav button:not(.active):hover{background:#181c16;border-color:var(--sb-edge);color:var(--sb-copy)}
+html body aside .sidebar-group{border-color:var(--sb-edge);margin-top:15px;padding-top:10px}
+html body aside .sidebar-group summary{font-size:12px;color:var(--sb-muted);padding:9px 8px;letter-spacing:.4px}
+html body aside .sidebar-group button.channel{font-size:13px;padding:9px;border-radius:2px}
+html body aside .channel span{font-size:13px;color:var(--sb-muted)}
+html body aside .channel.selected{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+html body aside .channel.selected span{color:var(--accent)}
+html body aside .sidebar-browse{color:var(--sb-muted);font-size:12px;padding:8px}
+html body aside .aside-bottom{border-top:1px solid var(--sb-edge);padding-top:12px}
+html body aside .settings{padding:12px 8px;font-size:14px;color:#b7bdaf}
+html body .breadcrumb{font:12px Consolas,'Cascadia Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:var(--sb-muted)}
+html body .breadcrumb strong{color:var(--accent)}
+html body .header-actions{gap:8px}
+html body .header-actions button.header-control,html body.compact .header-actions button.header-control{height:36px;min-height:36px;border-radius:3px;border:1px solid var(--sb-edge);background:#10130f;color:#d7dbd0;font-size:13px;padding:0 13px;box-shadow:none}
+html body .header-actions button.header-control:hover{border-color:var(--accent);background:var(--accent-soft)}
+html body .header-actions #connection[data-signal-state=connected]{color:var(--accent);background:var(--accent-soft);border-color:var(--accent-line)}
+html body .page-heading{margin-bottom:14px;min-height:0}
+html body .page-heading h1{font-size:27px;line-height:1.15;letter-spacing:-.6px;margin:0 0 5px;color:var(--sb-copy)}
+html body .page-heading p{font-size:12px;line-height:1.4;color:var(--sb-muted)}
+html body #overview>.stats,html body.compact #overview>.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--sb-edge);border-radius:2px;background:var(--sb-surface);margin-bottom:14px;position:relative}
+html body #overview>.stats article,html body.compact #overview>.stats article{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:5px;border:0;border-right:1px solid var(--sb-edge);border-radius:0;min-height:74px;padding:10px 20px;background:transparent;box-shadow:none;backdrop-filter:none}
+html body #overview>.stats article:last-child{border-right:0}
+html body #overview>.stats article::after{display:none}
+html body #overview>.stats article>div:first-child{font:11px Consolas,monospace;text-transform:uppercase;letter-spacing:1px;color:var(--sb-muted)}
+html body #overview>.stats strong,html body.compact #overview>.stats strong{font:500 27px/1.1 'Segoe UI Variable','Segoe UI',sans-serif;color:var(--sb-copy);letter-spacing:0;margin:0}
+html body #overview>.stats strong small{font:12px Consolas,monospace;color:var(--sb-muted);float:none;margin-left:5px}
+html body #overview>.dashboard-grid,html body.compact #overview>.dashboard-grid{grid-template-columns:minmax(0,3fr) minmax(280px,2fr);grid-template-rows:minmax(0,1fr);gap:14px}
+html body #overview .conversation{grid-column:1;grid-row:1}
+html body #overview .map-panel{grid-column:2;grid-row:1}
+html body .panel{position:relative;border:1px solid var(--sb-edge);border-radius:2px;background:linear-gradient(135deg,#11140f,#090c09 65%);box-shadow:none;backdrop-filter:none}
+html body .panel::before{content:'';position:absolute;inset:0;z-index:3;width:auto;height:auto;pointer-events:none;filter:none;opacity:.8;box-shadow:none;background:linear-gradient(var(--accent),var(--accent)) left top/15px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) left top/2px 11px no-repeat,linear-gradient(var(--accent),var(--accent)) right top/15px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) right top/2px 11px no-repeat,linear-gradient(var(--accent),var(--accent)) left bottom/10px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) left bottom/2px 15px no-repeat,linear-gradient(var(--accent),var(--accent)) right bottom/10px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) right bottom/2px 15px no-repeat}
+html body .panel-heading,html body .dm-heading,html body .dialog-heading{background:#10130f;border-color:var(--sb-edge);color:var(--sb-copy)}
+html body .panel-heading h2{font-size:15px;font-weight:600;letter-spacing:.1px;color:var(--sb-copy)}
+html body .panel-heading button{font-size:12px;color:var(--sb-muted)}
+html body #overview .panel-heading{height:44px;min-height:44px;padding:0 15px}
+html body .network-source-bar,html body .network-source-switch,html body .conversation-tools,html body .workspace-message-tabs,html body .chat-channel{background:#0c0f0b;border-color:var(--sb-edge);color:var(--sb-copy)}
+html body .network-source-switch{border-radius:2px}
+html body .network-source-switch button,html body .conversation-tools button,html body .voice-actions button,html body .workspace-message-tabs button{border-radius:2px;background:#11150f;border-color:var(--sb-edge);color:var(--sb-muted);font-size:12px}
+html body .network-source-switch button[aria-pressed=true],html body .workspace-message-tabs button[aria-pressed=true]{color:var(--accent);border-color:var(--accent-line);background:var(--accent-soft);box-shadow:inset 0 -2px var(--accent)}
+html body .network-source-bar{padding:7px 9px;gap:7px;font-size:12px}
+html body .map-footer,html body .echo-map-status{background:#0c0f0b;border-color:var(--sb-edge);color:var(--sb-muted)}
+html body #overview .map-footer{font-size:10px}
+html body .corescope-pane,html body .corescope-startup{background:#0b0f0b;color:var(--sb-muted)}
+html body .count,html body .live{color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:2px;font:11px Consolas,monospace;padding:3px 6px}
+html body .radio-manage,html body .message-route,html body .rf-trend-controls button{background:#11150f;border:1px solid var(--sb-edge);border-radius:2px;color:#d5dbce}
+html body .radio-manage:hover,html body .message-route:hover{border-color:var(--accent);color:var(--accent)}
+html body .primary,html body #chat-form button,html body .dm-compose button.primary{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 85%,white),var(--accent));border-color:var(--accent);border-radius:3px;color:#171309;font-weight:650;box-shadow:none}
+html body .primary:hover,html body #chat-form button:hover{background:color-mix(in srgb,var(--accent) 85%,white);color:#171309}
+html body input,html body select,html body textarea,html body .settings-grid input,html body .settings-grid select,html body dialog input,html body dialog textarea,html body dialog select{border:1px solid #41483b;border-radius:3px;background:#10130f;color:var(--sb-copy);font-family:inherit}
+html body input::placeholder,html body textarea::placeholder{color:#9aa18f;opacity:1}
+html body dialog,html body .dm-window,html body .dm-floating{border:1px solid var(--accent-line);border-radius:4px;background:#0d100c;color:var(--sb-copy);box-shadow:0 24px 100px #000a}
+html body dialog::backdrop{background:#040604cc;backdrop-filter:blur(5px)}
+html body .settings-grid,html body .contact-profile,html body .contact-card,html body .dm-inbox,html body .contact-profile-facts,html body .contact-profile-notes,html body .diagnostics-body,html body .rf-trend-metrics>div,html body .annotation-row{background:#10140f;color:var(--sb-copy);border-color:var(--sb-edge);border-radius:3px}
+html body .radio-details strong,html body .radio-device strong,html body .contact-profile-facts dd{color:var(--sb-copy)}
+html body .rf-trend-chart{background:#090d09;border-color:var(--sb-edge)}
+html body .rf-trend-chart .rf-grid{stroke:#2b3327}
+html body .identity-fingerprint{background:#090d09;border-color:var(--sb-edge);color:var(--sb-copy)}
+html body .web-preview,html body .link-preview{background:#10140f;border-color:var(--sb-edge)}
+html body :is(button,a,input,select,textarea):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+html body .switchboard-channel-tabs{display:flex;align-items:stretch;gap:4px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:thin}
+html body .switchboard-channel-tabs button{white-space:nowrap;padding:9px 13px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--sb-muted);font-size:14px;flex:none}
+html body .switchboard-channel-tabs button[aria-pressed=true]{color:var(--accent);border-bottom-color:var(--accent);background:var(--accent-soft)}
+html body .switchboard-trend{display:none;flex:none;border-top:1px solid var(--sb-edge);background:#0b0f0a;padding:10px 13px 8px;min-height:105px}
+html body #overview .switchboard-trend{display:block}
+html body .switchboard-trend h3{margin:0 0 6px;font:11px Consolas,monospace;letter-spacing:1px;text-transform:uppercase;color:var(--sb-copy)}
+html body .switchboard-trend svg{display:block;width:100%;height:58px;overflow:visible}
+html body .switchboard-trend svg text{fill:var(--sb-muted);font-size:10px}
+html body .switchboard-trend p,html body .switchboard-trend figcaption{margin:5px 0 0;font-size:10px;color:var(--sb-muted);line-height:1.3}
+@media(max-height:780px){html body aside,html body.compact aside{padding-top:16px}html body aside .brand{margin-bottom:20px}html body main>header,html body.compact main>header{height:52px;min-height:52px}html body .content,html body.compact .content{padding-top:10px;padding-bottom:10px}html body .page-heading{margin-bottom:10px}html body .page-heading h1{font-size:23px}html body .page-heading p{display:none}html body #overview>.stats,html body.compact #overview>.stats{margin-bottom:10px}html body #overview>.stats article,html body.compact #overview>.stats article{min-height:58px;padding:8px 14px}html body #overview>.stats strong,html body.compact #overview>.stats strong{font-size:22px}html body aside nav button,html body.compact aside nav button{height:39px;min-height:39px}}
+@media(max-width:1100px){html body aside,html body.compact aside{width:164px;padding-inline:9px}html body main,html body.compact main{margin-left:188px;width:calc(100% - 188px)}html body aside .brand{font-size:22px;gap:6px}html body aside .brand-icon{width:29px;height:29px}html body .content,html body.compact .content{padding-inline:14px}html body #overview>.dashboard-grid,html body.compact #overview>.dashboard-grid{grid-template-columns:minmax(0,3fr) minmax(250px,2fr);gap:10px}html body .network-source-bar{flex-wrap:wrap}}
+@media(max-width:1000px){html body #overview>.dashboard-grid,html body.compact #overview>.dashboard-grid{grid-template-columns:minmax(0,1fr);grid-template-rows:42px minmax(0,1fr)}html body #overview .map-panel{grid-column:1;grid-row:1}html body #overview .conversation{grid-column:1;grid-row:2}html body #overview.map-expanded>.dashboard-grid,html body.compact #overview.map-expanded>.dashboard-grid{grid-template-rows:180px minmax(0,1fr)}html body #overview .map-panel>.panel-heading{height:40px;min-height:40px}html body #overview-map-toggle{display:block}html body #overview>.stats article,html body.compact #overview>.stats article{padding-inline:10px}html body #overview>.stats article>div:first-child{font-size:9px;letter-spacing:.4px}html body #overview .switchboard-trend{display:none!important}}
+@media(max-width:850px){html body aside,html body.compact aside{inset:8px auto 8px 8px;width:68px;padding:14px 6px}html body main,html body.compact main{margin-left:84px;width:calc(100% - 84px)}html body aside .brand,html body.compact aside .brand{font-size:0;gap:0;justify-content:center;margin-bottom:20px}html body aside .brand-icon{width:32px;height:32px}html body aside nav button,html body.compact aside nav button{justify-content:center;padding:8px 4px;min-height:42px}html body aside nav button>span,html body aside nav button>em{display:none}html body aside .settings{font-size:0}html body aside .sidebar-group[open]{background:#0d110c;border-color:var(--sb-edge);left:80px}html body aside .sidebar-group[open] button>span{display:inline}html body .breadcrumb{display:none}html body main>header,html body.compact main>header{padding-inline:12px}html body .header-actions button.header-control,html body.compact .header-actions button.header-control{font-size:12px;padding-inline:9px}html body #overview>.stats article,html body.compact #overview>.stats article{min-height:52px;padding:6px 8px}html body #overview>.stats strong,html body.compact #overview>.stats strong{font-size:19px}}
+@media(max-height:650px){html body .page-heading{margin-bottom:8px}html body #overview>.stats article,html body.compact #overview>.stats article{min-height:45px;padding:5px 10px}html body #overview>.stats strong,html body.compact #overview>.stats strong{font-size:20px}html body aside .brand{margin-bottom:12px}html body aside .sidebar-group{margin-top:7px;padding-top:5px}html body #overview .switchboard-trend{display:none}}
+
+html body .content:has(>#overview:not([hidden]))>.page-heading{display:none}
+
+@media(max-width:1000px) and (max-height:700px){html body #overview.map-expanded>.dashboard-grid,html body.compact #overview.map-expanded>.dashboard-grid{grid-template-rows:130px minmax(0,1fr)}}
+
+html body #overview .map-panel>.switchboard-trend{order:20}

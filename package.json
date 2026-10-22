@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.21",
+  "version": "0.8.22-rc.22",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -149,7 +149,10 @@
       "login-vault.css",
       "login-vault.js",
       "display-scheme.js",
-      "display-scheme.css"
+      "display-scheme.css",
+      "switchboard.css",
+      "switchboard-messages.css",
+      "switchboard-ui.js"
     ],
     "win": {
       "target": [
