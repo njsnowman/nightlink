@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Simplify radio loading to a compact status card and one motion-aware ring; remove visible terminal, counters and phase tracker. Preserve transport choice, cancel/retry, error details and automatic Overview entry. [#81](https://github.com/njsnowman/nightlink/issues/81)
+
 - Replace legacy cyan installer branding with Switchboard black/amber artwork, custom welcome/options/completion pages and matching native-page colors. Preserve per-user setup, optional shortcut and retained app data. Installer visual/lifecycle acceptance remains separate from compilation. [#80](https://github.com/njsnowman/nightlink/issues/80)
 
 - Separate message interactions: body selects a reply with local context and channel sender mention, hop badge opens route details/map, and sender opens contact/DM actions. Preserve drafts and nested link/mention actions; detached-DM route requests are checked against that window’s message snapshot. Reply context is local, not protocol threading. [#79](https://github.com/njsnowman/nightlink/issues/79)
