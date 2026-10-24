@@ -18,5 +18,8 @@ document.addEventListener('click',e=>{const nav=e.target.closest('[data-view]');
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-node]')){e.preventDefault();inspectNode(Number(e.target.dataset.node));}});
 function setZoom(v){zoom=Math.max(1,Math.min(2.5,v));const w=800/zoom,h=440/zoom;$('#mesh-map').setAttribute('viewBox',[(800-w)/2,(440-h)/2,w,h].join(' '));}
 $('#zoom-in').onclick=()=>setZoom(zoom+.25);$('#zoom-out').onclick=()=>setZoom(zoom-.25);$('#recenter').onclick=()=>setZoom(1);
-function clock(){ $('#clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' LOCAL';}clock();setInterval(clock,1000);
+// The display has minute precision; avoid waking the header observer every second.
+let clockTimer;
+function clock(){clearTimeout(clockTimer);if(document.hidden)return;const label=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' LOCAL',element=$('#clock');if(element.textContent!==label)element.textContent=label;clockTimer=setTimeout(clock,60000-Date.now()%60000+25);}
+document.addEventListener('visibilitychange',clock);clock();
 

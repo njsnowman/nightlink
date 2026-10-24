@@ -18,6 +18,8 @@ const fs=require('node:fs/promises'),path=require('node:path'),assert=require('n
  await page.evaluate(()=>{view('Overview');const now=Date.now();evidenceStore.rows=[{type:'packet',at:now-10000,data:{valid:true,snr:13}},{type:'packet',at:now-1800000,data:{valid:true,snr:8}}];renderMessages();});
  assert.equal(await page.locator('.switchboard-trend .trend-dot').count(),2);
  assert.equal(await page.locator('.switchboard-trend polyline').count(),0);
+ const reused=await page.evaluate(()=>{const dot=document.querySelector('.switchboard-trend .trend-dot'),tab=document.querySelector('.switchboard-channel-tabs');renderMessages();return{dot:dot===document.querySelector('.switchboard-trend .trend-dot'),tab:tab===document.querySelector('.switchboard-channel-tabs')};});
+ assert.deepEqual(reused,{dot:true,tab:true},'unchanged presentation should retain chart and channel controls');
  assert.match(await page.locator('.switchboard-trend small').innerText(),/2 passive samples.*gaps/);
  await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-switchboard-overview.png'});
  await page.evaluate(()=>view('Messages'));

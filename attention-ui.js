@@ -44,7 +44,7 @@ function refreshUnreadBadges(){
 const attentionChannels=renderChannels;renderChannels=function(){attentionChannels();refreshUnreadBadges();};
 const attentionInbox=renderDMInbox;renderDMInbox=function(){attentionInbox();if(current==='Direct Messages'){refreshUnreadBadges();}};
 const jumpNewest=document.createElement('button');jumpNewest.id='jump-newest';jumpNewest.className='reading-jump';jumpNewest.hidden=true;jumpNewest.textContent='Jump to latest ↓';chatReadingLog.after(jumpNewest);
-jumpNewest.onclick=()=>{chatReadingLog.scrollTop=chatReadingLog.scrollHeight;captureReading();markVisibleReading();jumpNewest.hidden=true;};
+jumpNewest.onclick=()=>{messageWindowLatest();renderMessages();chatReadingLog.scrollTop=chatReadingLog.scrollHeight;captureReading();markVisibleReading();jumpNewest.hidden=true;};
 const muteChannel=document.createElement('button');muteChannel.id='mute-channel';muteChannel.className='channel-mute';muteChannel.hidden=true;$('.chat-channel').append(muteChannel);
 muteChannel.onclick=()=>{if(live.selected?.kind!=='channel')return;const id=conversationId(live.selected),state=ensureAttention();state.mute(id,!state.muted.has(id));renderMessages();renderChannels();};
 const attentionMessages=renderMessages;
@@ -54,7 +54,7 @@ renderMessages=function(){
  if(changed){readingConversation=next;readingBoundary=next?state.unread(live.messages,next)[0]?.id:null;}
  const position=next?state.position(next):null;if(!readingBoundary&&next&&(!chatIsVisible()||(position&&!position.bottom)))readingBoundary=state.unread(live.messages,next)[0]?.id;
  attentionMessages();
- const rows=next?conversationRows(next):[];
+ const rows=renderedConversationRows();
  chatReadingLog.querySelectorAll('.message').forEach((row,i)=>{row.dataset.messageId=rows[i].id;});
  if(readingBoundary){const row=[...chatReadingLog.querySelectorAll('.message')].find(r=>r.dataset.messageId===readingBoundary);if(row){const divider=document.createElement('div');divider.className='new-messages-divider';divider.textContent='New messages';divider.setAttribute('role','separator');row.before(divider);}}
  muteChannel.hidden=live.selected?.kind!=='channel';

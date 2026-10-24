@@ -48,3 +48,6 @@ html:root body .switchboard-trend .trend-grid{stroke:#35372f;stroke-width:1}
 html:root body .switchboard-trend .trend-range{stroke:var(--accent);stroke-width:1;opacity:.55}
 html:root body .switchboard-trend .trend-dot{fill:var(--accent)}
 html:root body .switchboard-trend small{display:block;color:var(--sb-muted);font:10px/1.4 Consolas,monospace}
+
+/* Archive paging stays inside the message pane; latest messages remain the default. */
+.message-history-page{display:block;margin:8px auto;padding:9px 14px;font:inherit;font-size:.8rem;color:var(--accent);background:var(--panel,#091219);border:1px solid var(--line,#294351);cursor:pointer}

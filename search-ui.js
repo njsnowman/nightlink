@@ -8,7 +8,7 @@ function appendSearchOption(select,value,label){const option=document.createElem
 function highlightedSearchText(text,query){const fragment=document.createDocumentFragment(),needle=query.trim();if(!needle){fragment.append(document.createTextNode(text));return fragment;}const safe=needle.replace(/[.*+?^$()|[\]\\{}]/g,'\\$&'),expression=new RegExp(safe,'giu');let at=0,match;while((match=expression.exec(text))){fragment.append(document.createTextNode(text.slice(at,match.index)));const mark=document.createElement('mark');mark.textContent=match[0];fragment.append(mark);at=match.index+match[0].length;}fragment.append(document.createTextNode(text.slice(at)));return fragment;}
 function openSearchMessage(message){
  const m=live.messages.find(m=>m.id===message.id);if(!m){toast('This message is no longer in saved history.');return;}
- searchFocusId=m.id;pendingReadingJump=m.id;selectConversation({...m.target});
+ messageWindow.focus=m.id;searchFocusId=m.id;pendingReadingJump=m.id;selectConversation({...m.target});
  requestAnimationFrame(()=>{
   pendingReadingJump=null;if(live.selected&&conversationId(live.selected)===m.conversation){
    const row=[...chatReadingLog.querySelectorAll('.message')].find(row=>row.dataset.messageId===m.id);if(!row)return;
