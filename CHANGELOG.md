@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Restore explicit MeshMapper recentering when Windows returns unchanged coordinates; coalesce repeated clicks and ignore late location completion after navigation. [#78](https://github.com/njsnowman/nightlink/issues/78)
+
 - Bound mounted conversation rows to 120 with archive paging and search navigation; retain unchanged detached-DM content and suppress duplicate snapshots. Reuse unchanged map frames, pause hidden health probes, retain unchanged signal/chart controls, and add session phase timings in Radio Health. Timings distinguish page loading from live feed readiness. [#78](https://github.com/njsnowman/nightlink/issues/78)
 
 - Keep a loaded CoreScope page open during health-only failures, warn without claiming a live feed, and allow up to 120 seconds for initial page loading. Offline and frame-error fallback remain available. [#77](https://github.com/njsnowman/nightlink/issues/77)

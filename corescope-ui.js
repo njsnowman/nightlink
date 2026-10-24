@@ -1,6 +1,6 @@
 /* Remote sources are isolated from local radio contacts and private overlays. */
 (function(){
- let mode='corescope',overviewMode='corescope',frame=null,frameKey='',timer=null,stopHealth=null,finishPage=null,locationSignature='',retryTimer=null,retryEpoch=0;
+ let mode='corescope',overviewMode='corescope',frame=null,frameKey='',timer=null,stopHealth=null,finishPage=null,locationSignature='',retryTimer=null,retryEpoch=0,recenterRequest=0;
  let pcPosition=null,pcPending=null,pcAttempted=false;
  function locatePC(){if(pcPending)return pcPending;pcAttempted=true;pcPending=Promise.resolve().then(()=>window.nightlinkMeshMapper?.location?.()).then(p=>{pcPosition=p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&Math.abs(p.lat)<=85&&Math.abs(p.lon)<=180?p:null;}).catch(()=>{pcPosition=null;}).finally(()=>{pcPending=null;if(current==='Network map'&&effective()==='meshmapper')show();});return pcPending;}
  const pcLabel=()=>pcPending?'Locating PC…':pcPosition?'PC location · Windows estimate':region()+' region center · PC location unavailable; enable Windows Location and Recenter';
@@ -65,16 +65,16 @@
   if(active!=='radio'){mapPanel.hidden=!overview;if(pane.parentElement!==host)host.append(pane);start(force);}
   else{stop();pane.remove();mapPanel.hidden=false;if(!overview)host.append(mapPanel);centerNetworkStreetMap();requestAnimationFrame(()=>networkStreetMap?.invalidateSize());}
  }
- function choose(source){failed[source]=false;if(current==='Overview'){overviewMode=source;show();return;}mode=source;if(source==='meshmapper')locatePC();try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
+ function choose(source){recenterRequest++;failed[source]=false;if(current==='Overview'){overviewMode=source;show();return;}mode=source;if(source==='meshmapper')locatePC();try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
  for(const source of ['corescope','radio','meshmapper'])bar.querySelector('#network-'+source).onclick=()=>choose(source);
  bar.querySelector('#network-open-meshmapper').onclick=()=>window.nightlinkMeshMapper?.open(region());
  bar.querySelector('#network-meshmapper-region').onclick=()=>showMeshMapperRegion();
  window.addEventListener('nightlink-meshmapper-region',()=>{failed.meshmapper=false;show();});
- bar.querySelector('#network-center').onclick=()=>{if(effective()==='meshmapper'){locatePC();return;}if(effective()!=='radio')start(true);else centerNetworkStreetMap();};
+ bar.querySelector('#network-center').onclick=()=>{if(effective()==='meshmapper'){const request=++recenterRequest,expectedFrame=frame;locatePC().then(()=>{if(request===recenterRequest&&current==='Network map'&&effective()==='meshmapper'&&frame===expectedFrame)show(true);});return;}if(effective()!=='radio')start(true);else centerNetworkStreetMap();};
  bar.querySelector('#network-reload').onclick=()=>{failed[wanted()]=false;show(true);};
  radioSession.addEventListener('identity',()=>{if(frame&&effective()!=='meshmapper'&&locationSignature!==NightlinkCoreScopeLocation.signature(context()))start();});
  window.addEventListener('offline',()=>show());window.addEventListener('online',()=>{failed.corescope=failed.meshmapper=false;show();});
  const sourceRenderMap=renderMap;renderMap=function(){sourceRenderMap();if(current==='Overview'&&effective()!=='radio')mapPanel.querySelector('.live').textContent='OKI MESH';};
- const sourceView=view;view=function(name){stop();bar.remove();pane.remove();mapPanel.hidden=false;mapPanel.classList.remove('overview-corescope');$('#alternate').classList.remove('network-source-view');sourceView(name);if(name==='Overview'){overviewMode='corescope';failed.corescope=false;}if(name==='Network map'&&wanted()==='meshmapper')locatePC();if(['Overview','Network map'].includes(name))show();};
+ const sourceView=view;view=function(name){recenterRequest++;stop();bar.remove();pane.remove();mapPanel.hidden=false;mapPanel.classList.remove('overview-corescope');$('#alternate').classList.remove('network-source-view');sourceView(name);if(name==='Overview'){overviewMode='corescope';failed.corescope=false;}if(name==='Network map'&&wanted()==='meshmapper')locatePC();if(['Overview','Network map'].includes(name))show();};
  if(['Overview','Network map'].includes(current))show();
 })();
