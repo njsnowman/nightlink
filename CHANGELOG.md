@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Replace legacy cyan installer branding with Switchboard black/amber artwork, custom welcome/options/completion pages and matching native-page colors. Preserve per-user setup, optional shortcut and retained app data. Installer visual/lifecycle acceptance remains separate from compilation. [#80](https://github.com/njsnowman/nightlink/issues/80)
+
 - Separate message interactions: body selects a reply with local context and channel sender mention, hop badge opens route details/map, and sender opens contact/DM actions. Preserve drafts and nested link/mention actions; detached-DM route requests are checked against that window’s message snapshot. Reply context is local, not protocol threading. [#79](https://github.com/njsnowman/nightlink/issues/79)
 
 - Restore explicit MeshMapper recentering when Windows returns unchanged coordinates; coalesce repeated clicks and ignore late location completion after navigation. [#78](https://github.com/njsnowman/nightlink/issues/78)
