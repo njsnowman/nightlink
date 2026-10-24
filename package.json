@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.27",
+  "version": "0.8.22-rc.28",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -158,7 +158,9 @@
       "switchboard-contacts.css",
       "switchboard-controls.css",
       "switchboard-settings.css",
-      "switchboard-settings.js"
+      "switchboard-settings.js",
+      "message-actions.js",
+      "message-actions.css"
     ],
     "win": {
       "target": [

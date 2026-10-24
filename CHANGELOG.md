@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Separate message interactions: body selects a reply with local context and channel sender mention, hop badge opens route details/map, and sender opens contact/DM actions. Preserve drafts and nested link/mention actions; detached-DM route requests are checked against that window’s message snapshot. Reply context is local, not protocol threading. [#79](https://github.com/njsnowman/nightlink/issues/79)
+
 - Restore explicit MeshMapper recentering when Windows returns unchanged coordinates; coalesce repeated clicks and ignore late location completion after navigation. [#78](https://github.com/njsnowman/nightlink/issues/78)
 
 - Bound mounted conversation rows to 120 with archive paging and search navigation; retain unchanged detached-DM content and suppress duplicate snapshots. Reuse unchanged map frames, pause hidden health probes, retain unchanged signal/chart controls, and add session phase timings in Radio Health. Timings distinguish page loading from live feed readiness. [#78](https://github.com/njsnowman/nightlink/issues/78)
