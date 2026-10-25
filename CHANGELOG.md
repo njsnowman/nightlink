@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Add About purpose statement explaining MeshCore-based off-grid core messaging without an internet connection, cloud account or online service; distinguish optional internet features. [#86](https://github.com/njsnowman/nightlink/issues/86)
+
 - Add bundled Help & About with 19 searchable task guides, eight application screenshots using fictional demonstration data, installed version, support links and bundled library notices. Keep guide scrolling within its content pane and provide a Tools shortcut. [#85](https://github.com/njsnowman/nightlink/issues/85)
 
 - Support installed candidate versions when comparing with approved stable releases; retain stable-only feed selection and restricted download URLs. Hide stale update banners after failed checks. [#84](https://github.com/njsnowman/nightlink/issues/84)
