@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Use the asynchronous Windows protected-storage provider for startup-lock reads and atomic writes. Add real Windows process-restart coverage for enrollment, recovery replay protection, disabling and readable legacy ciphertext. Unreadable existing settings remain locked and unchanged; this does not recover a lost encryption key. [#87](https://github.com/njsnowman/nightlink/issues/87)
+
 - Add About purpose statement explaining MeshCore-based off-grid core messaging without an internet connection, cloud account or online service; distinguish optional internet features. [#86](https://github.com/njsnowman/nightlink/issues/86)
 
 - Add bundled Help & About with 19 searchable task guides, eight application screenshots using fictional demonstration data, installed version, support links and bundled library notices. Keep guide scrolling within its content pane and provide a Tools shortcut. [#85](https://github.com/njsnowman/nightlink/issues/85)

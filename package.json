@@ -1,16 +1,16 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.35",
+  "version": "0.8.22-rc.36",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
     "start": "electron .",
     "preview": "node server.cjs",
     "dist": "electron-builder --win nsis portable",
-    "test": "node --test performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs"
+    "test": "node --test performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs security-store.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs"
   },
   "devDependencies": {
-    "electron": "^42.0.0",
+    "electron": "^42.11.12",
     "electron-builder": "^26.0.12"
   },
   "build": {
@@ -175,7 +175,8 @@
       "help-assets/radio-tools.png",
       "help-assets/health.png",
       "help-assets/backup.png",
-      "help-assets/updates.png"
+      "help-assets/updates.png",
+      "security-store.cjs"
     ],
     "win": {
       "target": [
