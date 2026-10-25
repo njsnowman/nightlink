@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Add manual direct-range node discovery under Contacts and Radio Tools, with type filters, tagged responses, signal readings, bounded scan/cooldown and explicit contact addition. Add local saved-contact filtering by name, nickname, key and type. Discovery identities are not automatically trusted or saved; no background scans. [#82](https://github.com/njsnowman/nightlink/issues/82)
+
 - Simplify radio loading to a compact status card and one motion-aware ring; remove visible terminal, counters and phase tracker. Preserve transport choice, cancel/retry, error details and automatic Overview entry. [#81](https://github.com/njsnowman/nightlink/issues/81)
 
 - Replace legacy cyan installer branding with Switchboard black/amber artwork, custom welcome/options/completion pages and matching native-page colors. Preserve per-user setup, optional shortcut and retained app data. Installer visual/lifecycle acceptance remains separate from compilation. [#80](https://github.com/njsnowman/nightlink/issues/80)
