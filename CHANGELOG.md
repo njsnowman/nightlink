@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Support installed candidate versions when comparing with approved stable releases; retain stable-only feed selection and restricted download URLs. Hide stale update banners after failed checks. [#84](https://github.com/njsnowman/nightlink/issues/84)
+
 - Simplify Messages navigation with Channels and Direct Messages as primary destinations, secondary Search/Browse/Add channel actions under More, and channels-first sidebar entry. Preserve explicit direct-conversation actions. [#83](https://github.com/njsnowman/nightlink/issues/83)
 
 - Add manual direct-range node discovery under Contacts and Radio Tools, with type filters, tagged responses, signal readings, bounded scan/cooldown and explicit contact addition. Add local saved-contact filtering by name, nickname, key and type. Discovery identities are not automatically trusted or saved; no background scans. [#82](https://github.com/njsnowman/nightlink/issues/82)

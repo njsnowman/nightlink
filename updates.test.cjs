@@ -9,3 +9,17 @@ test('missing appropriate asset uses release page rather than another build type
 test('private repository and rate limits never report up to date',async()=>{for(const status of [401,403,404])assert.equal((await U.check('0.8.8','portable',async()=>({status,ok:false}))).status,'unavailable');});
 test('offline errors and malformed bodies fail without executable URLs',async()=>{assert.equal((await U.check('0.8.8','portable',async()=>{throw Error('offline');})).status,'error');const result=await U.check('0.8.8','portable',async()=>({status:200,ok:true,text:async()=>'{'}));assert.equal(result.status,'error');assert.equal(result.download,undefined);});
 test('fetch is restricted to fixed API, bounded timeout, no credentials and no redirects',async()=>{const result=await U.check('0.8.8','portable',async(url,options)=>{assert.equal(url,U.API);assert.equal(options.redirect,'error');assert.equal(options.headers.Authorization,undefined);assert.ok(options.signal);return{status:200,ok:true,text:async()=>JSON.stringify({...base,assets:[asset('Nightlink-Portable-0.8.9.exe')]})};});assert.equal(result.status,'available');});
+
+test('installed candidates compare against approved stable releases without accepting prerelease feeds',()=>{
+ assert.equal(U.compare('0.8.22','0.8.22-rc.32'),1);
+ assert.equal(U.compare('0.8.22-rc.32','0.8.19'),1);
+ assert.equal(U.compare('0.8.22-rc.10','0.8.22-rc.9'),1);
+ assert.equal(U.compare('0.8.22-rc.32+build.1','0.8.22-rc.32'),0);
+ assert.equal(U.compare('0.8.22-alpha','0.8.22-alpha.1'),-1);
+ assert.equal(U.compare('0.8.22-1','0.8.22-alpha'),-1);
+ for(const bad of ['0.8.22-rc.01','0.8.22-','0.8.22+','0.8.22/evil'])assert.throws(()=>U.compare(bad,'0.8.22'));
+ assert.equal(U.selectRelease(base,'0.8.22-rc.32','installer').status,'ahead');
+ const next={...base,tag_name:'v0.8.22',html_url:'https://github.com/njsnowman/nightlink/releases/tag/v0.8.22'};
+ assert.equal(U.selectRelease(next,'0.8.22-rc.32','installer').status,'available');
+ assert.throws(()=>U.selectRelease({...next,tag_name:'v0.8.22-rc.33'},'0.8.22-rc.32'));
+});
