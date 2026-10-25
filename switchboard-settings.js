@@ -1,8 +1,9 @@
 /* Group existing settings controls without recreating their state or handlers. */
 (function(){
- const categories=[['appearance','Appearance','Color, text size and workspace layout'],['connection','Connection','Startup connection, recovery and delivery'],['notifications','Notifications','Sounds, quiet hours and background mode'],['security','Security','Optional password and authenticator app lock'],['data','Data & updates','Backups, maps, previews and application updates']];
+ const categories=[['appearance','Appearance','Color, text size and workspace layout'],['connection','Connection','Startup connection, recovery and delivery'],['notifications','Notifications','Sounds, quiet hours and background mode'],['security','Security','Optional password and authenticator app lock'],['data','Data & updates','Backups, maps, previews and application updates'],['help','Help & About','Illustrated guides, version and support']];
  let selected='appearance';
  function category(node){
+  if(node.matches('.help-center'))return 'help';
   if(node.matches('.security-panel'))return 'security';
   if(node.matches('.startup-connection-settings,.delivery-settings,.health-settings')||node.querySelector('#auto-reconnect'))return 'connection';
   if(node.matches('.desktop-settings,.attention-help')||node.querySelector('#notifications,#dm-alert-sound,#mention-alert-sound'))return 'notifications';
@@ -17,6 +18,7 @@
  }
  function group(){
   const grid=document.querySelector('.settings-grid');if(!grid||grid.classList.contains('switchboard-settings'))return;
+  window.renderNightlinkHelpSettings?.(grid);
   const controls=[...grid.children];grid.classList.add('switchboard-settings');grid.closest('.panel')?.classList.add('switchboard-settings-shell');
   const nav=document.createElement('div');nav.className='switchboard-settings-nav';nav.setAttribute('role','tablist');nav.setAttribute('aria-label','Settings categories');nav.setAttribute('aria-orientation','vertical');
   const pages=document.createElement('div');pages.className='switchboard-settings-pages';

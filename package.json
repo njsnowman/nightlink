@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.33",
+  "version": "0.8.22-rc.34",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -163,7 +163,19 @@
       "message-actions.css",
       "node-discovery.js",
       "node-discovery-ui.js",
-      "node-discovery.css"
+      "node-discovery.css",
+      "user-guide.js",
+      "help-ui.js",
+      "help.css",
+      "help-licenses.js",
+      "help-assets/messages.png",
+      "help-assets/connection.png",
+      "help-assets/contact.png",
+      "help-assets/channels.png",
+      "help-assets/radio-tools.png",
+      "help-assets/health.png",
+      "help-assets/backup.png",
+      "help-assets/updates.png"
     ],
     "win": {
       "target": [

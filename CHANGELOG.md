@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Add bundled Help & About with 19 searchable task guides, eight application screenshots using fictional demonstration data, installed version, support links and bundled library notices. Keep guide scrolling within its content pane and provide a Tools shortcut. [#85](https://github.com/njsnowman/nightlink/issues/85)
+
 - Support installed candidate versions when comparing with approved stable releases; retain stable-only feed selection and restricted download URLs. Hide stale update banners after failed checks. [#84](https://github.com/njsnowman/nightlink/issues/84)
 
 - Simplify Messages navigation with Channels and Direct Messages as primary destinations, secondary Search/Browse/Add channel actions under More, and channels-first sidebar entry. Preserve explicit direct-conversation actions. [#83](https://github.com/njsnowman/nightlink/issues/83)
