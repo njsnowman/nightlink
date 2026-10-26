@@ -454,3 +454,14 @@ An advertised name is not a unique public key. Open the contact card and link/im
 
 Include the version from About, the exact action and error, radio firmware/model and whether another client was connected. Export diagnostics if useful. Review and remove private information before attaching any files.
 
+## Radio workbench
+
+Open **Radio** for Trace Path, Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI. Selecting a tab does not transmit.
+
+- **Trace Path:** choose a saved one-byte repeater route or enter outbound and return hashes. Review the complete round trip, then select Send trace. Each result is received SNR; a hash can match multiple nodes. There is no automatic retry. Multi-byte trace hashes are not currently supported.
+- **Line of Sight:** enter endpoint coordinates, antenna heights above ground and frequency, then calculate offline. Saved advertised coordinates can populate the destination. Results describe geometry only; terrain, buildings, trees, elevation differences and atmospheric refraction are not checked.
+- **RX Log:** view passive packet observations and final-link RSSI/SNR. Firmware must emit RX-log events. The list updates automatically; no observations does not mean failed reception.
+- **Noise Floor:** select Read noise floor to retrieve the companion's reported noise statistic over Bluetooth/USB. Protocol 8+ is required. No test packet is transmitted over the mesh.
+- **Discover Nodes:** open discovery, then select Search nearby when ready to transmit a zero-hop discovery request.
+- **CLI:** open the terminal and select the intended companion or authorized remote node. Remote administration requires login; firmware determines supported commands.
+
