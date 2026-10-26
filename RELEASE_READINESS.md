@@ -10,12 +10,12 @@ The consolidated [changelog](CHANGELOG.md) describes final behavior rather than 
 
 | Area | Evidence | Status |
 | --- | --- | --- |
-| Protocol, transport, history, backup and safety logic | Full package unit suite | 173 tests passed on consolidated source |
+| Protocol, transport, history, backup and safety logic | Full package unit suite | See latest candidate validation record for current count; earlier consolidated baseline passed 173 |
 | Workspace, maps, lock and detached DMs | Browser and native isolated fixtures | Browser and packaged native checks passed |
 | Stable 0.8.19 → consolidated history/cards/preferences | Actual old/new app.asar with one isolated profile | Payload upgrade; not installer evidence |
 | Optional lock migration | rc.12 → consolidated DPAPI store and login | Payload upgrade; synthetic credentials |
 | Profile identity/retention | appId local.meshline.desktop; name meshline; userData Meshline; deleteAppDataOnUninstall false | Source-reviewed |
-| Physical M1 retained-message recovery | Known nonempty queue; no intervening phone client; reconnect imports without Refresh, no duplicates/history loss; content-free diagnostics | **Open: #49** |
+| Physical M1 retained-message recovery | rc.35 nonempty queue/reconnect/offline persistence, no Refresh; two test messages merged into normal history after authorized lock recovery | **Passed: #49**; original historical incidents not fully attributed |
 | Installer lifecycle and appearance | Exact final NSIS artifact; clean install, upgrade, uninstall retaining synthetic profile; welcome/directory/shortcut/progress/finish at multiple DPI | **Open: #63** |
 
 Actual installer tests must use an isolated Windows account/VM. Payload replacement, artwork inspection and a successful build do not substitute for installer evidence. No production profile is used by regression fixtures. Physical evidence is recorded separately.
@@ -30,7 +30,7 @@ Neither test installs/uninstalls Nightlink or contacts a radio. New backup expor
 
 ## Publication rule
 
-Until both open physical/installer gates have recorded evidence, distribute only a clearly labeled local candidate. Do not create a stable tag or GitHub release. Final candidate record must identify source commit, test commands/results, artifact sizes and SHA-256 checksums. Do not claim comprehensive hardware compatibility or actual installer-upgrade preservation from synthetic/payload tests.
+Until remaining applicable installer/security/radio gates have recorded evidence, distribute only a clearly labeled local candidate. Do not create a stable tag or public GitHub release. Final candidate record must identify source commit, test commands/results, artifact sizes and SHA-256 checksums. Do not claim comprehensive hardware compatibility or actual installer-upgrade preservation from synthetic/payload tests. The workbench acceptance scope is tracked in #89; local lock reset does not establish new production enrollment/restart acceptance under #87.
 
 ## Consolidated candidate evidence
 
