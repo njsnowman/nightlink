@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Omit the originating companion from generated trace forwarding routes; companions with repetition disabled must receive the completed trace rather than forward it. [#89](https://github.com/njsnowman/nightlink/issues/89).
+
 - Add a consolidated Radio workbench with manual trace, offline geometric planning, RX observations, noise-floor reads, discovery and CLI. Physical-radio acceptance is pending. [#89](https://github.com/njsnowman/nightlink/issues/89).
 
 - Use the asynchronous Windows protected-storage provider for startup-lock reads and atomic writes. Add real Windows process-restart coverage for enrollment, recovery replay protection, disabling and readable legacy ciphertext. Unreadable existing settings remain locked and unchanged; this does not recover a lost encryption key. [#87](https://github.com/njsnowman/nightlink/issues/87)
