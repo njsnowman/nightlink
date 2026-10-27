@@ -32,8 +32,10 @@ Core Bluetooth/USB messaging needs no internet or cloud account. CoreScope, Mesh
 
 The radio has a finite pending queue, not a shared permanent archive. Another client can consume messages before Nightlink connects. The optional startup lock does not encrypt history or exported backups. Update checks open downloads; they do not install silently. Both 0.8.24 executables are unsigned.
 
-A returned direct repeater trace was physically confirmed on the recorded Heltec USB setup. Earlier timeouts remain unexplained; multihop reliability is unverified. Installer lifecycle/multiple-DPI and production lock re-enrollment checks remain outstanding under the documented owner-approved 0.8.24 publication exception. Physical inbound DM/speaker acceptance and new peer reaction interoperability also remain unverified.
+A returned direct repeater trace was physically confirmed on the recorded Heltec USB setup. Earlier timeouts remain unexplained; multihop reliability is unverified. Installer lifecycle/multiple-DPI and production lock re-enrollment checks remain outstanding under the documented owner-approved 0.8.24 publication exception.
 
 ## Documentation delivery
 
 Repository documentation can be read now. The refreshed bundled Help is included in public 0.8.24. Published 0.8.22 executables and checksums remain unchanged. Guide and release screenshots use labeled fictional data.
+
+Physical incoming-DM/speaker acceptance and new peer reaction interoperability remain unverified and disclosed in the release notes.
