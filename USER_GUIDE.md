@@ -465,3 +465,11 @@ Open **Radio** for Trace Path, Line of Sight, RX Log, Noise Floor, Discover Node
 - **Discover Nodes:** open discovery, then select Search nearby when ready to transmit a zero-hop discovery request.
 - **CLI:** open the terminal and select the intended companion or authorized remote node. Remote administration requires login; firmware determines supported commands.
 
+
+## Reading your messages and paths
+
+Your outgoing messages use an accent edge, a tinted body and a You badge in channels, Overview and direct messages. Incoming rows remain neutral. The treatment follows your chosen display accent.
+
+Select a hop badge to inspect the message path. Numbered cards show stored repeater names and whether coordinates are known. Unknown or ambiguous short hashes are not verified identities. Signal values describe reception of the message at your radio unless the evidence explicitly provides another measurement; the dialog does not invent repeater-by-repeater signal readings. Unlocated hops remain gaps in the map.
+
+For a manual radio trace, select a repeater by name and review the visual forwarding sequence. Advanced exposes raw one-byte hashes. Companion acceptance only confirms queue acceptance. The app uses the firmware estimate plus a margin, bounded to 30–120 seconds, while waiting for a matching returned trace; there are no automatic retries.

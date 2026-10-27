@@ -2,6 +2,9 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Distinguish outgoing messages with an accent edge, tinted body and You badge across channel chats, Overview and detached DMs. Redesign message paths with larger numbered hop cards and explicit evidence/location gaps. [#90](https://github.com/njsnowman/nightlink/issues/90).
+- Make repeater-name selection and visual forwarding routes primary; place raw hashes under Advanced. Show companion queue acceptance separately from returned trace and use a bounded firmware-based reply deadline. [#89](https://github.com/njsnowman/nightlink/issues/89).
+
 - Omit the originating companion from generated trace forwarding routes; companions with repetition disabled must receive the completed trace rather than forward it. [#89](https://github.com/njsnowman/nightlink/issues/89).
 
 - Add a consolidated Radio workbench with manual trace, offline geometric planning, RX observations, noise-floor reads, discovery and CLI. Physical-radio acceptance is pending. [#89](https://github.com/njsnowman/nightlink/issues/89).

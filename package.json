@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.38",
+  "version": "0.8.22-rc.39",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -179,7 +179,10 @@
       "security-store.cjs",
       "radio-workbench.js",
       "radio-workbench-ui.js",
-      "radio-workbench.css"
+      "radio-workbench.css",
+      "outgoing-message.css",
+      "message-path.css",
+      "help-assets/message-path.png"
     ],
     "win": {
       "target": [
