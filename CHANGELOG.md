@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Animate awaiting-ACK badges with reduced-motion support; add a once-per-message completion sound with mute/quiet-hours controls. Restore native DM presentation for hidden windows and retain explicit open/focus intent during startup. [#96](https://github.com/njsnowman/nightlink/issues/96).
+
 - Reconcile exact-key contact removal notifications and rejected DM recipients with the current radio list. Preserve history/cards and drafts; distinguish an unaccepted send from a missing ACK, and show missing-contact availability separately from Bluetooth connection. [#95](https://github.com/njsnowman/nightlink/issues/95).
 
 - Recognize received MeshCore One emoji reactions in channels and DMs. Match retained originals by exact message text/timestamp and conversation; display deduplicated reaction chips or an explicit unmatched notice instead of a raw hash line. Preserve stored wire text and ordinary messages. [#94](https://github.com/njsnowman/nightlink/issues/94).

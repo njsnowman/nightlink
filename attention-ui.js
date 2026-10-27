@@ -70,7 +70,7 @@ const attentionView=view;view=function(name){captureReading();attentionView(name
 function renderAttentionSettings(){
  $('#enable-dm-sound')?.setAttribute('hidden','');
  const grid=$('.settings-grid');const existing=[...grid.querySelectorAll('label')].find(l=>l.textContent.trim()==='Direct message sound');if(existing)existing.remove();
- for(const [id,title,key]of [['dm-alert-sound','Direct message sound','dm-sound'],['mention-alert-sound','Mention sound','nightlink.mention-sound']]){
+ for(const [id,title,key]of [['dm-alert-sound','Direct message sound','dm-sound'],['mention-alert-sound','Mention sound','nightlink.mention-sound'],['sent-message-sound','Sent message sound','nightlink.sent-sound']]){
   const label=document.createElement('label'),input=document.createElement('input');label.textContent=title;input.id=id;input.type='checkbox';input.checked=localStorage.getItem(key)!=='false';
   input.onchange=()=>{localStorage.setItem(key,String(input.checked));updateDMs();};label.append(input);if(key==='nightlink.mention-sound'){const test=document.createElement('button');test.type='button';test.id='test-mention-sound';test.textContent='Test mention sound';test.onclick=()=>soundMention(true);label.append(test);}grid.prepend(label);
  }

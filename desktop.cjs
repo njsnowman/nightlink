@@ -53,15 +53,24 @@ else app.whenReady().then(async()=>{
   ownerDialogOpen=open;
   // Windows keeps owned windows above their owner; release that relationship
   // while a workspace dialog is open, then restore normal DM ownership.
-  for(const record of dmWindows.values())if(!record.window.isDestroyed())record.window.setParentWindow(open?null:win);
+  for(const record of dmWindows.values())if(!record.window.isDestroyed())record.window.setParentWindow(open||win.isMinimized()||!win.isVisible()?null:win);
   if(open){if(win.isMinimized())win.restore();if(!app.commandLine.hasSwitch('meshline-test')){win.show();win.focus();}}
  });
+ function presentDM(record){
+  if(!record.showReady||!record.openRequested||app.commandLine.hasSwitch('meshline-test'))return;
+  const popup=record.window;if(popup.isDestroyed())return;
+  if(win.isMinimized()||!win.isVisible())popup.setParentWindow(null);
+  else popup.setParentWindow(ownerDialogOpen?null:win);
+  if(popup.isMinimized())popup.restore();
+  if(record.focusRequested){popup.show();popup.focus();}else popup.showInactive();
+  record.openRequested=false;record.focusRequested=false;
+ }
  function clearDMs(){for(const record of dmWindows.values())record.window.close();dmWindows.clear();}
  ipcMain.on('dm:publish',(e,{data,open}={})=>{
   if(!trusted(e)||!data||!(/^[a-f0-9]{64}$/).test(data.radio)||!(/^[a-f0-9]{12,64}$/).test(data.key)||!Array.isArray(data.messages))return;
   const id=data.radio+'/'+data.key;let record=dmWindows.get(id);
-  if(!record&&open){if(dmWindows.size>=8)dmWindows.values().next().value.window.close();const popup=new BrowserWindow({show:false,width:440,height:620,minWidth:340,minHeight:400,parent:ownerDialogOpen?undefined:win,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,title:String(data.name).slice(0,100)+' · Nightlink',icon:path.join(__dirname,'icon.ico'),webPreferences:{preload:path.join(__dirname,'dm-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,autoplayPolicy:'no-user-gesture-required'}});record={window:popup,data,ready:false};dmWindows.set(id,record);popup.webContents.setWindowOpenHandler(()=>({action:'deny'}));popup.webContents.on('will-navigate',event=>event.preventDefault());popup.on('focus',()=>popup.webContents.send('dm:focus'));popup.on('closed',()=>{dmWindows.delete(id);if(!win.isDestroyed())win.webContents.send('dm:closed',data.key);});popup.loadFile('dm.html');popup.once('ready-to-show',()=>{if(!app.commandLine.hasSwitch('meshline-test')){if(record.data.focus)popup.show();else popup.showInactive();}});}
-  if(record){record.data={...data,sound:data.sound||(!record.ready&&record.data.sound)};if(record.ready){record.window.webContents.send('dm:update',record.data);record.data.sound=false;}if(open&&record.window.isMinimized())record.window.restore();if(open&&data.focus&&record.ready&&!app.commandLine.hasSwitch('meshline-test')){record.window.show();record.window.focus();}}
+  if(!record&&open){if(dmWindows.size>=8)dmWindows.values().next().value.window.close();const popup=new BrowserWindow({show:false,width:440,height:620,minWidth:340,minHeight:400,parent:ownerDialogOpen?undefined:win,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,title:String(data.name).slice(0,100)+' · Nightlink',icon:path.join(__dirname,'icon.ico'),webPreferences:{preload:path.join(__dirname,'dm-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,autoplayPolicy:'no-user-gesture-required'}});record={window:popup,data,ready:false,showReady:false,openRequested:!!open,focusRequested:!!data.focus};dmWindows.set(id,record);popup.webContents.setWindowOpenHandler(()=>({action:'deny'}));popup.webContents.on('will-navigate',event=>event.preventDefault());popup.on('focus',()=>popup.webContents.send('dm:focus'));popup.on('closed',()=>{dmWindows.delete(id);if(!win.isDestroyed())win.webContents.send('dm:closed',data.key);});popup.loadFile('dm.html');popup.once('ready-to-show',()=>{record.showReady=true;presentDM(record);});}
+  if(record){record.data={...data,sound:data.sound||(!record.ready&&record.data.sound)};if(record.ready){record.window.webContents.send('dm:update',record.data);record.data.sound=false;}if(open){record.openRequested=true;record.focusRequested||=!!data.focus;presentDM(record);}}
  });
  const childRecord=e=>[...dmWindows.values()].find(r=>r.window.webContents===e.sender&&e.senderFrame===r.window.webContents.mainFrame);
  require('./link-preview.cjs').install({ipcMain,shell,trusted:e=>security.unlocked&&(trusted(e)||!!childRecord(e))});

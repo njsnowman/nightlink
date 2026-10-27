@@ -6,7 +6,7 @@
   if(node.matches('.help-center'))return 'help';
   if(node.matches('.security-panel'))return 'security';
   if(node.matches('.startup-connection-settings,.delivery-settings,.health-settings')||node.querySelector('#auto-reconnect'))return 'connection';
-  if(node.matches('.desktop-settings,.attention-help')||node.querySelector('#notifications,#dm-alert-sound,#mention-alert-sound'))return 'notifications';
+  if(node.matches('.desktop-settings,.attention-help')||node.querySelector('#notifications,#dm-alert-sound,#mention-alert-sound,#sent-message-sound'))return 'notifications';
   if(node.matches('.accent-setting')||node.querySelector('#compact-setting,#text-size-setting,#reduced-motion'))return 'appearance';
   return 'data';
  }
