@@ -39,6 +39,8 @@ const assert=require('node:assert/strict');
  await page.evaluate(()=>{live.sync='ready';radioSession.dispatchEvent(new CustomEvent('message',{detail:{kind:'channel',slot:1,text:'Jordan: hey @[Snow Man]',timestamp:4,pathLength:0}}));});
  assert.equal(await page.evaluate(()=>mentionSounds),mentionBefore+1);await page.evaluate(()=>handleIncomingAttention());assert.equal(await page.evaluate(()=>mentionSounds),mentionBefore+1);await page.locator('.conversation-alert').click();assert.equal(await page.evaluate(()=>live.selected.slot),1);
  assert.ok(await page.evaluate(()=>window.soundEvents)>0);
+ // Sound preferences and quiet hours suppress alerts; explicit preview remains available.
+ const suppression=await page.evaluate(()=>{const before=mentionSounds,q=quietHoursActive;quietHoursActive=()=>true;soundMention();quietHoursActive=q;localStorage.setItem('nightlink.mention-sound','false');soundMention();localStorage.removeItem('nightlink.mention-sound');return mentionSounds-before;});assert.equal(suppression,0);
  // Desktop notification action navigates to the matching channel.
  await page.evaluate(()=>{localStorage.setItem('notifications','true');window.realHasFocus=document.hasFocus.bind(document);document.hasFocus=()=>false;view('Nodes');radioSession.dispatchEvent(new CustomEvent('message',{detail:{kind:'channel',slot:0,text:'Jordan: notification @[Snow Man]',timestamp:5,pathLength:0}}));});
  assert.equal(await page.evaluate(()=>window.notices.length),1);await page.evaluate(()=>{window.notices[0].onclick();document.hasFocus=window.realHasFocus;});assert.equal(await page.evaluate(()=>live.selected.slot),0);await chooseChannel(1);
