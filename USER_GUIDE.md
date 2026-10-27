@@ -1,6 +1,6 @@
 # Nightlink user guide
 
-Updated 2026-10-27. Open **Settings > Help & About** or **Tools > Help & About**. The prepared 0.8.24 package includes the current Help, delivery feedback and contact-availability changes. See the [documentation index](DOCUMENTATION.md).
+Updated 2026-10-27. Open **Settings > Help & About** or **Tools > Help & About**. Public 0.8.24 includes the current Help, delivery feedback and contact-availability changes. See the [documentation index](DOCUMENTATION.md).
 
 Actual Nightlink interface with fictional demonstration data. No physical-radio session is shown.
 

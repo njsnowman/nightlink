@@ -15,3 +15,6 @@ On 2026-10-27, stable 0.8.22 was published. Uploaded sizes/digests and anonymous
 All future publication follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md). Update-check validation is tracked in [#84](https://github.com/njsnowman/nightlink/issues/84).
 
 Stable 0.8.23 was published on 2026-10-27. Public download availability, uploaded digests and live installer/Portable update selection from 0.8.22 were verified; 0.8.23 reports current. See [0.8.23 release record](releases/0.8.23.md).
+
+
+Stable 0.8.24 was published on 2026-10-27 under the release-specific owner-approved exception. Anonymous download HEAD checks returned HTTP 200 with matching sizes for Setup, Portable and checksums; GitHub artifact digests match local SHA-256 values. The live updater offers the matching Setup/Portable download to 0.8.23 and reports 0.8.24 current. No installer was executed and no production profile/radio was accessed by these checks. See [0.8.24 release record](releases/0.8.24.md) for source, tests and unverified acceptance.
