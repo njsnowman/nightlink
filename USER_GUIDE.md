@@ -1,6 +1,6 @@
 # Nightlink user guide
 
-Updated 2026-10-27. Open **Settings > Help & About** or **Tools > Help & About**. Bundled Help is included in the prepared 0.8.23 package; published 0.8.22 binaries remain unchanged. See the [documentation index](DOCUMENTATION.md).
+Updated 2026-10-27. Open **Settings > Help & About** or **Tools > Help & About**. The prepared 0.8.24 package includes the current Help, delivery feedback and contact-availability changes. See the [documentation index](DOCUMENTATION.md).
 
 Actual Nightlink interface with fictional demonstration data. No physical-radio session is shown.
 
@@ -547,3 +547,12 @@ An advertised name is not a unique public key. Open the contact card and link/im
 ### Before reporting
 
 Include the version from About, the exact action and error, radio firmware/model and whether another client was connected. Export diagnostics if useful. Review and remove private information before attaching any files.
+
+
+## Send feedback and direct-message windows
+
+Awaiting recipient ACK displays a rotating indicator while a DM attempt is active. It stops when the attempt ends; it is not a delivery progress meter. App and operating-system reduced-motion settings disable rotation.
+
+Settings > Notifications > Sent message sound controls the completion swoosh. DMs sound only after a recipient ACK; channel broadcasts sound after your own radio accepts them, which does not confirm reception. Turning Direct message sound off also silences DM completion. Quiet hours silence completion sounds and automatic incoming DM windows.
+
+A contact card’s Send message action opens one DM window for that saved peer. New incoming DMs bring an existing hidden window back into view without requesting keyboard focus. Your radio must have the recipient saved before it can address a DM. A recipient ACK is still required to confirm delivery.

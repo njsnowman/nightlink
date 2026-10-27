@@ -23,3 +23,8 @@ Channel messages already use flood and have no recipient delivery ACK. Keep chan
 ## Regression and physical verification
 
 Test first-attempt success, retries with one unchanged timestamp and increasing attempt bytes, ACK before SENT registration, late ACK from earlier attempt, no ACK exhaustion, flood reset failure, route update, cancellation, disconnect and identity change. Verify all send entry points (main composer and native/floating DM windows) use the same delivery controller. Physical two-radio verification is pending because no second peer is currently available.
+
+
+## Delivery feedback in 0.8.24
+
+An animated awaiting-ACK badge indicates active waiting, not delivery progress. The send-completion sound is once per outgoing message: recipient ACK for DMs, radio acceptance for channels. Failed/unconfirmed attempts do not play it. Sound preferences and quiet hours apply; reduced motion suppresses rotation. These UI changes do not increase retry counts or imply remote reception.

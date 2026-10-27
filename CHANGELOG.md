@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.8.24 — 2026-10-27
+
 - Animate awaiting-ACK badges with reduced-motion support; add a once-per-message completion sound with mute/quiet-hours controls. Restore native DM presentation for hidden windows and retain explicit open/focus intent during startup. [#96](https://github.com/njsnowman/nightlink/issues/96).
 
 - Reconcile exact-key contact removal notifications and rejected DM recipients with the current radio list. Preserve history/cards and drafts; distinguish an unaccepted send from a missing ACK, and show missing-contact availability separately from Bluetooth connection. [#95](https://github.com/njsnowman/nightlink/issues/95).
