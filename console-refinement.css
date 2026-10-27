@@ -1,0 +1,53 @@
+/* Signal Console refinement. Palette accents are presentation; semantic state colors remain independent. */
+:root{--console-surface:#080f16;--console-edge:color-mix(in srgb,var(--accent,#8cbfff) 30%,#1b2630);--console-copy:#e6edf5;--console-secondary:#b3c2d0}
+body{color:var(--console-copy)}
+/* Segmented corner marks, without clipping focus rings or the content viewport. */
+.panel{border-radius:2px;border-color:var(--console-edge);background:linear-gradient(145deg,#101923ed,#060d14fa);box-shadow:inset 0 1px #ffffff05,0 8px 26px #0002}
+.panel::before{background:linear-gradient(var(--accent),var(--accent)) left top/23px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) left top/2px 13px no-repeat,linear-gradient(var(--accent),var(--accent)) right top/13px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) right top/2px 23px no-repeat,linear-gradient(var(--accent),var(--accent)) left bottom/13px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) left bottom/2px 23px no-repeat,linear-gradient(var(--accent),var(--accent)) right bottom/23px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) right bottom/2px 13px no-repeat;opacity:.42;filter:none;pointer-events:none}
+.conversation::before,.panel:focus-within::before{opacity:.85;filter:none}
+.panel-heading,.dm-heading{background:linear-gradient(90deg,var(--accent-soft),#0a121a 75%);border-color:var(--console-edge)}
+.panel-heading h2{letter-spacing:.15px;color:var(--console-copy)}
+aside,body.compact aside{border-color:var(--console-edge);box-shadow:inset 0 1px #ffffff06,0 10px 35px #0004}
+aside nav button.active{border-color:var(--accent-line);background:linear-gradient(90deg,var(--accent-dim),#0b121a 90%);box-shadow:inset 2px 0 var(--accent)}
+aside nav button:not(.active):hover{background:#15212c;color:#edf3f8;border-color:#2b3b49}
+aside .brand{letter-spacing:-.5px}.brand-icon{filter:none}
+.breadcrumb{color:var(--console-secondary)}.breadcrumb strong{color:var(--accent)}
+.page-heading h1{font-weight:600;letter-spacing:-.65px}.page-heading p{color:var(--console-secondary)}
+.stats article{border-color:var(--console-edge);border-radius:2px;background:linear-gradient(120deg,#101923,#080f17)}
+.stats strong{font-variant-numeric:tabular-nums;color:#e6edf5}
+/* Neutral message text remains visually stronger than decorative edging. */
+.message .sender>.contact-link,.message .sender>span:not(.signal-hop),.signal-message-content .dm-message-person{color:#e2ebf4}
+.message .sender time,.signal-message-content time{color:#aebecd;font-variant-numeric:tabular-nums}
+.message p,.message.own p,body.compact .message p,.dm-bubble p,.dm-bubble.own p{border-color:#2b3b4b;background:linear-gradient(120deg,#14202c,#0d1721);color:#edf2f7;box-shadow:none;line-height:1.5}
+.message.own p,.dm-bubble.own p{border-left-color:var(--accent-line)}
+.signal-hop,.message .sender .signal-hop{border-color:var(--accent-line);color:var(--accent);background:var(--accent-soft);border-radius:2px;letter-spacing:.2px}
+.signal-hop-own{border-color:var(--console-edge)!important;color:var(--console-secondary)!important}
+.message>.avatar,.message>.contact-avatar,.signal-message-avatar .avatar{border-color:var(--accent-line);background:#101d29;color:var(--accent)}
+#chat-form,body.compact #chat-form{border-color:var(--accent-line);border-radius:3px;background:#09131d;box-shadow:inset 0 1px #ffffff05}
+#chat-form:focus-within,.dm-compose input:focus{border-color:var(--accent)}
+#chat-form button,.primary{font-weight:600;letter-spacing:.1px;box-shadow:none}
+.composer-hint{color:var(--console-secondary)}
+.new-messages-divider{color:var(--accent)}.new-messages-divider:before,.new-messages-divider:after{background:var(--accent-line)}
+.conversation-tools button,.echo-tools button,.diagnostics-tabs button,.diagnostics-actions button,.rf-trend-controls button{border-radius:3px;border-color:var(--console-edge);background:#0a141e;color:#c7d4e0}
+.diagnostics-tabs [aria-selected=true],.echo-tools button[aria-pressed=true],.network-source-switch button[aria-pressed=true]{color:var(--accent);background:var(--accent-soft);border-color:var(--accent-line);box-shadow:inset 0 -2px var(--accent)}
+.diagnostics-tabs button:hover,.diagnostics-actions button:hover,.rf-trend-controls button:hover{border-color:var(--accent)}
+.diagnostics-body{border-color:var(--console-edge);border-radius:3px;background:#070f17}
+.diagnostics-workspace p{color:var(--console-secondary)}
+.diagnostics-workspace input,.diagnostics-workspace select{background:#09131d;color:var(--console-copy);border-color:var(--accent-line);border-radius:3px}
+.rf-trend-metrics>div,.annotation-row{background:linear-gradient(125deg,#121d28,#09121a);border-color:var(--console-edge);border-radius:2px}
+.rf-trend-metrics small{font-size:12px;color:var(--console-secondary)}.rf-trend-metrics strong{font-variant-numeric:tabular-nums}
+.rf-trend-note{max-width:88ch}.rf-trend-chart{border-color:var(--console-edge);border-radius:2px}
+dialog{border-color:var(--accent-line);border-radius:4px;background:linear-gradient(140deg,#111d29,#070f17);box-shadow:0 24px 90px #000b}
+dialog::backdrop{background:#03080bc7;backdrop-filter:blur(5px)}
+.contact-profile-facts,.contact-profile-notes{border-radius:3px;border-color:var(--console-edge);background:#0a141e}
+.contact-profile-facts dt,.contact-profile #contact-advertised-name{color:var(--console-secondary)}
+.contact-profile-facts dd{font-variant-numeric:tabular-nums;color:#e1ebf3}
+.identity-fingerprint{padding:12px;background:#050c13;border:1px solid var(--console-edge);border-radius:2px;color:#deebf6;font-size:13px}
+.identity-status[data-verified=true]{padding:7px 10px;background:var(--accent-soft);border-left:2px solid var(--accent)}
+.annotation-manager>p,.annotation-editor>p,.annotation-row small{color:var(--console-secondary)}
+.annotation-control button{box-shadow:0 3px 15px #0006}
+.echo-map-panel>.panel-heading{background:linear-gradient(90deg,var(--accent-soft),#0a121a)}
+.echo-map-status{background:#08111a;color:var(--console-secondary)}
+:is(button,a,input,select,textarea):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(max-height:650px){.message{margin-bottom:18px}.message p,.message.own p,body.compact .message p{margin-top:6px;margin-bottom:5px}.panel-heading{padding-top:7px;padding-bottom:7px}.diagnostics-workspace{gap:8px}.diagnostics-body{padding:10px}.rf-trend-controls{margin-bottom:10px}.rf-trend-metrics>div{padding:9px}}
+@media(prefers-reduced-motion:reduce){.panel::before{transition:none}}

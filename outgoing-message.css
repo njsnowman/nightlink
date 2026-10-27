@@ -1,0 +1,36 @@
+/* Outgoing messages keep the shared anatomy and gain an accent edge, tint and You badge. */
+html:root:root:root body .message.own > div > p,
+html:root:root:root body .dm-bubble.own > .signal-message-content > p {
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, #30343b);
+  border-inline-start: 3px solid var(--accent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent) 10%, #0e1216);
+  color: #f1f5f9;
+  box-shadow: none;
+}
+
+html:root:root:root body .message.own .sender > span:first-child:not(.signal-hop),
+html:root:root:root body .dm-bubble.own .sender > span:first-child:not(.signal-hop) {
+  padding: 2px 7px;
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, #30343b);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 9%, #0e1216);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+html:root:root:root body .message.own > .avatar,
+html:root:root:root body .message.own > .contact-avatar,
+html:root:root:root body .dm-bubble.own > .signal-message-avatar .avatar {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, #0e1216);
+  color: var(--accent);
+}
+
+@media (max-width: 600px), (max-height: 650px) {
+  html:root:root:root body .message.own > div > p,
+  html:root:root:root body .dm-bubble.own > .signal-message-content > p {
+    padding: 8px 10px;
+  }
+}

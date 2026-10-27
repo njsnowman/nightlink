@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       electron:
-        specifier: ^42.0.0
+        specifier: ^42.11.12
         version: 42.11.12(supports-color@7.2.0)
       electron-builder:
         specifier: ^26.0.12

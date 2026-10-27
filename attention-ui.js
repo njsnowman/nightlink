@@ -44,7 +44,7 @@ function refreshUnreadBadges(){
 const attentionChannels=renderChannels;renderChannels=function(){attentionChannels();refreshUnreadBadges();};
 const attentionInbox=renderDMInbox;renderDMInbox=function(){attentionInbox();if(current==='Direct Messages'){refreshUnreadBadges();}};
 const jumpNewest=document.createElement('button');jumpNewest.id='jump-newest';jumpNewest.className='reading-jump';jumpNewest.hidden=true;jumpNewest.textContent='Jump to latest ↓';chatReadingLog.after(jumpNewest);
-jumpNewest.onclick=()=>{chatReadingLog.scrollTop=chatReadingLog.scrollHeight;captureReading();markVisibleReading();jumpNewest.hidden=true;};
+jumpNewest.onclick=()=>{messageWindowLatest();renderMessages();chatReadingLog.scrollTop=chatReadingLog.scrollHeight;captureReading();markVisibleReading();jumpNewest.hidden=true;};
 const muteChannel=document.createElement('button');muteChannel.id='mute-channel';muteChannel.className='channel-mute';muteChannel.hidden=true;$('.chat-channel').append(muteChannel);
 muteChannel.onclick=()=>{if(live.selected?.kind!=='channel')return;const id=conversationId(live.selected),state=ensureAttention();state.mute(id,!state.muted.has(id));renderMessages();renderChannels();};
 const attentionMessages=renderMessages;
@@ -54,7 +54,7 @@ renderMessages=function(){
  if(changed){readingConversation=next;readingBoundary=next?state.unread(live.messages,next)[0]?.id:null;}
  const position=next?state.position(next):null;if(!readingBoundary&&next&&(!chatIsVisible()||(position&&!position.bottom)))readingBoundary=state.unread(live.messages,next)[0]?.id;
  attentionMessages();
- const rows=next?conversationRows(next):[];
+ const rows=renderedConversationRows();
  chatReadingLog.querySelectorAll('.message').forEach((row,i)=>{row.dataset.messageId=rows[i].id;});
  if(readingBoundary){const row=[...chatReadingLog.querySelectorAll('.message')].find(r=>r.dataset.messageId===readingBoundary);if(row){const divider=document.createElement('div');divider.className='new-messages-divider';divider.textContent='New messages';divider.setAttribute('role','separator');row.before(divider);}}
  muteChannel.hidden=live.selected?.kind!=='channel';
@@ -72,12 +72,13 @@ function renderAttentionSettings(){
  const grid=$('.settings-grid');const existing=[...grid.querySelectorAll('label')].find(l=>l.textContent.trim()==='Direct message sound');if(existing)existing.remove();
  for(const [id,title,key]of [['dm-alert-sound','Direct message sound','dm-sound'],['mention-alert-sound','Mention sound','nightlink.mention-sound']]){
   const label=document.createElement('label'),input=document.createElement('input');label.textContent=title;input.id=id;input.type='checkbox';input.checked=localStorage.getItem(key)!=='false';
-  input.onchange=()=>{localStorage.setItem(key,String(input.checked));updateDMs();};label.append(input);grid.prepend(label);
+  input.onchange=()=>{localStorage.setItem(key,String(input.checked));updateDMs();};label.append(input);if(key==='nightlink.mention-sound'){const test=document.createElement('button');test.type='button';test.id='test-mention-sound';test.textContent='Test mention sound';test.onclick=()=>soundMention(true);label.append(test);}grid.prepend(label);
  }
  const explanation=document.createElement('p');explanation.className='attention-help';explanation.textContent='Mute individual channels from the conversation header. Muted channels keep unread counts but suppress notifications and mention sounds. Recovered messages do not play alerts.';grid.append(explanation);
 }
-const mentionAudio=new Audio('dm.wav');mentionAudio.preload='auto';
-function soundMention(){if(typeof quietHoursActive==='function'&&quietHoursActive())return;if(localStorage.getItem('nightlink.mention-sound')==='false')return;mentionAudio.currentTime=0;mentionAudio.play().catch(()=>toast('Mention received · interact with Nightlink to enable sound.'));}
+const mentionAudio=new Audio('mention.wav');mentionAudio.preload='auto';let mentionSoundUnlocked=false;
+document.addEventListener('pointerdown',()=>{if(mentionSoundUnlocked||!mentionAudio.paused)return;mentionAudio.muted=true;mentionAudio.play().then(()=>{if(mentionSoundUnlocked)return;mentionAudio.pause();mentionAudio.currentTime=0;mentionAudio.muted=false;mentionSoundUnlocked=true;}).catch(()=>{mentionAudio.muted=false;});},{capture:true});
+function soundMention(preview=false){if(!preview&&typeof quietHoursActive==='function'&&quietHoursActive())return;if(!preview&&localStorage.getItem('nightlink.mention-sound')==='false')return;mentionSoundUnlocked=true;mentionAudio.muted=false;mentionAudio.currentTime=0;mentionAudio.play().catch(()=>toast('Mention sound unavailable - try Test mention sound in Settings > Notifications.'));}
 const attentionAlerts=document.createElement('div');attentionAlerts.id='conversation-alerts';attentionAlerts.setAttribute('aria-live','polite');document.body.append(attentionAlerts);
 function navigateAttention(target){if(target.kind==='direct')openDM(target.key);else selectConversation({...target});}
 function showConversationAlert(m,mention){
@@ -126,4 +127,4 @@ function decoratePopupReading(key){
 }
 const attentionPopupUpdate=updatePopup;updatePopup=function(key,options={}){const popup=dmPopups.get(key);if(popup instanceof HTMLElement){const thread=popup.querySelector('.dm-thread'),rect=thread.getBoundingClientRect(),anchor=[...thread.querySelectorAll('.dm-bubble')].find(r=>r.getBoundingClientRect().bottom>rect.top);if(anchor&&thread.getClientRects().length&&!popup.classList.contains('minimized'))ensureAttention().position('direct:'+key,{anchor:anchor.dataset.messageId,offset:anchor.getBoundingClientRect().top-rect.top,bottom:atReadingEnd(thread)});}attentionPopupUpdate(key,options);decoratePopupReading(key);const updated=dmPopups.get(key);if(updated instanceof HTMLElement){const thread=updated.querySelector('.dm-thread');let jump=updated.querySelector('.dm-reading-jump');if(!jump){jump=document.createElement('button');jump.className='reading-jump dm-reading-jump';jump.textContent='New messages ↓';thread.after(jump);jump.onclick=()=>{thread.scrollTop=thread.scrollHeight;thread.dispatchEvent(new Event('scroll'));};thread.addEventListener('scroll',()=>jump.hidden=atReadingEnd(thread));}jump.hidden=atReadingEnd(thread);}};
 window.meshlineDM?.onRead(data=>{if(data.radio!==live.identity?.key)return;const messages=live.messages.filter(m=>m.conversation==='direct:'+data.key);if(messages.some(m=>m.id===data.through))markDMRead(data.key,data.through);if(data.position)ensureAttention().position('direct:'+data.key,data.position);});
-ensureAttention();const savedAttentionView=attention.data.view,savedAttentionTarget=attention.data.selected;if(savedAttentionTarget&&['channel','direct'].includes(savedAttentionTarget.kind))live.selected=savedAttentionTarget;if(['Overview','Messages','Direct Messages','Nodes','Activity','Network map','Settings','Search'].includes(savedAttentionView))view(savedAttentionView);else renderMessages();refreshUnreadBadges();
+ensureAttention();const savedAttentionTarget=attention.data.selected;if(savedAttentionTarget&&['channel','direct'].includes(savedAttentionTarget.kind))live.selected=savedAttentionTarget;view('Overview');refreshUnreadBadges();

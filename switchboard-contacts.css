@@ -1,0 +1,49 @@
+/* Contact presentation only; identity resolution and radio operations are unchanged. */
+html:root:root body dialog.contact-quick-dialog,html:root:root body.compact dialog.contact-quick-dialog{width:min(560px,calc(100vw - 32px));padding:22px;max-height:calc(100dvh - 32px);box-sizing:border-box}
+html:root:root body .contact-profile{position:relative;padding:0;text-align:left;background:transparent;border:0}
+html:root:root body .contact-profile-hero{display:flex;gap:20px;align-items:center;padding:8px 38px 22px 0;min-width:0}
+html:root:root body .contact-profile-hero>div:last-child{min-width:0}
+html:root:root body .contact-profile #contact-quick-photo .avatar,html:root:root body #card-photo .avatar{display:grid;place-items:center;width:82px;height:82px;min-width:82px;margin:0;overflow:hidden;border-radius:50%;border:1px solid var(--accent-line);background:var(--accent-soft);color:var(--accent);font:500 26px 'Segoe UI',sans-serif}
+html:root:root body #contact-quick-photo img,html:root:root body #card-photo img{display:block;width:100%;height:100%;object-fit:cover}
+html:root:root body .contact-profile-kind{color:var(--accent);font:11px Consolas,monospace;letter-spacing:1px;text-transform:uppercase}
+html:root:root body .contact-profile #contact-quick-name{font:600 calc(25px * var(--read-scale,1))/1.2 'Segoe UI',sans-serif;color:var(--sb-copy);margin:6px 0;overflow-wrap:anywhere}
+html:root:root body .contact-profile #contact-advertised-name{color:var(--sb-muted);font-size:12px;margin:5px 0;line-height:1.4}
+html:root:root body .contact-profile #contact-readiness{font:11px/1.4 Consolas,monospace;color:var(--sb-muted)}
+html:root:root body .contact-profile #live-dm{display:block;width:100%;min-height:42px;padding:10px 16px;margin:0 0 20px;border:1px solid var(--accent);background:var(--accent);color:#17170d;border-radius:3px;font-weight:600;font-size:14px;box-shadow:none}
+html:root:root body .contact-profile #live-dm:disabled{background:#22251f;border-color:#3c4036;color:#969b8f;opacity:1;cursor:not-allowed}
+html:root:root body .contact-profile-facts{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0;border:1px solid var(--sb-edge);border-radius:3px;background:#0b0e0a}
+html:root:root body .contact-profile-facts>div{padding:14px 16px;border-bottom:1px solid var(--sb-edge);min-width:0}
+html:root:root body .contact-profile-facts>div:nth-child(odd){border-right:1px solid var(--sb-edge)}
+html:root:root body .contact-profile-facts>div:nth-last-child(-n+2){border-bottom:0}
+html:root:root body .contact-profile-facts dt{font:10px/1.4 Consolas,monospace;text-transform:uppercase;letter-spacing:.45px;color:var(--sb-muted)}
+html:root:root body .contact-profile-facts dd{font:500 13px/1.5 'Segoe UI',sans-serif;color:var(--sb-copy);margin:6px 0 0;overflow-wrap:anywhere}
+html:root:root body .contact-profile-notes{margin:16px 0 0;padding:14px 16px;border:1px solid var(--sb-edge);border-left:2px solid var(--accent-line);background:#0c0f0b;border-radius:3px}
+html:root:root body .contact-profile h4{font:11px Consolas,monospace;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);margin:0 0 9px}
+html:root:root body .contact-profile-notes p{font:13px/1.6 'Segoe UI',sans-serif;color:var(--sb-copy);max-height:112px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+html:root:root body .contact-profile-footnote{font:11px/1.5 'Segoe UI',sans-serif!important;color:var(--sb-muted)!important;margin:16px 0 0}
+html:root:root body .contact-profile #contact-more{position:absolute;top:4px;right:0;width:34px;height:32px;padding:0;border:1px solid var(--sb-edge);border-radius:3px;background:#141710;color:var(--sb-copy);font-size:22px;line-height:1}
+html:root:root body .contact-profile #contact-more[aria-expanded=true]{color:var(--accent);border-color:var(--accent)}
+html:root:root body .contact-profile #contact-actions{position:absolute;top:43px;right:0;z-index:20;min-width:190px;padding:5px;background:#11150f;border:1px solid var(--accent-line);border-radius:3px;box-shadow:0 12px 32px #000b;text-align:left}
+html:root:root body .contact-profile #contact-actions[hidden]{display:none!important}
+html:root:root body .contact-profile #contact-actions button{width:100%;display:block;border:0;border-radius:2px;padding:11px 12px;background:transparent;color:var(--sb-copy);font-size:13px;text-align:left}
+html:root:root body .contact-profile #contact-actions button:hover{background:var(--accent-soft);color:var(--accent)}
+html:root:root body .contact-profile #contact-identity-setup{margin-top:16px;border-color:var(--sb-edge)}
+html:root:root body dialog.contact-card-dialog{width:min(560px,calc(100vw - 32px));max-height:calc(100dvh - 32px);box-sizing:border-box}
+html:root:root body #contact-card-form{display:flex;flex-direction:column;gap:8px}
+html:root:root body .contact-card-hero{display:flex;gap:18px;align-items:center;padding-bottom:18px;border-bottom:1px solid var(--sb-edge);margin-bottom:8px}
+html:root:root body .contact-card-hero h3{font-size:21px;line-height:1.25;margin:5px 0;color:var(--sb-copy);overflow-wrap:anywhere}
+html:root:root body .contact-card-hero .eyebrow{display:block;font:10px Consolas,monospace;letter-spacing:1px;color:var(--accent)}
+html:root:root body .contact-card-hero .local-badge{font-size:11px;line-height:1.4;color:var(--sb-muted)}
+html:root:root body #contact-card-form>label{font:11px Consolas,monospace;letter-spacing:.5px;text-transform:uppercase;color:var(--sb-muted);margin:8px 0 0}
+html:root:root body #contact-card-form :is(input:not([type=file]),textarea){width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--sb-edge);background:#090c08;color:var(--sb-copy);border-radius:3px;margin:0;font-size:14px}
+html:root:root body #contact-card-form textarea{resize:vertical;min-height:85px;max-height:180px;line-height:1.5}
+html:root:root body #contact-card-form .photo-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0}
+html:root:root body #card-upload{flex:1;min-width:160px;max-width:100%;font-size:12px;color:var(--sb-muted)}
+html:root:root body #card-upload::file-selector-button{border:1px solid var(--sb-edge);border-radius:3px;background:#151911;color:var(--sb-copy);padding:9px 12px;margin-right:10px}
+html:root:root body #card-remove-photo{padding:9px 12px;border:1px solid var(--sb-edge);background:#11150f;color:var(--sb-muted);border-radius:3px;font-size:12px}
+html:root:root body #card-save{margin-top:8px;min-height:40px;background:var(--accent);color:#17170d;border:1px solid var(--accent);border-radius:3px;font-weight:600}
+html:root:root body #card-error:empty{display:none}
+html:root:root body #card-error{font-size:12px;line-height:1.5;color:#ffada5;margin:0}
+html:root:root body .contact-radio-details .public-key{font:12px/1.6 Consolas,monospace;padding:12px;border:1px solid var(--sb-edge);background:#090c08;color:var(--sb-copy);overflow-wrap:anywhere}
+@media(max-height:680px){html:root:root body dialog.contact-quick-dialog,html:root:root body.compact dialog.contact-quick-dialog{padding:16px}html:root:root body .contact-profile-hero{gap:14px;padding-bottom:14px}html:root:root body .contact-profile #contact-quick-photo .avatar,html:root:root body #card-photo .avatar{width:60px;height:60px;min-width:60px;font-size:21px}html:root:root body .contact-profile #contact-quick-name{font-size:21px}html:root:root body .contact-profile #live-dm{margin-bottom:12px;min-height:36px;padding:8px}html:root:root body .contact-profile-facts>div{padding:10px 12px}html:root:root body .contact-profile-notes{margin-top:10px;padding:10px 12px}html:root:root body .contact-profile-notes p{max-height:60px}html:root:root body .contact-profile-footnote{margin-top:10px}html:root:root body #contact-card-form{gap:5px}html:root:root body .contact-card-hero{padding-bottom:10px;margin-bottom:2px}html:root:root body #contact-card-form textarea{min-height:65px;max-height:100px}}
+@media(max-width:440px){html:root:root body .contact-profile-facts{grid-template-columns:1fr}html:root:root body .contact-profile-facts>div:nth-child(odd){border-right:0}html:root:root body .contact-profile-facts>div:nth-last-child(2){border-bottom:1px solid var(--sb-edge)}html:root:root body .contact-profile-hero{gap:12px}html:root:root body .contact-profile #contact-quick-name{font-size:21px}}

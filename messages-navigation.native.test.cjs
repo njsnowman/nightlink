@@ -1,0 +1,15 @@
+const {_electron}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'),fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
+(async()=>{const source=path.resolve(process.argv[2]),runtime=process.argv[3],fixture=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-contact-flow-'));await fs.writeFile(path.join(fixture,'package.json'),JSON.stringify({name:'nightlink-contact-validation',version:'0.8.21-rc.4',main:'main.cjs'}));await fs.writeFile(path.join(fixture,'main.cjs'),"const {app}=require('electron'),path=require('node:path'),source="+JSON.stringify(source)+";const set=app.setPath.bind(app);app.setPath=(n,v)=>set(n,n==='userData'?path.join(__dirname,'profile'):v);app.setAppPath(source);require(path.join(source,'desktop.cjs'));");const app=await _electron.launch({executablePath:runtime,args:[fixture,'--meshline-test'],timeout:15000});try{const page=await app.firstWindow(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.waitForFunction(()=>typeof showNodeDiscovery==='function'); await page.evaluate(()=>{live.channels=[{slot:0,name:'Public'},{slot:1,name:'#echo'}];live.contacts=[];live.selected={kind:'direct',key:'b'.repeat(64),name:'Fixture'};view('Messages');});
+ await page.locator('aside nav > button[data-view="Messages"]').click();
+ assert.equal(await page.evaluate(()=>live.selected.kind),'channel');
+ assert.equal(await page.locator('.conversation-tools .workspace-message-tabs > button').nth(0).innerText(),'Channels');
+ assert.equal(await page.locator('.conversation-tools .workspace-message-tabs > button').nth(1).innerText(),'Direct messages');
+ await page.locator('.conversation-tools .message-more summary').click();
+ await page.locator('.conversation-tools .message-more').getByRole('button',{name:'Search messages',exact:true}).click();
+ assert.equal(await page.evaluate(()=>current),'Search');
+ await page.locator('aside nav > button[data-view="Messages"]').click();
+ await page.locator('.conversation-tools .workspace-message-tabs > button').nth(1).click();
+ assert.equal(await page.evaluate(()=>current),'Direct Messages');
+ await page.locator('.dm-inbox .workspace-message-tabs > button').nth(0).click();
+ assert.equal(await page.evaluate(()=>current),'Messages');
+assert.deepEqual(errors,[]);console.log('PASS exact packaged Messages navigation, channels-first entry, ordered tabs, More search and DM switching. Isolated profile; no radio.');}finally{await app.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

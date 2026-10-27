@@ -1,0 +1,7 @@
+.startup-connection-settings{min-width:0;overflow-wrap:anywhere}
+.startup-connection-settings label{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.startup-connection-settings input[type=checkbox]{width:auto;flex-shrink:0}
+.startup-connection-settings p{margin:8px 0 0}
+.connection.startup-active{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+#startup-connect-cancel,#startup-connect-retry{min-height:34px;flex-shrink:0}
+@media(max-width:850px){.connection.startup-active{max-width:170px}}

@@ -30,3 +30,29 @@
 .ble-sheet.link-console>.link-actions{margin:0;flex-shrink:0}
 .ble-sheet.link-console>.link-actions button{margin:0;padding:8px}
 @media(max-height:700px){.ble-sheet.link-console>.link-chrome,.ble-sheet.link-console .link-radar{display:none}.ble-sheet.link-console[open]{gap:6px;padding:12px}.ble-sheet.link-console .link-heading h3{font-size:19px}.ble-sheet.link-console #link-log{height:45px}.ble-sheet.link-console>.link-metrics{padding:7px}.ble-sheet.link-console>.link-phases li{padding:7px}}
+
+/* Minimal loading presentation. Detailed evidence remains in Radio Health. */
+html:root:root:root .ble-sheet.link-console[open]{width:480px;max-width:calc(100vw - 24px);padding:22px;gap:14px;background:#080908;border:1px solid #444234;border-radius:6px;box-shadow:0 24px 90px #000b;color:var(--text,#eeeede)}
+html:root:root:root .ble-sheet.link-console>.link-chrome,html:root:root:root .ble-sheet.link-console>.link-phases,html:root:root:root .ble-sheet.link-console>.link-metrics,html:root:root:root .ble-sheet.link-console>.link-terminal{display:none!important}
+html:root:root:root .ble-sheet.link-console .dialog-heading h2{font:500 12px Consolas,monospace;letter-spacing:1px;color:var(--accent,#ffbe55)}
+html:root:root:root .ble-sheet.link-console>.link-visual{display:flex;align-items:center;gap:18px;padding:10px 0 12px;flex-shrink:0}
+html:root:root:root .ble-sheet.link-console .link-radar{display:block;position:relative;width:54px;height:54px;flex-shrink:0;border:0;background:none;box-shadow:none;overflow:visible}
+html:root:root:root .ble-sheet.link-console .link-radar::before{content:'';position:absolute;inset:0;border:1px solid #454739;border-top:2px solid var(--accent,#ffbe55);border-radius:50%}
+html:root:root:root .ble-sheet.link-console[data-link-state=working] .link-radar::before{animation:link-sweep 1.8s linear infinite}
+html:root:root:root .ble-sheet.link-console .link-core{inset:12px;display:grid;place-items:center;border:0;border-radius:0;background:none;box-shadow:none}
+html:root:root:root .ble-sheet.link-console .link-core img{width:28px;height:28px;filter:none}
+html:root:root:root .ble-sheet.link-console .link-heading{min-width:0}
+html:root:root:root .ble-sheet.link-console .link-heading h3{font:600 calc(22px * var(--read-scale,1))/1.25 'Segoe UI',sans-serif;letter-spacing:-.3px;margin:0 0 6px;color:#eeeede}
+html:root:root:root .ble-sheet.link-console .link-heading p{font:calc(13px * var(--read-scale,1))/1.45 'Segoe UI',sans-serif;color:#aaa99a;margin:0;max-width:none}
+html:root:root:root .ble-sheet.link-console #ble-summary{display:none}
+html:root:root:root .ble-sheet.link-console #ble-help{font-size:13px;color:#aaa99a}
+html:root:root:root .ble-sheet.link-console .connect-primary-actions>button{min-height:40px}
+html:root:root:root .ble-sheet.link-console #link-cancel{background:transparent;border:1px solid #444234;color:#c9c9b9;min-height:36px}
+html:root:root:root .ble-sheet.link-console[data-link-state=error]{border-color:#b87451}
+html:root:root:root .ble-sheet.link-console[data-link-state=error] .link-radar::before{border-color:#b87451}
+@media(prefers-reduced-motion:reduce){html:root:root:root .ble-sheet.link-console .link-radar::before{animation:none!important}}
+html:root:root:root body.reduced-motion .ble-sheet.link-console .link-radar::before{animation:none!important}
+@media(max-height:540px){html:root:root:root .ble-sheet.link-console[open]{padding:12px;gap:8px}html:root:root:root .ble-sheet.link-console>.link-visual{padding:3px 0}}
+
+html:root:root:root .ble-sheet.link-console{--signal:var(--accent,#ffbe55)}
+html:root:root:root .ble-sheet.link-console .transport-choice button[aria-pressed=true]{border-color:var(--accent,#ffbe55);background:color-mix(in srgb,var(--accent,#ffbe55) 12%,#080908);color:#eeeede}

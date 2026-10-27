@@ -5,13 +5,19 @@ const nightlinkUpdates=require('./updates.cjs');
 const fsBackup=require('node:fs/promises'),cryptoBackup=require('node:crypto');
 app.setPath('userData',path.join(app.getPath('appData'),'Meshline'));
 if(!app.requestSingleInstanceLock())app.quit();
-else app.whenReady().then(()=>{
+else app.whenReady().then(async()=>{
  nativeTheme.themeSource='dark';
- const win=new BrowserWindow({show:!app.commandLine.hasSwitch('meshline-test'),width:1320,height:900,minWidth:760,minHeight:560,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),backgroundThrottling:false,contextIsolation:true,nodeIntegration:false,sandbox:true}});
- require('./serial-desktop.cjs').installSerial(win,ipcMain);
- let select=null,pair=null,devices=new Set(),scanTimer,pairTimer;
- const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
+ const win=new BrowserWindow({show:!app.commandLine.hasSwitch('meshline-test'),icon:path.join(__dirname,'icon.ico'),width:1320,height:900,minWidth:760,minHeight:560,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),backgroundThrottling:false,contextIsolation:true,nodeIntegration:false,sandbox:true}});
+ win.maximize();
+ const security=await require('./security-desktop.cjs').install({app,win,ipcMain,safeStorage:require('electron').safeStorage});
+ require('./corescope-health.cjs').install({win,ipcMain,net:require('electron').net});
+ const startup=require('./startup-desktop.cjs').install({app,win,ipcMain});
+ require('./serial-desktop.cjs').installSerial(win,ipcMain,startup);
+ let select=null,pair=null,devices=new Set(),deviceDetails=new Map(),scanTimer,pairTimer;
+ const trusted=e=>security.unlocked&&e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
 
+ require('./pc-location.cjs').install({ipcMain,trusted});
+ ipcMain.handle('meshmapper:open',async(e,region='CVG')=>{if(!trusted(e))return false;try{const url=require('./meshmapper-region.js').base(region);await shell.openExternal(url);return true;}catch{return false;}});
  require('./voice-desktop.cjs').install({app,win,ipcMain,dialog,trusted});
  require('./offline-maps-desktop.cjs').install({win,ipcMain,dialog,trusted});
  let updateResult=null,updateCheck=null,updateCheckedAt=0;
@@ -41,16 +47,26 @@ else app.whenReady().then(()=>{
  let normalBounds=null,wasMaximized=false,compactWindow=false;
  ipcMain.on('layout:compact',(e,compact)=>{if(!trusted(e)||typeof compact!=='boolean'||compact===compactWindow)return;compactWindow=compact;if(compact){wasMaximized=win.isMaximized();normalBounds=win.getNormalBounds();if(wasMaximized)win.unmaximize();const area=screen.getDisplayMatching(win.getBounds()).workArea;const width=Math.min(920,area.width),height=Math.min(740,area.height);win.setBounds({width,height,x:Math.max(area.x,Math.min(normalBounds.x,area.x+area.width-width)),y:Math.max(area.y,Math.min(normalBounds.y,area.y+area.height-height))});}else if(normalBounds){win.setBounds(normalBounds);if(wasMaximized)win.maximize();normalBounds=null;}});
  const dmWindows=new Map();
+ let ownerDialogOpen=false;
+ ipcMain.on('dm:owner-dialog',(e,open)=>{
+  if(!trusted(e)||typeof open!=='boolean'||open===ownerDialogOpen)return;
+  ownerDialogOpen=open;
+  // Windows keeps owned windows above their owner; release that relationship
+  // while a workspace dialog is open, then restore normal DM ownership.
+  for(const record of dmWindows.values())if(!record.window.isDestroyed())record.window.setParentWindow(open?null:win);
+  if(open){if(win.isMinimized())win.restore();if(!app.commandLine.hasSwitch('meshline-test')){win.show();win.focus();}}
+ });
  function clearDMs(){for(const record of dmWindows.values())record.window.close();dmWindows.clear();}
  ipcMain.on('dm:publish',(e,{data,open}={})=>{
   if(!trusted(e)||!data||!(/^[a-f0-9]{64}$/).test(data.radio)||!(/^[a-f0-9]{12,64}$/).test(data.key)||!Array.isArray(data.messages))return;
   const id=data.radio+'/'+data.key;let record=dmWindows.get(id);
-  if(!record&&open){if(dmWindows.size>=8)dmWindows.values().next().value.window.close();const popup=new BrowserWindow({show:false,width:440,height:620,minWidth:340,minHeight:400,parent:win,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,title:String(data.name).slice(0,100)+' · Nightlink',icon:path.join(__dirname,'icon.ico'),webPreferences:{preload:path.join(__dirname,'dm-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,autoplayPolicy:'no-user-gesture-required'}});record={window:popup,data,ready:false};dmWindows.set(id,record);popup.webContents.setWindowOpenHandler(()=>({action:'deny'}));popup.webContents.on('will-navigate',event=>event.preventDefault());popup.on('focus',()=>popup.webContents.send('dm:focus'));popup.on('closed',()=>{dmWindows.delete(id);if(!win.isDestroyed())win.webContents.send('dm:closed',data.key);});popup.loadFile('dm.html');popup.once('ready-to-show',()=>{if(!app.commandLine.hasSwitch('meshline-test')){if(record.data.focus)popup.show();else popup.showInactive();}});}
+  if(!record&&open){if(dmWindows.size>=8)dmWindows.values().next().value.window.close();const popup=new BrowserWindow({show:false,width:440,height:620,minWidth:340,minHeight:400,parent:ownerDialogOpen?undefined:win,backgroundMaterial:'acrylic',backgroundColor:'#080b11',autoHideMenuBar:true,title:String(data.name).slice(0,100)+' · Nightlink',icon:path.join(__dirname,'icon.ico'),webPreferences:{preload:path.join(__dirname,'dm-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,autoplayPolicy:'no-user-gesture-required'}});record={window:popup,data,ready:false};dmWindows.set(id,record);popup.webContents.setWindowOpenHandler(()=>({action:'deny'}));popup.webContents.on('will-navigate',event=>event.preventDefault());popup.on('focus',()=>popup.webContents.send('dm:focus'));popup.on('closed',()=>{dmWindows.delete(id);if(!win.isDestroyed())win.webContents.send('dm:closed',data.key);});popup.loadFile('dm.html');popup.once('ready-to-show',()=>{if(!app.commandLine.hasSwitch('meshline-test')){if(record.data.focus)popup.show();else popup.showInactive();}});}
   if(record){record.data={...data,sound:data.sound||(!record.ready&&record.data.sound)};if(record.ready){record.window.webContents.send('dm:update',record.data);record.data.sound=false;}if(open&&record.window.isMinimized())record.window.restore();if(open&&data.focus&&record.ready&&!app.commandLine.hasSwitch('meshline-test')){record.window.show();record.window.focus();}}
  });
  const childRecord=e=>[...dmWindows.values()].find(r=>r.window.webContents===e.sender&&e.senderFrame===r.window.webContents.mainFrame);
+ require('./link-preview.cjs').install({ipcMain,shell,trusted:e=>security.unlocked&&(trusted(e)||!!childRecord(e))});
  ipcMain.on('dm:ready',e=>{const record=childRecord(e);if(record){record.ready=true;record.window.webContents.send('dm:update',record.data);record.data.sound=false;}});
- ipcMain.on('dm:action',(e,data)=>{const record=childRecord(e);if(!record||!data||!['cancel','details','sound','retry'].includes(data.action)||(data.action!=='sound'&&!record.data.messages.some(m=>m.id===data.id&&m.own)))return;if(data.action==='details'||data.action==='retry'){if(win.isMinimized())win.restore();if(!app.commandLine.hasSwitch('meshline-test'))win.show();}win.webContents.send('dm:owner-action',{radio:record.data.radio,key:record.data.key,...data});});
+ ipcMain.on('dm:action',(e,data)=>{const record=childRecord(e);if(!record||!data||!['cancel','details','sound','retry','path'].includes(data.action)||(data.action!=='sound'&&!record.data.messages.some(m=>m.id===data.id&&(data.action==='path'||m.own))))return;if(data.action==='details'||data.action==='retry'||data.action==='path'){if(win.isMinimized())win.restore();if(!app.commandLine.hasSwitch('meshline-test'))win.show();}win.webContents.send('dm:owner-action',{radio:record.data.radio,key:record.data.key,...data});});
  ipcMain.on('dm:read',(e,data)=>{const record=childRecord(e);if(!record||!record.window.isFocused()||typeof data?.through!=='string'||!record.data.messages.some(m=>m.id===data.through))return;const p=data.position;const position=p&&typeof p.anchor==='string'&&Number.isFinite(p.offset)?{anchor:p.anchor,offset:Math.max(-10000,Math.min(10000,p.offset)),bottom:p.bottom===true}:null;win.webContents.send('dm:owner-read',{radio:record.data.radio,key:record.data.key,through:data.through,position});});
  ipcMain.on('dm:draft',(e,text)=>{const record=childRecord(e);if(record&&typeof text==='string'&&text.length<=4096)win.webContents.send('dm:owner-draft',{radio:record.data.radio,key:record.data.key,text});});
  ipcMain.on('dm:reply',(e,text)=>{const record=childRecord(e);if(record&&typeof text==='string'&&text.length<=1024)win.webContents.send('dm:owner-reply',{radio:record.data.radio,key:record.data.key,text});});
@@ -60,12 +76,12 @@ else app.whenReady().then(()=>{
  require('./desktop-shell.cjs').install({app,win,ipcMain,...require('electron'),icon:path.join(__dirname,'icon.ico'),hideChildren:()=>{for(const record of dmWindows.values())record.window.hide();}});
  function cancelScan(){clearTimeout(scanTimer);scanTimer=null;const cb=select;select=null;devices.clear();if(cb)cb('');}
  function cancelPair(){clearTimeout(pairTimer);const cb=pair;pair=null;if(cb)cb({confirmed:false});}
- win.webContents.on('select-bluetooth-device',(event,list,callback)=>{event.preventDefault();select=callback;devices=new Set(list.map(d=>d.deviceId));if(!scanTimer)scanTimer=setTimeout(()=>{cancelScan();if(!win.isDestroyed())win.webContents.send('ble:scan-ended');},60000);win.webContents.send('ble:devices',list.map(({deviceId,deviceName})=>({deviceId,deviceName})));});
- ipcMain.on('ble:select',(e,id)=>{if(!trusted(e)||!select)return;if(id!==''&&!devices.has(id))return;clearTimeout(scanTimer);scanTimer=null;const cb=select;select=null;devices.clear();cb(id);});
+ win.webContents.on('select-bluetooth-device',(event,list,callback)=>{event.preventDefault();select=callback;devices=new Set(list.map(d=>d.deviceId));deviceDetails=new Map(list.map(d=>[d.deviceId,d]));if(startup.select('bluetooth',list,id=>{clearTimeout(scanTimer);scanTimer=null;select=null;devices.clear();callback(id);})){if(select&&!scanTimer)scanTimer=setTimeout(cancelScan,12000);return;}if(!scanTimer)scanTimer=setTimeout(()=>{cancelScan();if(!win.isDestroyed())win.webContents.send('ble:scan-ended');},60000);win.webContents.send('ble:devices',list.map(({deviceId,deviceName})=>({deviceId,deviceName})));});
+ ipcMain.on('ble:select',(e,id)=>{if(!trusted(e)||!select)return;if(id!==''&&!devices.has(id))return;clearTimeout(scanTimer);scanTimer=null;const cb=select;select=null;startup.selected('bluetooth',deviceDetails.get(id));devices.clear();cb(id);});
  win.webContents.session.setBluetoothPairingHandler((details,callback)=>{cancelPair();pair=callback;pairTimer=setTimeout(cancelPair,60000);win.webContents.send('ble:pairing',details);});
  ipcMain.on('ble:pairing-response',(e,response)=>{if(!trusted(e)||!pair)return;const cb=pair;pair=null;clearTimeout(pairTimer);cb({confirmed:response?.confirmed===true,pin:typeof response?.pin==='string'?response.pin.slice(0,16):undefined});});
  win.webContents.on('will-navigate',e=>e.preventDefault());
  win.on('closed',()=>{cancelScan();cancelPair();ipcMain.removeAllListeners('ble:select');ipcMain.removeAllListeners('ble:pairing-response');});
- win.loadFile('index.html');win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
+ win.loadFile(security.unlocked?'index.html':'security-lock.html');win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
 });
 app.on('window-all-closed',()=>app.quit());

@@ -1,0 +1,55 @@
+/* Message path is received evidence; it is never a live route probe. */
+html:root:root body dialog.route-map-dialog{width:min(1220px,calc(100vw - 36px));height:min(820px,calc(100dvh - 36px));max-width:calc(100vw - 36px);max-height:calc(100dvh - 36px);padding:0;overflow:hidden;border-radius:8px;box-sizing:border-box}
+html:root:root body dialog.route-map-dialog[open]{display:flex;flex-direction:column}
+html:root:root body .route-map-dialog>.dialog-heading{padding:16px 22px;flex:0 0 auto;min-height:58px;box-sizing:border-box}
+html:root:root body .route-map-dialog>.dialog-heading h2{font-size:24px;line-height:1.2}
+html:root:root body .route-map-dialog #dialog-body{flex:1;min-height:0;padding:18px;overflow:hidden;display:flex}
+.message-path-workspace{width:100%;min-height:0;min-width:0;display:flex;flex-direction:column;gap:14px}
+.message-path-summary{display:grid;grid-template-columns:.8fr 1.1fr 1fr;gap:10px;flex:0 0 auto}
+.message-path-summary>div{padding:12px 14px;background:#0b141a;border:1px solid #30444c;border-radius:5px;min-width:0}
+.message-path-summary span{display:block;font:12px/1.4 Consolas,monospace;letter-spacing:.08em;color:#a9bec8;margin-bottom:5px}
+html:root:root body .message-path-summary strong{font:600 clamp(16px,1.6vw,22px)/1.3 'Segoe UI',sans-serif;color:#e3f0f5;overflow-wrap:anywhere}
+html:root:root body .route-map-dialog .route-map-grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.9fr);gap:16px}
+.message-path-map-pane,.message-path-itinerary{min-width:0;min-height:0;display:flex;flex-direction:column}
+.message-path-section-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex:0 0 auto;margin:0 0 10px}
+html:root:root body .message-path-section-heading h3{font-size:18px;line-height:1.3;margin:0;color:#e1edf2}
+.message-path-section-heading>span{font-size:13px;color:#b5c9d3}
+html:root:root body .route-map-dialog #message-route-map{flex:1;min-height:150px;height:auto;border:1px solid #3a5966;border-radius:5px;overflow:hidden}
+html:root:root body .route-map-dialog #route-map-status{font-size:13px;line-height:1.4;margin:7px 0 0;color:#b2c9d4;min-height:18px;flex:0 0 auto}
+html:root:root body .route-map-dialog .route-map-hops{margin:0;padding:0 5px 0 0;list-style:none;max-height:none;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:9px;scrollbar-gutter:stable}
+html:root:root body .message-hop-card{width:100%;display:flex;gap:12px;align-items:flex-start;padding:14px;text-align:left;background:#0d1b23;border:1px solid #355460;border-radius:5px;box-sizing:border-box;color:#e2eef4;white-space:normal;cursor:default;box-shadow:none}
+html:root:root body button.message-hop-card{cursor:pointer}
+html:root:root body button.message-hop-card:hover,html:root:root body button.message-hop-card[aria-pressed=true]{border-color:var(--accent,#85e0f5);background:#152832}
+.message-hop-card:focus-visible{outline:2px solid var(--accent,#85e0f5);outline-offset:2px}
+.message-hop-card>div{min-width:0;flex:1}
+html:root:root body .message-hop-number{display:grid;place-items:center;flex:0 0 34px;height:34px;font:600 18px/1 'Segoe UI',sans-serif;border:1px solid #5a8796;border-radius:50%;color:#dff6ff;background:#173442}
+html:root:root body .message-hop-card strong{display:block;font:600 clamp(19px,1.7vw,23px)/1.25 'Segoe UI',sans-serif;color:#e5f1f5;overflow-wrap:anywhere}
+html:root:root body .message-hop-state{display:block;font:14px/1.45 'Segoe UI',sans-serif;color:#bfd1da;margin-top:6px}
+html:root:root body .message-hop-card small{display:block;font:13px/1.4 Consolas,monospace;color:#9fb8c6;margin-top:6px;overflow-wrap:anywhere}
+html:root:root body .message-hop-card.missing{background:#14191c;border-style:dashed;border-color:#53616a}
+.message-hop-card.missing .message-hop-number{border-style:dashed;background:#1b252b}
+.message-hop-candidates{display:grid;gap:4px;margin-top:10px;padding-top:10px;border-top:1px solid #34454e}
+html:root:root body .message-hop-candidates span{font-size:17px;line-height:1.35;color:#d2e1e8;overflow-wrap:anywhere}
+html:root:root body .message-path-receiver{padding:13px 15px;border:1px solid #3e665b;border-radius:5px;background:#0b1b17;color:#c9e9dd}
+.message-path-receiver strong{display:block;font-size:18px}.message-path-receiver span{display:block;font-size:13px;margin-top:4px}
+.message-path-no-hops{padding:18px;border:1px dashed #53616a;border-radius:5px;background:#11191d}.message-path-no-hops strong{font-size:20px;color:#e0edf2}
+html:root:root body .message-path-no-hops p{font-size:16px;line-height:1.5;color:#bfd0d9;margin:8px 0 0}
+.message-path-signal{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px 18px;padding:10px 14px;border:1px solid #30444c;background:#0b141a;border-radius:5px;font-size:15px;color:#c8dce5;flex:0 0 auto}
+.message-path-signal strong{font-size:15px;color:#e2eff5}.message-path-signal span{font-size:17px;font-variant-numeric:tabular-nums}.message-path-signal small{font-size:13px;color:#adbfca}
+.message-path-evidence{flex:0 0 auto;min-height:0;max-height:25%;overflow:auto;font-size:14px;color:#bed0d9}
+.message-path-evidence summary{cursor:pointer;font-size:14px;line-height:1.5;color:#c4d9e4}
+html:root:root body .message-path-evidence p{font-size:14px;line-height:1.5;color:#b7cbd6;margin:7px 0 0}
+html:root:root body .message-path-map-number{background:none;border:0;box-shadow:none;color:#eefbff;font:700 13px/1 'Segoe UI',sans-serif;padding:0;margin:0}
+.message-path-map-number:before{display:none}
+html:root:root body .route-map-dialog .leaflet-popup-content{font-size:16px;line-height:1.4}
+html:root:root body .route-map-dialog .route-map-empty{font-size:14px;line-height:1.4;max-width:80%;padding:10px;bottom:28px;color:#d6e8f0;background:#07121be8}
+html:root:root body .route-map-dialog .street-map-state strong{font-size:16px}.route-map-dialog .street-map-state span{font-size:14px;line-height:1.5}
+@media(max-width:850px){html:root:root body dialog.route-map-dialog{width:calc(100vw - 20px);height:calc(100dvh - 20px);max-width:calc(100vw - 20px);max-height:calc(100dvh - 20px)}html:root:root body .route-map-dialog #dialog-body{padding:12px}.message-path-workspace{gap:10px}.message-path-summary{gap:6px}.message-path-summary>div{padding:8px}.message-path-summary span{font-size:10px;letter-spacing:.03em}html:root:root body .message-path-summary strong{font-size:15px}html:root:root body .route-map-dialog .route-map-grid{grid-template-columns:minmax(0,1fr) minmax(250px,.95fr);gap:10px}html:root:root body .message-hop-card{padding:11px;gap:9px}html:root:root body .message-hop-card strong{font-size:19px}.message-path-section-heading>span{display:none}.message-path-signal small{flex-basis:100%}}
+@media(max-width:620px){.message-path-summary{grid-template-columns:1fr 1fr}.message-path-summary>div:last-child{display:none}html:root:root body .route-map-dialog .route-map-grid{grid-template-columns:1fr;grid-template-rows:minmax(150px,.8fr) minmax(150px,1fr);gap:10px}.message-path-section-heading{margin-bottom:5px}html:root:root body .route-map-dialog #message-route-map{min-height:120px}.message-path-signal{padding:8px 10px;gap:4px 12px}.message-path-signal small{display:none}html:root:root body .route-map-dialog>.dialog-heading{padding:12px 16px;min-height:48px}html:root:root body .route-map-dialog>.dialog-heading h2{font-size:21px}}
+
+/* Directional pulse over the persistent evidence line. */
+.message-route-laser{stroke-dasharray:12 100;stroke-dashoffset:12;opacity:0;filter:drop-shadow(0 0 4px #6de6ff);pointer-events:none}
+.message-route-laser.is-tracing{animation:message-route-trace .8s linear var(--route-delay,0s) both}
+@keyframes message-route-trace{0%{stroke-dashoffset:12;opacity:0}8%{opacity:1}90%{opacity:1}100%{stroke-dashoffset:-100;opacity:0}}
+html:root:root body #replay-route{font-size:13px;padding:6px 10px;min-height:32px;white-space:nowrap}
+@media(prefers-reduced-motion:reduce){.message-route-laser.is-tracing{animation:none;opacity:0}}

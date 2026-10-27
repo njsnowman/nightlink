@@ -1,0 +1,49 @@
+/* The guide scrolls within its reading pane, never the application frame. */
+html:root body #settings-page-help{padding:0;overflow:hidden;gap:0}
+html:root body #settings-page-help>.switchboard-settings-title,html:root body #settings-page-help>.switchboard-settings-description{display:none}
+html:root body .help-center{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;container-type:inline-size;color:var(--sb-copy,#dce5eb);background:#080a0c}
+html:root body .help-heading{padding:18px 22px 12px;border-bottom:1px solid var(--sb-edge,#273039);flex:none}
+html:root body .help-heading h3{font-size:23px!important;margin:4px 0!important}
+html:root body .help-heading p{margin:4px 0 10px;max-width:none}
+html:root body .help-mode{display:flex;gap:6px}
+html:root body .help-mode button{padding:7px 15px;background:#11171c;border:1px solid var(--sb-edge,#273039);color:var(--sb-copy,#dce5eb)}
+html:root body .help-mode button[aria-pressed=true]{color:var(--accent);border-color:var(--accent);box-shadow:inset 0 -2px var(--accent)}
+html:root body .help-body{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;overflow:hidden}
+html:root body .help-toolbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--sb-edge);flex:none;flex-wrap:wrap}
+html:root body .help-toolbar label{font-size:12px;color:var(--sb-muted)}
+html:root body .help-toolbar input{flex:1;min-width:130px;width:0;min-height:35px;padding:7px 10px;font:14px 'Segoe UI',sans-serif;background:#10151b;color:var(--sb-copy);border:1px solid var(--sb-edge)}
+html:root body .help-count{font-size:11px;color:var(--sb-muted)}
+html:root body .help-layout{display:grid;grid-template-columns:205px minmax(0,1fr);flex:1;min-height:0;overflow:hidden}
+html:root body .help-topics{overflow-y:auto;overflow-x:hidden;min-height:0;padding:10px;border-right:1px solid var(--sb-edge);display:block}
+html:root body .help-topics h4{font:600 10px/1.4 'Segoe UI',sans-serif;text-transform:uppercase;letter-spacing:.12em;color:var(--sb-muted);margin:15px 8px 5px}
+html:root body .help-topics button{display:block;width:100%;height:auto;min-height:34px;text-align:left;padding:8px;font:13px/1.35 'Segoe UI',sans-serif;border:1px solid transparent;border-radius:3px;background:transparent;color:var(--sb-copy)}
+html:root body .help-topics button[aria-current=true]{border-color:var(--accent-line);color:var(--accent);background:var(--accent-soft)}
+html:root body .help-article,html:root body .help-about{overflow-y:auto;overflow-x:hidden;min-height:0;min-width:0;padding:24px;scrollbar-width:thin;scrollbar-color:var(--sb-edge) #080a0c}
+html:root body .help-topic-title{font:600 26px/1.2 'Segoe UI',sans-serif;margin:6px 0 10px;color:var(--sb-copy)}
+html:root body .help-article p,html:root body .help-article li,html:root body .help-about p,html:root body .help-about dd{font:14px/1.7 'Segoe UI',sans-serif;color:var(--sb-copy);max-width:80ch;overflow-wrap:anywhere}
+html:root body .help-article .help-lead,html:root body .help-about .help-lead{font-size:15px;color:var(--sb-muted);margin-top:0}
+html:root body .help-instructions{margin:22px 0}
+html:root body .help-instructions h5,html:root body .help-about h5{font:600 16px/1.4 'Segoe UI',sans-serif;margin:0 0 9px;color:var(--accent)}
+html:root body .help-instructions li{padding-left:4px;margin:8px 0}
+html:root body .help-instructions ol,html:root body .help-instructions ul{padding-left:24px}
+html:root body .help-figure{margin:18px 0}
+html:root body .help-screenshot{display:block;padding:0;width:100%;overflow:hidden;border:1px solid var(--accent-line);background:#000;border-radius:3px;cursor:zoom-in}
+html:root body .help-screenshot img{display:block;width:100%;height:auto;max-height:220px;object-fit:contain}
+html:root body .help-caption,html:root body .help-article .help-caption{font:11px/1.6 'Segoe UI',sans-serif;color:var(--sb-muted);margin-top:7px}
+html:root body .help-related{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;padding-top:16px;border-top:1px solid var(--sb-edge)}
+html:root body .help-related button,html:root body .help-support button{padding:8px 12px;border:1px solid var(--accent-line);color:var(--accent);background:#11171c}
+html:root body .help-brand{display:flex;align-items:center;gap:14px}.help-brand img{width:50px;height:50px}
+html:root body .help-brand h4{font:600 30px/1.3 'Segoe UI',sans-serif;margin:0}
+html:root body .help-version{color:var(--accent)!important}
+html:root body .help-about-facts{display:grid;gap:16px;margin:22px 0}
+html:root body .help-about-facts dt{font:600 12px 'Segoe UI',sans-serif;color:var(--sb-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+html:root body .help-about-facts dd{margin:0}
+html:root body .help-support{padding:18px 0;border-block:1px solid var(--sb-edge)}
+html:root body .help-support>div{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:9px 0}
+html:root body .help-support small{overflow-wrap:anywhere}
+html:root body .help-licenses{margin-top:24px}.help-licenses summary{cursor:pointer;padding:10px;border:1px solid var(--sb-edge);margin-top:5px;font-size:13px}
+.help-licenses pre{white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.6 Consolas,monospace;background:#10151b;padding:15px}
+html:root body .help-topic-picker{display:none}
+html:root body dialog.help-image-dialog{width:min(1150px,calc(100vw - 32px));max-width:calc(100vw - 32px)}
+.help-image-dialog #dialog-body>img{width:100%;max-height:70dvh;object-fit:contain;background:#000;display:block}
+@container(max-width:650px){html:root body .help-layout{grid-template-columns:minmax(0,1fr)}html:root body .help-topics{display:none}html:root body .help-topic-picker{display:block;flex:none;width:calc(100% - 24px);margin:8px 12px;min-width:0;max-width:none;font-size:13px}html:root body .help-article,html:root body .help-about{padding:16px}html:root body .help-heading{padding:12px 16px}html:root body .help-heading p{display:none}html:root body .help-toolbar{padding:8px 12px}html:root body .help-count{display:none}html:root body .help-topic-title{font-size:22px}}

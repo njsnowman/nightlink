@@ -2,8 +2,9 @@
 const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
- const page=await browser.newPage({viewport:{width:1500,height:1000}});page.setDefaultTimeout(6000);const errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.route('https://tile.openstreetmap.org/**',r=>r.abort());
- await page.addInitScript(()=>{if(!localStorage.getItem('meshline.profile')){const identity={key:'cd'.repeat(32),name:'Snow Man',model:'Test',frequency:906.875,txPower:22},channels=[{slot:0,id:'01'.repeat(12),name:'general'},{slot:1,id:'02'.repeat(12),name:'field-ops'}],contacts=[{key:'ab'.repeat(32),name:'Jordan',type:1}];localStorage.setItem('meshline.profile',JSON.stringify({identity,channels,contacts}));}});
+ const page=await browser.newPage({viewport:{width:1500,height:1000}});page.setDefaultTimeout(6000);const errors=[];page.on('pageerror',e=>errors.push(e.stack));
+ await page.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();const file=u.pathname==='/'?'index.html':decodeURIComponent(u.pathname.slice(1));try{await route.fulfill({body:await require('node:fs/promises').readFile(require('node:path').join(__dirname,file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':'text/html'});}catch{await route.fulfill({status:404,body:''});}});
+ await page.addInitScript(()=>{if(location.origin!=='http://127.0.0.1:4173')return;if(!localStorage.getItem('meshline.profile')){const identity={key:'cd'.repeat(32),name:'Snow Man',model:'Test',frequency:906.875,txPower:22},channels=[{slot:0,id:'01'.repeat(12),name:'general'},{slot:1,id:'02'.repeat(12),name:'field-ops'}],contacts=[{key:'ab'.repeat(32),name:'Jordan',type:1}];localStorage.setItem('meshline.profile',JSON.stringify({identity,channels,contacts}));}});
  await page.goto('http://127.0.0.1:4173');
  await page.evaluate(()=>{const channel={kind:'channel',...live.channels[0]},direct={kind:'direct',key:live.contacts[0].key,name:'Jordan'},timestamp=new Date(2026,9,15,12).getTime()/1000;
  for(let i=0;i<75;i++)live.messages.push({id:'saved-'+i,conversation:conversationId(channel),target:channel,kind:'channel',sender:i%2?'Jordan':'Other',own:false,timestamp:timestamp+i,text:i===2?'Literal <img src=x onerror=alert(1)> [radio].* @[Snow Man]':'Message '+i,status:'Received',pathLength:0});
@@ -25,3 +26,4 @@ const assert=require('node:assert/strict');
  await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-search-compact.png'});assert.equal(errors.length,0,errors.join('\n'));
  console.log('PASS: search pagination, literal highlighting, combined filters, date errors, channel/DM result navigation, retained reading position, offline search and compact layout');
  }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+

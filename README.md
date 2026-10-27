@@ -6,11 +6,19 @@ Windows desktop client for MeshCore companion radios over Bluetooth LE or USB se
 
 - Channel and direct messaging with local history.
 - Direct-message ACK tracking, bounded retries, flood fallback, cancellation, and delivery details.
-- Contact nicknames, photos, notes, and local favorites.
+- Contact nicknames, photos, notes, local favorites and independent full-key comparison records.
 - Direct-message windows and configurable notification sound.
 - Channel mention autocomplete using the MeshCore @[name] convention.
 - Street maps with advertised node locations and observed message paths.
 - Compact layout, connection diagnostics, and retained-message synchronization.
+- Passive RF trend summaries with sample counts and last-link limitations.
+- Private Radio map points with local notes and backup merge support.
+- An #echo-only chat/CoreScope split, automatic local-map fallback and configurable MeshMapper region/PC centering.
+- Default dark black surfaces, an alternative console scheme and four independent display accents.
+- Optional startup password/authenticator lock with recovery codes; existing history remains unencrypted.
+- Bounded webpage/image previews and session-only radio CLI tools.
+
+See [local client tools](LOCAL_CLIENT_TOOLS.md) for access paths and limitations. These additions are in the 0.8.22 candidate branch; stable publication remains subject to the [release-readiness gates](RELEASE_READINESS.md).
 
 ## Development
 

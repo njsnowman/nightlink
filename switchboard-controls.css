@@ -1,0 +1,35 @@
+/* Shared interaction vocabulary for maps, channels and detached conversations. */
+html:root:root body .network-source-switch{display:flex;gap:0;padding:0;border:1px solid var(--sb-edge);background:#0a0c09;border-radius:3px;overflow:hidden}
+html:root:root body .network-source-switch button{position:relative;min-height:32px;padding:7px 12px;border:0;border-right:1px solid var(--sb-edge);border-radius:0;background:transparent;color:var(--sb-muted);font:500 12px/1.3 'Segoe UI',sans-serif;box-shadow:none;white-space:nowrap}
+html:root:root body .network-source-switch button:last-child{border-right:0}
+html:root:root body .network-source-switch button[aria-pressed=true]{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 -3px var(--accent);font-weight:650}
+html:root:root body .network-source-switch button:hover:not([aria-pressed=true]){color:var(--sb-copy);background:#1a1e17}
+html:root:root body .network-source-switch button:focus-visible{outline:2px solid var(--accent);outline-offset:-4px;z-index:1}
+html:root:root body #overview .network-source-switch button{min-height:27px;padding:5px 8px;font-size:11px}
+html:root:root body .network-source-bar>button{min-height:32px;padding:6px 10px;border:1px solid var(--sb-edge);border-radius:3px;color:var(--sb-copy);background:#11150f;line-height:1.3;box-shadow:none}
+html:root:root body .network-source-bar>button:hover{border-color:var(--accent-line);color:var(--accent);background:var(--accent-soft)}
+html:root:root body #overview .network-source-bar>button{min-height:27px;padding:5px 8px;font-size:11px}
+html:root:root body #network-source-note{font-size:12px;line-height:1.45;color:var(--sb-muted)}
+html:root:root body #corescope-status{margin:0;padding:7px 12px;font:11px/1.45 Consolas,monospace;border-top:1px solid var(--sb-edge);background:#10130e;color:var(--sb-muted)}
+html:root:root body .corescope-startup{color:var(--sb-muted);font:12px/1.5 Consolas,monospace;background:#0d100c}
+html:root:root body .map-controls button,html:root:root body .leaflet-control-zoom a,html:root:root body .route-map-controls button{border-color:var(--sb-edge);border-radius:2px;background:#11150f;color:var(--sb-copy);box-shadow:none}
+html:root:root body .map-controls button:hover,html:root:root body .leaflet-control-zoom a:hover{background:var(--accent-soft);color:var(--accent)}
+html:root:root body .leaflet-control-attribution{font-size:10px;background:#090c09df;color:#b7bdaf}
+html:root:root body .leaflet-control-attribution a{color:#c8cfc0}
+html:root:root:root body .delivery-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border:1px solid #46493e;border-radius:3px;background:#161911;color:#c1c5b8;font:500 11px/1.4 'Segoe UI',sans-serif;white-space:normal}
+html:root:root:root body .delivery-acknowledged{border-color:#416d52;background:#102217;color:#a4dfb8}
+html:root:root:root body .delivery-unconfirmed,html:root:root:root body .delivery-interrupted,html:root:root:root body .delivery-cancelled{border-color:#7d6541;background:#241d11;color:#f0cb8b}
+html:root:root:root body .delivery-queued,html:root:root:root body .delivery-sending,html:root:root:root body .delivery-awaiting,html:root:root:root body .delivery-retrying{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent)}
+html:root:root:root body .message-route:not(.signal-hop){display:inline-flex;align-items:center;justify-content:center;min-height:28px;margin:6px 5px 0 0;padding:5px 9px;border:1px solid #454a3c;border-radius:3px;background:#141810;color:#c8cdbf;font-size:11px;line-height:1.35;box-shadow:none;text-align:center}
+html:root:root:root body .message-route:not(.signal-hop):hover:not(:disabled){border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent)}
+html:root:root:root body .message-route:disabled,html:root:root:root body .dm-compose button:disabled{opacity:.5;cursor:not-allowed;filter:none}
+html:root:root:root body .dm-compose input:focus-visible{border-color:var(--accent);outline:1px solid var(--accent);outline-offset:2px}
+html:root:root:root body #chat-form:focus-within{box-shadow:0 0 0 1px var(--accent-line)}
+html:root:root:root body #chat-form>button:hover:not(:disabled),html:root:root:root body .dm-compose button.primary:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 85%,white);border-color:var(--accent);color:#15140e}
+html:root:root:root body .reading-jump{border:1px solid var(--accent-line);border-radius:3px;padding:5px 11px;background:#191d13;color:var(--accent);font:600 11px/1.4 'Segoe UI',sans-serif;box-shadow:0 3px 10px #0007}
+html:root:root:root body .reading-jump:hover{background:var(--accent-soft)}
+html:root:root:root body #dm-sound{min-width:36px;min-height:32px;padding:5px 8px;border:1px solid var(--sb-edge);border-radius:3px;background:#151911;color:var(--sb-muted)}
+html:root:root:root body #dm-sound[aria-pressed=true]{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent)}
+html:root:root body :is(.message-route,.network-source-bar>button,.map-controls button,.reading-jump,#dm-sound):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-height:650px){html:root:root body #overview .network-source-bar>button,html:root:root body #overview .network-source-switch button{min-height:24px;padding:3px 6px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){html:root:root body :is(.network-source-bar button,.message-route,.reading-jump){transition:none}}

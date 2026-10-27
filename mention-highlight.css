@@ -1,0 +1,6 @@
+/* Exact radio-name mentions: presentation only; notification/read rules are unchanged. */
+html:root:root:root body .message.is-self-mention > div > p,
+html:root:root:root body .dm-bubble.is-self-mention > .signal-message-content > p{border:1px solid #b89642;border-inline-start:4px solid #ffd078;background:#292313;color:#fff4db;padding:10px 14px;border-radius:4px}
+html:root:root:root body .sender .mention-message-label{display:inline-block;background:#ffd078;color:#211a0a;border:1px solid #ffd078;border-radius:3px;padding:2px 7px;font:700 12px/1.4 'Segoe UI',sans-serif;white-space:nowrap;letter-spacing:.01em}
+html:root:root:root body .is-self-mention .mention-self{background:#ffd078;color:#211a0a;border-color:#ffd078}
+@media(max-height:650px),(max-width:600px){html:root:root:root body .message.is-self-mention > div > p,html:root:root:root body .dm-bubble.is-self-mention > .signal-message-content > p{padding:8px 10px}}

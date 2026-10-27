@@ -1,5 +1,14 @@
 # Consolidated navigation and fixed-window layout
 
+## Current navigation candidate — issue #55
+
+Five primary destinations: Overview, Messages, Network, Contacts and Radio. Channels and Direct messages are contextual views under Messages. Search remains in the top bar with Ctrl+K. Tools contains Activity and Diagnostics. Sidebar conversations are bounded, optional and collapsed on first use; recent contacts do not repeat the directory. The Messages unread counter includes channels and direct messages. Incoming message rendering preserves the channel selector and manually expanded Tools menu.
+
+Navigation browser tests use 350 synthetic contacts and 20 channels, plus focused synthetic DM/unread/channel-update scenarios. Compact and enlarged-text checks are isolated from production profiles. Packaged results and artifact identity are recorded in releases/0.8.22-rc.2.md. No physical-radio changes or validation are claimed for this UI scope.
+
+## Historical layout validation
+
+
 Tracking: https://github.com/njsnowman/nightlink/issues/30
 
 Four primary items remain: Overview, Messages, Network and Contacts. More contains Direct Messages, Search and Activity. Channels and Recent chats use collapsible groups, showing at most three channel shortcuts and two contacts with recent DM history. The full companion contact directory no longer appears in the sidebar. All channels, companion contacts and unconfigured saved conversations remain available in searchable Browse conversations, with progressive loading. Contacts open their contact card; channel/history items open the conversation. Existing unread counts remain available, including an aggregate DM count on More.

@@ -1,0 +1,53 @@
+/* Switchboard message records. Presentation only: delivery and route metadata remain authoritative. */
+html:root:root:root body #chat-log,html:root:root:root body .dm-thread{background:transparent;padding:8px 22px 12px;scrollbar-width:thin;scrollbar-color:#4a473c #101110;overscroll-behavior:contain;scroll-padding-block:12px}
+html:root:root:root body .message,html:root:root:root body .dm-bubble,html:root:root:root body .dm-bubble.own{display:flex;align-items:flex-start;gap:18px;max-width:100%;margin:0;padding:22px 0;border:0;border-bottom:1px solid #292a25;border-radius:0;background:transparent;box-shadow:none}
+html:root:root:root body .message:last-child,html:root:root:root body .dm-bubble:last-child{border-bottom-color:transparent}
+html:root:root:root body .message>div,html:root:root:root body .signal-message-content{flex:1;min-width:0}
+html:root:root:root body .message>.avatar,html:root:root:root body .message>.contact-avatar,html:root:root:root body .signal-message-avatar .avatar{display:grid;place-items:center;flex:none;width:52px;height:52px;min-width:52px;aspect-ratio:1;border-radius:50%;overflow:hidden;border:1px solid var(--accent-line);background:#1b1d17;color:var(--accent);font:600 calc(12px * var(--read-scale,1)) 'Segoe UI',sans-serif;line-height:1}
+html:root:root:root body .message>.avatar img,html:root:root:root body .message>.contact-avatar img,html:root:root:root body .signal-message-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
+html:root:root:root body .signal-message-avatar{padding:0;border:0;background:transparent;border-radius:50%;flex:none}
+html:root:root:root body .message .sender,html:root:root:root body .signal-message-content .sender{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:27px;line-height:1.35;color:#eeeede}
+html:root:root:root body .message .sender>span:not(.signal-hop),html:root:root:root body .message .sender>.contact-link,html:root:root:root body .message .sender>button.sender-contact,html:root:root:root body .signal-message-content .dm-message-person,html:root:root:root body .signal-message-content .sender>span:not(.signal-hop){font:600 calc(16px * var(--read-scale,1)) 'Segoe UI',sans-serif;color:#eeeede;padding:0;text-align:left;background:transparent;border:0}
+html:root:root:root body .message .sender time,html:root:root:root body .signal-message-content .sender time{font:calc(11px * var(--read-scale,1)) Consolas,'Courier New',monospace;color:#aaa99f;letter-spacing:.15px;font-variant-numeric:tabular-nums;white-space:nowrap}
+html:root:root:root body .message .sender .signal-hop,html:root:root:root body .signal-message-content .sender .signal-hop{display:inline-flex;align-items:center;flex:none;min-height:25px;width:auto;margin:0 0 0 auto;padding:3px 9px;border:1px solid var(--accent-line);border-radius:3px;color:var(--accent);background:var(--accent-soft);font:calc(11px * var(--read-scale,1)) Consolas,'Courier New',monospace;line-height:1.2;text-transform:uppercase;white-space:nowrap;letter-spacing:.5px}
+html:root:root:root body .message .sender .signal-hop-own{border-color:#4a4940!important;color:#b7b6aa!important;background:#171813}
+html:root:root:root body .message p,html:root:root:root body .message.own p,html:root:root:root body.compact .message p,html:root:root:root body .dm-bubble p,html:root:root:root body .dm-bubble.own p{display:block;max-width:100%;padding:0;margin:8px 0 4px;border:0;border-radius:0;background:transparent;box-shadow:none;color:#eaeade;font:400 calc(16px * var(--read-scale,1))/1.65 'Segoe UI',sans-serif;letter-spacing:.1px;white-space:pre-wrap;overflow-wrap:anywhere}
+html:root:root:root body .message small,html:root:root:root body .dm-bubble small{color:#aba99e;line-height:1.5;font-size:calc(11px * var(--read-scale,1))}
+html:root:root:root body .message button.sender-contact:hover,html:root:root:root body .signal-message-content .dm-message-person:hover{color:var(--accent);text-decoration:underline;text-underline-offset:4px}
+html:root:root:root body .message-route:not(.signal-hop){font-size:calc(11px * var(--read-scale,1));border-radius:3px;border-color:#4a473a;background:#151610;color:#d3ccba;min-height:28px;margin-top:6px}
+html:root:root:root body #chat-form,html:root:root:root body.compact #chat-form{display:flex;align-items:center;flex-shrink:0;gap:8px;margin:10px 14px 0;padding:5px;border:1px solid #494737;border-radius:4px;background:#0d0e0c;box-shadow:none}
+html:root:root:root body #chat-form:focus-within{border-color:var(--accent)}
+html:root:root:root body #chat-form input,html:root:root:root body.compact #chat-form input{flex:1;min-width:0;min-height:45px;border:0;background:transparent;color:#eeeede;padding:10px 12px;font:calc(15px * var(--read-scale,1)) 'Segoe UI',sans-serif}
+html:root:root:root body #chat-form input::placeholder,html:root:root:root body .dm-compose input::placeholder{color:#a4a498;opacity:1}
+html:root:root:root body #chat-form>button{flex:none;min-width:66px;min-height:45px;padding:9px 16px;border:1px solid var(--accent);border-radius:4px;background:var(--accent);color:#16150e;font-size:20px;box-shadow:none}
+html:root:root:root body #chat-form>button:disabled{opacity:.45}
+html:root:root:root body .composer-hint{flex-shrink:0;margin:5px 18px 10px;font-size:calc(10px * var(--read-scale,1));color:#aaa89a;background:transparent;line-height:1.4}
+html:root:root:root body .voice-actions{flex-shrink:0;padding:0 15px;margin:4px 0}
+html:root:root:root body .voice-actions button{font-size:11px;min-height:26px;padding:4px 8px;background:#14150f;color:#c5c2b4;border-color:#3c3d32;border-radius:3px}
+html:root:root:root body .dm-window,html:root:root:root body .dm-floating{background:#090a09;border-color:#4a4738;border-radius:4px;color:#eeeede}
+html:root:root:root body.dm-native{background:#090a09}
+html:root:root:root body.dm-native .dm-window{border-radius:0;height:100dvh;min-height:0;overflow:hidden}
+html:root:root:root body .dm-heading{flex-shrink:0;padding:16px 18px;border-bottom:1px solid #38382c;background:#11120f}
+html:root:root:root body .dm-heading .dm-person strong{color:#eeeede;font-size:calc(16px * var(--read-scale,1));font-weight:600}
+html:root:root:root body .dm-heading .dm-person small{color:#aaa99f;font-size:calc(12px * var(--read-scale,1))}
+html:root:root:root body .dm-heading .avatar{width:44px;height:44px;aspect-ratio:1;flex:none;border-radius:50%;overflow:hidden;border:1px solid var(--accent-line);background:#1b1d17;color:var(--accent)}
+html:root:root:root body .dm-compose{flex-shrink:0;display:flex;gap:8px;padding:12px 14px;background:#0c0d0b;border-top:1px solid #38382c}
+html:root:root:root body .dm-compose input{min-width:0;flex:1;min-height:44px;background:#10110e;border:1px solid #494737;border-radius:4px;color:#eeeede;font:calc(15px * var(--read-scale,1)) 'Segoe UI',sans-serif;padding:10px 12px}
+html:root:root:root body .dm-compose button.primary{min-height:44px;flex:none;min-width:64px;border-radius:4px;background:var(--accent);color:#16150e;border-color:var(--accent);font-weight:600}
+html:root:root:root body .dm-feedback{background:#0c0d0b;color:#d4b477;padding:0 14px 8px;flex-shrink:0;font-size:calc(11px * var(--read-scale,1))}
+html:root:root:root body .dm-thread .signal-hop{margin-left:0}
+html:root:root:root body .dm-thread .message-route{display:inline-flex;margin-right:6px}
+html:root:root:root body .empty-chat{color:#b8b5a8;line-height:1.6}
+@media(max-width:1100px),(max-height:720px){html:root:root:root body .message,html:root:root:root body .dm-bubble,html:root:root:root body .dm-bubble.own{gap:13px;padding:15px 0}html:root:root:root body .message>.avatar,html:root:root:root body .message>.contact-avatar,html:root:root:root body .signal-message-avatar .avatar{width:44px;height:44px;min-width:44px}html:root:root:root body #chat-log,html:root:root:root body .dm-thread{padding-inline:15px}html:root:root:root body .message .sender,html:root:root:root body .signal-message-content .sender{gap:8px}html:root:root:root body .message .sender .signal-hop{margin-left:0}}
+@media(max-width:600px){html:root:root:root body .message,html:root:root:root body .dm-bubble,html:root:root:root body .dm-bubble.own{gap:10px}html:root:root:root body .message>.avatar,html:root:root:root body .message>.contact-avatar,html:root:root:root body .signal-message-avatar .avatar{width:38px;height:38px;min-width:38px}html:root:root:root body .message .sender>span:not(.signal-hop),html:root:root:root body .message .sender>.contact-link,html:root:root:root body .signal-message-content .dm-message-person{font-size:calc(14px * var(--read-scale,1))}html:root:root:root body .message p,html:root:root:root body .message.own p,html:root:root:root body .dm-bubble p,html:root:root:root body .dm-bubble.own p{font-size:calc(15px * var(--read-scale,1))}html:root:root:root body .message .sender .signal-hop,html:root:root:root body .signal-message-content .sender .signal-hop{min-height:22px;padding:3px 6px;font-size:10px}}
+
+/* State-driven controls and passive trend marks. */
+html:root body .switchboard-channel-picker{display:none}
+html:root body .switchboard-trend svg[hidden]{display:none!important}
+html:root body .switchboard-trend .trend-grid{stroke:#35372f;stroke-width:1}
+html:root body .switchboard-trend .trend-range{stroke:var(--accent);stroke-width:1;opacity:.55}
+html:root body .switchboard-trend .trend-dot{fill:var(--accent)}
+html:root body .switchboard-trend small{display:block;color:var(--sb-muted);font:10px/1.4 Consolas,monospace}
+
+/* Archive paging stays inside the message pane; latest messages remain the default. */
+.message-history-page{display:block;margin:8px auto;padding:9px 14px;font:inherit;font-size:.8rem;color:var(--accent);background:var(--panel,#091219);border:1px solid var(--line,#294351);cursor:pointer}

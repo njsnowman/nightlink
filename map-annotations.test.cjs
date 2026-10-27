@@ -1,0 +1,6 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),{create,validate}=require('./map-annotations.js');
+const point={id:'one',name:'Test point',type:'Coverage note',notes:'Private note',lat:39.3,lon:-85.2};
+function memory(){const values=new Map();return{getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v)};}
+test('local points persist, update without duplicates and delete',()=>{const storage=memory(),a=create(storage);a.save(point);a.save({...point,notes:'Updated'});assert.equal(create(storage).list().length,1);assert.equal(create(storage).list()[0].notes,'Updated');a.remove(point.id);assert.deepEqual(create(storage).list(),[]);});
+test('invalid coordinates, unsupported types and malformed records are rejected',()=>{for(const change of [{lat:NaN},{lat:86},{lon:181},{lat:''},{lat:null},{lon:undefined},{lat:' '},{name:''},{type:'Radio command'},{notes:'x'.repeat(2001)}])assert.throws(()=>validate({...point,...change}));const storage=memory();storage.setItem('nightlink.map-annotations.v1',JSON.stringify([point,{...point,id:'two',lat:999}]));assert.equal(create(storage).list().length,1);});
+test('storage failure never mutates the in-memory collection',()=>{const storage={getItem:()=>null,setItem:()=>{throw Error('Full');}},a=create(storage);assert.throws(()=>a.save(point),/Full/);assert.deepEqual(a.list(),[]);});

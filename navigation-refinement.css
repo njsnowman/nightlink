@@ -1,0 +1,20 @@
+aside nav button[hidden],#channels details[hidden]{display:none!important}
+.workspace-message-tabs{display:flex;gap:4px;padding:6px 10px;flex-shrink:0}
+.workspace-message-tabs button[aria-pressed="true"]{border-color:var(--accent,#8cbfff);background:var(--accent-soft,#172a3b);color:var(--accent,#8cbfff)}
+.conversation-tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.conversation-tools .workspace-message-tabs{padding:0}
+.conversation-tools select{min-width:110px;max-width:240px;width:auto;flex:1;background:#08141e;color:#d8e7ef;border:1px solid #345463;border-radius:5px;padding:8px;font:inherit}
+@media(max-width:850px){.conversation-tools{gap:4px;padding:6px}.conversation-tools button,.conversation-tools select{padding:6px}.conversation-tools select{max-width:180px}}
+.workspace-message-tabs{align-items:center;gap:6px;position:relative;overflow:visible}
+.workspace-message-tabs>button{min-height:36px;padding:8px 14px;font-weight:650;border:1px solid var(--accent-line,#345463);border-radius:4px}
+.workspace-message-tabs>button[aria-pressed="true"]{box-shadow:inset 0 -2px var(--accent,#8cbfff)}
+.message-more{position:relative;margin-left:auto;flex:none}
+.message-more>summary{cursor:pointer;list-style:none;padding:8px 10px;color:var(--muted,#aab9c9);border:1px solid transparent;border-radius:4px}
+.message-more>summary::-webkit-details-marker{display:none}
+.message-more>summary::after{content:' +'}
+.message-more>summary:hover,.message-more>summary:focus-visible{border-color:var(--accent,#8cbfff);color:var(--accent,#8cbfff)}
+.message-more-actions{position:absolute;right:0;top:calc(100% + 5px);z-index:50;display:grid;gap:4px;min-width:190px;padding:6px;background:#080d12;border:1px solid var(--accent-line,#345463);box-shadow:0 12px 30px #000b;border-radius:5px}
+.message-more-actions button{text-align:left;min-height:36px;padding:8px 10px;white-space:nowrap}
+.conversation-tools>.workspace-message-tabs{flex:1 1 100%;border-bottom:1px solid var(--accent-line,#345463);padding-bottom:6px}
+.dm-inbox>.workspace-message-tabs{border-bottom:1px solid var(--accent-line,#345463)}
+@media(max-width:850px){.workspace-message-tabs>button{padding:7px 10px}.workspace-message-tabs{gap:4px}}

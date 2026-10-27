@@ -2,10 +2,27 @@
 const RELEASES='https://github.com/njsnowman/nightlink/releases/latest';
 const API='https://api.github.com/repos/njsnowman/nightlink/releases/latest';
 function version(value){const m=/^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(value||'');if(!m)return null;const parts=m.slice(1).map(Number);return parts.every(Number.isSafeInteger)?parts:null;}
-function compare(a,b){a=version(a);b=version(b);if(!a||!b)throw Error('Unsupported version.');for(let i=0;i<3;i++)if(a[i]!==b[i])return a[i]>b[i]?1:-1;return 0;}
+function installedVersion(value){
+ if(typeof value!=='string'||value.length>128)return null;
+ const m=/^v?((?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*))(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/.exec(value);
+ if(!m)return null;const core=version(m[1]),pre=m[2]?.split('.')||[];
+ if(!core||pre.some(x=>/^\d+$/.test(x)&&x.length>1&&x[0]==='0'))return null;
+ return{core,pre};
+}
+function compare(a,b){
+ a=installedVersion(a);b=installedVersion(b);if(!a||!b)throw Error('Unsupported version.');
+ for(let i=0;i<3;i++)if(a.core[i]!==b.core[i])return a.core[i]>b.core[i]?1:-1;
+ if(!a.pre.length||!b.pre.length)return a.pre.length?-1:b.pre.length?1:0;
+ for(let i=0;i<Math.max(a.pre.length,b.pre.length);i++){
+  if(a.pre[i]===undefined)return -1;if(b.pre[i]===undefined)return 1;
+  const x=a.pre[i],y=b.pre[i];if(x===y)continue;
+  const xn=/^\d+$/.test(x),yn=/^\d+$/.test(y);
+  if(xn&&yn)return BigInt(x)>BigInt(y)?1:-1;if(xn!==yn)return xn?-1:1;return x>y?1:-1;
+ }return 0;
+}
 function releaseURL(tag){return 'https://github.com/njsnowman/nightlink/releases/tag/'+tag;}
 function selectRelease(data,installed,mode='portable'){
- if(!version(installed)||!data||data.draft||data.prerelease||!/^v\d+\.\d+\.\d+$/.test(data.tag_name)||!version(data.tag_name)||data.html_url!==releaseURL(data.tag_name)||!Array.isArray(data.assets))throw Error('GitHub returned unsupported release information.');
+ if(!installedVersion(installed)||!data||data.draft||data.prerelease||!/^v\d+\.\d+\.\d+$/.test(data.tag_name)||!version(data.tag_name)||data.html_url!==releaseURL(data.tag_name)||!Array.isArray(data.assets))throw Error('GitHub returned unsupported release information.');
  const v=data.tag_name.slice(1),names=mode==='installer'?['Nightlink-Setup-'+v+'.exe']:['Nightlink-Portable-'+v+'.exe','Nightlink.'+v+'.exe','Nightlink '+v+'.exe'];
  const asset=names.map(name=>data.assets.find(a=>a.name===name&&a.state==='uploaded'&&Number.isFinite(a.size)&&a.size>0&&a.browser_download_url==='https://github.com/njsnowman/nightlink/releases/download/'+data.tag_name+'/'+encodeURIComponent(name))).find(Boolean);
  const diff=compare(data.tag_name,installed);
