@@ -73,3 +73,7 @@ Build with npm run dist to produce Nightlink-Setup-<version>.exe and Nightlink-P
 Settings → Nightlink updates shows the running version, offers manual checks and optional checks while the app is open. Updates are never installed automatically. The repository is private, so anonymous checks cannot currently discover releases; use Open GitHub releases in a signed-in browser. No credentials are embedded in the application.
 
 Installer and update controls are available starting in 0.8.9.
+
+## Screenshots
+
+[Download five Nightlink 0.8.22 screenshots](https://github.com/njsnowman/nightlink/releases/download/v0.8.22/Nightlink-Screenshots-0.8.22.zip): Overview, Messages, Network, Radio Tools and Message Path. These are actual application captures with labeled demonstration data and the ice-blue display accent, without private messages or contact details.
