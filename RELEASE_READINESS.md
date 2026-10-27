@@ -59,3 +59,9 @@ Heltec USB synchronization, noise/battery read, discovery (two repeaters) and va
 After the additional Batesville target initially timed out, an independent USB command-36 control received a matching trace. The exact rc.43 payload then successfully traced the same discovery-matched target: one repeater hop, two SNR samples, raw trace and 0x89 response, final connected/ready and no command errors. See [rc.43 control evidence](releases/0.8.22-rc.43.md). The basic returned-direct-trace gate is now satisfied for the tested Heltec/repeater pair; earlier failures remain unexplained and multihop performance is unverified. The six-tool workbench implementation acceptance is complete within that recorded scope.
 
 Installer lifecycle remains on user-requested hold (#63), and production optional-lock re-enrollment/restart is not established (#87). No stable/public release or automatic-update feed change is authorized while applicable gates remain open.
+
+## Owner-approved publication exception for 0.8.22 (2026-10-27)
+
+The owner explicitly directed a full release despite unavailable installer isolation: “lets do the release and if people have issues they will report it”. This latest instruction lifts the installer hold and authorizes publication with the remaining validation gaps disclosed. It is an exception for this release, not a record that those checks passed or a blanket waiver for later releases.
+
+Outstanding evidence: actual isolated clean install/upgrade/uninstall/reinstall and multiple-DPI installer inspection (#63); production optional-lock re-enrollment/restart (#87). The installer must be described as built and statically checked, with these lifecycle checks unverified. Synthetic payload/storage tests and the successful direct physical trace remain separately recorded. North Pole VM remains excluded. Release notes must preserve these limitations and that optional app lock does not encrypt message history.

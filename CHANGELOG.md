@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — consolidated 0.8.22 candidate
+## 0.8.22 — 2026-10-27
 
 - Distinguish absent, unrelated and invalid trace response frames after a companion-accepted timeout. Retain counters only, without packet contents or automatic retries. This does not establish a physical trace fix. [#89](https://github.com/njsnowman/nightlink/issues/89).
 
@@ -57,7 +57,7 @@ Release scope and validation gates: [#74](https://github.com/njsnowman/nightlink
 - Add bounded image/Giphy and webpage previews in channel/Overview/DM messages, with preview opt-out and native URL/fetch limits. [#60](https://github.com/njsnowman/nightlink/issues/60), [#66](https://github.com/njsnowman/nightlink/issues/66)
 - Add opt-in startup password/authenticator lock, recovery codes and post-login vault transition. This does not encrypt existing message history. [#65](https://github.com/njsnowman/nightlink/issues/65), [#69](https://github.com/njsnowman/nightlink/issues/69), [#70](https://github.com/njsnowman/nightlink/issues/70)
 - Add bounded opt-in startup connection to the last synchronized device, session-only radio CLI and restored Add channel actions. [#56](https://github.com/njsnowman/nightlink/issues/56), [#61](https://github.com/njsnowman/nightlink/issues/61)
-- Include identity comparisons, passive RF trends, private map points and queue-notification catch-up changes; physical nonempty M1 backlog confirmation remains pending. [#54](https://github.com/njsnowman/nightlink/issues/54), [#49](https://github.com/njsnowman/nightlink/issues/49)
+- Include identity comparisons, passive RF trends, private map points and queue-notification catch-up changes; physical nonempty M1 backlog recovery was verified in the recorded M1 test; queues remain finite and can be consumed by another client. [#54](https://github.com/njsnowman/nightlink/issues/54), [#49](https://github.com/njsnowman/nightlink/issues/49)
 - Complete packaged web-asset serving in development preview, include validated MeshMapper region/webpage-preview choices in backup exports, and add isolated payload-upgrade checks for history, cards, drafts, preferences and security state. [#74](https://github.com/njsnowman/nightlink/issues/74)
 
 
