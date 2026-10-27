@@ -18,7 +18,7 @@ html:root:root body .leaflet-control-attribution{font-size:10px;background:#090c
 html:root:root body .leaflet-control-attribution a{color:#c8cfc0}
 html:root:root:root body .delivery-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border:1px solid #46493e;border-radius:3px;background:#161911;color:#c1c5b8;font:500 11px/1.4 'Segoe UI',sans-serif;white-space:normal}
 html:root:root:root body .delivery-acknowledged{border-color:#416d52;background:#102217;color:#a4dfb8}
-html:root:root:root body .delivery-unconfirmed,html:root:root:root body .delivery-interrupted,html:root:root:root body .delivery-cancelled{border-color:#7d6541;background:#241d11;color:#f0cb8b}
+html:root:root:root body .delivery-not-sent,html:root:root:root body .delivery-unconfirmed,html:root:root:root body .delivery-interrupted,html:root:root:root body .delivery-cancelled{border-color:#7d6541;background:#241d11;color:#f0cb8b}
 html:root:root:root body .delivery-queued,html:root:root:root body .delivery-sending,html:root:root:root body .delivery-awaiting,html:root:root:root body .delivery-retrying{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent)}
 html:root:root:root body .message-route:not(.signal-hop){display:inline-flex;align-items:center;justify-content:center;min-height:28px;margin:6px 5px 0 0;padding:5px 9px;border:1px solid #454a3c;border-radius:3px;background:#141810;color:#c8cdbf;font-size:11px;line-height:1.35;box-shadow:none;text-align:center}
 html:root:root:root body .message-route:not(.signal-hop):hover:not(:disabled){border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent)}

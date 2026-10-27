@@ -202,6 +202,10 @@ Configure desktop notifications, DM sounds, mention sounds and quiet hours under
 
 Acknowledged by recipient means the recipient radio returned an acknowledgement; it does not prove a person read the message. Failed or unconfirmed means no qualifying confirmation was recorded. The message may still have arrived if the return acknowledgement was lost.
 
+### Contact missing on the radio
+
+A connected Bluetooth/USB link does not guarantee that a previously saved contact still exists in the companion. If the radio removes or replaces that entry, Nightlink keeps your messages, notes and draft but disables sending to it. Import the shared contact again before retrying. A send rejected before radio acceptance is labeled Not sent; earlier accepted attempts without an ACK remain unconfirmed. At capacity, firmware may replace an old non-favorite contact according to its configured policy.
+
 ### Retry with context
 
 Open Delivery details to inspect recorded attempts before retrying. A retry can produce duplicates if the first message arrived without its acknowledgement. Retry and route behavior depend on the existing radio path and firmware.
