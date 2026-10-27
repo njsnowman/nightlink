@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Distinguish absent, unrelated and invalid trace response frames after a companion-accepted timeout. Retain counters only, without packet contents or automatic retries. This does not establish a physical trace fix. [#89](https://github.com/njsnowman/nightlink/issues/89).
+
 - Add Copy public ID to Radio status and shared-contact export. Copy the full public key with a selectable fallback when clipboard access is unavailable. [#91](https://github.com/njsnowman/nightlink/issues/91).
 
 - Add a bundled two-tone mention chime and Notifications test control. Animate consecutive located message hops with replay and reduced-motion support; unknown location gaps remain unconnected. [#90](https://github.com/njsnowman/nightlink/issues/90).
