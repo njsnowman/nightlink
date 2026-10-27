@@ -1,7 +1,10 @@
 # Windows installer and update checks
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracking: https://github.com/njsnowman/nightlink/issues/15
-Status: implemented and locally built; not published as a release.
+Current status (2026-10-27): stable [0.8.22 is public](releases/0.8.22.md). The dated checks below describe the earlier implementation and are not acceptance evidence for the current installer. Current installer lifecycle/multiple-DPI validation remains incomplete under #63; the owner approved publication with that limitation. Both current Windows executables are unsigned.
 
 ## Installer behavior
 
@@ -15,7 +18,7 @@ Settings shows the running version and build mode, supports a manual GitHub rele
 
 Version checks use a fixed GitHub API URL with no credentials, bounded response size and timeout, and no redirects. Only stable releases from the expected repository and matching installer/portable assets are accepted. Download actions use main-process validated URLs; the renderer cannot supply an arbitrary URL. Checks are coalesced and cached for one minute.
 
-The repository is private. Anonymous API checks currently cannot discover its releases. Access/rate-limit and offline states never report "up to date"; the app offers Open GitHub releases in the user's signed-in browser. No credentials are embedded and repository visibility is unchanged. Automatic discovery requires an accessible release feed or a separately designed authentication approach.
+The repository and stable feed are public. No credentials are embedded. Offline, access/rate-limit and malformed responses never establish that the app is current. Final 0.8.22 and an older 0.8.19 client were checked against the live public feed using isolated native app sessions; matching uploaded digests were verified. See [updates](UPDATES.md) and the [final release record](releases/0.8.22.md).
 
 ## Validation — 2026-10-16
 
@@ -27,7 +30,7 @@ The repository is private. Anonymous API checks currently cannot discover its re
 - A separately identified installer (app ID local.meshline.installer-validation; product/shortcut Nightlink Installer Test) installed silently to an explicit cache directory with exit 0 and a working Start menu shortcut. Same-version reinstall returned 0 and preserved a test-data sentinel. Silent uninstall returned 0, removed its executable and shortcut, and retained the sentinel. The sentinel was then cleaned up. Production user storage remained present.
 - The test installer used the same wizard/custom-shortcut and data-retention settings with a separate package identity and uncompressed, non-differential payload. Actual desktop-checkbox interaction and a version-increment upgrade were not exercised. Production installer artifacts were not installed over the user's app.
 
-No release has been published for this change. No new physical-radio test is claimed.
+At the time of the 2026-10-16 checks, this change had not been published. That historical statement is superseded by the current status above. These installer checks do not claim physical-radio validation.
 
 ## References
 

@@ -1,5 +1,8 @@
 # Radio Health validation
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracking: https://github.com/njsnowman/nightlink/issues/21
 
 Radio Health is available from Your radio and Settings. It reports current Bluetooth connection duration, successful reconnections across this app session, current synchronization stage, last successful full sync for the selected radio, frames returned by completed queue fetches and current local-history size. Switching radio identity resets that radio's sync/fetch evidence. Restarting the app resets all session health evidence.

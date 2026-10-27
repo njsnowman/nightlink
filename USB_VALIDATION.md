@@ -1,5 +1,8 @@
 # USB companion validation
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracked in [#37](https://github.com/njsnowman/nightlink/issues/37).
 
 USB uses the shared MeshCore protocol session and per-radio identity/history. Web Serial opens only an explicitly selected port at 115200 baud. Outbound framing is 0x3c, uint16 little-endian payload length, command bytes. Incoming frames use 0x3e; parsing handles fragmented/coalesced reads, skips malformed headers and bounds accepted frame length to 512 bytes. No external serial library or driver installer is bundled.

@@ -1,5 +1,8 @@
 # Advanced feature validation
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracked in [#43](https://github.com/njsnowman/nightlink/issues/43) and [PR #44](https://github.com/njsnowman/nightlink/pull/44).
 
 The advanced batch is packaged as 0.8.19. Connection-flow and scrolling fixes previously shipped independently in 0.8.17 and 0.8.18. Final results, source identity, checksums and limitations are recorded in [releases/0.8.19.md](releases/0.8.19.md).

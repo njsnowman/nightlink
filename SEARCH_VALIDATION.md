@@ -1,5 +1,8 @@
 # Saved-message search validation
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracking: https://github.com/njsnowman/nightlink/issues/8
 Status: implemented in source and local preview; no release published for this change.
 

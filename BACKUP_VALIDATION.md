@@ -1,5 +1,8 @@
 # Backup and restore validation
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracking: https://github.com/njsnowman/nightlink/issues/12
 Status: included in release preparation for 0.8.8.
 

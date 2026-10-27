@@ -1,8 +1,40 @@
 # Nightlink user guide
 
-Open **Settings > Help & About** or **Tools > Help & About** in the Windows app. The same guide and screenshots are bundled for offline reading.
+Updated 2026-10-27. Open **Settings > Help & About** or **Tools > Help & About**. Source updates to bundled Help appear in the next packaged build; published 0.8.22 binaries remain unchanged. See the [documentation index](DOCUMENTATION.md).
 
 Actual Nightlink interface with fictional demonstration data. No physical-radio session is shown.
+
+## Radio workbench and message paths
+
+Six radio tools, public identity and path evidence.
+
+### Trace Path
+
+Open Radio, select a repeater by name and review the forwarding sequence before sending. Advanced accepts one-byte hashes. Omit your own companion from forwarding hops. Queue acceptance is separate from a returned trace. The reply deadline is bounded to 30–120 seconds; there is no automatic retry.
+
+### Other tools
+
+- Line of Sight calculates offline geometry from coordinates, antenna heights and frequency. It does not check terrain, buildings or actual coverage.
+- RX Log shows passive firmware observations. RSSI/SNR describe the final received link, not every repeater.
+- Noise Floor explicitly reads the companion statistic on protocol 8+; it does not send a mesh test packet.
+- Discover Nodes requires Search nearby to transmit a zero-hop request. The scan lasts seven seconds with a sixty-second cooldown; results are not automatically saved or trusted.
+- CLI targets the companion or an authorized remote node. General local commands require protocol 14+; older firmware supports limited reads. Remote administration requires compatible firmware and login.
+
+### Copy public ID
+
+Open Radio and select Copy public ID, or use shared-contact export. Copy the full 64-character public key; selectable text is available if clipboard access fails. Compare full keys through a trusted channel. Never share private keys, channel secrets or authenticator setup material.
+
+### Message paths
+
+Select the hops badge to open numbered repeater cards and the map. Consecutive located hops animate in order; Replay path repeats the presentation. Reduced motion suppresses animation. Unknown locations remain gaps. This illustrates stored route evidence, not live packet tracking.
+
+### Mention alerts
+
+Exact mentions of your current radio name receive a Mentioned you badge. Simple @name and bracketed @[multi word name] forms are supported. Settings > Notifications includes mention sound and Test mention sound. Muted conversations, quiet hours, your own messages, duplicates and recovered history do not trigger a new alert.
+
+### Validation scope
+
+A returned direct trace through one repeater was physically confirmed on the recorded Heltec USB setup. Earlier timeouts remain unexplained and multihop reliability is unverified. Consult the release notes for installer and optional-lock validation limitations.
 
 ## Start here
 
@@ -284,11 +316,57 @@ A rectangular coverage outline can contain gaps. Imported tiles only cover their
 
 A normal Nightlink history/preferences backup does not replace the source offline tile pack. Keep the original permitted map file so you can reinstall its coverage on another computer.
 
-## Radio Tools, adverts & CLI
+## Read a message path
 
-Understand local adverts, flood adverts and administrative commands.
+Use readable repeater cards, a street map and explicit path evidence.
 
-![Radio Tools, adverts & CLI demonstration](help-assets/radio-tools.png)
+![Read a message path demonstration](help-assets/message-path.png)
+
+### Open the path
+
+1. Select the hop badge beside a message. Selecting message text instead opens reply context.
+2. Read the reception count and whether a matching route packet was captured. A hop count alone cannot identify repeaters.
+3. Use the large numbered cards to review forwarding order. Select a located hop to center its stored position on the map.
+4. Scroll the repeater pane if the route is long. Escape closes the path window.
+
+### Interpret gaps and signals
+
+Unknown repeaters, ambiguous short hashes and missing advertised coordinates remain explicit. Lines are not drawn across missing hops. Reception SNR/RSSI describes the message at your radio, not individual repeater links. Outgoing messages do not report the receiving path. Positions use latest stored advertisements, not verified live locations.
+
+### Offline street maps
+
+The dialog uses the same street-map and permitted offline tile-pack support as Radio map. Import regional offline coverage before disconnecting from the internet; missing tile coverage cannot be invented. A displayed message path is retained evidence, not a new trace request.
+
+## Radio workbench, adverts & CLI
+
+Trace routes, plan offline geometry, inspect reception and administer nodes.
+
+![Radio workbench, adverts & CLI demonstration](help-assets/radio-tools.png)
+
+### Radio workbench
+
+Open Radio for Trace Path, Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI. Selecting a tool does not transmit. At compact window sizes the workbench takes the available width; its content scrolls inside the pane.
+
+### Trace Path
+
+1. Choose a repeater by name and review its visual outbound/return route. Open Advanced only to enter a custom one-byte hash sequence.
+2. Review the route, including the return relays but omitting your companion hash, then select Send trace.
+3. Wait for a matching tagged reply. Acceptance means queued by the companion, not confirmed RF transmission. The reply deadline begins after acceptance and uses the firmware estimate, bounded to 30–120 seconds. There is no automatic retry.
+4. Results show SNR for reported hops. Hashes may collide and do not verify a repeater identity. This tool currently supports one-byte hashes only.
+
+### Line of Sight offline
+
+Enter both endpoint coordinates, antenna heights above ground and frequency. Calculate distance, bearing, geometric horizon and midpoint first-Fresnel radius without internet access. These are geometric estimates only: terrain elevation, buildings, trees, elevation differences and atmospheric refraction are not checked. A calculated path is not confirmed reception or terrain clearance.
+
+### RX Log and Noise Floor
+
+RX Log updates from firmware-reported receptions and displays the latest 100 retained observations without packet payloads. Empty observations do not prove a failed link. Noise Floor reads the radio statistics subtype manually over Bluetooth or USB and requires companion protocol 8+. It is a reported noise measurement, not an estimate from message RSSI.
+
+### Discover Nodes
+
+1. Select Discover Nodes, then Open node discovery.
+2. Select Search nearby when ready to send a direct-range search.
+3. Review responding public identities before adding contacts. A zero-hop search is not forwarded by repeaters; no responses do not prove that the network is empty.
 
 ### Advertise your radio
 
@@ -299,7 +377,7 @@ Understand local adverts, flood adverts and administrative commands.
 
 ### CLI Terminal
 
-1. Open Radio Tools > CLI Terminal.
+1. Open Radio > CLI > Open CLI terminal.
 2. Choose the intended target. Remote administrative access requires a compatible node and its permissions/login.
 3. Read the terminal’s command help and inspect read-only information first.
 4. Review any setting-changing command before sending. The node firmware determines accepted commands and permissions.
@@ -313,6 +391,14 @@ The CLI administers supported radio/node functions. It is not a Windows terminal
 Inspect sync evidence and collect a useful support report.
 
 ![Radio Health & diagnostics demonstration](help-assets/health.png)
+
+### Mentions of your radio
+
+Messages with an exact mention of your current radio name have a contrasting border and Mentioned you label in channels, Overview and direct messages. Multi-word names use bracketed mention syntax. Matching is case-insensitive and does not match a longer similar name. Visual emphasis applies to retained messages too; mute, sound, notification and read settings do not change.
+
+### Radio status panel
+
+Open Radio to see connection/synchronization activity, last successful full sync in this app session, new incoming messages added during that sync and fetched queue frames. Frames may be duplicates or command replies; zero new messages means none were added, not that no traffic occurred while disconnected. Refresh and Reconnect are enabled only when appropriate; Diagnostics opens retained local evidence. Details opens the full Radio Health view. A history write failure is shown separately from successful queue checking.
 
 ### Inspect the session
 
@@ -453,31 +539,3 @@ An advertised name is not a unique public key. Open the contact card and link/im
 ### Before reporting
 
 Include the version from About, the exact action and error, radio firmware/model and whether another client was connected. Export diagnostics if useful. Review and remove private information before attaching any files.
-
-## Radio workbench
-
-Open **Radio** for Trace Path, Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI. Selecting a tab does not transmit.
-
-- **Trace Path:** choose a saved one-byte repeater route or enter outbound and return repeater hashes, omitting your own companion hash. Review the complete round trip, then select Send trace. Each result is received SNR; a hash can match multiple nodes. There is no automatic retry. Multi-byte trace hashes are not currently supported.
-- **Line of Sight:** enter endpoint coordinates, antenna heights above ground and frequency, then calculate offline. Saved advertised coordinates can populate the destination. Results describe geometry only; terrain, buildings, trees, elevation differences and atmospheric refraction are not checked.
-- **RX Log:** view passive packet observations and final-link RSSI/SNR. Firmware must emit RX-log events. The list updates automatically; no observations does not mean failed reception.
-- **Noise Floor:** select Read noise floor to retrieve the companion's reported noise statistic over Bluetooth/USB. Protocol 8+ is required. No test packet is transmitted over the mesh.
-- **Discover Nodes:** open discovery, then select Search nearby when ready to transmit a zero-hop discovery request.
-- **CLI:** open the terminal and select the intended companion or authorized remote node. Remote administration requires login; firmware determines supported commands.
-
-
-## Reading your messages and paths
-
-Your outgoing messages use an accent edge, a tinted body and a You badge in channels, Overview and direct messages. Incoming rows remain neutral. The treatment follows your chosen display accent.
-
-Select a hop badge to inspect the message path. Numbered cards show stored repeater names and whether coordinates are known. Unknown or ambiguous short hashes are not verified identities. Signal values describe reception of the message at your radio unless the evidence explicitly provides another measurement; the dialog does not invent repeater-by-repeater signal readings. Unlocated hops remain gaps in the map.
-
-For a manual radio trace, select a repeater by name and review the visual forwarding sequence. Advanced exposes raw one-byte hashes. Companion acceptance only confirms queue acceptance. The app uses the firmware estimate plus a margin, bounded to 30–120 seconds, while waiting for a matching returned trace; there are no automatic retries.
-
-## Radio connection and synchronization status
-
-The Radio page keeps connection state, current sync stage, last successful full sync in this app session, new-message count and fetched queue-frame count together. Frames can include duplicates and command replies; the counts are intentionally separate. New messages counts incoming rows added during that full sync, not traffic seen by another client. The radio must still retain messages for Nightlink to collect them.
-
-Refresh checks an idle connected radio. Reconnect retries a disconnected radio. Diagnostics opens local observations without starting radio probes; Details opens Radio Health. Storage-write errors take priority over a Ready label, and no successful queue check is presented as proof that missing messages exist in local storage. Completion time and counts reset for a different radio and on app restart.
-
-Messages containing an exact mention of your current radio name receive a warm highlighted border and a Mentioned you badge. Case-insensitive simple mentions and bracketed multi-word names are supported. Similar longer names do not match. The visual treatment also applies to retained messages and does not change mute, notification, sound or read settings.

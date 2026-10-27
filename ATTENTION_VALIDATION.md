@@ -1,5 +1,8 @@
 # Unread state and notification controls
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracking: https://github.com/njsnowman/nightlink/issues/5
 
 Status: implemented in source and local preview; not published as a release.

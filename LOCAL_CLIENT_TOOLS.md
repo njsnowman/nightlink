@@ -8,7 +8,7 @@ Open a contact card, choose its options menu, then Compare public key. Compare t
 
 ## RF Trends
 
-Open More → Diagnostics → RF Trends. Hour, day and week windows summarize existing received-packet observations with bucket medians/ranges, counts and gaps. Half-window change requires at least five samples in each half. The recorder retains a bounded set for up to seven days; a week selector does not guarantee a full week of data. These are mixed-transmitter last-link observations, not network-wide health, packet-loss estimates or individual hop measurements. No probes are sent.
+Open Tools → Diagnostics → RF Trends. Hour, day and week windows summarize existing received-packet observations with bucket medians/ranges, counts and gaps. Half-window change requires at least five samples in each half. The recorder retains a bounded set for up to seven days; a week selector does not guarantee a full week of data. These are mixed-transmitter last-link observations, not network-wide health, packet-loss estimates or individual hop measurements. No probes are sent.
 
 ## Private map points
 

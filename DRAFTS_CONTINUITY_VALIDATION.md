@@ -1,5 +1,8 @@
 # Drafts and reading continuity
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracking: https://github.com/njsnowman/nightlink/issues/24
 
 Drafts are local inert text, scoped by companion identity and conversation, and included in local JSON backups. Main channel/DM composers and floating/native DM replies share the relevant draft. Native draft messages are accepted only from a registered child window and bounded to 4096 characters; radio/contact identity is taken from the main-process window record. Drafts are never transmitted on reopen or reconnect.

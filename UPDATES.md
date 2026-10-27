@@ -10,4 +10,6 @@ Installed candidate versions are compared against stable versions in rc.33 and l
 
 Repository visibility was changed to public at the owner's request on 2026-10-25. The public feed and full downloads of both v0.8.19 Windows artifacts were verified without authentication, including matching GitHub SHA-256 digests. This confirms distribution and download access, not successful installation on every client. No new stable release was published as part of this verification.
 
+On 2026-10-27, stable 0.8.22 was published. Uploaded sizes/digests and anonymous download access were verified. Isolated native checks confirmed an older 0.8.19 client sees the update and the 0.8.22 client reports current. These checks did not execute an installer. See [the release record](releases/0.8.22.md) for source, SHA-256 values and outstanding installer/lock limitations.
+
 All future publication follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md). Update-check validation is tracked in [#84](https://github.com/njsnowman/nightlink/issues/84).

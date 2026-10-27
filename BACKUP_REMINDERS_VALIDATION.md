@@ -1,5 +1,8 @@
 # Local backup status and reminders
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracking: https://github.com/njsnowman/nightlink/issues/27
 
 Settings separates the last confirmed desktop save from a browser export starting. Confirmed save metadata is recorded only after the native save bridge reports success, using completion time. Cancelled or failed saves do not record success. A browser export does not overwrite separate confirmed-save evidence; earlier confirmed records are preserved when exporting through a browser. Save evidence cannot establish that the file still exists or is readable.

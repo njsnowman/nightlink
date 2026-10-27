@@ -1,5 +1,8 @@
 # Nightlink 0.8.22 release readiness
 
+> Current disposition: stable [0.8.22 is public](releases/0.8.22.md) under the owner-approved publication exception recorded below. Earlier hold/candidate statements are dated history. Installer lifecycle and production lock re-enrollment checks remain unverified.
+
+
 Tracking: [#74](https://github.com/njsnowman/nightlink/issues/74). This consolidates the candidate branch; it is not authorization to bypass RELEASE_PROCESS.md.
 
 ## Scope

@@ -1,5 +1,8 @@
 Nightlink 0.8.9 adds a per-user Windows installer and optional update checks.
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 - Installer: Start menu shortcut, optional desktop shortcut, and retained local data on normal uninstall.
 - Portable: available separately for users who prefer to run without installation.
 - Settings: running version, manual release check, and opt-in update notices. Downloads require an explicit action; updates are never installed automatically.

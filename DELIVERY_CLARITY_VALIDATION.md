@@ -1,5 +1,8 @@
 # Delivery state and retry validation
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 Tracking: https://github.com/njsnowman/nightlink/issues/18
 
 Outgoing messages display structured queued, sending, retrying, awaiting ACK and final states. Channel acceptance is labelled Broadcast accepted by radio; it does not imply receipt by another node. Direct messages become acknowledged only when recipient ACK evidence is present. Legacy saved statuses remain supported.

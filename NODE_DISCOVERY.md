@@ -13,4 +13,4 @@ Primary references checked2026-10-24:
 - [Control payload layout](https://github.com/meshcore-dev/MeshCore/blob/main/docs/payloads.md#control-data): DISCOVER_REQ/DISCOVER_RESP, full-key/prefix forms and type masks.
 - [Zero-hop routing](https://github.com/meshcore-dev/MeshCore/blob/main/src/Mesh.cpp): sendZeroHop and control reception. Requests/replies are not forwarded through repeaters.
 
-The older wiki example includes an extra reserved byte; the implementation follows the current firmware's command parser (subtype at command byte1). Physical-radio interoperability remains a separate acceptance item. Synthetic packet tests and successful command acceptance are not proof of RF delivery or a complete inventory of nearby nodes.
+The older wiki example includes an extra reserved byte; the implementation follows the current firmware's command parser (subtype at command byte1). The recorded Heltec USB physical test discovered two repeaters; see releases/0.8.22.md. This establishes that tested setup only, not a complete inventory of nearby nodes or universal firmware interoperability. Synthetic packet tests and command acceptance alone are not RF-delivery proof.

@@ -1,5 +1,8 @@
 # Consolidated navigation and fixed-window layout
 
+> Evidence record: dated results below retain their original scope. For current downloads, release status and remaining limitations, use the [documentation index](DOCUMENTATION.md) and [0.8.22 release record](releases/0.8.22.md).
+
+
 ## Current navigation candidate — issue #55
 
 Five primary destinations: Overview, Messages, Network, Contacts and Radio. Channels and Direct messages are contextual views under Messages. Search remains in the top bar with Ctrl+K. Tools contains Activity and Diagnostics. Sidebar conversations are bounded, optional and collapsed on first use; recent contacts do not repeat the directory. The Messages unread counter includes channels and direct messages. Incoming message rendering preserves the channel selector and manually expanded Tools menu.

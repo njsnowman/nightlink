@@ -1,6 +1,6 @@
 # Optional startup app lock
 
-Settings → App lock → Set up app lock enables a local password plus authenticator-code gate. It is off by default. Enrollment requires a password/passphrase of 12–256 characters, a verified six-digit authenticator code, and acknowledgement that eight one-time recovery codes have been saved. The QR code is generated locally; no authentication service or Internet connection is used. Phone and computer clocks must agree. A recovery code replaces the authenticator factor, never the password. A code used during enrollment cannot immediately be reused for unlocking; wait for a fresh code.
+Settings → Security → Set up app lock enables a local password plus authenticator-code gate. It is off by default. Enrollment requires a password/passphrase of 12–256 characters, a verified six-digit authenticator code, and acknowledgement that eight one-time recovery codes have been saved. The QR code is generated locally; no authentication service or Internet connection is used. Phone and computer clocks must agree. A recovery code replaces the authenticator factor, never the password. A code used during enrollment cannot immediately be reused for unlocking; wait for a fresh code.
 
 ## Protection boundary
 

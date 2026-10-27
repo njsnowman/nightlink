@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Refresh documentation for the public 0.8.22 release, current radio tools, update behavior and validation limits. Expand bundled Help source; published 0.8.22 binaries remain unchanged. [#92](https://github.com/njsnowman/nightlink/issues/92).
+
 ## 0.8.22 — 2026-10-27
 
 - Distinguish absent, unrelated and invalid trace response frames after a companion-accepted timeout. Retain counters only, without packet contents or automatic retries. This does not establish a physical trace fix. [#89](https://github.com/njsnowman/nightlink/issues/89).
@@ -17,7 +21,7 @@
 
 - Omit the originating companion from generated trace forwarding routes; companions with repetition disabled must receive the completed trace rather than forward it. [#89](https://github.com/njsnowman/nightlink/issues/89).
 
-- Add a consolidated Radio workbench with manual trace, offline geometric planning, RX observations, noise-floor reads, discovery and CLI. Physical-radio acceptance is pending. [#89](https://github.com/njsnowman/nightlink/issues/89).
+- Add a consolidated Radio workbench with manual trace, offline geometric planning, RX observations, noise-floor reads, discovery and CLI. Physical Heltec USB checks confirmed synchronization, noise/battery reads, discovery, RX observations and one returned direct repeater trace. Earlier trace timeouts remain unexplained; multihop performance is unverified. [#89](https://github.com/njsnowman/nightlink/issues/89).
 
 - Use the asynchronous Windows protected-storage provider for startup-lock reads and atomic writes. Add real Windows process-restart coverage for enrollment, recovery replay protection, disabling and readable legacy ciphertext. Unreadable existing settings remain locked and unchanged; this does not recover a lost encryption key. [#87](https://github.com/njsnowman/nightlink/issues/87)
 
@@ -49,7 +53,7 @@
 
 - Implement the Switchboard interface with amber defaults, compact channel navigation, flat message rows, and a passive signal summary. Preserve saved accents and radio behavior. Tracking: [#75](https://github.com/njsnowman/nightlink/issues/75).
 
-Release scope and validation gates: [#74](https://github.com/njsnowman/nightlink/issues/74), [release readiness](RELEASE_READINESS.md). Stable publication remains gated by physical M1 backlog confirmation and installer lifecycle validation.
+Release scope and validation gates: [#74](https://github.com/njsnowman/nightlink/issues/74), [release readiness](RELEASE_READINESS.md). Stable 0.8.22 was published under the owner-approved exception recorded in release readiness. Installer lifecycle/multiple-DPI checks and production lock re-enrollment remain unverified; neither is represented as passed.
 
 - Consolidate navigation under Overview, Messages, Network, Contacts and Radio; group secondary tools and unify top-right actions. Start maximized on Overview while preserving session compact controls. [#55](https://github.com/njsnowman/nightlink/issues/55), [#57](https://github.com/njsnowman/nightlink/issues/57), [#64](https://github.com/njsnowman/nightlink/issues/64)
 - Apply Signal Bridge icons and installer artwork; default workspace and detached DMs to Dark black, retain Blue-black console and four independent accents. [#63](https://github.com/njsnowman/nightlink/issues/63), [#73](https://github.com/njsnowman/nightlink/issues/73)
