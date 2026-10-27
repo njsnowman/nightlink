@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.8.23 — release preparation
 
-- Refresh documentation for the public 0.8.22 release, current radio tools, update behavior and validation limits. Expand bundled Help source; published 0.8.22 binaries remain unchanged. [#92](https://github.com/njsnowman/nightlink/issues/92).
+- Refresh documentation for the public 0.8.22 release, current radio tools, update behavior and validation limits. Expand bundled Help source; published 0.8.22 binaries remain unchanged. Package as 0.8.23 under [#93](https://github.com/njsnowman/nightlink/issues/93). [#92](https://github.com/njsnowman/nightlink/issues/92).
 
 ## 0.8.22 — 2026-10-27
 

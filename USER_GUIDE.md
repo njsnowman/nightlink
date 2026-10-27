@@ -1,6 +1,6 @@
 # Nightlink user guide
 
-Updated 2026-10-27. Open **Settings > Help & About** or **Tools > Help & About**. Source updates to bundled Help appear in the next packaged build; published 0.8.22 binaries remain unchanged. See the [documentation index](DOCUMENTATION.md).
+Updated 2026-10-27. Open **Settings > Help & About** or **Tools > Help & About**. Bundled Help is included in the prepared 0.8.23 package; published 0.8.22 binaries remain unchanged. See the [documentation index](DOCUMENTATION.md).
 
 Actual Nightlink interface with fictional demonstration data. No physical-radio session is shown.
 
