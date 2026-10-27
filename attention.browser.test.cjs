@@ -11,7 +11,7 @@ const assert=require('node:assert/strict');
  async function notifications(){await page.locator('.settings').click();await page.getByRole('tab',{name:'Notifications',exact:true}).click();}
  await page.addInitScript(()=>{
   if(location.origin!=='http://127.0.0.1:4173')return;
-  window.soundEvents=0;HTMLMediaElement.prototype.play=function(){if(!this.muted)window.soundEvents++;return Promise.resolve();};
+  window.soundEvents=0;window.mentionSounds=0;HTMLMediaElement.prototype.play=function(){if(!this.muted){window.soundEvents++;if(this.src.endsWith('/mention.wav'))window.mentionSounds++;}return Promise.resolve();};
   window.notices=[];window.Notification=class{static permission='granted';static requestPermission=async()=>'granted';constructor(title,options){this.title=title;this.options=options;window.notices.push(this);}close(){}};
   if(!localStorage.getItem('meshline.profile'))localStorage.setItem('meshline.profile',JSON.stringify({identity:{key:'cd'.repeat(32),name:'Snow Man',model:'Test radio',frequency:906.875,txPower:22,version:'test'},contacts:[{key:'ab'.repeat(32),name:'Jordan',type:1,pathLength:255}],channels:[{slot:0,id:'01'.repeat(12),name:'general'},{slot:1,id:'02'.repeat(12),name:'field-ops'}]}));
  });
@@ -35,9 +35,9 @@ const assert=require('node:assert/strict');
  assert.equal(await page.locator('#mute-channel').getAttribute('aria-pressed'),'true');await page.locator('#mute-channel').click();
  await notifications();await page.locator('#mention-alert-sound').uncheck();assert.equal(await page.locator('#dm-alert-sound').isChecked(),true);
  await page.reload();await notifications();assert.equal(await page.locator('#mention-alert-sound').isChecked(),false);
- await page.locator('#mention-alert-sound').check();await page.locator('nav [data-view="Nodes"]').click();
+ await page.locator('#mention-alert-sound').check();const previewBefore=await page.evaluate(()=>mentionSounds);await page.locator('#test-mention-sound').click();assert.equal(await page.evaluate(()=>mentionSounds),previewBefore+1);await page.locator('nav [data-view="Nodes"]').click();const mentionBefore=await page.evaluate(()=>mentionSounds);
  await page.evaluate(()=>{live.sync='ready';radioSession.dispatchEvent(new CustomEvent('message',{detail:{kind:'channel',slot:1,text:'Jordan: hey @[Snow Man]',timestamp:4,pathLength:0}}));});
- await page.locator('.conversation-alert').click();assert.equal(await page.evaluate(()=>live.selected.slot),1);
+ assert.equal(await page.evaluate(()=>mentionSounds),mentionBefore+1);await page.evaluate(()=>handleIncomingAttention());assert.equal(await page.evaluate(()=>mentionSounds),mentionBefore+1);await page.locator('.conversation-alert').click();assert.equal(await page.evaluate(()=>live.selected.slot),1);
  assert.ok(await page.evaluate(()=>window.soundEvents)>0);
  // Desktop notification action navigates to the matching channel.
  await page.evaluate(()=>{localStorage.setItem('notifications','true');window.realHasFocus=document.hasFocus.bind(document);document.hasFocus=()=>false;view('Nodes');radioSession.dispatchEvent(new CustomEvent('message',{detail:{kind:'channel',slot:0,text:'Jordan: notification @[Snow Man]',timestamp:5,pathLength:0}}));});

@@ -2,6 +2,8 @@
 
 ## Unreleased — consolidated 0.8.22 candidate
 
+- Add a bundled two-tone mention chime and Notifications test control. Animate consecutive located message hops with replay and reduced-motion support; unknown location gaps remain unconnected. [#90](https://github.com/njsnowman/nightlink/issues/90).
+
 - Emphasize exact radio-name mentions with a contrasting border and Mentioned you badge in channels, Overview and detached DMs; match case-insensitive bracketed and simple mention forms without prefix/substring matches. Notification and read rules remain unchanged. [#90](https://github.com/njsnowman/nightlink/issues/90).
 
 - Consolidate Radio connection/sync status, session-specific completion time, distinct new-message/queue-frame counts and guarded Refresh/Reconnect/Diagnostics controls. Keep storage errors and recovery notices explicit. [#91](https://github.com/njsnowman/nightlink/issues/91).

@@ -72,12 +72,13 @@ function renderAttentionSettings(){
  const grid=$('.settings-grid');const existing=[...grid.querySelectorAll('label')].find(l=>l.textContent.trim()==='Direct message sound');if(existing)existing.remove();
  for(const [id,title,key]of [['dm-alert-sound','Direct message sound','dm-sound'],['mention-alert-sound','Mention sound','nightlink.mention-sound']]){
   const label=document.createElement('label'),input=document.createElement('input');label.textContent=title;input.id=id;input.type='checkbox';input.checked=localStorage.getItem(key)!=='false';
-  input.onchange=()=>{localStorage.setItem(key,String(input.checked));updateDMs();};label.append(input);grid.prepend(label);
+  input.onchange=()=>{localStorage.setItem(key,String(input.checked));updateDMs();};label.append(input);if(key==='nightlink.mention-sound'){const test=document.createElement('button');test.type='button';test.id='test-mention-sound';test.textContent='Test mention sound';test.onclick=()=>soundMention(true);label.append(test);}grid.prepend(label);
  }
  const explanation=document.createElement('p');explanation.className='attention-help';explanation.textContent='Mute individual channels from the conversation header. Muted channels keep unread counts but suppress notifications and mention sounds. Recovered messages do not play alerts.';grid.append(explanation);
 }
-const mentionAudio=new Audio('dm.wav');mentionAudio.preload='auto';
-function soundMention(){if(typeof quietHoursActive==='function'&&quietHoursActive())return;if(localStorage.getItem('nightlink.mention-sound')==='false')return;mentionAudio.currentTime=0;mentionAudio.play().catch(()=>toast('Mention received · interact with Nightlink to enable sound.'));}
+const mentionAudio=new Audio('mention.wav');mentionAudio.preload='auto';let mentionSoundUnlocked=false;
+document.addEventListener('pointerdown',()=>{if(mentionSoundUnlocked||!mentionAudio.paused)return;mentionAudio.muted=true;mentionAudio.play().then(()=>{if(mentionSoundUnlocked)return;mentionAudio.pause();mentionAudio.currentTime=0;mentionAudio.muted=false;mentionSoundUnlocked=true;}).catch(()=>{mentionAudio.muted=false;});},{capture:true});
+function soundMention(preview=false){if(!preview&&typeof quietHoursActive==='function'&&quietHoursActive())return;if(!preview&&localStorage.getItem('nightlink.mention-sound')==='false')return;mentionSoundUnlocked=true;mentionAudio.muted=false;mentionAudio.currentTime=0;mentionAudio.play().catch(()=>toast('Mention sound unavailable - try Test mention sound in Settings > Notifications.'));}
 const attentionAlerts=document.createElement('div');attentionAlerts.id='conversation-alerts';attentionAlerts.setAttribute('aria-live','polite');document.body.append(attentionAlerts);
 function navigateAttention(target){if(target.kind==='direct')openDM(target.key);else selectConversation({...target});}
 function showConversationAlert(m,mention){
