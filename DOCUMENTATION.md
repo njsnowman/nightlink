@@ -11,6 +11,7 @@ Updated 2026-10-27 for public stable **0.8.23**. Tracking: [#92](https://github.
 
 ## Operating guides
 
+- Messaging: [received emoji reactions](REACTIONS.md).
 - Connection: [startup connection](STARTUP_CONNECTION.md), [Windows tray](WINDOWS_TRAY.md), [message retries](SEND_RETRIES.md).
 - Maps: [CoreScope and MeshMapper](CORESCOPE_MAP.md), [offline maps](OFFLINE_MAPS.md), [local tools and private points](LOCAL_CLIENT_TOOLS.md).
 - Radio: [tools and adverts](RADIO_TOOLS.md), [CLI](RADIO_CLI.md), [node discovery](NODE_DISCOVERY.md), [diagnostics](DIAGNOSTICS.md), [field test procedure](FIELD_TEST.md).

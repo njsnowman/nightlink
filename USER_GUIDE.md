@@ -151,6 +151,10 @@ Read, reply, inspect hops and open a sender’s contact card.
 
 Opening a conversation shows the latest messages. Incoming messages follow the bottom while you are reading the latest. If you move into older history, use the latest-message control to return. Large histories use bounded rows and paging rather than mounting every saved message.
 
+### Received reactions
+
+Supported MeshCore One reactions appear as emoji chips beneath a uniquely matched original message. A reaction whose original is missing or outside the current page appears as a separate notice; Reaction details shows its original wire text. Ordinary messages are preserved. Nightlink does not send reactions through this feature.
+
 ### Reply context
 
 The reply preview is local context, not a new MeshCore threading protocol. Check the actual text and byte count before sending. Clicking a message does not transmit by itself.

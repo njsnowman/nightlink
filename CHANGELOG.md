@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Recognize received MeshCore One emoji reactions in channels and DMs. Match retained originals by exact message text/timestamp and conversation; display deduplicated reaction chips or an explicit unmatched notice instead of a raw hash line. Preserve stored wire text and ordinary messages. [#94](https://github.com/njsnowman/nightlink/issues/94).
+
 ## 0.8.23 — 2026-10-27
 
 - Refresh documentation for the public 0.8.22 release, current radio tools, update behavior and validation limits. Expand bundled Help source; published 0.8.22 binaries remain unchanged. Package as 0.8.23 under [#93](https://github.com/njsnowman/nightlink/issues/93). [#92](https://github.com/njsnowman/nightlink/issues/92).

@@ -1,0 +1,8 @@
+.message[hidden],.dm-bubble[hidden]{display:none!important}
+.message-reactions{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0 3px}
+.message-reaction-chip{display:inline-flex;align-items:center;min-height:28px;padding:3px 10px;border:1px solid var(--accent,#f1b653);border-radius:8px;background:rgba(120,150,170,.1);font-size:17px;line-height:1.3;color:inherit}
+.reaction-notice>div>p,.reaction-notice>p{font-size:16px;opacity:.9}
+.reaction-unmatched{display:block;margin-top:5px;font-size:13px!important;line-height:1.5}
+.reaction-wire-details{margin-top:6px;font-size:12px;cursor:default}
+.reaction-wire-details summary{cursor:pointer}
+.reaction-wire-details code{display:block;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:5px;user-select:text}
