@@ -1,12 +1,12 @@
 # Nightlink documentation
 
-Updated 2026-10-27 for public stable **0.8.22**. Tracking: [#92](https://github.com/njsnowman/nightlink/issues/92).
+Updated 2026-10-27 for public stable **0.8.23**. Tracking: [#92](https://github.com/njsnowman/nightlink/issues/92).
 
 ## Start here
 
-- [Downloads, screenshots and checksums](https://github.com/njsnowman/nightlink/releases/tag/v0.8.22)
+- [Downloads, screenshots and checksums](https://github.com/njsnowman/nightlink/releases/tag/v0.8.23)
 - [Illustrated user guide](USER_GUIDE.md)
-- [Release record and validation limits](releases/0.8.22.md)
+- [Release record and validation limits](releases/0.8.23.md)
 - [Changelog](CHANGELOG.md)
 
 ## Operating guides
@@ -29,10 +29,10 @@ Validation documents retain dated results and their original scope. They do not 
 
 Core Bluetooth/USB messaging needs no internet or cloud account. CoreScope, MeshMapper, uncached online tiles, URL previews and update checks require internet. Imported offline maps cover only their supplied areas and zoom levels.
 
-The radio has a finite pending queue, not a shared permanent archive. Another client can consume messages before Nightlink connects. The optional startup lock does not encrypt history or exported backups. Update checks open downloads; they do not install silently. Both 0.8.22 executables are unsigned.
+The radio has a finite pending queue, not a shared permanent archive. Another client can consume messages before Nightlink connects. The optional startup lock does not encrypt history or exported backups. Update checks open downloads; they do not install silently. Both 0.8.23 executables are unsigned.
 
-A returned direct repeater trace was physically confirmed on the recorded Heltec USB setup. Earlier timeouts remain unexplained; multihop reliability is unverified. Installer lifecycle/multiple-DPI and production lock re-enrollment checks remain outstanding under the documented owner-approved 0.8.22 publication exception.
+A returned direct repeater trace was physically confirmed on the recorded Heltec USB setup. Earlier timeouts remain unexplained; multihop reliability is unverified. Installer lifecycle/multiple-DPI and production lock re-enrollment checks remain outstanding under the documented owner-approved 0.8.23 publication exception.
 
 ## Documentation delivery
 
-Repository documentation can be read now. Bundled Help source changes appear in the next packaged build; published 0.8.22 executables and checksums are unchanged. Guide and release screenshots use labeled fictional data.
+Repository documentation can be read now. The refreshed bundled Help is included in public 0.8.23. Published 0.8.22 executables and checksums remain unchanged. Guide and release screenshots use labeled fictional data.

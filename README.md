@@ -20,7 +20,7 @@ Windows desktop client for MeshCore companion radios over Bluetooth LE or USB se
 - Radio workbench: Trace Path, offline geometric Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI.
 - Copy public ID, exact-name mention highlighting/chime, and animated located message paths.
 
-Stable **0.8.22** is available: [Windows installer](https://github.com/njsnowman/nightlink/releases/download/v0.8.22/Nightlink-Setup-0.8.22.exe), [portable build](https://github.com/njsnowman/nightlink/releases/download/v0.8.22/Nightlink-Portable-0.8.22.exe), and [release notes and checksums](releases/0.8.22.md). Both executables are unsigned. See the [documentation index](DOCUMENTATION.md), [user guide](USER_GUIDE.md) and [local client tools](LOCAL_CLIENT_TOOLS.md).
+Stable **0.8.23** is available: [Windows installer](https://github.com/njsnowman/nightlink/releases/download/v0.8.23/Nightlink-Setup-0.8.23.exe), [portable build](https://github.com/njsnowman/nightlink/releases/download/v0.8.23/Nightlink-Portable-0.8.23.exe), and [release notes and checksums](releases/0.8.23.md). Both executables are unsigned. See the [documentation index](DOCUMENTATION.md), [user guide](USER_GUIDE.md) and [local client tools](LOCAL_CLIENT_TOOLS.md).
 
 ## Development
 

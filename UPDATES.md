@@ -13,3 +13,5 @@ Repository visibility was changed to public at the owner's request on 2026-10-25
 On 2026-10-27, stable 0.8.22 was published. Uploaded sizes/digests and anonymous download access were verified. Isolated native checks confirmed an older 0.8.19 client sees the update and the 0.8.22 client reports current. These checks did not execute an installer. See [the release record](releases/0.8.22.md) for source, SHA-256 values and outstanding installer/lock limitations.
 
 All future publication follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md). Update-check validation is tracked in [#84](https://github.com/njsnowman/nightlink/issues/84).
+
+Stable 0.8.23 was published on 2026-10-27. Public download availability, uploaded digests and live installer/Portable update selection from 0.8.22 were verified; 0.8.23 reports current. See [0.8.23 release record](releases/0.8.23.md).
