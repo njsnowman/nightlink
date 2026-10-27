@@ -47,3 +47,9 @@ The unchanged [rc.42 Portable artifact](releases/0.8.22-rc.42.md) was rechecked:
 Both isolated cross-payload upgrade fixtures passed against the exact rc.42 app.asar: stable 0.8.19 history/cards/drafts/preferences and restart retention; rc.12 protected app-lock store, recovery/TOTP login, disable/restart and corrupt-state rejection. Synthetic data and credentials only. These tests do not establish production re-enrollment or actual installer lifecycle acceptance.
 
 Remaining publication gates are unchanged: #63 requires a permitted isolated Windows installer environment (installer remains on user-requested hold; North Pole VM excluded); #89 lacks a successful physical returned trace; #87 production optional-lock re-enrollment/restart is not verified. No physical transmissions, firmware/settings changes, production-profile edits, installer publication or update-feed change occurred in this follow-up. Continue local diagnostic distribution only.
+
+## rc.43 workbench and hardware follow-up (2026-10-27)
+
+See [rc.43 record](releases/0.8.22-rc.43.md) for source/checksum and separate automated versus physical evidence. Full unit suite: 202 passed; exact-package workbench, interface/readability, offline Help and nine-process Windows protected-store checks passed with isolated synthetic data.
+
+Heltec USB synchronization, noise/battery read, discovery (two repeaters) and valid RX observations passed; one trace was accepted and aggregate direct-TX counter increased, but no trace reply returned. Physical trace remains incomplete. Sixteen received messages were safely merged into normal history and verified after reload. User reaffirmed installer hold and exclusion of North Pole VM. No new firmware/radio configuration, installer publication or update-feed changes. A known-working trace target is requested before another RF attempt.
