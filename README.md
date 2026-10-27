@@ -2,6 +2,8 @@
 
 Windows desktop client for MeshCore companion radios over Bluetooth LE or USB serial. Built with Electron and a local HTML/CSS/JavaScript interface.
 
+> **Development note:** Nightlink is vibe coded with AI-assisted development. If you don’t want to use the program because of that, don’t use it.
+
 ## Features
 
 - Channel and direct messaging with local history.
