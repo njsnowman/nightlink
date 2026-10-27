@@ -1,12 +1,18 @@
 /* Shared message presentation. Hop labels come from received metadata, never inferred. */
 (function(root){
  function time(timestamp){return new Date(timestamp*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
- function main(row,m){
+ function mention(row,m,name){
+  const match=typeof name==='string'&&!!name&&[...String(m.text||'').matchAll(/@\[([^\]]+)\]|@([\p{L}\p{N}_-]+)/gu)].some(tag=>(tag[1]||tag[2]).toLocaleLowerCase()===name.toLocaleLowerCase());
+  row.classList.toggle('is-self-mention',match);row.querySelector('.mention-message-label')?.remove();
+  if(match){const badge=document.createElement('span');badge.className='mention-message-label';badge.textContent='Mentioned you';const header=row.querySelector('.sender'),stamp=header?.querySelector('time');if(stamp)stamp.before(badge);else header?.append(badge);}
+ }
+ function main(row,m,selfName){
   const sender=row.querySelector('.sender'),route=[...row.querySelectorAll('.message-route')].find(b=>!b.classList.contains('retry-delivery')&&/hops?|Route details|View repeaters|Direct/i.test(b.textContent));
   if(route){route.title=route.textContent;route.textContent=MeshlineRoutes.hopSummary(m.pathLength);route.classList.add('signal-hop');route.setAttribute('aria-label','View message path · '+route.textContent);sender.append(route);}
   else if(m.own){const tag=document.createElement('span');tag.className='signal-hop signal-hop-own';tag.textContent=m.target?.kind==='channel'?'Broadcast':'Outgoing';sender.append(tag);}
   NightlinkMessageMedia.attach(row,m.text);NightlinkLinkPreviews.attach(row,m.text);
   row.querySelector('p').title=m.status+(m.snr==null?'':' · '+m.snr+' dB');
+  mention(row,m,selfName);
  }
  function direct(row,m,data,openContact,actions={}){
   const old=row.querySelector('.dm-message-person'),image=old?.querySelector('.avatar,.contact-avatar')?.cloneNode(true)||document.createElement('span');
@@ -19,6 +25,7 @@
   const meta=content.querySelector('small');if(meta&&!m.own)meta.textContent=m.status||'';else if(meta?.firstChild?.nodeType===Node.TEXT_NODE)meta.firstChild.remove();content.querySelector('p').title=m.status||'';
   const avatar=document.createElement(m.own?'span':'button');avatar.className='signal-message-avatar';avatar.append(image);if(!m.own){avatar.setAttribute('aria-label','Open contact card for '+data.name);avatar.onclick=openContact;}
   if(actions.reply)root.NightlinkMessageActions?.bind(content.querySelector('p'),actions.reply);row.append(avatar,content);NightlinkMessageMedia.attach(row,m.text);NightlinkLinkPreviews.attach(row,m.text,data.linkPreviews);
+  mention(row,m,data.selfName);
  }
  root.NightlinkMessageLayout={main,direct};
 })(globalThis);

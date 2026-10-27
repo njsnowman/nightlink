@@ -473,3 +473,11 @@ Your outgoing messages use an accent edge, a tinted body and a You badge in chan
 Select a hop badge to inspect the message path. Numbered cards show stored repeater names and whether coordinates are known. Unknown or ambiguous short hashes are not verified identities. Signal values describe reception of the message at your radio unless the evidence explicitly provides another measurement; the dialog does not invent repeater-by-repeater signal readings. Unlocated hops remain gaps in the map.
 
 For a manual radio trace, select a repeater by name and review the visual forwarding sequence. Advanced exposes raw one-byte hashes. Companion acceptance only confirms queue acceptance. The app uses the firmware estimate plus a margin, bounded to 30–120 seconds, while waiting for a matching returned trace; there are no automatic retries.
+
+## Radio connection and synchronization status
+
+The Radio page keeps connection state, current sync stage, last successful full sync in this app session, new-message count and fetched queue-frame count together. Frames can include duplicates and command replies; the counts are intentionally separate. New messages counts incoming rows added during that full sync, not traffic seen by another client. The radio must still retain messages for Nightlink to collect them.
+
+Refresh checks an idle connected radio. Reconnect retries a disconnected radio. Diagnostics opens local observations without starting radio probes; Details opens Radio Health. Storage-write errors take priority over a Ready label, and no successful queue check is presented as proof that missing messages exist in local storage. Completion time and counts reset for a different radio and on app restart.
+
+Messages containing an exact mention of your current radio name receive a warm highlighted border and a Mentioned you badge. Case-insensitive simple mentions and bracketed multi-word names are supported. Similar longer names do not match. The visual treatment also applies to retained messages and does not change mute, notification, sound or read settings.

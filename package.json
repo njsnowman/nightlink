@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.22-rc.39",
+  "version": "0.8.22-rc.40",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -182,7 +182,10 @@
       "radio-workbench.css",
       "outgoing-message.css",
       "message-path.css",
-      "help-assets/message-path.png"
+      "help-assets/message-path.png",
+      "radio-status-ui.js",
+      "radio-status.css",
+      "mention-highlight.css"
     ],
     "win": {
       "target": [
