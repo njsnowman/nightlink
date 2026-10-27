@@ -72,3 +72,7 @@ Outstanding evidence: actual isolated clean install/upgrade/uninstall/reinstall 
 ## Published disposition — 0.8.22
 
 Stable [v0.8.22](https://github.com/njsnowman/nightlink/releases/tag/v0.8.22) is public under the explicit owner-approved exception above. Setup, Portable, labeled demonstration screenshots and checksums were uploaded and verified. The public update feed and exact native old/current-client checks passed. Remaining installer and production-lock evidence stays open (#63/#87); publication is not a claim those tests passed. See [final release record](releases/0.8.22.md) for artifact/source provenance, validation, limits and URLs. The Windows executables are unsigned, as disclosed in release notes.
+
+## Owner-approved publication exception for 0.8.23 (2026-10-27)
+
+After reviewing the completed draft, the owner explicitly selected “Publish 0.8.23 with disclosed limitations”. This authorizes the documentation patch release with installer lifecycle/multiple-DPI and production optional-lock enrollment/restart still unverified (#63/#87). These checks are not marked passed and this exception does not apply to later releases. See [0.8.23 record](releases/0.8.23.md).
