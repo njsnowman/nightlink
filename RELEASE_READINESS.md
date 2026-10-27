@@ -53,3 +53,9 @@ Remaining publication gates are unchanged: #63 requires a permitted isolated Win
 See [rc.43 record](releases/0.8.22-rc.43.md) for source/checksum and separate automated versus physical evidence. Full unit suite: 202 passed; exact-package workbench, interface/readability, offline Help and nine-process Windows protected-store checks passed with isolated synthetic data.
 
 Heltec USB synchronization, noise/battery read, discovery (two repeaters) and valid RX observations passed; one trace was accepted and aggregate direct-TX counter increased, but no trace reply returned. Physical trace remains incomplete. Sixteen received messages were safely merged into normal history and verified after reload. User reaffirmed installer hold and exclusion of North Pole VM. No new firmware/radio configuration, installer publication or update-feed changes. A known-working trace target is requested before another RF attempt.
+
+## Current trace acceptance update (2026-10-27)
+
+After the additional Batesville target initially timed out, an independent USB command-36 control received a matching trace. The exact rc.43 payload then successfully traced the same discovery-matched target: one repeater hop, two SNR samples, raw trace and 0x89 response, final connected/ready and no command errors. See [rc.43 control evidence](releases/0.8.22-rc.43.md). The basic returned-direct-trace gate is now satisfied for the tested Heltec/repeater pair; earlier failures remain unexplained and multihop performance is unverified. The six-tool workbench implementation acceptance is complete within that recorded scope.
+
+Installer lifecycle remains on user-requested hold (#63), and production optional-lock re-enrollment/restart is not established (#87). No stable/public release or automatic-update feed change is authorized while applicable gates remain open.
