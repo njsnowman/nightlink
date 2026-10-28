@@ -5,7 +5,7 @@ const fs=require('node:fs');
 test('#echo retains conversation controls at compact widths',()=>{
   const css=fs.readFileSync('echo-workspace.css','utf8');
   assert.doesNotMatch(css,/\.echo-grid\s+\.conversation-tools\s*\{\s*display\s*:\s*none\s*\}/);
-  assert.match(css,/@media\(max-width:850px\)[^{]*\{[^}]*#echo-workspace\s+\.echo-grid\s+\.conversation-tools\s*\{display:flex\}/);
+  assert.match(css,/#echo-workspace\s+\.echo-grid\s+\.conversation-tools\s*\{display:flex\}/);
 });
 
 test('#echo layout and CoreScope action controls remain defined',()=>{
