@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add Signal Rail activity indicators to channel chats and DM windows, with distinct receive, sending, awaiting ACK, recipient confirmation, radio acceptance and error states. Respect reduced motion and suppress saved-history activity flashes. [#97](https://github.com/njsnowman/nightlink/issues/97).
+
 ## 0.8.24 — 2026-10-27
 
 - Animate awaiting-ACK badges with reduced-motion support; add a once-per-message completion sound with mute/quiet-hours controls. Restore native DM presentation for hidden windows and retain explicit open/focus intent during startup. [#96](https://github.com/njsnowman/nightlink/issues/96).

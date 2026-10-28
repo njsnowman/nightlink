@@ -1,0 +1,27 @@
+/* Synthetic isolated profile; network and physical radio operations blocked. */
+const {_electron}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
+(async()=>{const source=path.resolve(process.argv[2]),runtime=process.argv[3],fixture=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-chat-signals-'));
+await fs.writeFile(path.join(fixture,'main.cjs'),`const {app,ipcMain,session}=require('electron'),path=require('path');const set=app.setPath.bind(app);app.setPath=(n,v)=>set(n,n==='userData'?path.join(__dirname,'profile'):v);const handle=ipcMain.handle.bind(ipcMain);ipcMain.handle=(n,f)=>handle(n,n==='startup:info'?()=>({enabled:false,last:null}):f);app.whenReady().then(()=>session.defaultSession.webRequest.onBeforeRequest({urls:['http://*/*','https://*/*']},(_d,done)=>done({cancel:true})));app.setAppPath(${JSON.stringify(source)});require(path.join(${JSON.stringify(source)},'desktop.cjs'));`);
+const app=await _electron.launch({executablePath:runtime,args:[path.join(fixture,'main.cjs')],timeout:20000});try{
+const page=await app.firstWindow();await page.waitForFunction(()=>typeof NightlinkChatSignals!=='undefined'&&typeof openDM==='function');
+await page.evaluate(async()=>{await cardsReady;live.identity={key:'aa'.repeat(32),name:'Test owner'};live.contacts=[{key:'bb'.repeat(32),name:'Test peer',type:1,pathLength:255}];live.channels=[{slot:0,id:'public',name:'Public'}];live.selected={kind:'channel',...live.channels[0]};radioSession.contacts=live.contacts;radioSession.identity=live.identity;radioSession.ready=true;live.sync='ready';live.messages=[];ble.state='connected';radioSession.request=ble.command=()=>{throw Error('Physical radio blocked');};localStorage.setItem('dm-sound','false');renderMessages();});
+const rail=page.locator('.conversation .chat-signal-rail');await rail.waitFor();assert.equal(await rail.getAttribute('data-state'),'standby');
+await page.evaluate(()=>{const m={id:'test-channel',own:true,conversation:conversationId(live.selected),target:{...live.selected},text:'Synthetic message',timestamp:1700000000,phase:'sending',pending:true,status:'Sending broadcast'};live.messages.push(m);renderMessages();});assert.equal(await rail.getAttribute('data-state'),'sending');
+await page.evaluate(()=>{Object.assign(live.messages[0],{phase:'broadcast',pending:false,status:'Broadcast accepted by radio'});renderMessages();});assert.equal(await rail.getAttribute('data-state'),'broadcast');assert.match(await rail.textContent(),/accepted by radio/);
+const opened=app.waitForEvent('window');await page.evaluate(()=>openDM('bb'.repeat(32)));const child=await opened;await child.waitForFunction(()=>document.querySelector('.chat-signal-rail')?.dataset.state==='standby');
+await page.evaluate(()=>{live.messages.push({id:'test-receive',own:false,sender:'Test peer',kind:'direct',target:{kind:'direct',key:'bb'.repeat(32),name:'Test peer'},conversation:'direct:'+'bb'.repeat(32),text:'Synthetic incoming',timestamp:1700000001,status:'Received from radio'});renderMessages();});await child.waitForFunction(()=>document.querySelector('.chat-signal-rail')?.dataset.state==='receive');
+for(const phase of ['awaiting','acknowledged','unconfirmed','not-sent']){
+await page.evaluate(phase=>{let m=live.messages.find(x=>x.id==='test-dm');if(!m){m={id:'test-dm',own:true,target:{kind:'direct',key:'bb'.repeat(32),name:'Test peer'},conversation:'direct:'+'bb'.repeat(32),text:'Synthetic DM',timestamp:1700000001};live.messages.push(m);}Object.assign(m,{phase,pending:phase==='awaiting',ack:phase==='acknowledged'?{tag:1}:null,status:phase==='unconfirmed'?'No recipient ACK received':phase});renderMessages();},phase);
+await child.waitForFunction(phase=>document.querySelector('.chat-signal-rail')?.dataset.state===phase,phase);
+}
+assert.equal(await rail.getAttribute('data-state'),'broadcast','DM does not change channel indicator');
+await page.evaluate(()=>{document.body.classList.add('reduced-motion');live.selected={kind:'direct',key:'bb'.repeat(32),name:'Test peer'};const m=live.messages.find(x=>x.id==='test-dm');Object.assign(m,{phase:'awaiting',pending:true});renderMessages();});
+assert.equal(await rail.locator('[data-signal=ack] i').evaluate(el=>getComputedStyle(el).animationName),'none');
+assert.equal(await rail.count(),1,'only one rail after repeated renders');
+if(process.env.NIGHTLINK_SIGNAL_SCREENSHOT)await child.screenshot({path:process.env.NIGHTLINK_SIGNAL_SCREENSHOT});
+await page.evaluate(()=>{live.sync='disconnected';renderMessages();});await child.waitForFunction(()=>document.querySelector('.chat-signal-rail')?.dataset.state==='offline');assert.equal(await rail.getAttribute('data-state'),'offline');
+await child.setViewportSize({width:420,height:650});assert.equal(await child.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+const bounds=await child.locator('#dm-thread').boundingBox();assert.ok(bounds.height>100,'DM retains message space');
+console.log('PASS real renderer wiring: channel send/acceptance, native DM await/ACK/unconfirmed/rejected, conversation isolation, reduced motion, disconnect and compact window. Synthetic only; no RF transmissions.');
+}finally{await app.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
