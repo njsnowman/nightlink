@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep RX activity independent of outgoing TX/ACK state so fast #echo replies remain visible during active sends and repeated screen refreshes. Burst replies extend the receive indication. [#100](https://github.com/njsnowman/nightlink/issues/100).
+
 - Distinguish transport connection, queue catch-up and completed synchronization in the existing radio control; show the last successful full-sync time for this session. Add an activity inbox for unread DMs, mentions and sends needing review, with source-message navigation and protection against marking chats read behind a dialog. [#99](https://github.com/njsnowman/nightlink/issues/99).
 
 - Add Signal Rail activity indicators to channel chats and DM windows, with distinct receive, sending, awaiting ACK, recipient confirmation, radio acceptance and error states. Respect reduced motion and suppress saved-history activity flashes. [#97](https://github.com/njsnowman/nightlink/issues/97).
