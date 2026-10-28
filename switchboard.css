@@ -92,3 +92,66 @@ html body .content:has(>#overview:not([hidden]))>.page-heading{display:none}
 @media(max-width:1000px) and (max-height:700px){html body #overview.map-expanded>.dashboard-grid,html body.compact #overview.map-expanded>.dashboard-grid{grid-template-rows:130px minmax(0,1fr)}}
 
 html body #overview .map-panel>.switchboard-trend{order:20}
+
+
+/* Layout foundation — restrained spacing pass.
+   Keep this limited to presentation; interaction and radio state remain unchanged.
+   Reuse these tokens for subsequent screen-level consistency passes. */
+html:root {
+  --layout-space-xs: 4px;
+  --layout-space-sm: 8px;
+  --layout-space-md: 12px;
+  --layout-space-lg: 16px;
+  --layout-space-xl: 20px;
+  --layout-content-gutter: 20px;
+  --layout-panel-gap: 12px;
+}
+html body .content,
+html body.compact .content {
+  padding-inline: var(--layout-content-gutter);
+  padding-top: var(--layout-space-lg);
+  padding-bottom: var(--layout-space-xl);
+}
+html body .page-heading {
+  margin-bottom: var(--layout-space-lg);
+  gap: var(--layout-space-md);
+}
+html body #overview>.stats,
+html body.compact #overview>.stats {
+  margin-bottom: var(--layout-panel-gap);
+}
+html body #overview>.dashboard-grid,
+html body.compact #overview>.dashboard-grid {
+  gap: var(--layout-panel-gap);
+}
+html body .panel-heading {
+  gap: var(--layout-space-md);
+  padding-inline: var(--layout-space-lg);
+}
+html body .panel-heading h2 {
+  min-width: 0;
+  line-height: 1.35;
+}
+html body .header-actions {
+  gap: var(--layout-space-sm);
+}
+html body aside nav {
+  gap: var(--layout-space-xs);
+}
+html body .conversation-tools {
+  gap: var(--layout-space-sm);
+}
+html body :is(.conversation-tools, .workspace-message-tabs) > button {
+  min-height: 36px;
+}
+@media (max-width: 1100px) {
+  html:root { --layout-content-gutter: 14px; --layout-panel-gap: 10px; }
+}
+@media (max-width: 850px) {
+  html:root { --layout-content-gutter: 12px; --layout-panel-gap: 8px; }
+  html body .panel-heading { padding-inline: var(--layout-space-md); }
+}
+@media (max-height: 780px) {
+  html body .content,
+  html body.compact .content { padding-top: 10px; padding-bottom: 10px; }
+}

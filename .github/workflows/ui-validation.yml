@@ -1,0 +1,65 @@
+name: NightLink UI validation
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Enable pnpm
+        run: corepack enable
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Run complete feature and unit suite
+        run: pnpm test
+      - name: Install isolated test browser
+        run: pnpm exec playwright install chromium
+      - name: Verify combined UI and actual send/draft behavior
+        run: pnpm run test:browser
+        env:
+          NIGHTLINK_SCREENSHOTS: ${{ runner.temp }}/nightlink-layout
+      - name: Archive layout evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightlink-layout-evidence
+          path: ${{ runner.temp }}/nightlink-layout
+          if-no-files-found: ignore
+  package:
+    needs: test
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Read candidate version
+        id: version
+        shell: pwsh
+        run: '"value=$((Get-Content package.json -Raw | ConvertFrom-Json).version)" >> $env:GITHUB_OUTPUT'
+      - name: Build Windows installer and portable candidate
+        run: pnpm exec electron-builder --win nsis portable --publish never
+      - name: Verify every packaged feature and record source/checksums
+        run: pnpm run verify:package
+      - name: Archive verified candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightlink-${{ steps.version.outputs.value }}-windows-candidate
+          path: |
+            dist/Nightlink-Setup-${{ steps.version.outputs.value }}.exe
+            dist/Nightlink-Portable-${{ steps.version.outputs.value }}.exe
+            dist/SHA256SUMS.txt
+            dist/release-manifest.json
+          if-no-files-found: error
+          retention-days: 14
