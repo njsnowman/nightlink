@@ -1,7 +1,7 @@
 /* Conversation attention and notification controls; scoped to the current companion identity. */
 let attention,attentionOwner,readingConversation=null,readingBoundary=null,attentionFrame=0,restoringReading=false,pendingReadingJump=null;
 const chatReadingLog=$('#chat-log');
-const chatIsVisible=()=>['Overview','Messages'].includes(current)&&!document.hidden&&document.hasFocus();
+const chatIsVisible=()=>['Overview','Messages'].includes(current)&&!document.hidden&&document.hasFocus()&&!$('#dialog').open;
 const atReadingEnd=el=>el.scrollHeight-el.clientHeight-el.scrollTop<36;
 function ensureAttention(){
  const owner=live.identity?.key||'local';
