@@ -1,7 +1,7 @@
 /* Explicit removal from the connected radio; local history and personal cards stay. */
 (()=>{
  let revision=0;
- const busy=()=>live.sync!=='ready'||ble.state!=='connected'||live.sending||radioSession.configuring;
+ const busy=()=>window.NightlinkBulkContactRemovalUI?.running||live.sync!=='ready'||ble.state!=='connected'||live.sending||radioSession.configuring;
  function showDelete(contact){
   const owner=live.identity?.key,generation=radioSession.generation,key=contact.key;
   modal('Remove contact from radio','<section id="delete-contact-panel"><p>Remove <strong id="delete-contact-name"></strong> from the connected radio?</p><p>Saved messages, nicknames, photos, notes and favorites stay on this computer. You may need to import the contact again before sending a DM.</p><p id="delete-contact-feedback" role="status"></p><div class="delete-contact-actions"><button type="button" id="delete-contact-cancel">Back to contact</button><button type="button" id="delete-contact-confirm" class="contact-delete-action">Remove from radio</button></div></section>');

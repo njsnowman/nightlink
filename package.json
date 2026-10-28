@@ -1,13 +1,13 @@
 {
   "name": "meshline",
-  "version": "0.8.25-rc.4",
+  "version": "0.8.25-rc.5",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
     "start": "electron .",
     "preview": "node server.cjs",
     "dist": "electron-builder --win nsis portable",
-    "test": "node --test send-feedback.test.cjs performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs security-store.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs radio-workbench.test.cjs reactions.test.cjs chat-signals.test.cjs workspace-confidence.test.cjs outbox.test.cjs compact-workspace.test.cjs support-report.test.cjs contact-deletion.test.cjs desktop-window.test.cjs"
+    "test": "node --test send-feedback.test.cjs performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs security-store.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs radio-workbench.test.cjs reactions.test.cjs chat-signals.test.cjs workspace-confidence.test.cjs outbox.test.cjs compact-workspace.test.cjs support-report.test.cjs contact-deletion.test.cjs desktop-window.test.cjs bulk-contact-removal.test.cjs"
   },
   "devDependencies": {
     "electron": "^42.11.12",
@@ -205,7 +205,9 @@
       "support-report-ui.js",
       "contact-deletion-ui.js",
       "contact-deletion.css",
-      "desktop-window.cjs"
+      "desktop-window.cjs",
+      "bulk-contact-removal.js",
+      "bulk-contact-removal-ui.js"
     ],
     "win": {
       "target": [

@@ -26,7 +26,7 @@
     const bytes=new Uint8Array(144);bytes[0]=9;bytes.set(publicKey,1);bytes[33]=Number(type);bytes[35]=255;bytes.set(encoder.encode(name),100);await configRequest(bytes,0);const response=await configRequest([30,...publicKey],3);const added=contact(response);if(added.key!==key)throw new Error('Radio returned a different contact. Refresh before retrying.');const i=this.contacts.findIndex(c=>c.key===key);if(i<0)this.contacts.push(added);else this.contacts[i]=added;this.emit('contacts',this.contacts.slice());return added;
    }finally{this.configuring=false;}
   }
-  async removeContact(key){
+  async removeContact(key,{guard:beforeRemove=()=>{}}={}){
    if(!this.ready||this.syncing||!this.identity?.key||this.ble.state!=='connected')throw new Error('Connect and synchronize your radio first.');
    if(this.configuring)throw new Error('Another radio update is in progress.');
    key=typeof key==='string'?key.trim().toLowerCase():'';
@@ -39,7 +39,7 @@
    this.configuring=true;let readback=null;
    try{
     // Companion CMD_REMOVE_CONTACT: one command byte plus the entire public key.
-    const response=await configRequest([15,...key.match(/../g).map(h=>parseInt(h,16))],0);guard();
+    const response=await configRequest([15,...key.match(/../g).map(h=>parseInt(h,16))],0,8000,beforeRemove);guard();
     if(response.length!==1||response[0]!==0)throw new Error('Contact removal was not acknowledged by the radio. Refresh before retrying.');
     readback={generation,owner,key,active:false,expected:null,invalid:false,frames:0,contacts:new Map(),adverts:new Set()};this._contactRemovalReadback=readback;
     const end=await configRequest([4],4,60000,()=>{readback.active=true;});guard();readback.active=false;
