@@ -1,0 +1,3 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),{preference,limits,constrain}=require('./compact-workspace');
+test('invalid or out-of-range layout preferences use the balanced split',()=>{for(const value of [null,undefined,'65',NaN,Infinity,0,39,76])assert.equal(preference(value),60);assert.equal(preference(68),68);});
+test('split keeps message/map space while honoring wide-window preferences',()=>{assert.equal(constrain(75,1400),75);assert.equal(constrain(40,1400),40);const narrow=limits(650);assert.ok(constrain(75,650)<=100-250/650*100);assert.ok(constrain(40,650)>=300/650*100);assert.ok(narrow.max>=narrow.min);});

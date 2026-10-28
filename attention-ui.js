@@ -1,5 +1,5 @@
 /* Conversation attention and notification controls; scoped to the current companion identity. */
-let attention,attentionOwner,readingConversation=null,readingBoundary=null,attentionFrame=0,restoringReading=false,pendingReadingJump=null;
+let attention,attentionOwner,readingConversation=null,readingBoundary=null,attentionFrame=0,restoringReading=false,pendingReadingJump=null,manualReading=false,readingInputUntil=0,readingPageChange=false,readingViewDepth=0;
 const chatReadingLog=$('#chat-log');
 const chatIsVisible=()=>['Overview','Messages'].includes(current)&&!document.hidden&&document.hasFocus()&&!$('#dialog').open;
 const atReadingEnd=el=>el.scrollHeight-el.clientHeight-el.scrollTop<36;
@@ -11,10 +11,11 @@ function ensureAttention(){
 function migrateAttentionMessage(previousId,previousConversation,message){const state=ensureAttention();if(state.read.delete(previousId))state.read.add(message.id);const position=state.position(previousConversation);if(position){if(position.anchor===previousId)position.anchor=message.id;state.position(message.conversation,position);}state.save();}
 function conversationRows(id){return live.messages.filter(m=>m.conversation===id);}
 function captureReading(){
- if(!readingConversation||!chatReadingLog.getClientRects().length||restoringReading)return;
+ if(!readingConversation||!chatReadingLog.getClientRects().length||restoringReading||pendingReadingJump)return;
  const rect=chatReadingLog.getBoundingClientRect(),rows=[...chatReadingLog.querySelectorAll('.message')];
- const anchor=rows.find(row=>row.getBoundingClientRect().bottom>rect.top);
- ensureAttention().position(readingConversation,{anchor:anchor?.dataset.messageId,offset:anchor?anchor.getBoundingClientRect().top-rect.top:0,bottom:atReadingEnd(chatReadingLog)});
+ const anchor=rows.find(row=>row.getBoundingClientRect().bottom>rect.top+1);
+ const bottom=atReadingEnd(chatReadingLog);
+ ensureAttention().position(readingConversation,{anchor:anchor?.dataset.messageId,offset:anchor?anchor.getBoundingClientRect().top-rect.top:0,bottom,manual:manualReading&&!bottom});
 }
 function markVisibleReading(){
  if(!chatIsVisible()||restoringReading||pendingReadingJump||!readingConversation)return;
@@ -44,15 +45,20 @@ function refreshUnreadBadges(){
 const attentionChannels=renderChannels;renderChannels=function(){attentionChannels();refreshUnreadBadges();};
 const attentionInbox=renderDMInbox;renderDMInbox=function(){attentionInbox();if(current==='Direct Messages'){refreshUnreadBadges();}};
 const jumpNewest=document.createElement('button');jumpNewest.id='jump-newest';jumpNewest.className='reading-jump';jumpNewest.hidden=true;jumpNewest.textContent='Jump to latest ↓';chatReadingLog.after(jumpNewest);
-jumpNewest.onclick=()=>{messageWindowLatest();renderMessages();chatReadingLog.scrollTop=chatReadingLog.scrollHeight;captureReading();markVisibleReading();jumpNewest.hidden=true;};
+jumpNewest.onclick=()=>{manualReading=false;readingInputUntil=0;messageWindowLatest();renderMessages();chatReadingLog.scrollTop=chatReadingLog.scrollHeight;captureReading();markVisibleReading();jumpNewest.hidden=true;};
 const muteChannel=document.createElement('button');muteChannel.id='mute-channel';muteChannel.className='channel-mute';muteChannel.hidden=true;$('.chat-channel').append(muteChannel);
 muteChannel.onclick=()=>{if(live.selected?.kind!=='channel')return;const id=conversationId(live.selected),state=ensureAttention();state.mute(id,!state.muted.has(id));renderMessages();renderChannels();};
 const attentionMessages=renderMessages;
 renderMessages=function(){
  const state=ensureAttention(),next=live.selected?conversationId(live.selected):null;if(live.selected){state.data.selected=live.selected;state.save();}
- const changed=next!==readingConversation;captureReading();
- if(changed){readingConversation=next;readingBoundary=next?state.unread(live.messages,next)[0]?.id:null;}
+ const changed=next!==readingConversation;if(!changed&&!readingViewDepth)captureReading();
+ if(changed){readingConversation=next;readingBoundary=next?state.unread(live.messages,next)[0]?.id:null;manualReading=next&&state.position(next)?.manual===true;readingInputUntil=0;}
  const position=next?state.position(next):null;if(!readingBoundary&&next&&(!chatIsVisible()||(position&&!position.bottom)))readingBoundary=state.unread(live.messages,next)[0]?.id;
+ const explicitJump=!!pendingReadingJump,pageChange=readingPageChange;readingPageChange=false;
+ if(explicitJump)manualReading=true;
+ const preserve=manualReading&&position?.manual===true&&!position.bottom&&!explicitJump&&!pageChange;
+ // Restore the bounded history page containing the reading anchor before rows render.
+ if(preserve&&position.anchor)messageWindow.focus=position.anchor;
  attentionMessages();
  const rows=renderedConversationRows();
  chatReadingLog.querySelectorAll('.message').forEach((row,i)=>{row.dataset.messageId=rows[i].id;});
@@ -60,13 +66,22 @@ renderMessages=function(){
  muteChannel.hidden=live.selected?.kind!=='channel';
  const muted=next&&state.muted.has(next);muteChannel.textContent=muted?'Muted · Unmute':'Mute channel';muteChannel.setAttribute('aria-pressed',String(!!muted));
  cancelAnimationFrame(attentionFrame);restoringReading=true;
- function restorePosition(){chatReadingLog.scrollTop=chatReadingLog.scrollHeight;jumpNewest.hidden=true;}
+ function restorePosition(){
+  if(explicitJump)return; // Search/inbox navigation positions its exact source message.
+  if(pageChange){chatReadingLog.scrollTop=0;const first=chatReadingLog.querySelector('.message');if(first)chatReadingLog.scrollTop+=first.getBoundingClientRect().top-chatReadingLog.getBoundingClientRect().top;manualReading=true;return;}
+  if(preserve){const row=[...chatReadingLog.querySelectorAll('.message')].find(r=>r.dataset.messageId===position.anchor);if(row){chatReadingLog.scrollTop+=row.getBoundingClientRect().top-chatReadingLog.getBoundingClientRect().top-(position.offset||0);return;}manualReading=false;}
+  chatReadingLog.scrollTop=chatReadingLog.scrollHeight;jumpNewest.hidden=true;
+ }
  restorePosition();attentionFrame=requestAnimationFrame(()=>{restorePosition();restoringReading=false;markVisibleReading();captureReading();jumpNewest.hidden=atReadingEnd(chatReadingLog)||!next;const count=next?state.unread(live.messages,next).length:0;jumpNewest.textContent=count?'New messages ('+count+') ↓':'Jump to latest ↓';});
  refreshUnreadBadges();
 };
-chatReadingLog.addEventListener('scroll',()=>{if(restoringReading)return;captureReading();markVisibleReading();jumpNewest.hidden=atReadingEnd(chatReadingLog);},{passive:true});
-new ResizeObserver(()=>{if(ensureAttention().position(readingConversation)?.bottom)chatReadingLog.scrollTop=chatReadingLog.scrollHeight;}).observe(chatReadingLog);
-const attentionView=view;view=function(name){captureReading();attentionView(name);if(['Overview','Messages'].includes(name))renderMessages();if(name==='Settings')renderAttentionSettings();ensureAttention().data.view=name;ensureAttention().save();refreshUnreadBadges();};
+function readingInput(){readingInputUntil=performance.now()+750;}
+chatReadingLog.addEventListener('wheel',readingInput,{passive:true});chatReadingLog.addEventListener('pointerdown',readingInput,{passive:true});chatReadingLog.addEventListener('touchstart',readingInput,{passive:true});
+chatReadingLog.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(e.key))readingInput();});
+chatReadingLog.addEventListener('click',e=>{if(e.target.closest('#message-history-earlier,#message-history-newer')){manualReading=true;readingPageChange=true;}},true);
+chatReadingLog.addEventListener('scroll',()=>{if(restoringReading)return;if(performance.now()<readingInputUntil)manualReading=!atReadingEnd(chatReadingLog);captureReading();markVisibleReading();jumpNewest.hidden=atReadingEnd(chatReadingLog);},{passive:true});
+new ResizeObserver(()=>{if(!manualReading&&!pendingReadingJump&&ensureAttention().position(readingConversation)?.bottom)chatReadingLog.scrollTop=chatReadingLog.scrollHeight;}).observe(chatReadingLog);
+const attentionView=view;view=function(name){captureReading();readingViewDepth++;try{attentionView(name);if(['Overview','Messages'].includes(name))renderMessages();if(name==='Settings')renderAttentionSettings();ensureAttention().data.view=name;ensureAttention().save();refreshUnreadBadges();}finally{readingViewDepth--;}};
 function renderAttentionSettings(){
  $('#enable-dm-sound')?.setAttribute('hidden','');
  const grid=$('.settings-grid');const existing=[...grid.querySelectorAll('label')].find(l=>l.textContent.trim()==='Direct message sound');if(existing)existing.remove();

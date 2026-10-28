@@ -16,5 +16,6 @@
   const result=[],seen=new Set();for(let index=messages.length-1;index>=0;index--){const m=messages[index];if(seen.has(m.id))continue;seen.add(m.id);const direct=m.target?.kind==='direct'||m.conversation?.startsWith('direct:');const mention=!m.own&&isMention(m.text||'');const phase=root.deliveryPresentation?.(m)?.phase||m.phase;const needsAttention=!!m.own&&!m.pending&&!m.ack&&['not-sent','unconfirmed','interrupted','cancelled'].includes(phase);if(needsAttention)result.push({message:m,kind:'send',mention:false,muted:false});else if(!m.own&&!read.has(m.id)&&(direct||mention))result.push({message:m,kind:direct?'dm':'mention',mention,muted:muted.has(m.conversation)});}
   return result;
  }
- root.NightlinkWorkspaceConfidence={connection,inbox};if(typeof module!=='undefined')module.exports=root.NightlinkWorkspaceConfidence;
+ function outbox(messages){const result=[],seen=new Set();for(let i=messages.length-1;i>=0;i--){const m=messages[i];if(seen.has(m.id))continue;seen.add(m.id);if(!m.own||m.ack)continue;const phase=root.deliveryPresentation?.(m)?.phase||m.phase;if(m.pending||['not-sent','unconfirmed','interrupted','cancelled'].includes(phase))result.push({message:m,kind:'send',mention:false,muted:false});}return result;}
+ root.NightlinkWorkspaceConfidence={connection,inbox,outbox};if(typeof module!=='undefined')module.exports=root.NightlinkWorkspaceConfidence;
 })(globalThis);
