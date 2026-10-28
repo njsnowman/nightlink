@@ -1,0 +1,98 @@
+/* NightLink visual consistency pass: layout only, no behavioral changes.
+   Loaded last so the shared rhythm applies to every workspace. */
+html:root {
+  --ui-gap-1:4px;
+  --ui-gap-2:8px;
+  --ui-gap-3:12px;
+  --ui-gap-4:16px;
+  --ui-gap-5:20px;
+  --ui-control-height:36px;
+  --ui-separator:var(--sb-edge,#34392f);
+  --ui-surface:#10130f;
+}
+html body { line-height:1.45; }
+html body :is(.panel,.dm-inbox,.contact-card,.contact-profile-facts,.settings-grid) { min-width:0; }
+html body :is(.panel-heading,.dm-heading,.dialog-heading) { gap:var(--ui-gap-3); }
+html body :is(.panel-heading h2,.dm-heading h2,.dialog-heading h2) { min-width:0; line-height:1.35; }
+html body :is(.panel-heading button,.dialog-heading button) { flex-shrink:0; }
+html body :is(.eyebrow,.nav-label,.switchboard-trend h3) { letter-spacing:.08em; }
+html body .page-heading p { max-width:65ch; line-height:1.5; }
+html body :is(.conversation-tools,.workspace-message-tabs,.network-source-bar) { gap:var(--ui-gap-2); }
+html body :is(.conversation-tools,.workspace-message-tabs) > button {
+  min-height:var(--ui-control-height);
+  padding:7px 12px;
+  border-radius:2px;
+  line-height:1.3;
+}
+html body :is(.network-source-bar,.conversation-tools,.workspace-message-tabs) > :is(button,select) {
+  max-width:100%;
+}
+html body :is(.conversation-tools,.workspace-message-tabs,.network-source-bar,.radio-workbench-tabs) {
+  align-items:center;
+}
+html body :is(.workspace-message-tabs,.radio-workbench-tabs) button {
+  font-weight:500;
+}
+html body :is(.workspace-message-tabs,.radio-workbench-tabs) button[aria-pressed=true] {
+  font-weight:650;
+}
+html body :is(button,input,select,textarea) { line-height:1.35; }
+html body :is(input,select,textarea) { max-width:100%; }
+html body :is(button,input,select,textarea):disabled { cursor:not-allowed; opacity:.58; }
+html body :is(button,a,input,select,textarea,summary):focus-visible {
+  outline:2px solid var(--accent,#8cbfff);
+  outline-offset:2px;
+}
+html body :is(.settings-grid,.contact-profile-facts,.contact-profile-notes,.diagnostics-body) {
+  border-color:var(--ui-separator);
+}
+html body :is(.contact-profile-notes,.contact-profile-footnote) { line-height:1.5; }
+html:root body .switchboard-settings-nav { gap:var(--ui-gap-1); }
+html:root body .switchboard-settings-nav button { min-height:38px; padding:8px 12px; }
+html:root body .switchboard-settings-page {
+  gap:var(--ui-gap-3);
+  padding:var(--ui-gap-5);
+}
+html:root body .switchboard-settings-page > :is(h2,h3,p) { max-width:78ch; }
+html:root body .switchboard-settings-page > label { gap:var(--ui-gap-3); }
+html:root body .switchboard-settings-page :is(input,select,textarea) { min-height:34px; }
+html:root body .contact-profile-hero { gap:var(--ui-gap-4); }
+html:root body .contact-profile-facts > div { min-width:0; }
+html:root:root:root body :is(#chat-log,.dm-thread) { padding-inline:var(--ui-gap-4); }
+html:root:root:root body :is(.message,.dm-bubble,.dm-bubble.own) {
+  gap:var(--ui-gap-3);
+  padding-block:var(--ui-gap-4);
+}
+html:root:root:root body :is(.message>.avatar,.message>.contact-avatar,.signal-message-avatar .avatar) {
+  width:40px;
+  height:40px;
+  min-width:40px;
+}
+html body #radio-workbench-body { gap:var(--ui-gap-3); padding:var(--ui-gap-4); }
+html body .radio-workbench-tabs { gap:var(--ui-gap-1); padding:var(--ui-gap-3); }
+html body .radio-workbench-tabs button { min-height:var(--ui-control-height); padding:7px 11px; }
+html body #radio-workbench-body :is(input,select) {
+  background:var(--ui-surface);
+  color:var(--sb-copy);
+  border-color:var(--ui-separator);
+  border-radius:2px;
+}
+html body #radio-workbench-body .workbench-result {
+  background:var(--ui-surface);
+  padding:var(--ui-gap-3);
+}
+html body .trace-route-chip { gap:var(--ui-gap-2); padding:8px 10px; border-radius:2px; }
+html body .trace-advanced { padding-top:var(--ui-gap-3); }
+@media(max-width:900px) {
+  html:root body .switchboard-settings-page { padding:var(--ui-gap-4); }
+  html body #radio-workbench-body { padding:var(--ui-gap-3); }
+}
+@media(max-width:600px) {
+  html:root body .switchboard-settings-page { padding:var(--ui-gap-3); }
+  html:root:root:root body :is(#chat-log,.dm-thread) { padding-inline:var(--ui-gap-3); }
+  html:root:root:root body :is(.message,.dm-bubble,.dm-bubble.own) { padding-block:var(--ui-gap-3); }
+  html body :is(.conversation-tools,.workspace-message-tabs,.network-source-bar) { gap:var(--ui-gap-1); }
+}
+@media(prefers-reduced-motion:reduce) {
+  html body :is(.panel,.radio-workbench-tabs button,.workspace-message-tabs button) { transition:none; }
+}
