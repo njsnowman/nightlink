@@ -25,3 +25,30 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Run NightLink test suite
         run: pnpm test
+
+  package:
+    needs: test
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Enable pnpm
+        run: corepack enable
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Build Windows installer and portable executable
+        run: pnpm exec electron-builder --win nsis portable --publish never
+      - name: Upload pre-release test builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightlink-0.8.25-windows-candidate
+          path: |
+            dist/Nightlink-Setup-0.8.25.exe
+            dist/Nightlink-Portable-0.8.25.exe
+          if-no-files-found: error
+          retention-days: 14
