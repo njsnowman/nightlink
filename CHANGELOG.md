@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Ignore late DM focus and close notifications after their native window or WebContents is destroyed, preventing a main-process shutdown exception. [#103](https://github.com/njsnowman/nightlink/issues/103).
+
 - Add Contact card > More > Remove from radio with confirmation, full-key targeting and verified contact-list readback. Retain saved messages and personal contact details. [#102](https://github.com/njsnowman/nightlink/issues/102).
 
 - Add active/unconfirmed Outbox review, intentional reading-position memory in main and detached chats, a resizable Overview split and a local support report with allowlisted operational metadata. [#101](https://github.com/njsnowman/nightlink/issues/101).
