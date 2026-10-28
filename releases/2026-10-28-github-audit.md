@@ -200,3 +200,7 @@ All 20 release tags exist in the fetched tag inventory. Metadata only; this audi
 | [40716963415](https://github.com/njsnowman/nightlink/actions/runs/40716963415) | ui/spacing-cleanup-foundation | 3fde527b7923 | completed / failure |
 | [40700414346](https://github.com/njsnowman/nightlink/actions/runs/40700414346) | ui/spacing-cleanup-foundation | 08dffc0289ae | completed / failure |
 | [40699734509](https://github.com/njsnowman/nightlink/actions/runs/40699734509) | ui/spacing-cleanup-foundation | ec45de48cf0b | completed / failure |
+
+## Audit-created follow-up
+
+Issue [#107](https://github.com/njsnowman/nightlink/issues/107) and combined draft PR [#108](https://github.com/njsnowman/nightlink/pull/108) were created after the initial inventory snapshot. Local combined validation passed 254 unit tests, cross-screen browser/send/draft tests and prior feature regressions. Final package verification matched all 193 explicit assets and both packaged renderer/native checks passed. Public stable v0.8.24 remains unchanged.
