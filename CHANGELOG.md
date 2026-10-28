@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add #echo-only !test, !spam, !echo and !yolo send buttons with connection/busy checks and composer-draft preservation. [#105](https://github.com/njsnowman/nightlink/issues/105).
+
 - Add a previewed and confirmed bulk radio-contact removal action that preserves Nightlink favorites, uses sequential verified deletions, and reports partial progress when stopped or interrupted. [#104](https://github.com/njsnowman/nightlink/issues/104).
 
 - Ignore late DM focus and close notifications after their native window or WebContents is destroyed, preventing a main-process shutdown exception. [#103](https://github.com/njsnowman/nightlink/issues/103).

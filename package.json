@@ -207,7 +207,8 @@
       "contact-deletion.css",
       "desktop-window.cjs",
       "bulk-contact-removal.js",
-      "bulk-contact-removal-ui.js"
+      "bulk-contact-removal-ui.js",
+      "echo-command-shortcuts.js"
     ],
     "win": {
       "target": [
