@@ -155,6 +155,7 @@
       "display-scheme.js",
       "display-scheme.css",
       "switchboard.css",
+      "layout-consistency.css",
       "switchboard-messages.css",
       "switchboard-ui.js",
       "switchboard-contacts.css",
