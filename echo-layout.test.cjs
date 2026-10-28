@@ -10,6 +10,6 @@ test('#echo retains conversation controls at compact widths',()=>{
 
 test('#echo layout and CoreScope action controls remain defined',()=>{
   const js=fs.readFileSync('echo-workspace.js','utf8');
-  for(const action of ['chat','map','split'])assert.ok(js.includes('data-echo-layout=\\"'+action+'\\"'));
+  for(const action of ['chat','map','split'])assert.ok(js.includes('data-echo-layout="'+action+'"'));
   for(const id of ['echo-center','echo-local','echo-reload','echo-expand'])assert.ok(js.includes(id));
 });
