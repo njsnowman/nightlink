@@ -29,3 +29,27 @@ html body #dialog .device-center :is(input,select){min-height:42px;width:100%;pa
 html body #dialog .device-center button{width:auto;margin:0;min-width:0}
 html body #dialog .device-center label{margin:0}
 .device-center fieldset>label:has([data-setting=name]),.device-center fieldset>label:has([data-setting=owner]){grid-column:1/-1}
+
+/* Balanced axes: consistent control centers, equal action columns and centered headings. */
+html body #dialog:has(.device-center) .dialog-heading{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;column-gap:10px}
+html body #dialog:has(.device-center) .dialog-heading h2{grid-column:2;text-align:center;margin:0}
+html body #dialog:has(.device-center) .dialog-heading>button{grid-column:3;justify-self:center;align-self:center;margin:0;width:42px;height:42px;display:grid;place-items:center;padding:0}
+.device-center{margin-inline:auto}.device-intro{margin-inline:auto;text-align:center}
+.device-connection h3,.device-center label,.device-identity,#device-permission,#device-status,#device-summary,#device-review-panel h3,.device-review-key{text-align:center}
+.device-target{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;justify-items:stretch;gap:12px}
+.device-target>label{grid-column:1/-1}.device-target>button{align-self:center}
+html body #dialog .device-center :is(button,input:not([type=file]),select){box-sizing:border-box;min-height:48px;font-size:14px;line-height:1.4}
+html body #dialog .device-center :is(input:not([type=file]),select){height:48px;text-align:center}
+html body #dialog .device-center button{align-items:center;justify-content:center;text-align:center}
+#device-auth{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:stretch;gap:12px}
+#device-auth>label,#device-permission{grid-column:1/-1}.device-center legend{margin-inline:auto;text-align:center}
+.device-center fieldset{align-items:center}.device-center fieldset>label{align-self:center}
+.device-flow{align-items:stretch;justify-content:center}.device-flow span{display:flex;align-items:center;justify-content:center;min-height:36px}
+.device-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;justify-items:stretch;gap:12px}
+.device-import{grid-column:1/-1;justify-self:center;width:min(100%,440px);align-items:center;padding-top:4px}
+html body #dialog .device-import input{width:auto;max-width:100%;text-align:center}
+.device-review-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;gap:12px;margin-top:18px}
+#device-review-panel>p{text-align:center}.device-center th,.device-center td{text-align:center;vertical-align:middle}
+#device-usb-command-form{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;justify-items:stretch}
+.device-center summary{text-align:center;list-style-position:inside}
+@media(max-width:560px){.device-target,.device-actions,.device-review-actions{grid-template-columns:minmax(0,1fr)}.device-target>label,.device-import{grid-column:1}.device-flow span{flex-basis:calc(50% - 4px)}}
