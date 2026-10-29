@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add Device Center for companion configuration, authenticated repeater / room administration and direct text-CLI USB setup, with staged differences, session guards, readback verification and settings export/import. Preserve companion repeating during RF changes and hide sensitive terminal output. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
 - Reconcile UI spacing/Echo controls and DM draft fixes with all current chat/contact features; require complete feature assets and rendered UI coverage before packaging. [#107](https://github.com/njsnowman/nightlink/issues/107).
 
 - Add #echo-only !test, !spam, !echo and !yolo send buttons with connection/busy checks and composer-draft preservation. [#105](https://github.com/njsnowman/nightlink/issues/105).

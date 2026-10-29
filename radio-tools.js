@@ -25,7 +25,7 @@ function install(Radio,contact){
   if(this.configuring)throw new Error('Another radio update is in progress.');
   this.configuring=true;const generation=this.generation,key=this.identity.key;
   const guard=()=>{if(generation!==this.generation||key!==this.identity?.key||!this.ready||this.syncing)throw new Error('Radio connection changed. Open Radio Tools again.');};
-  const request=async(bytes,type)=>{const response=await this.request(bytes,type,8000,guard);guard();return response;};
+  const request=async(bytes,type,extraGuard=()=>{})=>{const check=()=>{guard();extraGuard();};const response=await this.request(bytes,type,8000,check);check();return response;};
   try{return await work(request,guard);}finally{this.configuring=false;}
  };
  Radio.prototype.sendAdvert=function(flood=false){return this.radioTool(async request=>{
