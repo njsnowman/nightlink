@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use paced companion-RTC timestamps for remote CLI commands, honor bounded companion reply estimates after acceptance, and report inspection progress and the failing setting. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
 - Center Device Center headings, form controls and action groups, with equal action columns, consistent control heights and responsive alignment. [#109](https://github.com/njsnowman/nightlink/issues/109).
 
 - Refine Device Center with explicit primary/secondary button surfaces, connection and setting groups, visible focus/disabled states and responsive spacing. [#109](https://github.com/njsnowman/nightlink/issues/109).
