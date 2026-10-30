@@ -26,9 +26,9 @@ for(let attempt=1;attempt<=attempts;attempt++){
   const accepted=await radio.radioTool(async(request,checkSession)=>{
    guard();const clockReply=await request([5],9,guard);if(clockReply.length<5)throw Error('Incomplete companion clock reply. Remote command was not sent.');
    const clock=new DataView(clockReply.buffer,clockReply.byteOffset,clockReply.byteLength).getUint32(1,true);
-   this.record(key,'clock',{companionTime:clock});const timestamp=Math.max(clock+1,this.commandTimestamp+1),delay=(timestamp-clock)*1000;
+   this.record(key,'clock',{companionTime:clock});const timestamp=Math.max(clock+(this.commandTimestamp?0:1),this.commandTimestamp+1),delay=(timestamp-clock)*1000;
    if(delay>10000)throw Error('Companion clock moved behind this session. Reconnect before sending more commands.');
-   await this.sleep(delay);checkSession();guard();
+   if(delay>0)await this.sleep(delay);checkSession();guard();
    const bytes=new Uint8Array(13+enc.encode(s).length);bytes.set([2,1,0]);new DataView(bytes.buffer).setUint32(3,timestamp,true);bytes.set(keyBytes(key).slice(0,6),7);bytes.set(enc.encode(s),13);
    return request(bytes,6,()=>{guard();if(!sent)this.record(key,'sent',{timestamp,bytes:bytes.length});this.commandTimestamp=timestamp;sent=true;});
   });

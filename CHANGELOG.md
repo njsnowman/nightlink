@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Speed up remote settings inspection by skipping unnecessary timestamp waits after the companion clock advances, and display settings progressively while keeping incomplete inspections unavailable for writes. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
 - Retry only allowlisted core configuration reads up to three times after a missed reply; drain queued replies and wait for duplicate replies to settle before advancing. Configuration writes and optional commands never retry automatically. [#109](https://github.com/njsnowman/nightlink/issues/109).
 
 - Load core repeater radio settings independently of optional firmware-specific queries. Read optional settings individually, preserve staged edits and retain the core snapshot on an optional read failure. [#109](https://github.com/njsnowman/nightlink/issues/109).
