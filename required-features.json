@@ -23,6 +23,7 @@
     "device-serial.js",
     "device-management-ui.js",
     "device-management.css",
-    "nightlink-design.css"
+    "nightlink-design.css",
+    "nightlink-design.js"
   ]
 }

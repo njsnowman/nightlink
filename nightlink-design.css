@@ -89,3 +89,45 @@ html:root:root:root:root body dialog .dialog-heading>button{display:grid;place-i
 html:root:root:root:root body :is(.diagnostics-workspace,.diagnostics-body,.help-about-facts,.help-support,.help-licenses){border-color:var(--nl-edge);border-radius:12px;background:var(--nl-surface)}
 
 html:root:root:root:root body #bulk-contact-remove{width:auto;max-width:100%;margin:0 0 0 auto;background:transparent;color:var(--nl-muted);border:1px dashed var(--nl-edge);font-weight:550}
+
+/* Submenus and nested tool surfaces share the approved Radio Tools vocabulary. */
+html:root:root:root:root body :is(#contact-actions,.message-more-actions){padding:8px;gap:6px;border-radius:14px;border-color:var(--nl-edge);background:var(--nl-surface);box-shadow:0 12px 36px #0006}
+html:root:root:root:root body button.nl-menu-action{display:flex;align-items:center;justify-content:flex-start;gap:12px;min-height:44px;padding:11px 12px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--nl-copy);text-align:left;font:550 calc(13px * var(--read-scale,1))/1.45 'Segoe UI',sans-serif;white-space:normal}
+html:root:root:root:root body button.nl-menu-action:hover:not(:disabled){background:var(--nl-hover);border-color:var(--accent-line,var(--nl-edge))}
+html:root:root:root:root body button.nl-menu-action.contact-delete-action{color:#ffb2b8;border-color:transparent;background:transparent}
+html:root:root:root:root body .nl-menu-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 20px;width:20px;height:20px;color:var(--nl-accent)}
+html:root:root:root:root body button.contact-delete-action .nl-menu-icon{color:inherit}
+html:root:root:root:root body .nl-menu-icon svg{display:block;width:20px;height:20px}
+html:root:root:root:root body dialog .dialog-heading h2:has(.nl-submenu-mark){display:flex;align-items:center;gap:12px;min-width:0}
+html:root:root:root:root body .nl-submenu-mark{display:inline-grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border:1px solid color-mix(in srgb,var(--nl-accent) 20%,var(--nl-edge));border-radius:10px;background:var(--nl-hover);color:var(--nl-accent)}
+html:root:root:root:root body .nl-submenu-mark svg{width:20px;height:20px;display:block}
+html:root:root:root:root body dialog :is(details:not(.message-more),fieldset){margin:14px 0;border:1px solid var(--nl-edge);border-radius:12px;background:var(--nl-surface);padding:14px 16px;min-width:0}
+html:root:root:root:root body dialog details:not(.message-more)>summary{cursor:pointer;padding:4px 0;color:var(--nl-copy);font-weight:550;line-height:1.5}
+html:root:root:root:root body dialog details[open]:not(.message-more)>summary{margin-bottom:12px}
+html:root:root:root:root body dialog :is(pre,.public-key,.identity-fingerprint){padding:14px;border:1px solid var(--nl-edge);border-radius:10px;background:var(--nl-surface);color:var(--nl-copy);line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;min-width:0}
+html:root:root:root:root body dialog :is(.identity-actions,.delete-contact-actions,.discovery-actions,.cli-auth,.cli-target,.cli-footer,.backup-actions){gap:10px;align-items:center}
+html:root:root:root:root body dialog :is(#discovery-results article,.backup-counts>div,.identity-warning,.contact-radio-details,.card-technical){border-radius:12px;border-color:var(--nl-edge);background:var(--nl-surface)}
+html:root:root:root:root body dialog #discovery-results article{padding:16px;gap:8px}
+html:root:root:root:root body dialog #cli-output{border-radius:12px;background:var(--nl-surface);border-color:var(--nl-edge);color:var(--nl-accent);font:13px/1.65 Consolas,monospace;padding:16px}
+html:root:root:root:root body dialog #cli-command{font-family:Consolas,monospace}
+html:root:root:root:root body #activity-inbox :is(.activity-inbox-item,.activity-outbox-actions){border-radius:12px;border-color:var(--nl-edge);background:var(--nl-surface);color:var(--nl-copy)}
+html:root:root:root:root body #activity-inbox :is(.activity-inbox-filters button,.activity-inbox-more,.activity-outbox-actions button){min-height:38px;padding:9px 12px;border:1px solid var(--nl-edge);border-radius:9px;background:var(--nl-surface);color:var(--nl-copy)}
+html:root:root:root:root body #activity-inbox .activity-inbox-filters button[aria-pressed=true]{border-color:var(--accent-line,var(--nl-edge));background:var(--nl-hover);color:var(--nl-accent)}
+html:root:root:root:root body #activity-inbox .activity-outbox-actions{margin-top:-10px;border-radius:0 0 12px 12px}
+html:root:root:root:root body :is(.message-path-summary>div,.message-path-hop,.route-stop,.identity-verification,.map-annotation-item){border-color:var(--nl-edge);border-radius:12px;background:var(--nl-surface)}
+html:root:root:root:root body .identity-warning{border-color:#866338;color:#ffd19a}
+html:root:root:root:root body #contact-actions .contact-delete-action:hover{background:#241216;border-color:#86444f}
+@media(max-width:650px){html:root:root:root:root body dialog :is(details:not(.message-more),fieldset){padding:12px}html:root:root:root:root body button.nl-menu-action{min-height:42px;padding:10px}html:root:root:root:root body .nl-submenu-mark{flex-basis:32px;width:32px;height:32px}}
+
+html:root:root:root:root body .radio-tools:has(#cli-output){height:min(560px,calc(100dvh - 180px));min-height:140px}
+html:root:root:root:root body button.nl-menu-action{min-width:0;overflow-wrap:anywhere}
+
+html:root:root:root:root body #contact-actions{width:min(280px,calc(100vw - 64px));max-height:min(440px,calc(100dvh - 180px));overflow:auto}
+html:root:root:root:root body #contact-actions button.nl-menu-action{display:flex;align-items:center;justify-content:flex-start;gap:12px;min-height:44px;padding:11px 12px;line-height:1.45;text-align:left}
+html:root:root:root:root body #contact-actions button.contact-delete-action{color:#ffb2b8}
+html:root:root:root:root body #dialog :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea){background:var(--nl-surface);border-color:var(--nl-edge);border-radius:var(--nl-radius-control);color:var(--nl-copy)}
+html:root:root:root:root body dialog .identity-verification .identity-warning{border-color:#866338;color:#ffd19a}
+
+/* Keep compact sidebar submenus above the workspace rather than behind its panels. */
+html:root:root:root:root body aside{z-index:20}
+@media(max-width:850px){html:root:root:root:root body aside .sidebar-group[open]{width:min(280px,calc(100vw - 100px));border:1px solid var(--nl-edge);border-radius:14px;background:var(--nl-surface);box-shadow:0 12px 36px #0006;padding:10px;z-index:90}html:root:root:root:root body aside .sidebar-group[open] button.nl-menu-action{justify-content:flex-start;padding:11px 12px;gap:12px}html:root:root:root:root body aside .sidebar-group[open]>summary{padding:8px 10px;margin-bottom:6px;font-size:13px}}
