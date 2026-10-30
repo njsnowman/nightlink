@@ -66,3 +66,7 @@ A physical trace showed six successful replies before an optional path-hash read
 ## Bounded core read recovery (rc.8)
 
 After the user restored the companion, a core name read succeeded but the TX read timed out. The client now permits up to three transmissions only for five exact read-only core queries. Recovery drains queued messages and holds serialization through a bounded duplicate-reply quiet interval. Writes, arbitrary CLI and optional probes remain single-attempt. The firmware has no per-command reply ID, so late-reply handling remains bounded best effort; preflight and setting readback remain mandatory. This does not alter the radio clock or any RF setting.
+
+## Inspection latency (rc.9 / rc.10)
+
+Once the companion clock advances beyond the preceding command, remote CLI queries no longer incur an unconditional one-second wait. The initial timestamp margin and strictly increasing timestamps remain. Inspection displays partial values while keeping them disabled and unavailable for apply/export until completion. Exact core reads on a direct route recover using twice the reported estimate plus margin, with an eight-second floor capped by the existing overall budget. Other command/route deadlines remain unchanged. Physical rc.10 testing confirmed companion inspection within the first 1.5-second observation, progressive remote values and 8.564-second recovery budgets. A full remote inspection succeeded despite two missed RF replies; packet loss still affects total load time. See releases/0.8.26-rc.10.md.
