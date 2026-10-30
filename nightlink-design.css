@@ -131,3 +131,13 @@ html:root:root:root:root body dialog .identity-verification .identity-warning{bo
 /* Keep compact sidebar submenus above the workspace rather than behind its panels. */
 html:root:root:root:root body aside{z-index:20}
 @media(max-width:850px){html:root:root:root:root body aside .sidebar-group[open]{width:min(280px,calc(100vw - 100px));border:1px solid var(--nl-edge);border-radius:14px;background:var(--nl-surface);box-shadow:0 12px 36px #0006;padding:10px;z-index:90}html:root:root:root:root body aside .sidebar-group[open] button.nl-menu-action{justify-content:flex-start;padding:11px 12px;gap:12px}html:root:root:root:root body aside .sidebar-group[open]>summary{padding:8px 10px;margin-bottom:6px;font-size:13px}}
+
+/* Connection is also a submenu; override its former console-specific chrome. */
+html:root:root:root:root body dialog.ble-sheet.link-console[open]{width:min(520px,calc(100vw - 32px));padding:24px;gap:16px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-dialog);background:var(--bg,#000);color:var(--nl-copy);box-shadow:0 24px 100px #0009}
+html:root:root:root:root body dialog.ble-sheet.link-console .dialog-heading{padding-bottom:16px;margin:0;border-color:var(--nl-edge);background:transparent}
+html:root:root:root:root body dialog.ble-sheet.link-console .dialog-heading h2{font:650 20px/1.35 'Segoe UI',sans-serif;letter-spacing:-.4px;color:var(--nl-copy)}
+html:root:root:root:root body dialog.ble-sheet.link-console :is(.transport-choice button,.connect-primary-actions button,#link-cancel){border-radius:var(--nl-radius-control);border-color:var(--nl-edge);background:var(--nl-surface);color:var(--nl-copy);min-height:40px}
+html:root:root:root:root body dialog.ble-sheet.link-console .transport-choice button[aria-pressed=true]{border-color:var(--accent-line,var(--nl-edge));background:var(--nl-hover);color:var(--nl-accent)}
+html:root:root:root:root body dialog.ble-sheet.link-console #ble-connect{background:var(--nl-accent);border-color:var(--nl-accent);color:#101410}
+html:root:root:root:root body dialog.ble-sheet.link-console #ble-help{color:var(--nl-muted)}
+@media(max-height:650px){html:root:root:root:root body dialog.ble-sheet.link-console[open]{padding:18px;gap:12px}}
