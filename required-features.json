@@ -25,6 +25,7 @@
     "device-management.css",
     "nightlink-design.css",
     "nightlink-design.js",
-    "radio-page-ui.js"
+    "radio-page-ui.js",
+    "map-provider-settings.js"
   ]
 }

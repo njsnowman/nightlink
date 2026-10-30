@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add independent CoreScope and MeshMapper visibility controls under Settings > Data & updates. Hidden providers unload and stay hidden across restarts; local Radio maps remain available, including #echo fallback. Tracks [#114](https://github.com/njsnowman/nightlink/issues/114).
+
 - Redesign the main Radio landing page with the approved shared card design, live identity summary, nine grouped tool actions and expandable data/device details; preserve original tools and offline guards. Tracks [#113](https://github.com/njsnowman/nightlink/issues/113).
 
 - Extend the approved design through nested submenus, terminal/discovery/inbox surfaces and expandable panels. Add matching decorative line icons to submenu headers and action lists while preserving labels, handlers and confirmations. [#112](https://github.com/njsnowman/nightlink/issues/112).

@@ -173,3 +173,11 @@ html:root:root:root:root body #alternate.nl-radio-page #radio-workbench-body{fle
 @media(max-width:1050px){.nl-radio-groups{gap:14px}html:root:root:root:root body #radio-page-hub .radio-status-main{flex-direction:column;align-items:flex-start}html:root:root:root:root body #radio-page-hub .radio-status-actions{max-width:100%}}
 @media(max-width:850px){.nl-radio-groups{grid-template-columns:repeat(2,minmax(0,1fr))}.nl-radio-group:last-child{grid-column:1/-1}.nl-radio-group:last-child .nl-radio-action-list{grid-template-columns:repeat(3,minmax(0,1fr))}html:root:root:root:root body #radio-page-hub #radio-status-panel{padding:18px}.nl-radio-identity{gap:12px}.nl-radio-identity>.nl-submenu-mark{display:none}}
 @media(max-width:600px){.nl-radio-groups{grid-template-columns:1fr;gap:22px}.nl-radio-group:last-child .nl-radio-action-list{grid-template-columns:1fr}.nl-radio-exports{grid-template-columns:1fr}.nl-radio-facts{gap:12px}.nl-radio-identity{flex-wrap:wrap}html body #radio-page-hub .nl-radio-name h2{font-size:22px}html:root:root:root:root body #radio-page-hub button.nl-radio-action{min-height:96px}.nl-radio-name{flex-basis:65%}}
+
+/* Optional Internet map visibility controls share the Settings card rhythm. */
+html:root:root:root:root body .map-provider-settings{display:grid;gap:16px;padding:20px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-card);background:var(--nl-surface)}
+html:root:root:root:root body .map-provider-settings h3,html:root:root:root:root body .map-provider-settings p{margin:0}
+html:root:root:root:root body .map-provider-settings p,html:root:root:root:root body .map-provider-settings small{color:var(--nl-muted);line-height:1.5}
+html:root:root:root:root body .map-provider-settings label{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control);cursor:pointer}
+html:root:root:root:root body .map-provider-settings label span{display:grid;gap:4px;min-width:0}
+html:root:root:root:root body .map-provider-settings input{flex:0 0 auto;accent-color:var(--nl-accent);width:18px;height:18px}
