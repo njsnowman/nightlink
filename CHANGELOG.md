@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep an open Message delivery dialog synchronized with attempts, ACK/failure state and cancellation availability; clear stale actions when the radio changes or the dialog is replaced. Tracks [#115](https://github.com/njsnowman/nightlink/issues/115).
+
 - Add independent CoreScope and MeshMapper visibility controls under Settings > Data & updates. Hidden providers unload and stay hidden across restarts; local Radio maps remain available, including #echo fallback. Tracks [#114](https://github.com/njsnowman/nightlink/issues/114).
 
 - Redesign the main Radio landing page with the approved shared card design, live identity summary, nine grouped tool actions and expandable data/device details; preserve original tools and offline guards. Tracks [#113](https://github.com/njsnowman/nightlink/issues/113).
