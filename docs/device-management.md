@@ -58,3 +58,7 @@ Automated coverage uses synthetic transports. Physical companion, remote and dir
 ## Remote command timing (rc.5)
 
 Physical testing with a protocol-13 companion confirmed administrator login, followed by a configuration-inspection timeout. Clock readings matched at the observation, so clock skew was not established as the cause. Source review and regression fixtures did establish that PC-based whole-second timestamps can repeat, and that the old deadline ignored the companion path estimate. Commands now query the companion RTC, pace strictly increasing timestamps before sending, and arm a bounded estimated reply budget only after acceptance. This follows the firmware replay constraints without changing the radio clock. Inspection progress identifies the current setting and failure count; the exact physical dropped command remains unproven until the updated candidate is tested.
+
+## Core versus optional inspection (rc.7)
+
+A physical trace showed six successful replies before an optional path-hash read received no reply. The missing response alone does not prove unsupported firmware versus radio loss. The client now loads core identity, power, location and RF parameters in five requests without probing optional capabilities. Additional infrastructure settings are queried one at a time by operator choice, preserving staged edits and the previous core snapshot if that optional request fails. Uncertain authentication still blocks writes.
