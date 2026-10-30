@@ -53,3 +53,5 @@ html body #dialog .device-import input{width:auto;max-width:100%;text-align:cent
 #device-usb-command-form{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;justify-items:stretch}
 .device-center summary{text-align:center;list-style-position:inside}
 @media(max-width:560px){.device-target,.device-actions,.device-review-actions{grid-template-columns:minmax(0,1fr)}.device-target>label,.device-import{grid-column:1}.device-flow span{flex-basis:calc(50% - 4px)}}
+
+#device-session-trace{font:11px/1.7 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;text-align:left;margin:14px 0 0}
