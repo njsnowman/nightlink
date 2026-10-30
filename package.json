@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.26-rc.11",
+  "version": "0.8.26-rc.12",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -8,7 +8,7 @@
     "preview": "node server.cjs",
     "dist": "electron-builder --win nsis portable",
     "test": "node --test echo-layout.test.cjs feature-retention.test.cjs send-feedback.test.cjs performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs security-store.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs radio-workbench.test.cjs reactions.test.cjs chat-signals.test.cjs workspace-confidence.test.cjs outbox.test.cjs compact-workspace.test.cjs support-report.test.cjs contact-deletion.test.cjs desktop-window.test.cjs bulk-contact-removal.test.cjs device-management.test.cjs device-serial.test.cjs",
-    "test:browser": "node combined-ui.browser.test.cjs && node device-management.browser.test.cjs && node radio-tools-design.browser.test.cjs",
+    "test:browser": "node combined-ui.browser.test.cjs && node device-management.browser.test.cjs && node radio-tools-design.browser.test.cjs && node shared-design.browser.test.cjs",
     "verify:package": "node verify-package.cjs"
   },
   "devDependencies": {
@@ -216,7 +216,8 @@
       "device-management.js",
       "device-serial.js",
       "device-management-ui.js",
-      "device-management.css"
+      "device-management.css",
+      "nightlink-design.css"
     ],
     "win": {
       "target": [

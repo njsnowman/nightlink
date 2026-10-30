@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Apply the approved Radio Tools visual standard across workspace pages, menus, dialogs, Settings, detached DMs and the startup lock through a shared final design layer. Persist the design rules in repository guidance and verify their inclusion in all documents. [#112](https://github.com/njsnowman/nightlink/issues/112).
+
 - Redesign Radio Tools with grouped action cards, consistent SVG icons, current radio context, a separate contact-maintenance action and responsive layouts. Refresh contact-exchange and advert controls while preserving all nine tool destinations and their guards. [#111](https://github.com/njsnowman/nightlink/issues/111).
 
 - Speed up remote settings inspection by skipping unnecessary timestamp waits after the companion clock advances, and display settings progressively while keeping incomplete inspections unavailable for writes. Direct core reads recover from missed replies using the reported route timing instead of a fixed 30-second minimum. [#109](https://github.com/njsnowman/nightlink/issues/109).
