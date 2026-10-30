@@ -53,7 +53,7 @@ RF and path-hash changes can affect reachability and network compatibility. Infr
 
 Structured ACLs, hierarchical regions, room-user administration, firmware flashing/OTA, automatic recovery after an RF change, hardware-specific power limits above the conservative remote ceiling, scheduled fleet operations and telemetry history are follow-up capabilities. They are not claimed by this candidate. Protocol differences require separate work rather than sending guessed commands to unsupported roles.
 
-Automated coverage uses synthetic transports. Physical companion, remote and direct repeater/room validation remains required before stable release.
+Automated coverage uses synthetic transports. rc.8 additionally passed physical remote administrator login and all five core inspection queries through a protocol-13 Bluetooth companion on October 30, 2026. Physical configuration write/readback, direct USB infrastructure setup and other roles remain required before stable release. See releases/0.8.26-rc.8.md.
 
 ## Remote command timing (rc.5)
 
