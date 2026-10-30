@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Redesign Radio Tools with grouped action cards, consistent SVG icons, current radio context, a separate contact-maintenance action and responsive layouts. Refresh contact-exchange and advert controls while preserving all nine tool destinations and their guards. [#111](https://github.com/njsnowman/nightlink/issues/111).
+
 - Speed up remote settings inspection by skipping unnecessary timestamp waits after the companion clock advances, and display settings progressively while keeping incomplete inspections unavailable for writes. Direct core reads recover from missed replies using the reported route timing instead of a fixed 30-second minimum. [#109](https://github.com/njsnowman/nightlink/issues/109).
 
 - Retry only allowlisted core configuration reads up to three times after a missed reply; drain queued replies and wait for duplicate replies to settle before advancing. Configuration writes and optional commands never retry automatically. [#109](https://github.com/njsnowman/nightlink/issues/109).
