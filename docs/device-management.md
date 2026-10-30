@@ -62,3 +62,7 @@ Physical testing with a protocol-13 companion confirmed administrator login, fol
 ## Core versus optional inspection (rc.7)
 
 A physical trace showed six successful replies before an optional path-hash read received no reply. The missing response alone does not prove unsupported firmware versus radio loss. The client now loads core identity, power, location and RF parameters in five requests without probing optional capabilities. Additional infrastructure settings are queried one at a time by operator choice, preserving staged edits and the previous core snapshot if that optional request fails. Uncertain authentication still blocks writes.
+
+## Bounded core read recovery (rc.8)
+
+After the user restored the companion, a core name read succeeded but the TX read timed out. The client now permits up to three transmissions only for five exact read-only core queries. Recovery drains queued messages and holds serialization through a bounded duplicate-reply quiet interval. Writes, arbitrary CLI and optional probes remain single-attempt. The firmware has no per-command reply ID, so late-reply handling remains bounded best effort; preflight and setting readback remain mandatory. This does not alter the radio clock or any RF setting.

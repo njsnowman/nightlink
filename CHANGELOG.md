@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Retry only allowlisted core configuration reads up to three times after a missed reply; drain queued replies and wait for duplicate replies to settle before advancing. Configuration writes and optional commands never retry automatically. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
 - Load core repeater radio settings independently of optional firmware-specific queries. Read optional settings individually, preserve staged edits and retain the core snapshot on an optional read failure. [#109](https://github.com/njsnowman/nightlink/issues/109).
 
 - Add a session-only remote administration diagnostic panel with request phases, route mode, reply budgets and inbound message metadata; exclude credentials and payloads. [#109](https://github.com/njsnowman/nightlink/issues/109).
