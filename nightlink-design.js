@@ -7,6 +7,7 @@
   for(const menu of document.querySelectorAll('#contact-actions,.message-more-actions,aside .sidebar-group[data-sidebar-group=tools]'))for(const button of menu.querySelectorAll(':scope>button')){if(button.querySelector(':scope>.nl-menu-icon')||button.querySelector(':scope>svg'))continue;button.classList.add('nl-menu-action');button.prepend(icon(button.getAttribute('aria-label')||button.textContent));}
   for(const heading of document.querySelectorAll('dialog[open]:not(:has(.radio-tools-hub)) .dialog-heading h2')){if(!heading.textContent.trim()||heading.querySelector(':scope>.nl-submenu-mark'))continue;heading.prepend(icon(heading.textContent,true));}
  }
+ window.NightlinkDesign=Object.freeze({icon});
  let scheduled=false;const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;refresh();});};
  new MutationObserver(records=>{if(records.some(r=>r.type==='attributes'?r.target.matches('dialog'):r.target.closest?.('dialog,.message-more,aside .sidebar-group')||[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches('dialog,.message-more')||n.querySelector('dialog,.message-more')))))schedule();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['open']});refresh();
 })();

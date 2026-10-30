@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Redesign the main Radio landing page with the approved shared card design, live identity summary, nine grouped tool actions and expandable data/device details; preserve original tools and offline guards. Tracks [#113](https://github.com/njsnowman/nightlink/issues/113).
+
 - Extend the approved design through nested submenus, terminal/discovery/inbox surfaces and expandable panels. Add matching decorative line icons to submenu headers and action lists while preserving labels, handlers and confirmations. [#112](https://github.com/njsnowman/nightlink/issues/112).
 
 - Apply the approved Radio Tools visual standard across workspace pages, menus, dialogs, Settings, detached DMs and the startup lock through a shared final design layer. Persist the design rules in repository guidance and verify their inclusion in all documents. [#112](https://github.com/njsnowman/nightlink/issues/112).

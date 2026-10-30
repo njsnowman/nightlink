@@ -141,3 +141,35 @@ html:root:root:root:root body dialog.ble-sheet.link-console .transport-choice bu
 html:root:root:root:root body dialog.ble-sheet.link-console #ble-connect{background:var(--nl-accent);border-color:var(--nl-accent);color:#101410}
 html:root:root:root:root body dialog.ble-sheet.link-console #ble-help{color:var(--nl-muted)}
 @media(max-height:650px){html:root:root:root:root body dialog.ble-sheet.link-console[open]{padding:18px;gap:12px}}
+
+/* Main Radio landing menu follows the approved grouped action-card layout. */
+html:root:root:root:root body #alternate.nl-radio-page:has(#radio-workbench){display:flex;flex-direction:column;gap:24px;overflow-y:auto;overflow-x:hidden;scroll-behavior:auto}
+#radio-page-hub{display:flex;flex-direction:column;gap:24px;min-width:0;flex:0 0 auto}
+html:root:root:root:root body #radio-page-hub #radio-status-panel{padding:22px 24px;border-radius:14px;background:linear-gradient(115deg,var(--nl-hover),var(--nl-surface));width:100%;margin:0}
+.nl-radio-identity{display:flex;align-items:center;gap:16px;min-width:0}
+.nl-radio-identity>.nl-submenu-mark{width:52px;height:52px;flex-basis:52px;border-radius:14px}.nl-radio-identity>.nl-submenu-mark svg{width:28px;height:28px}
+.nl-radio-name{flex:1;min-width:0}.nl-radio-eyebrow{font-size:10px;font-weight:650;letter-spacing:1.4px;color:var(--nl-accent)}
+html body #radio-page-hub .nl-radio-name h2{font-size:24px;line-height:1.25;font-weight:650;letter-spacing:-.6px;margin:5px 0;color:var(--nl-copy);overflow-wrap:anywhere}
+html body #radio-page-hub .nl-radio-name p{font-size:12px;line-height:1.5;color:var(--nl-muted);margin:0}
+html:root:root:root:root body #radio-page-hub #radio-status-title{font:550 12px/1.4 'Segoe UI',sans-serif;border:1px solid var(--nl-edge);border-radius:999px;padding:8px 12px;margin:0;color:var(--nl-muted);background:var(--nl-surface);max-width:200px;text-align:center}
+html:root:root:root:root body #radio-page-hub #radio-status-title[data-ready=true]{color:#9edbb6;border-color:#315e43;background:#10221a}
+html:root:root:root:root body #radio-page-hub #radio-status-title[data-error=true]{color:#ffb2b8;border-color:#86444f;background:#241216}
+.nl-radio-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0;padding:14px 0;border-block:1px solid var(--nl-edge)}.nl-radio-facts dt{font-size:11px;color:var(--nl-muted);margin-bottom:4px}.nl-radio-facts dd{font-size:14px;font-weight:550;color:var(--nl-copy);margin:0;overflow-wrap:anywhere}
+html:root:root:root:root body #radio-page-hub .radio-status-eyebrow{display:none}
+html:root:root:root:root body #radio-page-hub .radio-status-main{gap:16px;align-items:center}.radio-status-main>div:first-child{min-width:0}
+html:root:root:root:root body #radio-page-hub #radio-status-detail{font-size:12px;color:var(--nl-muted);line-height:1.6;max-width:70ch}
+html:root:root:root:root body #radio-page-hub .radio-status-actions{max-width:none;gap:8px;flex-shrink:1}
+html:root:root:root:root body #radio-page-hub .radio-status-actions button{min-height:36px;padding:8px 11px;font-size:12px;white-space:normal}
+.nl-radio-sync-evidence{margin-top:14px}.nl-radio-sync-evidence>summary{cursor:pointer;font-size:11px;color:var(--nl-muted);padding:3px 0}.nl-radio-sync-evidence[open]>summary{margin-bottom:12px}
+.nl-radio-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.nl-radio-group{min-width:0}.nl-radio-group h3{font-size:14px;font-weight:650;margin:0 0 4px;color:var(--nl-copy)}.nl-radio-group>p{font-size:12px;line-height:1.5;color:var(--nl-muted);margin:0 0 14px}.nl-radio-action-list{display:grid;gap:10px}
+html:root:root:root:root body #radio-page-hub button.nl-radio-action{display:flex;align-items:center;justify-content:flex-start;gap:12px;width:100%;min-width:0;min-height:110px;margin:0;padding:17px 16px;border:1px solid var(--nl-edge);border-radius:12px;background:var(--nl-surface);color:var(--nl-copy);text-align:left;line-height:1.4;box-shadow:0 2px 3px #0002;white-space:normal;cursor:pointer}
+html:root:root:root:root body #radio-page-hub button.nl-radio-action:hover:not(:disabled){background:var(--nl-hover);border-color:var(--accent-line,var(--nl-edge))}
+.nl-radio-action>.nl-menu-icon{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border:1px solid var(--accent-line,var(--nl-edge));border-radius:10px;background:var(--nl-hover)}
+.nl-radio-action-copy{display:flex;flex-direction:column;justify-content:center;gap:6px;flex:1;min-width:0}.nl-radio-action-copy strong{font-size:calc(13px * var(--read-scale,1));font-weight:600;line-height:1.35}.nl-radio-action-copy>span{font-size:calc(11.5px * var(--read-scale,1));line-height:1.5;color:var(--nl-muted)}.nl-radio-action-arrow{font-size:22px;font-weight:300;color:var(--nl-muted);flex:none}
+.nl-radio-more{border-top:1px solid var(--nl-edge);padding-top:18px}.nl-radio-more>summary{cursor:pointer;font-size:13px;font-weight:550;color:var(--nl-muted);padding:6px 0}.nl-radio-more[open]>summary{margin-bottom:16px}.nl-radio-exports{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+html:root:root:root:root body #radio-page-hub .nl-radio-more .radio-panel{display:block!important;max-width:none;width:100%;margin:0}
+html:root:root:root:root body #alternate.nl-radio-page #radio-workbench{flex:0 0 auto;width:100%;height:min(560px,calc(100dvh - 220px));min-height:260px;max-height:none;scroll-margin-top:0}
+html:root:root:root:root body #alternate.nl-radio-page #radio-workbench-body{flex:1;min-height:0;overflow:auto}
+@media(max-width:1050px){.nl-radio-groups{gap:14px}html:root:root:root:root body #radio-page-hub .radio-status-main{flex-direction:column;align-items:flex-start}html:root:root:root:root body #radio-page-hub .radio-status-actions{max-width:100%}}
+@media(max-width:850px){.nl-radio-groups{grid-template-columns:repeat(2,minmax(0,1fr))}.nl-radio-group:last-child{grid-column:1/-1}.nl-radio-group:last-child .nl-radio-action-list{grid-template-columns:repeat(3,minmax(0,1fr))}html:root:root:root:root body #radio-page-hub #radio-status-panel{padding:18px}.nl-radio-identity{gap:12px}.nl-radio-identity>.nl-submenu-mark{display:none}}
+@media(max-width:600px){.nl-radio-groups{grid-template-columns:1fr;gap:22px}.nl-radio-group:last-child .nl-radio-action-list{grid-template-columns:1fr}.nl-radio-exports{grid-template-columns:1fr}.nl-radio-facts{gap:12px}.nl-radio-identity{flex-wrap:wrap}html body #radio-page-hub .nl-radio-name h2{font-size:22px}html:root:root:root:root body #radio-page-hub button.nl-radio-action{min-height:96px}.nl-radio-name{flex-basis:65%}}
