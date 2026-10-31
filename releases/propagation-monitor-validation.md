@@ -62,5 +62,12 @@ CI artifact `nightlink-0.8.27-rc.1-windows-candidate` ID 13030997234, expires No
 
 ## 0.8.27-rc.2 - review fixes
 
-The rc.1 build above is superseded. A code review of #120 found issues fixed in 0ca8b21 (core: time-based sustained evidence, radio-switch reset, validated restore, baseline cache, closed orphan events, route-aware SNR class, idle coverage gap, heartbeat), 8bf5fb3 (UI: corrupt-record recovery, 60 s persistence max-wait, IndexedDB error reporting, focus-preserving refresh, Clear monitor data) and 57abd25 (browser test with simulated time). The reported desktop-notice rejection was not reproduced: desktop-shell.cjs already accepts `propagation`. 329 unit tests and 13 test:browser suites pass locally and on Windows CI run 41204868316 (synthetic only). rc.2 checksums are recorded after its CI build.
+The rc.1 build above is superseded. A code review of #120 found issues fixed in 0ca8b21 (core: time-based sustained evidence, radio-switch reset, validated restore, baseline cache, closed orphan events, route-aware SNR class, idle coverage gap, heartbeat), 8bf5fb3 (UI: corrupt-record recovery, 60 s persistence max-wait, IndexedDB error reporting, focus-preserving refresh, Clear monitor data) and 57abd25 (browser test with simulated time). The reported desktop-notice rejection was not reproduced: desktop-shell.cjs already accepts `propagation`. 329 unit tests and 13 test:browser suites pass locally and on Windows CI run 41204868316 (synthetic only). Windows CI [run 41205227260](https://github.com/njsnowman/nightlink/actions/runs/41205227260) built rc.2: test and package jobs passed; verify-package matched all 204 packaged files. Packaged source 1a2dae20f65a45009bd1cadbd56872417562b604 is the synthetic merge of head 05afaa9e963ebe694caff414012c5e25443c6556 into main 93f5277.
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Nightlink-Setup-0.8.27-rc.2.exe | 103173308 | 2934a13e9a3060586ed22bfd272e4221bb8a3ae75a140df65cc103362ec5d6b7 |
+| Nightlink-Portable-0.8.27-rc.2.exe | 102929458 | 085b1785e01128b6a6215768ee27feffb2d370a2ca66ee379c23770eae8cec55 |
+
+CI artifact `nightlink-0.8.27-rc.2-windows-candidate` ID 13043942499, expires November 14, 2026. Unsigned. This is the build for the physical acceptance plan; later documentation-only builds have different checksums.
 
