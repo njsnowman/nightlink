@@ -1,6 +1,6 @@
 # Nightlink user guide
 
-Updated 2026-10-27. Open **Settings > Help & About** or **Tools > Help & About**. Public 0.8.24 includes the current Help, delivery feedback and contact-availability changes. See the [documentation index](DOCUMENTATION.md).
+Updated 2026-10-31. Open **Settings > Help & About** or **Tools > Help & About**. Version 0.8.26 adds Device Center, radio contact removal, Signal Rail and the activity inbox, live delivery details, map visibility settings and the Overview messages/map divider. See the [documentation index](DOCUMENTATION.md).
 
 Actual Nightlink interface with fictional demonstration data. No physical-radio session is shown.
 
@@ -151,6 +151,10 @@ Read, reply, inspect hops and open a sender’s contact card.
 
 Opening a conversation shows the latest messages. Incoming messages follow the bottom while you are reading the latest. If you move into older history, use the latest-message control to return. Large histories use bounded rows and paging rather than mounting every saved message.
 
+### Reading position
+
+Each conversation remembers where you stopped when you scroll into older history, in the main window and in detached DM windows. Reopening that conversation returns to the same message. Select New messages ↓ or Jump to latest ↓ to return to the newest messages. Opening a message from search or the activity inbox shows that exact message instead. Backups include saved reading positions.
+
 ### Received reactions
 
 Supported MeshCore One reactions appear as emoji chips beneath a uniquely matched original message. A reaction whose original is missing or outside the current page appears as a separate notice; Reaction details shows its original wire text. Ordinary messages are preserved. Nightlink does not send reactions through this feature.
@@ -206,6 +210,34 @@ Acknowledged by recipient means the recipient radio returned an acknowledgement;
 
 A connected Bluetooth/USB link does not guarantee that a previously saved contact still exists in the companion. If the radio removes or replaces that entry, Nightlink keeps your messages, notes and draft but disables sending to it. Import the shared contact again before retrying. A send rejected before radio acceptance is labeled Not sent; earlier accepted attempts without an ACK remain unconfirmed. At capacity, firmware may replace an old non-favorite contact according to its configured policy.
 
+### Signal Rail and activity
+
+The Signal Rail above each conversation has LINK, RX, TX, ACK and FAULT indicators and a status label. It describes this conversation only and never sends, retries or changes delivery state.
+
+- Ready · standing by: connected, with no active send.
+- Incoming message: a new message arrived in this conversation.
+- Queued · waiting for radio, Sending to radio and Retrying transmission: your send is in progress.
+- Awaiting recipient ACK: a DM attempt is waiting for the recipient radio's acknowledgement.
+- Recipient acknowledged: the recipient radio returned an ACK.
+- Broadcast accepted by radio: your companion accepted a channel message. This does not confirm reception.
+- No recipient ACK · delivery unconfirmed, Send error · delivery unconfirmed, Cancelled · delivery unconfirmed and Interrupted · delivery unconfirmed: no qualifying confirmation was recorded. The message may still have arrived.
+- Not sent · radio rejected request: the radio did not accept the send.
+- Radio disconnected and Synchronizing radio: the connection is not ready.
+
+### Activity inbox and Outbox
+
+1. Select Inbox in the header. The count shows unread DMs, mentions and sends to review.
+2. Choose All, DMs, Mentions or Outbox.
+3. Outbox lists active and unconfirmed sends. Each can offer Delivery details, Review retry or Cancel remaining attempts. Retrying asks for confirmation.
+4. Opening the inbox does not mark messages read or retry sends. Muted conversations are included.
+
+### Message delivery details
+
+1. Select Delivery details under one of your sent DMs, in the main window, a DM window or the Outbox.
+2. The Message delivery window lists each attempt, including direct attempts and flood fallback attempts, and the current result.
+3. While it stays open, the window updates as attempts, ACKs and failures arrive. Cancel attempts stops remaining attempts for a pending DM. Retry message is available once the send has ended.
+4. If the radio or message changes, its actions are disabled. Close the window and reopen the message.
+
 ### Retry with context
 
 Open Delivery details to inspect recorded attempts before retrying. A retry can produce duplicates if the first message arrived without its acknowledgement. Retry and route behavior depend on the existing radio path and firmware.
@@ -252,6 +284,30 @@ The card can show last received message, last advert, stored outbound route and 
 ### Compare a public key
 
 Use the contact’s Compare public key action and compare it with the person through a separate trusted channel. The local record means you compared that key; it does not authenticate every channel message carrying the same name.
+
+### Remove a contact from the radio
+
+This removes the contact from the connected companion only. Saved messages, nicknames, photos, notes and favorites stay on this computer.
+
+1. Connect and finish synchronization. Removal is unavailable while the radio is busy.
+2. Open the contact card from Contacts or by selecting a sender.
+3. Select ⋯ (Contact options), then Remove from radio.
+4. Check the name, then select Remove from radio, or Back to contact to cancel.
+5. Nightlink sends one removal and checks that the radio no longer has that exact public key. If the check fails, the message says the removal could not be verified; refresh the radio data before trying again.
+6. Import the contact again before you send it a DM.
+
+### Remove all except favorites
+
+Use this to clear a full contact list while keeping the contacts you starred in Nightlink.
+
+1. Star every contact you want to keep. Favorites are stored on this computer.
+2. Open Contacts and select Remove all except favorites. It is also in Radio Tools.
+3. Review the lists under Review contacts to remove and Favorites to keep. If no favorites are saved, a warning says every contact shown will be removed.
+4. Select the box I understand these contacts will be removed from the connected radio, then select Remove non-favorites.
+5. Nightlink removes and verifies one contact at a time. The status shows verified removals, skipped contacts and the number originally selected. Large lists take a while.
+6. Select Stop after current contact to stop once the current removal is verified.
+7. Contacts discovered after the preview are left alone. Contacts that become favorites or disappear are skipped.
+8. If a removal cannot be verified, the run stops and says the last operation may be unverified. Refresh contacts before retrying. Nothing is retried automatically.
 
 ### Share and import contacts
 
@@ -305,6 +361,33 @@ Remote maps require internet and their own service availability. Nightlink can f
 
 Selecting #echo can show the command conversation beside CoreScope. Seeing a burst depends on a receiver reporting that traffic to the provider; a visible map alone does not confirm your message was observed.
 
+1. Select the #echo channel in Overview or Messages.
+2. Choose Chat, Map or Split. Split shows the conversation beside the map.
+3. In Split, drag the divider to resize, or focus it and use the Left and Right arrow keys. Select Restore split to return to the balanced layout.
+4. The map uses CoreScope. If CoreScope is hidden in Settings, offline or unavailable, the local Radio map is shown instead, with downloaded street tiles where available.
+
+### #echo command buttons
+
+When #echo is selected and the radio is connected and synchronized, buttons for !test, !spam, !echo and !yolo appear beside the composer.
+
+1. Select a button. It sends that exact command to #echo immediately; there is no separate confirmation.
+2. Any text already in the composer stays as your draft.
+3. The buttons are unavailable while the radio is disconnected or synchronizing, while another send is in progress, or during a radio configuration or bulk contact removal.
+
+### Hide CoreScope or MeshMapper
+
+1. Open Settings and find Map visibility.
+2. Clear Show CoreScope or Show MeshMapper to hide that provider. The status line confirms Map visibility saved.
+3. A hidden provider is unloaded and its source button is hidden in Overview, Network and #echo. The local Radio map stays available.
+4. The choice is saved on this computer and kept across restarts. Select the box again to show the provider.
+
+### Resize Overview messages and map
+
+1. Open Overview.
+2. Drag the divider between messages and the map.
+3. Or focus the divider and use the Left and Right arrow keys. Home and End move to the limits. Enter or a double-click restores the balanced split.
+4. The size is saved on this computer.
+
 ## Prepare offline maps
 
 Install coverage before losing internet access.
@@ -344,6 +427,41 @@ Unknown repeaters, ambiguous short hashes and missing advertised coordinates rem
 ### Offline street maps
 
 The dialog uses the same street-map and permitted offline tile-pack support as Radio map. Import regional offline coverage before disconnecting from the internet; missing tile coverage cannot be invented. A displayed message path is retained evidence, not a new trace request.
+
+## Device Center
+
+Inspect and change settings on your companion, a repeater or a room, then verify each change by reading it back.
+
+### Open Device Center
+
+Open Radio and select Device Center. It is also in Radio Tools, and a saved repeater or room contact card offers Manage device. Opening Device Center sends nothing.
+
+### Inspect and change settings
+
+1. Under Device, choose Connected companion, a saved repeater or room, or Direct USB setup.
+2. For a repeater or room, enter its Password and select Log in. A guest login can inspect supported settings; changes require the node to report administrator permission.
+3. Select Inspect settings. Remote settings are read over the mesh one request at a time and appear as they arrive. If a core reply is missed, only that read is retried, up to three sends; writes are never retried.
+4. Edit the fields you want to change. To read an optional setting, open Optional infrastructure settings, choose a Setting and select Read selected setting.
+5. Select Review staged changes. Check the full target key and every value under Review changes.
+6. Select Apply reviewed changes, or Back to editing. Nightlink first checks that the device still matches the inspection, then writes each setting and reads it back.
+7. If a step fails, applying stops and earlier changes may remain applied. Inspect again before continuing.
+8. Companion RF changes take effect immediately. Repeater and room RF changes require a separate reboot. RF and path-hash changes can separate radios from the network.
+
+### Export and stage a settings file
+
+1. After inspecting, select Export inspected settings. The file records the device's full public key and the displayed settings. Passwords, private keys and channel keys are not included.
+2. To reuse a file, inspect the target device first, then use Stage settings file. Values fill the form; nothing is sent.
+3. If the file came from a different or unidentified device, a warning asks you to check every staged value against this device.
+4. Review and apply the staged changes as above.
+
+### Direct USB setup (unverified)
+
+1. Disconnect your companion. Attach the repeater or room by USB and select Connect USB. This opens the text CLI at 115200 baud, separate from USB companion firmware.
+2. Choose Inspect settings to identify supported settings, then edit, review and apply as above.
+3. Direct USB advanced commands runs a single command on the attached device. A command that may change configuration requires Confirm command.
+4. Select Disconnect USB when finished.
+
+Direct USB setup, remote RF changes and roles other than the tested companion and repeater have not been verified on hardware for 0.8.26.
 
 ## Radio workbench, adverts & CLI
 
@@ -418,6 +536,13 @@ Open Radio to see connection/synchronization activity, last successful full sync
 ### Export a diagnostic log
 
 Use Export diagnostic log in the Radio controls. Include your Nightlink version, radio model/firmware, Bluetooth or USB, the time the problem occurred and exact error text in a support report. Check any exported file before posting it publicly; do not include message backups, passwords or keys.
+
+### Support report
+
+1. Open Radio Health or Diagnostics and select Support report.
+2. Expand Review report contents to read exactly what it contains.
+3. Select Save support report to save the file locally. Nothing is uploaded.
+4. The report includes app version, connection status, synchronization counters, command numbers, error categories and timing measurements. It excludes message text, names, keys, channel secrets, locations, raw frames and free-form error details.
 
 ### Performance and evidence
 
