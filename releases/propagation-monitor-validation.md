@@ -71,3 +71,7 @@ The rc.1 build above is superseded. A code review of #120 found issues fixed in 
 
 CI artifact `nightlink-0.8.27-rc.2-windows-candidate` ID 13043942499, expires November 14, 2026. Unsigned. This is the build for the physical acceptance plan; later documentation-only builds have different checksums.
 
+## 0.8.27-rc.3 - consistency, USB errors and test coverage
+
+The rc.2 build is superseded. Changes since rc.2: USB silence/non-companion errors (#116, 6bb4aa0), separated 0xFF route labels and saved-path decoding (fa09663, 39c9b34), map refresh on local identity updates and required #echo files (f058493), portable test suites with 55 browser suites in test:browser and CI actions v7 (01367b1, 51de85a). 334 unit tests and 55 browser suites pass locally (synthetic only). rc.3 checksums are recorded after its CI build.
+
