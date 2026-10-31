@@ -1,7 +1,7 @@
 name: NightLink UI validation
 on:
   pull_request:
-    branches: [main, codex/integrate-current-ui]
+    branches: [main, codex/integrate-current-ui, codex/device-management]
   workflow_dispatch:
 permissions:
   contents: read
