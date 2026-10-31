@@ -2,6 +2,41 @@
 
 Research reviewed October 28-29, 2026. Tracking: [#109](https://github.com/njsnowman/nightlink/issues/109). This implementation is original Nightlink code and layout. Other clients were reviewed through their published documentation and feature descriptions; their implementation code and visual layouts were not used.
 
+## How to use Device Center (0.8.26)
+
+Open Radio → Device Center, Radio Tools → Device Center, or a saved repeater/room contact card → Manage device. Opening Device Center sends nothing.
+
+### Connected companion
+
+1. Connect the companion over Bluetooth or USB and wait for synchronization.
+2. Select Connected companion and choose Inspect settings. Nightlink reads identity, TX power, location and RF parameters from the companion.
+3. Edit fields. Choose Review staged changes to see each before → after value. Choose Back to editing to change them.
+4. Choose Apply reviewed changes. Nightlink re-reads the affected values first, cancels the batch if any value changed since inspection, then writes and reads back each setting. RF parameters are written last and take effect immediately.
+5. Inspect again after any stopped batch. Earlier changes may remain applied.
+
+After a successful local change, the Radio page, Radio Tools header and Overview statistics update from the companion's readback without a resynchronization.
+
+### Saved repeater or room
+
+1. Select the remote device and enter its password, then choose Log in. Login uses mesh airtime.
+2. An administrator session allows structured writes. A guest or legacy session (Read-only / legacy session) allows inspection only.
+3. Choose Inspect settings. Core settings (name, TX power, latitude, longitude and RF parameters) load one request at a time, with progress for each request. Partial values stay disabled until inspection completes.
+4. Optional infrastructure settings (owner information, RX gain, path hash mode, delay factors, forwarding and advert intervals) are not read by Inspect settings. Choose one under Optional infrastructure settings, then Read selected setting. A failed optional read keeps the core snapshot and staged edits.
+5. Stage, review and apply as for the companion. Infrastructure RF changes are saved pending a reboot that you request separately.
+6. Choose Log out when finished. This clears the companion's local session tracking; the remote node enforces its own permissions.
+
+### Direct repeater / room USB
+
+Disconnect the companion first. Choose Connect USB, select the port and choose Inspect settings. Nightlink reads the device's public key (`get public.key`) before showing settings. Direct USB advanced commands run one command at a time; changing commands need Confirm command. Choose Disconnect USB when finished.
+
+### Export and import settings
+
+Export inspected settings saves a `nightlink-device-settings` file with the displayed settings and the target's full public key. Direct USB exports record the key read from the device. Stage settings file fills the form for the currently inspected device; nothing is sent until you review and apply. A file exported from a different or unidentified device still stages and shows "Warning: this file was exported from ..." so you check every value.
+
+### Missed replies
+
+For a saved repeater or room, Device Center retries only the five core reads (`get name`, `get tx`, `get lat`, `get lon`, `get radio`), up to three transmissions each, during inspection and preflight. Direct USB commands are not retried. Before the next command it waits for one late reply per earlier transmission, or until the reply budget expires. Writes, optional reads and terminal commands are sent once. If a reply never arrives, or recovery is stopped while a command is outstanding, the target is quarantined until you reconnect the companion.
+
 ## Comparison and design decisions
 
 | Primary source | Documented capabilities reviewed | Nightlink decision |
@@ -53,7 +88,7 @@ RF and path-hash changes can affect reachability and network compatibility. Infr
 
 Structured ACLs, hierarchical regions, room-user administration, firmware flashing/OTA, automatic recovery after an RF change, hardware-specific power limits above the conservative remote ceiling, scheduled fleet operations and telemetry history are follow-up capabilities. They are not claimed by this candidate. Protocol differences require separate work rather than sending guessed commands to unsupported roles.
 
-Automated coverage uses synthetic transports. rc.8 additionally passed physical remote administrator login and all five core inspection queries through a protocol-13 Bluetooth companion on October 30, 2026. Physical configuration write/readback, direct USB infrastructure setup and other roles remain required before stable release. See releases/0.8.26-rc.8.md.
+Automated coverage uses synthetic transports. Physical evidence for 0.8.26 is recorded in [hardware acceptance](../releases/0.8.26-hardware-acceptance.md): remote administrator login and core inspection (rc.8/rc.10), a connected-companion TX power 22 → 21 → 22 dBm write/readback/restoration, and an owner-information write/readback/exact restoration on the tested Batesville repeater with administrator logout. Infrastructure RF activation, Direct USB setup and other device roles are not physically verified; 0.8.26 discloses them as unverified.
 
 ## Remote command timing (rc.5)
 

@@ -8,7 +8,7 @@ Open a contact card, choose its options menu, then Compare public key. Compare t
 
 ## RF Trends
 
-Open Tools → Diagnostics → RF Trends. Hour, day and week windows summarize existing received-packet observations with bucket medians/ranges, counts and gaps. Half-window change requires at least five samples in each half. The recorder retains a bounded set for up to seven days; a week selector does not guarantee a full week of data. These are mixed-transmitter last-link observations, not network-wide health, packet-loss estimates or individual hop measurements. No probes are sent.
+Open Radio → Diagnostics & health, then the RF Trends tab. Hour, day and week windows summarize existing received-packet observations with bucket medians/ranges, counts and gaps. Half-window change requires at least five samples in each half. The recorder retains a bounded set for up to seven days; a week selector does not guarantee a full week of data. These are mixed-transmitter last-link observations, not network-wide health, packet-loss estimates or individual hop measurements. No probes are sent.
 
 ## Private map points
 
@@ -16,4 +16,8 @@ Open Network → Radio map → Local points. Save a location, coverage note or m
 
 ## Console display and echo workspace
 
-Settings → Display accent selects ice blue, amber, emerald or violet. Ice blue is the default. Message text and semantic delivery/error states retain independent colors. Selecting #echo opens a resizable chat/observer split with Chat/Map/Split controls; other channels retain normal messaging. CoreScope uses radio-reported coordinates when valid and a labeled regional fallback otherwise. A visible observer burst is not a message acknowledgment.
+Display accent in Settings selects ice blue, amber, emerald or violet. Amber is the default. Message text and semantic delivery/error states retain independent colors. Selecting #echo opens a resizable chat/observer split with Chat/Map/Split controls and !test, !spam, !echo and !yolo send buttons that keep the composer draft; other channels retain normal messaging. Overview has a separate messages/map divider: drag it, or focus it and use Left/Right, Home/End, or Enter to restore the balanced split.
+
+## Map providers
+
+Settings → Data & updates shows or hides CoreScope and MeshMapper independently. A hidden provider unloads and stays hidden after restart, and sends no location request. The local Radio map remains available, including the #echo fallback. CoreScope uses radio-reported coordinates when valid and a labeled regional fallback otherwise. A visible observer burst is not a message acknowledgment.
