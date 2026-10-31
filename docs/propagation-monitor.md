@@ -23,7 +23,7 @@ Missing SNR or RSSI is `null`, never 0.
 - Path byte: low 6 bits are the hop count, top 2 bits are the hash size minus one (`routes.js`, `diagnostics.js` `packet()`).
 - RX-log route type `header & 3`: 0 scoped flood, 1 flood, 2 direct, 3 scoped direct (`diagnostics.js`).
 - A reception is classed `direct` only for a flood or scoped-flood packet with zero path hashes. Assumption, not confirmed in this repository: repeaters append their hash to a flood packet's path, so zero hashes means no repeater forwarded it. Direct-routed packets (route 2 or 3) are always `unknown`, because their path is the remaining route and the last transmitter may be a repeater.
-- Message path length `255` (0xFF) is `unknown`, never direct. Labels for 0xFF disagree elsewhere in the code (`routes.js` "Direct - hop count unavailable", `contacts-ui.js` "Flood / unknown"), so the monitor treats it as no evidence.
+- Message path length `255` (0xFF) is `unknown`, never direct. 0xFF means different things in two fields: on a received message the app labels it a direct-routed packet without a reported hop count (`routes.js` hopSummary), and on a saved contact it means no known path (`routes.js` contactRoute). Neither confirms a zero-hop reception, so the monitor treats it as no distance evidence.
 - Path hashes and 6-byte DM prefixes are not unique. They are never used as identities. Message stations are labeled `prefix`; only full public keys are labeled `key`.
 - Assumption, not parsed elsewhere in this repository: an Advert payload begins with the 32-byte originator public key. A key extracted this way is used for distance only when it matches a known contact location.
 
