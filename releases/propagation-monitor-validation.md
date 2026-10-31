@@ -73,5 +73,12 @@ CI artifact `nightlink-0.8.27-rc.2-windows-candidate` ID 13043942499, expires No
 
 ## 0.8.27-rc.3 - consistency, USB errors and test coverage
 
-The rc.2 build is superseded. Changes since rc.2: USB silence/non-companion errors (#116, 6bb4aa0), separated 0xFF route labels and saved-path decoding (fa09663, 39c9b34), map refresh on local identity updates and required #echo files (f058493), portable test suites with 55 browser suites in test:browser and CI actions v7 (01367b1, 51de85a). 334 unit tests and 55 browser suites pass locally (synthetic only). rc.3 checksums are recorded after its CI build.
+The rc.2 build is superseded. Changes since rc.2: USB silence/non-companion errors (#116, 6bb4aa0), separated 0xFF route labels and saved-path decoding (fa09663, 39c9b34), map refresh on local identity updates and required #echo files (f058493), portable test suites with 55 browser suites in test:browser and CI actions v7 (01367b1, 51de85a). 334 unit tests and 55 browser suites pass locally (synthetic only). After three test-only fixes to diagnostics.browser.test.cjs for the Windows runner (95e6893, cbad24a, 2521f06; offline emulation after reload), Windows CI [run 41244711712](https://github.com/njsnowman/nightlink/actions/runs/41244711712) passed the unit suite and all 55 test:browser suites (test job about 4 min) and built rc.3; verify-package matched all 204 packaged files, including the new required echo-workspace assets. Packaged source 6ae375c9d212bc7f705fb27bdd607e5c26adce3c is the synthetic merge of head 2521f069c269c0c5998fdae1b110ed6a06782ba2 into main 93f5277.
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Nightlink-Setup-0.8.27-rc.3.exe | 103174230 | f1a3635d535bc9302047ac345375df5088c4c3ca3e81b0b22436529ad873e14b |
+| Nightlink-Portable-0.8.27-rc.3.exe | 102930336 | ed151d81be2c55635e8c1fd7bf1023afac5d738e5d6fb9ae0c7082cc8d885169 |
+
+CI artifact `nightlink-0.8.27-rc.3-windows-candidate` ID 13059420633, expires November 14, 2026. Unsigned. This is the build for the physical acceptance plan; rc.1 and rc.2 are superseded.
 
