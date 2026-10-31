@@ -65,7 +65,7 @@ A physical trace showed six successful replies before an optional path-hash read
 
 ## Bounded core read recovery (rc.8)
 
-After the user restored the companion, a core name read succeeded but the TX read timed out. The client now permits up to three transmissions only for five exact read-only core queries. Recovery drains queued messages and holds serialization through a bounded duplicate-reply quiet interval. Writes, arbitrary CLI and optional probes remain single-attempt. The firmware has no per-command reply ID, so late-reply handling remains bounded best effort; preflight and setting readback remain mandatory. This does not alter the radio clock or any RF setting.
+After the user restored the companion, a core name read succeeded but the TX read timed out. The client now permits up to three transmissions only for five exact read-only core queries. Recovery drains queued messages and holds serialization until one late reply per earlier transmission has been consumed, or until the reply budget expires and the remaining replies are presumed lost. Stopping or a session guard failure during recovery quarantines the target, because a command is outstanding. Writes, arbitrary CLI and optional probes remain single-attempt. The firmware has no per-command reply ID, so late-reply handling remains bounded best effort; preflight and setting readback remain mandatory. This does not alter the radio clock or any RF setting.
 
 ## Inspection latency (rc.9 / rc.10)
 
