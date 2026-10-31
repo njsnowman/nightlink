@@ -12,7 +12,7 @@
   confirm.onclick=async()=>{
    if(busy()||!sameRadio()){feedback.textContent='The radio or connection changed. Reopen the contact and try again.';confirm.disabled=true;return;}
    if(!live.contacts.some(c=>c.key===key)){feedback.textContent='This contact is no longer saved on the connected radio.';confirm.disabled=true;return;}
-   confirm.disabled=true;cancel.disabled=true;feedback.textContent='Removing contact and verifying the radio contact list…';
+   confirm.disabled=true;cancel.disabled=true;feedback.textContent='Removing contact and verifying the key is no longer on the radio…';
    try{await radioSession.removeContact(key);if(!sameRadio())return;if(panel.isConnected)document.querySelector('#dialog').close();toast('Contact removed from radio. Saved messages and personal details kept.');}
    catch(error){if(panel.isConnected){feedback.textContent=error.message||'Contact removal could not be verified. Refresh the radio data before trying again.';cancel.disabled=false;confirm.disabled=busy()||!sameRadio();}}
   };
