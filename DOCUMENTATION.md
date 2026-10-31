@@ -1,6 +1,6 @@
 # Nightlink documentation
 
-Updated 2026-10-31. Public stable release: **0.8.24**. **0.8.26** is prepared and its publication is authorized; no 0.8.26 GitHub release exists yet. Tracking: [#104](https://github.com/njsnowman/nightlink/issues/104), [#109](https://github.com/njsnowman/nightlink/issues/109).
+Updated 2026-10-31. Public stable release: **0.8.26** (published 2026-10-31). Tracking: [#104](https://github.com/njsnowman/nightlink/issues/104), [#109](https://github.com/njsnowman/nightlink/issues/109).
 
 ## Start here
 
@@ -41,4 +41,4 @@ A returned direct repeater trace was physically confirmed on the recorded Heltec
 
 ## Documentation delivery
 
-Repository documentation can be read now and may describe 0.8.26 features before that release is published. Bundled Help is packaged with each executable and reflects its version. Guide and release screenshots use labeled fictional data.
+Repository documentation may describe features after the latest published release. Bundled Help is packaged with each executable and reflects its version. Guide and release screenshots use labeled fictional data.
