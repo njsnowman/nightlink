@@ -15,14 +15,33 @@ Windows desktop client for MeshCore companion radios over Bluetooth LE or USB se
 - Compact layout, connection diagnostics, and retained-message synchronization.
 - Passive RF trend summaries with sample counts and last-link limitations.
 - Private Radio map points with local notes and backup merge support.
-- An #echo-only chat/CoreScope split, automatic local-map fallback and configurable MeshMapper region/PC centering.
+- An #echo-only Chat / Map / Split view, a resizable Overview message/map split, independent Show CoreScope / Show MeshMapper settings, automatic local-map fallback and configurable MeshMapper region/PC centering.
+- Device Center for companion configuration, authenticated repeater/room administration and direct USB text-CLI setup, with reviewed changes and readback.
+- Contact card removal from the radio and Remove all except favorites bulk removal, each verified by an exact-key lookup; saved messages, cards and favorites stay on this computer.
+- Signal Rail activity indicators, activity inbox and Outbox, live delivery details, reading-position memory and a local support report.
+- #echo command buttons for !test, !spam, !echo and !yolo.
 - Default dark black surfaces, an alternative console scheme and four independent display accents.
 - Optional startup password/authenticator lock with recovery codes; existing history remains unencrypted.
 - Bounded webpage/image previews and session-only radio CLI tools.
 - Radio workbench: Trace Path, offline geometric Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI.
 - Copy public ID, exact-name mention highlighting/chime, and animated located message paths.
 
-Stable **0.8.24** is available: [Windows installer](https://github.com/njsnowman/nightlink/releases/download/v0.8.24/Nightlink-Setup-0.8.24.exe), [portable build](https://github.com/njsnowman/nightlink/releases/download/v0.8.24/Nightlink-Portable-0.8.24.exe), and [release notes and checksums](releases/0.8.24.md). Both executables are unsigned. See the [documentation index](DOCUMENTATION.md), [user guide](USER_GUIDE.md) and [local client tools](LOCAL_CLIENT_TOOLS.md).
+Current public stable release: **0.8.24** ([Windows installer](https://github.com/njsnowman/nightlink/releases/download/v0.8.24/Nightlink-Setup-0.8.24.exe), [portable build](https://github.com/njsnowman/nightlink/releases/download/v0.8.24/Nightlink-Portable-0.8.24.exe), [release notes and checksums](releases/0.8.24.md)). **0.8.26** is prepared and its publication is authorized, but no 0.8.26 GitHub release exists yet; see [0.8.26 release record](releases/0.8.26.md). Use only executables attached to a published GitHub release. Both executables are unsigned. See the [documentation index](DOCUMENTATION.md), [user guide](USER_GUIDE.md), [Device Center](docs/device-management.md) and [local client tools](LOCAL_CLIENT_TOOLS.md).
+
+## Install or upgrade
+
+1. Export a backup: Settings → Data & updates → Backup and restore.
+2. Quit Nightlink through its tray Quit command. Closing the main window hides it to the tray by default.
+3. Download from the published GitHub release. Use Setup for the normal per-user Windows installation, or Portable to run without installing. Do not run both on the same profile or radio.
+4. Download SHA256SUMS.txt from the same release and compare it with the downloaded file in PowerShell:
+
+   ```powershell
+   Get-FileHash .\Nightlink-Setup-<version>.exe -Algorithm SHA256
+   ```
+
+   Do not run the file if the value differs.
+5. Run Setup over the existing installation. The executables are unsigned, so Windows SmartScreen may show a warning before it runs; check the hash first.
+6. Start Nightlink and confirm the version under Settings → Data & updates.
 
 ## Development
 

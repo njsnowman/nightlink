@@ -2,7 +2,19 @@
 
 Tracked in [#33](https://github.com/njsnowman/nightlink/issues/33).
 
-Open Radio from the main sidebar, then Radio Tools. The workbench provides Trace Path, Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI. See the [user guide](USER_GUIDE.md#radio-workbench) for operating steps. Selecting a tool does not transmit.
+Open Radio from the main sidebar. The Radio page shows the connected radio's identity and grouped action cards, with expandable data and device details. Radio Tools opens a grouped tool panel:
+
+- Device & setup: Device Center, CLI Terminal, Add channel.
+- Contacts & discovery: Discover nodes, Share my contact, Import contact.
+- Broadcast: Local advert, Flood advert.
+
+The workbench also provides Trace Path, Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI. See the [user guide](USER_GUIDE.md#radio-workbench) for operating steps. Selecting a tool does not transmit.
+
+Device Center configures the connected companion, authenticated remote repeaters and rooms, and direct USB text-CLI devices. Changes are staged, reviewed and read back. See [Device Center](docs/device-management.md).
+
+## Contact maintenance
+
+To remove one contact from the radio, open its contact card and choose More > Remove from radio, then confirm. To remove every contact except your Nightlink favorites, choose Remove all except favorites in Radio Tools or Nodes. Review the preview, tick the acknowledgement and choose Remove non-favorites. Stop after current contact ends the run after the contact in progress. Each removal is verified by an exact-key lookup on the radio. Saved messages, nicknames, photos, notes and favorites stay on this computer. Tracked in [#102](https://github.com/njsnowman/nightlink/issues/102) and [#104](https://github.com/njsnowman/nightlink/issues/104).
 
  Local adverts use companion command 7 with scope 0; flood adverts use scope 1. Both require explicit confirmation and a synchronized connection. Nightlink prevents overlapping configuration operations and limits adverts to one per ten seconds for each radio during the app session. Acceptance means queued by the radio, not received by another station. Location inclusion follows radio firmware settings.
 
