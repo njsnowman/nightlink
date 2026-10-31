@@ -1,6 +1,6 @@
 # RF Propagation Monitor - detection model
 
-Status: core module only (`propagation.js`). No user interface, settings panel or persistence wiring is included yet. All validation is synthetic; no physical-radio evidence exists for this feature.
+Status: 0.8.27 candidate. Ships the detection core (`propagation.js`), a header indicator, a Propagation Monitor panel on the Radio page, a Settings > Notifications section and bounded local persistence in IndexedDB (`propagation-ui.js`). Stored history is validated before use; an unreadable record is cleared and learning restarts, and Settings > Clear monitor data removes it on request. All validation is synthetic; no physical-radio evidence exists for this feature. Scoring weights and thresholds are untested hypotheses, and the firmware assumptions listed below are unconfirmed.
 
 ## Purpose and limits
 
