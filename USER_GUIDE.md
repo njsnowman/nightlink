@@ -682,7 +682,10 @@ Download the matching Windows build and understand candidates.
 1. Open Settings > Data & updates > Nightlink updates.
 2. Select Check for updates. Enable the optional checks-while-open toggle for a check after about thirty seconds and every six hours.
 3. When a newer stable version is offered, choose Open download. Setup installations select Setup; portable clients select Portable when available.
-4. Export a backup, quit Nightlink cleanly and run the downloaded installer. Reopen and confirm the version in Help & About.
+4. Before running the download, compare its SHA-256 with the Expected SHA-256 shown under the update status. Select Copy command, paste it into PowerShell and compare the Hash line. If they differ, do not run the file.
+5. Export a backup, quit Nightlink cleanly and run the downloaded installer. Reopen and confirm the version in Help & About.
+
+If Nightlink reports that the published checksums disagree, it hides Open download. Do not run that release's file; open GitHub releases and report it. If it cannot confirm the checksums, compare the download with SHA256SUMS.txt on the release page yourself.
 
 ### Downloads are not automatic installation
 
