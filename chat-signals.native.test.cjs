@@ -19,7 +19,11 @@ await page.evaluate(()=>{live.messages.push({id:'test-receive',own:false,sender:
 for(const phase of ['awaiting','acknowledged','unconfirmed','not-sent']){
 await page.evaluate(phase=>{let m=live.messages.find(x=>x.id==='test-dm');if(!m){m={id:'test-dm',own:true,target:{kind:'direct',key:'bb'.repeat(32),name:'Test peer'},conversation:'direct:'+'bb'.repeat(32),text:'Synthetic DM',timestamp:1700000001};live.messages.push(m);}Object.assign(m,{phase,pending:phase==='awaiting',ack:phase==='acknowledged'?{tag:1}:null,status:phase==='unconfirmed'?'No recipient ACK received':phase});renderMessages();},phase);
 await child.waitForFunction(phase=>document.querySelector('.chat-signal-rail')?.dataset.state===phase,phase);
+if(phase==='awaiting')await child.getByRole('button',{name:'Delivery details',exact:true}).click();
+assert.equal(await page.locator('#delivery-state').textContent(),phase==='unconfirmed'?'No recipient ACK received':phase,'native DM delivery sheet follows '+phase);
+assert.equal(await page.locator('#cancel-delivery').isVisible(),phase==='awaiting');
 }
+await page.evaluate(()=>document.querySelector('#dialog').close());
 assert.equal(await rail.getAttribute('data-state'),'broadcast','DM does not change channel indicator');
 await page.evaluate(()=>{document.body.classList.add('reduced-motion');live.selected={kind:'direct',key:'bb'.repeat(32),name:'Test peer'};const m=live.messages.find(x=>x.id==='test-dm');Object.assign(m,{phase:'awaiting',pending:true});renderMessages();});
 assert.equal(await rail.locator('[data-signal=ack] i').evaluate(el=>getComputedStyle(el).animationName),'none');
@@ -29,5 +33,5 @@ await page.evaluate(()=>{live.sync='disconnected';renderMessages();});await chil
 await child.setViewportSize({width:420,height:650});assert.equal(await child.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
 const bounds=await child.locator('#dm-thread').boundingBox();assert.ok(bounds.height>100,'DM retains message space');
 const incomingWindow=app.waitForEvent('window');await page.evaluate(()=>{const key='cc'.repeat(32);live.sync='ready';live.contacts.push({key,name:'Muted peer',type:1});live.messages.push({id:'muted-incoming',own:false,sender:'Muted peer',kind:'direct',target:{kind:'direct',key,name:'Muted peer'},conversation:'direct:'+key,text:'Synthetic incoming opening',timestamp:1700000002,status:'Received from radio'});renderMessages();openDM(key,true);});const muted=await incomingWindow;await muted.waitForFunction(()=>document.querySelector('.chat-signal-rail')?.dataset.state==='receive');assert.match(await muted.locator('#dm-sound').textContent(),/off/,'muting sound does not suppress visual incoming feedback');
-console.log('PASS real renderer wiring: echo burst with concurrent TX/RX and silent backlog, channel send/acceptance, native DM await/ACK/unconfirmed/rejected, conversation isolation, reduced motion, disconnect and compact window. Synthetic only; no RF transmissions.');
+console.log('PASS real renderer wiring: echo burst with concurrent TX/RX and silent backlog, channel send/acceptance, native DM await/ACK/unconfirmed/rejected and live details through child IPC, conversation isolation, reduced motion, disconnect and compact window. Synthetic only; no RF transmissions.');
 }finally{await app.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

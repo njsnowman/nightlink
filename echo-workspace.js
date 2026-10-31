@@ -7,10 +7,10 @@
  function restoreMap(){if(mapHost?.contains(mapPanel)){homes.get(mapPanel).after(mapPanel);mapPanel.hidden=true;}}
  function cleanup(){removeFrame();restoreMap();if(shell?.contains(chatPanel))alternate.append(chatPanel);shell?.remove();shell=null;mapHost=null;status=null;alternate.classList.remove('echo-active');}
  function setLayout(next){layout=next;shell.dataset.layout=next;const expand=shell.querySelector('#echo-expand');if(expand)expand.textContent=next==='map'?'Restore split':'Expand map';for(const b of shell.querySelectorAll('[data-echo-layout]'))b.setAttribute('aria-pressed',String(b.dataset.echoLayout===next));requestAnimationFrame(()=>{networkStreetMap?.invalidateSize();window.dispatchEvent(new Event('resize'));});}
- function localMap(){removeFrame();mapPanel.hidden=false;mapPanel.classList.remove('overview-corescope');mapHost.append(mapPanel);ensureNetworkStreetMap();renderMap();requestAnimationFrame(()=>networkStreetMap?.invalidateSize());status.textContent=navigator.onLine?'CoreScope unavailable · local radio map. Observer activity is unavailable.':'Offline · local radio map with downloaded street tiles where available. CoreScope activity is unavailable.';}
+ function localMap(){removeFrame();mapPanel.hidden=false;mapPanel.classList.remove('overview-corescope');mapHost.append(mapPanel);ensureNetworkStreetMap();renderMap();requestAnimationFrame(()=>networkStreetMap?.invalidateSize());status.textContent=!NightlinkMapProviders.enabled('corescope')?'CoreScope hidden in Settings · local radio map.':navigator.onLine?'CoreScope unavailable · local radio map. Observer activity is unavailable.':'Offline · local radio map with downloaded street tiles where available. CoreScope activity is unavailable.';}
  function displayMap(){
   if(!shell)return;
-  if(!navigator.onLine||failed){localMap();return;}
+  const visible=NightlinkMapProviders.enabled('corescope');shell.querySelector('.echo-map-panel h2').firstChild.textContent=visible?'CoreScope ':'Radio map ';shell.querySelector('.echo-map-panel .live').textContent=visible?'OBSERVER':'LOCAL';shell.querySelector('#echo-reload').hidden=!visible;if(!visible||!navigator.onLine||failed){localMap();return;}
   restoreMap();if(frame?.isConnected)return;
   const token=window.NightlinkPerformance?.begin('echo-map-page');let measured=false;const finish=outcome=>{if(measured)return;measured=true;window.NightlinkPerformance?.end('echo-map-page',outcome,token);};finishPage=finish;
   status.textContent='Loading CoreScope · observer activity is separate from radio delivery status.';
@@ -33,5 +33,6 @@
  const echoRender=renderMessages;renderMessages=function(){echoRender();sync();};
  const echoView=view;view=function(name){cleanup();echoView(name);sync();};
  radioSession.addEventListener('identity',()=>{if(shell&&frame&&locationSignature!==NightlinkCoreScopeLocation.signature()){removeFrame();displayMap();}});
+ window.addEventListener('nightlink-map-providers-changed',()=>{if(shell){removeFrame();displayMap();}});
  window.addEventListener('offline',()=>{if(shell)displayMap();});window.addEventListener('online',()=>{failed=false;if(shell)displayMap();});sync();
 })();

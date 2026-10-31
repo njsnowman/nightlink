@@ -2,6 +2,42 @@
 
 ## Unreleased
 
+- Device Center: after a local companion change, update the Live, Radio page and Radio Tools views through a separate identity-updated event that does not reset sessions, using the device's readback even when verification fails. Require a value for a cleared numeric field even when the inspected value is 0. Inspect core settings only unless optional settings are explicitly requested. Export the verified device key for Direct USB instead of a placeholder, and warn when staging a file exported from a different or unidentified device. Keep integer fields and the retryable core-read allowlist in one place each. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Verify each radio-contact removal with an exact-key lookup (CMD_GET_CONTACT_BY_KEY expecting not found) instead of a full contact-list readback whose frame count must match exactly. Advertisements that add other contacts during verification no longer fail removal, and bulk removal no longer reads the entire roster per deletion. Lookup failures now report the underlying error. Synthetic tests only; physical revalidation remains required. Tracks [#104](https://github.com/njsnowman/nightlink/issues/104).
+
+- During core-read recovery, consume one late reply per earlier transmission before releasing serialization, instead of a fixed quiet window that could pass a late reply to the next command. Quarantine the target when recovery is stopped or a session guard fails while a command is outstanding. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Refuse to record package provenance when packaged sources differ from HEAD. On pull-request CI, also record the pull-request head and base commits, because HEAD is a synthetic merge commit.
+
+- Keep an open Message delivery dialog synchronized with attempts, ACK/failure state and cancellation availability; clear stale actions when the radio changes or the dialog is replaced. Tracks [#115](https://github.com/njsnowman/nightlink/issues/115).
+
+- Add independent CoreScope and MeshMapper visibility controls under Settings > Data & updates. Hidden providers unload and stay hidden across restarts; local Radio maps remain available, including #echo fallback. Tracks [#114](https://github.com/njsnowman/nightlink/issues/114).
+
+- Redesign the main Radio landing page with the approved shared card design, live identity summary, nine grouped tool actions and expandable data/device details; preserve original tools and offline guards. Tracks [#113](https://github.com/njsnowman/nightlink/issues/113).
+
+- Extend the approved design through nested submenus, terminal/discovery/inbox surfaces and expandable panels. Add matching decorative line icons to submenu headers and action lists while preserving labels, handlers and confirmations. [#112](https://github.com/njsnowman/nightlink/issues/112).
+
+- Apply the approved Radio Tools visual standard across workspace pages, menus, dialogs, Settings, detached DMs and the startup lock through a shared final design layer. Persist the design rules in repository guidance and verify their inclusion in all documents. [#112](https://github.com/njsnowman/nightlink/issues/112).
+
+- Redesign Radio Tools with grouped action cards, consistent SVG icons, current radio context, a separate contact-maintenance action and responsive layouts. Refresh contact-exchange and advert controls while preserving all nine tool destinations and their guards. [#111](https://github.com/njsnowman/nightlink/issues/111).
+
+- Speed up remote settings inspection by skipping unnecessary timestamp waits after the companion clock advances, and display settings progressively while keeping incomplete inspections unavailable for writes. Direct core reads recover from missed replies using the reported route timing instead of a fixed 30-second minimum. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Retry only allowlisted core configuration reads up to three times after a missed reply; drain queued replies and wait for duplicate replies to settle before advancing. Configuration writes and optional commands never retry automatically. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Load core repeater radio settings independently of optional firmware-specific queries. Read optional settings individually, preserve staged edits and retain the core snapshot on an optional read failure. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Add a session-only remote administration diagnostic panel with request phases, route mode, reply budgets and inbound message metadata; exclude credentials and payloads. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Use paced companion-RTC timestamps for remote CLI commands, honor bounded companion reply estimates after acceptance, and report inspection progress and the failing setting. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Center Device Center headings, form controls and action groups, with equal action columns, consistent control heights and responsive alignment. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Refine Device Center with explicit primary/secondary button surfaces, connection and setting groups, visible focus/disabled states and responsive spacing. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Add Device Center for companion configuration, authenticated repeater / room administration and direct text-CLI USB setup, with staged differences, session guards, readback verification and settings export/import. Preserve companion repeating during RF changes and hide sensitive terminal output. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
 - Reconcile UI spacing/Echo controls and DM draft fixes with all current chat/contact features; require complete feature assets and rendered UI coverage before packaging. [#107](https://github.com/njsnowman/nightlink/issues/107).
 
 - Add #echo-only !test, !spam, !echo and !yolo send buttons with connection/busy checks and composer-draft preservation. [#105](https://github.com/njsnowman/nightlink/issues/105).

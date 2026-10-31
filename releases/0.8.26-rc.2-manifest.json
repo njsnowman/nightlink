@@ -1,0 +1,42 @@
+{
+  "version": "0.8.26-rc.2",
+  "sourceCommit": "3fec9ac0acb375cb736dc4ffa5f3c019d445e05b",
+  "matchedSourceFiles": 197,
+  "requiredAssets": [
+    "chat-signals.js",
+    "chat-signals-ui.js",
+    "chat-signals-native.js",
+    "chat-signals.css",
+    "workspace-confidence.js",
+    "workspace-confidence-ui.js",
+    "workspace-confidence.css",
+    "compact-workspace.js",
+    "compact-workspace.css",
+    "support-report.js",
+    "support-report-ui.js",
+    "contact-deletion-ui.js",
+    "contact-deletion.css",
+    "desktop-window.cjs",
+    "bulk-contact-removal.js",
+    "bulk-contact-removal-ui.js",
+    "echo-command-shortcuts.js",
+    "layout-consistency.css",
+    "device-management.js",
+    "device-serial.js",
+    "device-management-ui.js",
+    "device-management.css"
+  ],
+  "assets": [
+    {
+      "filename": "Nightlink-Setup-0.8.26-rc.2.exe",
+      "bytes": 103437479,
+      "sha256": "9307caeea94fe2b6eedc9552b590ff3b71133e6add3631e1a4bd3920808b6d39"
+    },
+    {
+      "filename": "Nightlink-Portable-0.8.26-rc.2.exe",
+      "bytes": 103193603,
+      "sha256": "c70d3c6c25f0f68501ba891119ab101fdc502b75e982cd71fbc10ff39f72edd4"
+    }
+  ],
+  "published": false
+}

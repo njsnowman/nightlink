@@ -18,6 +18,14 @@
     "bulk-contact-removal.js",
     "bulk-contact-removal-ui.js",
     "echo-command-shortcuts.js",
-    "layout-consistency.css"
+    "layout-consistency.css",
+    "device-management.js",
+    "device-serial.js",
+    "device-management-ui.js",
+    "device-management.css",
+    "nightlink-design.css",
+    "nightlink-design.js",
+    "radio-page-ui.js",
+    "map-provider-settings.js"
   ]
 }
