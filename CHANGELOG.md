@@ -4,6 +4,8 @@
 
 ## 0.8.26 — prepared, not published
 
+- Update in-app Help for 0.8.26 features (Device Center, contact removal, Signal Rail and Outbox, delivery details, #echo commands and layouts, Overview divider, map visibility, reading position, support report) and regenerate all nine Help screenshots with demonstration data. The previous message-path image showed real place names. Remove a stale version from the unsigned-download note and correct the single-removal progress text.
+
 - Device Center: after a local companion change, update the Live, Radio page and Radio Tools views through a separate identity-updated event that does not reset sessions, using the device's readback even when verification fails. Require a value for a cleared numeric field even when the inspected value is 0. Inspect core settings only unless optional settings are explicitly requested. Export the verified device key for Direct USB instead of a placeholder, and warn when staging a file exported from a different or unidentified device. Keep integer fields and the retryable core-read allowlist in one place each. [#109](https://github.com/njsnowman/nightlink/issues/109).
 
 - Verify each radio-contact removal with an exact-key lookup (CMD_GET_CONTACT_BY_KEY expecting not found) instead of a full contact-list readback whose frame count must match exactly. Advertisements that add other contacts during verification no longer fail removal, and bulk removal no longer reads the entire roster per deletion. Lookup failures now report the underlying error. Synthetic tests only; physical revalidation remains required. Tracks [#104](https://github.com/njsnowman/nightlink/issues/104).
