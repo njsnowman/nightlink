@@ -176,6 +176,7 @@
       "help-ui.js",
       "help.css",
       "help-licenses.js",
+      "help-assets/propagation.png",
       "help-assets/messages.png",
       "help-assets/connection.png",
       "help-assets/contact.png",
