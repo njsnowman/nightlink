@@ -140,7 +140,7 @@
    const distance=directKeys.size?{stations:directKeys.size}:null;
    const packets=win.length,unique=new Set(win.filter(x=>x.station).map(x=>x.station)).size;
    return {base,enough,stations,snr,distance,packets,unique,
-    summary:{newStations:win.filter(x=>x.flags.includes('new station')).length,unusualStations:unusualKeys.size,unusualDirect:directKeys.size,
+    summary:{newStations:win.filter(x=>x.flags.includes('new station')).length,unusualStations:unusualKeys.size,unusualDirect:win.some(x=>x.distanceKm!=null)?directKeys.size:null,
      snrDelta:snr.delta,snrComparable:snr.comparable,packetRate:packets/hours,baselinePacketRate:base.packetRate,uniqueStations:unique,baselineHours:base.hours}};
   }
 
