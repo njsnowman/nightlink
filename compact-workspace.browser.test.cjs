@@ -1,8 +1,8 @@
 /* Isolated source-renderer layout checks. All network and radio work are blocked. */
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 (async()=>{
- const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+ const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});
  try{
   const page=await browser.newPage({viewport:{width:1500,height:900}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
