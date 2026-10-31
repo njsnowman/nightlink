@@ -1,0 +1,1300 @@
+From 7218de733ca2dac9f0367a008162db13c6716158 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 31 Oct 2026 21:58:12 +0000
+Subject: [PATCH 1/6] Add an in-app Help topic for the RF Propagation Monitor
+
+Add "RF Propagation Monitor" to the Radio group of the bundled guide:
+what the monitor observes, how to open it, the 24-hour learning period
+and 14/30/60-day baseline, states and colours, evidence used, settings
+under Settings > Notifications > RF propagation monitor, and limits
+(RX log firmware, false alerts, experimental thresholds). Labels match
+propagation-ui.js and radio-page-ui.js.
+
+help-screenshots.cjs now also captures the monitor panel from a
+synthetic baseline and unusual window injected into the isolated page
+(help-assets/propagation.png, 256-colour palette, 36.8 KB; demonstration
+keys only, no map tiles). The native Help test expects 22 topics.
+
+help-assets/propagation.png must be added to package.json build.files
+next to the other help-assets entries before packaging.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019jwdUNLdgFDTkdkrPTAK1B
+---
+ help-assets/propagation.png | Bin 0 -> 36762 bytes
+ help-screenshots.cjs        |  13 ++++++++++++-
+ help.native.test.cjs        |   2 +-
+ user-guide.js               |   8 ++++++++
+ 4 files changed, 21 insertions(+), 2 deletions(-)
+ create mode 100644 help-assets/propagation.png
+
+diff --git a/help-assets/propagation.png b/help-assets/propagation.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..e45b44bb01479ff27ec57d34d5e7917bffb7922b
+GIT binary patch
+literal 36762
+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
+FV1lD^H&Orq
+
+literal 0
+HcmV?d00001
+
+diff --git a/help-screenshots.cjs b/help-screenshots.cjs
+index e8b5f0d..adbd855 100644
+--- a/help-screenshots.cjs
++++ b/help-screenshots.cjs
+@@ -19,7 +19,18 @@ const fs=require('node:fs/promises'),path=require('node:path'),assert=require('n
+  // Let the previous dialog's close handler finish; it resets dialog classes.
+  await page.waitForFunction(()=>!document.querySelector('#dialog').open);await page.waitForTimeout(200);
+  await page.evaluate(()=>{const hop=live.contacts[1];Object.assign(hop,{lat:44.5,lon:-100.3,located:true});showMessageRoute({...live.messages[0],observedRoute:{path:[hop.key.slice(0,2)],direct:false,snr:9,rssi:-102}});});await page.locator('#message-hop-list li').first().waitFor();await capture('message-path');await page.locator('#close-dialog').click();
++ // Propagation Monitor: a synthetic baseline from ten demonstration stations, then an unusual window, injected into this isolated page only.
++ await page.waitForFunction(()=>!document.querySelector('#dialog').open);await page.waitForTimeout(200);
++ await page.waitForFunction(()=>window.NightlinkPropagationUI&&NightlinkPropagationUI.monitor);
++ await page.evaluate(()=>{const m=NightlinkPropagationUI.monitor,now=Date.now(),key=live.identity.key,start=now-30*3600000;m.disconnect(start-1);m.restore('{"version":1,"radios":{}}');m.connect(key,start);
++  const stable=Array.from({length:10},(_,i)=>(0x10+i).toString(16).repeat(32));let n=0;
++  for(let t=start;t<=now-60000;t+=600000)for(const s of stable)m.observe({source:'rxlog',at:t,snr:-5+((n++)%3),rssi:-110,station:s,stationKind:'key',type:4,typeName:'Advert',relation:'forwarded',hops:2,path:[],dedup:'base:'+s+':'+t});
++  for(let i=0;i<6;i++)m.observe({source:'rxlog',at:now-300000+i*1000,snr:4,rssi:-98,station:(0x30+i).toString(16).repeat(32),stationKind:'key',type:4,typeName:'Advert',relation:'forwarded',hops:3,path:[],dedup:'new:'+i});
++  for(const s of stable)for(let k=0;k<12;k++)m.observe({source:'rxlog',at:now-240000+k*1000,snr:11,rssi:-92,station:s,stationKind:'key',type:4,typeName:'Advert',relation:'forwarded',hops:2,path:[],dedup:'boost:'+s+':'+k+':'+(n++)});
++  NightlinkPropagationUI.refresh?.();showPropagationMonitor();});
++ await page.locator('dialog[open]').getByText('Recent observations').first().waitFor();await capture('propagation');await page.locator('#close-dialog').click();
++ await page.waitForFunction(()=>!document.querySelector('#dialog').open);await page.waitForTimeout(200);
+  await page.evaluate(()=>NightlinkSettings.open('data'));await page.locator('#backup-export').scrollIntoViewIfNeeded();await capture('backup');
+  await page.locator('#check-updates').scrollIntoViewIfNeeded();await page.locator('#check-updates').click();await page.waitForFunction(()=>!updateBusy);await capture('updates');
+- assert.deepEqual(await page.evaluate(()=>guideWrites),[]);assert.deepEqual(errors,[]);console.log('Captured nine application screenshots with fictional data; no radio commands or external requests.');
++ assert.deepEqual(await page.evaluate(()=>guideWrites),[]);assert.deepEqual(errors,[]);console.log('Captured ten application screenshots with fictional data; no radio commands or external requests.');
+ }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+diff --git a/help.native.test.cjs b/help.native.test.cjs
+index 48edc8c..8839884 100644
+--- a/help.native.test.cjs
++++ b/help.native.test.cjs
+@@ -1,2 +1,2 @@
+ const {_electron}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
+-(async()=>{const source=path.resolve(process.argv[2]),runtime=process.argv[3],expectedVersion=process.argv[4]||'0.8.22-rc.35',fixture=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-contact-flow-'));await fs.writeFile(path.join(fixture,'package.json'),JSON.stringify({name:'nightlink-contact-validation',version:expectedVersion,main:'main.cjs'}));await fs.writeFile(path.join(fixture,'main.cjs'),"const {app}=require('electron'),path=require('node:path'),source="+JSON.stringify(source)+";const set=app.setPath.bind(app);app.setPath=(n,v)=>set(n,n==='userData'?path.join(__dirname,'profile'):v);app.setAppPath(source);require(path.join(source,'desktop.cjs'));");const app=await _electron.launch({executablePath:runtime,args:[fixture,'--meshline-test'],timeout:15000});try{const page=await app.firstWindow(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.waitForFunction(()=>document.readyState==='complete'&&typeof NightlinkSettings!=='undefined'&&typeof NightlinkGuide!=='undefined');await app.evaluate(({shell})=>{global.helpSupportURLs=[];shell.openExternal=async url=>{helpSupportURLs.push(url);};});await page.evaluate(()=>{window.helpWrites=[];radioSession.request=async frame=>{helpWrites.push([...frame]);throw Error('No radio access');};NightlinkSettings.open('help');});assert.equal(await page.locator('#settings-tab-help').getAttribute('aria-selected'),'true');assert.equal(await page.evaluate(()=>NightlinkGuide.topics.length),21);await page.locator('#help-search').fill('Copy public ID');assert.match(await page.locator('#help-article').innerText(),/64-character/);await page.locator('#help-search').fill('phone');assert.match(await page.locator('#help-article').innerText(),/phone/i);await page.locator('#help-search').fill('');await page.locator('.help-topic-picker').isVisible().then(async visible=>{if(visible)await page.locator('.help-topic-picker').selectOption('messages');else await page.locator('[data-help-topic="messages"]').click();});await page.locator('.help-screenshot').click();await page.waitForFunction(()=>document.querySelector('.help-image-dialog img')?.naturalWidth>0);await page.keyboard.press('Escape');await page.locator('#help-about-tab').click();assert.match(await page.locator('.help-purpose').innerText(),/no internet connection, cloud account or online service required/);assert.match(await page.locator('.help-purpose').innerText(),/Optional online maps/);await page.waitForFunction(version=>document.querySelector('#help-installed-version').textContent.includes(version),expectedVersion);await page.getByRole('button',{name:'Report an issue',exact:false}).click();assert.deepEqual(await app.evaluate(()=>helpSupportURLs),['https://github.com/njsnowman/nightlink/issues']);assert.equal(await page.locator('.help-licenses details').count(),3);assert.deepEqual(await page.evaluate(()=>helpWrites),[]);assert.deepEqual(errors,[]);console.log('PASS packaged offline Help entry/search, bundled screenshot and Escape, installed version, support IPC captured without browser launch, library notices; no radio access. Isolated profile.');}finally{await app.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+\ No newline at end of file
++(async()=>{const source=path.resolve(process.argv[2]),runtime=process.argv[3],expectedVersion=process.argv[4]||'0.8.22-rc.35',fixture=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-contact-flow-'));await fs.writeFile(path.join(fixture,'package.json'),JSON.stringify({name:'nightlink-contact-validation',version:expectedVersion,main:'main.cjs'}));await fs.writeFile(path.join(fixture,'main.cjs'),"const {app}=require('electron'),path=require('node:path'),source="+JSON.stringify(source)+";const set=app.setPath.bind(app);app.setPath=(n,v)=>set(n,n==='userData'?path.join(__dirname,'profile'):v);app.setAppPath(source);require(path.join(source,'desktop.cjs'));");const app=await _electron.launch({executablePath:runtime,args:[fixture,'--meshline-test'],timeout:15000});try{const page=await app.firstWindow(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.waitForFunction(()=>document.readyState==='complete'&&typeof NightlinkSettings!=='undefined'&&typeof NightlinkGuide!=='undefined');await app.evaluate(({shell})=>{global.helpSupportURLs=[];shell.openExternal=async url=>{helpSupportURLs.push(url);};});await page.evaluate(()=>{window.helpWrites=[];radioSession.request=async frame=>{helpWrites.push([...frame]);throw Error('No radio access');};NightlinkSettings.open('help');});assert.equal(await page.locator('#settings-tab-help').getAttribute('aria-selected'),'true');assert.equal(await page.evaluate(()=>NightlinkGuide.topics.length),22);await page.locator('#help-search').fill('Copy public ID');assert.match(await page.locator('#help-article').innerText(),/64-character/);await page.locator('#help-search').fill('phone');assert.match(await page.locator('#help-article').innerText(),/phone/i);await page.locator('#help-search').fill('');await page.locator('.help-topic-picker').isVisible().then(async visible=>{if(visible)await page.locator('.help-topic-picker').selectOption('messages');else await page.locator('[data-help-topic="messages"]').click();});await page.locator('.help-screenshot').click();await page.waitForFunction(()=>document.querySelector('.help-image-dialog img')?.naturalWidth>0);await page.keyboard.press('Escape');await page.locator('#help-about-tab').click();assert.match(await page.locator('.help-purpose').innerText(),/no internet connection, cloud account or online service required/);assert.match(await page.locator('.help-purpose').innerText(),/Optional online maps/);await page.waitForFunction(version=>document.querySelector('#help-installed-version').textContent.includes(version),expectedVersion);await page.getByRole('button',{name:'Report an issue',exact:false}).click();assert.deepEqual(await app.evaluate(()=>helpSupportURLs),['https://github.com/njsnowman/nightlink/issues']);assert.equal(await page.locator('.help-licenses details').count(),3);assert.deepEqual(await page.evaluate(()=>helpWrites),[]);assert.deepEqual(errors,[]);console.log('PASS packaged offline Help entry/search, bundled screenshot and Escape, installed version, support IPC captured without browser launch, library notices; no radio access. Isolated profile.');}finally{await app.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+\ No newline at end of file
+diff --git a/user-guide.js b/user-guide.js
+index be1ed2e..e715189 100644
+--- a/user-guide.js
++++ b/user-guide.js
+@@ -111,6 +111,14 @@
+   {title:'Export a diagnostic log',text:'Use Export diagnostic log in the Radio controls. Include your Nightlink version, radio model/firmware, Bluetooth or USB, the time the problem occurred and exact error text in a support report. Check any exported file before posting it publicly; do not include message backups, passwords or keys.'},
+   {title:'Performance and evidence',text:'Session timing records distinguish connection, queue recovery, contacts and telemetry. Map timings measure page load, not a live feed. Replay/diagnostic observations describe data Nightlink actually recorded; they do not prove unseen radio traffic or hardware behavior.'}
+  ]},
++ {id:'propagation',title:'RF Propagation Monitor',group:'Radio',summary:'Passively compare reception with this radio’s history and see unusual reception.',image:'propagation',sections:[
++  {title:'What it does',text:'The monitor observes receive events already arriving at the connected radio and compares them with that radio’s own history. It runs on this computer only. It never transmits, never changes radio settings and does not need the internet. Alerts mean reception is unusual; they do not confirm a propagation event.'},
++  {title:'Open it',steps:['Open Radio and select Propagation Monitor under Observe & diagnose, or select the compact indicator beside the connection control.','Read Current status, Evidence, Reception trend, Recent observations and Event history.','Unknown means the value could not be measured, for example a distance without verified coordinates.']},
++  {title:'Learning and states',items:['Learning baseline: at least 24 connected hours are needed before detection starts. Time while Nightlink is closed or the radio is disconnected does not count as quiet reception.','Normal: reception matches this radio’s recent history.','Possible RF opening (amber): several receptions are unusual compared with this radio’s history.','Strong RF anomaly (red): strong, sustained unusual reception.','Monitoring unavailable or Monitoring disabled: no radio is connected, or the monitor is turned off.']},
++  {title:'Evidence it uses',items:['New or rarely received stations.','SNR change compared with the same station and route.','Unusual direct receptions, only when both locations are verified.','Unusual reception that lasts at least 20 minutes, not a single burst.']},
++  {title:'Settings',text:'Open Settings > Notifications > RF propagation monitor. Choose Enable monitoring, Alert sensitivity, Baseline period (14, 30 or 60 days), Show status indicator, Alert animations, Alert sound and Windows notification. Alert sound and Windows notification are off by default; Reduced motion settings always turn animations off. View recent alerts, Clear alert history, Reset baseline… and Clear monitor data… are also here.'},
++  {title:'Limits',items:['Full signal readings need radio firmware that sends RX log data. Without it, monitoring is limited.','Antenna changes and busy local traffic can cause false alerts. Reset the baseline after changing antennas.','This feature is experimental. Thresholds have not yet been validated on real traffic.']},
++ ]},
+  {id:'backup',title:'Back up & restore',group:'Settings',summary:'Save local history, cards and preferences before changing PCs.',image:'backup',sections:[
+   {title:'Export',steps:['Open Settings > Data & updates > Backup and restore.','Select Export backup and choose a private location.','Confirm the file was saved. Keep another protected copy before reinstalling, clearing app data or moving to a new computer.']},
+   {title:'Restore',steps:['Finish active sends and disconnect your radio.','Choose Preview a restore and select a Nightlink backup JSON file.','Review counts for new messages, duplicates, cards and skipped entries before confirming.','Select Restore and reload. Existing cards/preferences are kept, duplicate messages skipped, and incoming history is subject to the per-radio capacity limit.']},
+-- 
+2.43.0
+
+
+From 45cf1ec08cc98986d442be1f2d8bb3223d12f846 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 31 Oct 2026 21:58:35 +0000
+Subject: [PATCH 2/6] Package the Propagation Monitor Help screenshot
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019jwdUNLdgFDTkdkrPTAK1B
+---
+ package.json | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/package.json b/package.json
+index 2df4c0a..4811042 100644
+--- a/package.json
++++ b/package.json
+@@ -176,6 +176,7 @@
+       "help-ui.js",
+       "help.css",
+       "help-licenses.js",
++      "help-assets/propagation.png",
+       "help-assets/messages.png",
+       "help-assets/connection.png",
+       "help-assets/contact.png",
+-- 
+2.43.0
+
+
+From 9bf0d002999085337b31fb34a23c5b32cdb4fd80 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 31 Oct 2026 21:58:34 +0000
+Subject: [PATCH 3/6] Show radio-reported packet counters in Radio Health
+
+Radio Health now has a Radio counters section built from the stats the
+radio already returns during synchronization (CMD_GET_STATS subtypes
+0-2): packets sent and received since radio start, raw TX/RX airtime
+and uptime values, and when the counters were read. Firmware without
+statistics (protocol below 8, or statistics disabled after an error)
+shows "Unavailable on this firmware". No additional radio commands are
+sent; values update on synchronization and Refresh radio data.
+
+Packet counters were physically observed incrementing per transmission
+(releases/0.8.22-rc.43.md). Airtime and uptime units are not documented
+in this repository, so they are labelled as raw radio values.
+
+The propagation acceptance plan's passive-operation step now uses
+Packets sent from Radio Health. Adds a unit test and
+radio-counters.browser.test.cjs (synthetic events only).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019jwdUNLdgFDTkdkrPTAK1B
+---
+ CHANGELOG.md                                  |  2 ++
+ USER_GUIDE.md                                 |  8 +++++++
+ health-ui.js                                  |  7 ++++++
+ health.js                                     | 12 +++++++++-
+ health.test.cjs                               |  7 +++++-
+ radio-counters.browser.test.cjs               | 24 +++++++++++++++++++
+ .../0.8.27-propagation-acceptance-plan.md     |  2 +-
+ 7 files changed, 59 insertions(+), 3 deletions(-)
+ create mode 100644 radio-counters.browser.test.cjs
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 60c1075..84f7ffb 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,8 @@
+ 
+ ## Unreleased
+ 
++- Show radio-reported counters in Radio Health: packets sent and received since radio start, raw TX/RX airtime and uptime values, and when they were read; firmware without radio statistics shows Unavailable. No additional radio commands. Synthetic tests only.
++
+ - Add a passive RF Propagation Monitor: a header indicator, a Radio > Observe & diagnose panel with evidence, trend, observations and event history, and settings under Settings > Notifications. It compares received packets with a per-radio local baseline and reports "Possible RF opening" or "Strong RF anomaly" with hysteresis and cooldown. It never transmits, enables RX logging or uses the network, and does not claim an atmospheric cause. Thresholds are untested hypotheses; synthetic tests only.
+ 
+ ## 0.8.26 — 2026-10-31
+diff --git a/USER_GUIDE.md b/USER_GUIDE.md
+index 9915eb7..ee367c4 100644
+--- a/USER_GUIDE.md
++++ b/USER_GUIDE.md
+@@ -533,6 +533,14 @@ Open Radio to see connection/synchronization activity, last successful full sync
+ 3. Compare queue frames fetched with locally saved messages. Counts can include duplicates or command responses.
+ 4. Use Refresh radio data when connected and idle, or Reconnect radio when disconnected.
+ 
++### Read radio counters
++
++1. Open Radio > Radio Health and find **Radio counters**.
++2. Read **Packets sent Â· radio total** and **Packets received Â· radio total**. These are totals since the radio last started, not since Nightlink connected. Packets sent includes the radio's own adverts and forwarded packets.
++3. The airtime and uptime rows show raw values from the radio; their units are not documented here.
++4. **Counters read** shows when Nightlink last read them. They update during synchronization and when you select Refresh radio data, not live.
++5. Older firmware without radio statistics shows **Unavailable on this firmware**.
++
+ ### Export a diagnostic log
+ 
+ Use Export diagnostic log in the Radio controls. Include your Nightlink version, radio model/firmware, Bluetooth or USB, the time the problem occurred and exact error text in a support report. Check any exported file before posting it publicly; do not include message backups, passwords or keys.
+diff --git a/health-ui.js b/health-ui.js
+index 06436ff..6c9a626 100644
+--- a/health-ui.js
++++ b/health-ui.js
+@@ -7,6 +7,13 @@ healthButton.onclick=showRadioHealth;
+ // Timings remain inside the existing health view and contain durations only.
+ const renderHealthBeforeTimings=renderRadioHealth;
+ renderRadioHealth=function(){renderHealthBeforeTimings();const panel=$('#radio-health'),timings=window.NightlinkPerformance;if(!panel||!timings)return;let details=panel.querySelector('.performance-summary');if(!details){details=document.createElement('details');details.className='performance-summary';const summary=document.createElement('summary');summary.textContent='Session performance';details.append(summary,document.createElement('p'));panel.append(details);}const snapshot=timings.snapshot(),latest=new Map();for(const row of snapshot.completed)latest.set(row.phase,row);const labels={'app-script':'Workspace scripts','workspace-first-frame':'First workspace frame','saved-history':'Saved history loading',connection:'Radio connection',sync:'Full synchronization',channels:'Channel loading',queue:'Queue recovery',contacts:'Contact loading',telemetry:'Telemetry loading','corescope-page':'CoreScope page','meshmapper-page':'MeshMapper page','echo-map-page':'Echo map page'};const rows=[...latest.values()].map(row=>labels[row.phase]+': '+(row.durationMs/1000).toFixed(2)+' s · '+row.outcome);for(const row of snapshot.pending)rows.push(labels[row.phase]+': '+(row.elapsedMs/1000).toFixed(2)+' s · in progress');details.querySelector('p').textContent=rows.join(' | ')+' · Map timings measure page load, not live packet readiness. Connection time may include device selection. Timings reset when Nightlink reloads.';};
++// Radio-reported packet and airtime counters. Read only during synchronization and Refresh radio data; no extra radio commands.
++let radioCountersAt=null;
++function radioCountersAvailable(){const r=radioSession,key=r.identity?.key;return !(r.identity&&r.identity.protocol<8)&&!(key&&r.statsDisabled?.has(key));}
++const renderHealthBeforeCounters=renderRadioHealth;
++renderRadioHealth=function(){renderHealthBeforeCounters();const panel=$('#radio-health');if(!panel)return;let box=panel.querySelector('.radio-counters');if(!box){box=document.createElement('section');box.className='radio-counters';box.setAttribute('aria-labelledby','radio-counters-title');box.innerHTML='<h3 id="radio-counters-title">Radio counters</h3><dl class="health-grid"></dl><p class="ble-note">Totals reported by the radio since it last started, not since Nightlink connected. Nightlink reads them during synchronization and Refresh radio data; they do not update live. Packets sent includes the radio\'s own adverts and forwarded packets.</p>';const actions=panel.querySelector('.health-actions');panel.insertBefore(box,actions);}const rows=NightlinkRadioCounters.rows(live.stats,{available:radioCountersAvailable(),readAt:radioCountersAt});const list=box.querySelector('dl');list.replaceChildren(...rows.map(row=>{const item=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=row.label;dd.dataset.health=row.key;dd.textContent=row.value;item.append(dt,dd);return item;}));};
++radioSession.addEventListener('stats',e=>{if(Number.isFinite(e.detail?.packetsSent))radioCountersAt=Date.now();renderRadioHealth();});
++radioSession.addEventListener('identity',e=>{if(e.detail?.key!==radioHealth.radioKey)radioCountersAt=null;});
+ ble.addEventListener('state',e=>{radioHealth.transport(e.detail.state);renderRadioHealth();});radioSession.addEventListener('identity',e=>{radioHealth.identity(e.detail.key);renderRadioHealth();});radioSession.addEventListener('sync',e=>{radioHealth.sync(e.detail.state,e.detail.message);renderRadioHealth();});radioSession.addEventListener('sync-progress',e=>{radioHealth.stage=e.detail.stage;renderRadioHealth();});radioSession.addEventListener('catchup',e=>{radioHealth.catchup(e.detail);renderRadioHealth();});radioSession.addEventListener('command-error',e=>{radioHealth.error='Command '+e.detail.command+' · '+e.detail.message;renderRadioHealth();});radioSession.addEventListener('warning',e=>{radioHealth.error=String(e.detail);renderRadioHealth();});radioSession.addEventListener('message',renderRadioHealth);setInterval(()=>{if($('#dialog').open&&$('#radio-health'))renderRadioHealth();},1000);
+ const healthView=view;view=function(name){healthView(name);if(name==='Settings'){const box=document.createElement('section');box.className='health-settings';box.innerHTML='<h3>Radio Health</h3><p>Inspect connection uptime, synchronization and local history.</p><button class="radio-manage">Open Radio Health</button>';box.querySelector('button').onclick=showRadioHealth;$('.settings-grid').append(box);}};
+ 
+diff --git a/health.js b/health.js
+index 648b32f..61fb91c 100644
+--- a/health.js
++++ b/health.js
+@@ -6,4 +6,14 @@
+  sync(state,message){if(state==='syncing'){this.syncing=true;this.syncFetched=0;this.error=null;this.stage='Synchronizing radio';}if(state==='ready'){this.syncing=false;this.lastSyncAt=this.now();this.lastSyncFetched=this.syncFetched;this.stage='Ready';this.error=null;}if(state==='error'){this.syncing=false;this.stage='Synchronization stopped';this.error=message||'Synchronization failed';}if(state==='disconnected'){this.syncing=false;this.stage=this.connected?'Waiting for synchronization':'Disconnected';}}
+  catchup(detail){if(detail.complete&&Number.isSafeInteger(detail.count)&&detail.count>=0){this.fetched+=detail.count;if(this.syncing)this.syncFetched+=detail.count;}}
+  snapshot(){return{connected:this.connected,uptimeMs:this.connectedAt===null?0:Math.max(0,this.now()-this.connectedAt),reconnects:Math.max(0,this.connections-1),stage:this.stage,lastSyncAt:this.lastSyncAt,lastSyncFetched:this.lastSyncFetched,fetched:this.fetched,syncing:this.syncing,error:this.error};}
+-}root.NightlinkHealth=NightlinkHealth;if(typeof module!=='undefined')module.exports={NightlinkHealth};})(globalThis);
++}
++// Radio-reported counters (CMD_GET_STATS subtypes 0-2). They count from radio start, not from this app session.
++// packetsSent/packetsReceived were physically observed incrementing per transmission (releases/0.8.22-rc.43.md);
++// airtime and uptime units are not documented in this repository, so those values are shown raw.
++const counterFields=[['sent','Packets sent · radio total','packetsSent'],['received','Packets received · radio total','packetsReceived'],['txair','TX airtime counter · raw radio value','txAir'],['rxair','RX airtime counter · raw radio value','rxAir'],['radiouptime','Radio uptime counter · raw radio value','uptime']];
++function counterRows(stats,{available=true,readAt=null}={}){
++ if(!available)return counterFields.map(([key,label])=>({key,label,value:'Unavailable on this firmware'})).concat([{key:'read',label:'Counters read',value:'Unavailable on this firmware'}]);
++ const read=readAt!==null&&Number.isFinite(stats?.packetsSent)&&stats.packetsSent>=0;
++ return counterFields.map(([key,label,field])=>{const v=stats?.[field];return{key,label,value:Number.isFinite(v)&&v>=0?String(v):'—'};}).concat([{key:'read',label:'Counters read',value:read?new Date(readAt).toLocaleString():'Not read yet · refresh radio data'}]);
++}
++root.NightlinkHealth=NightlinkHealth;root.NightlinkRadioCounters={rows:counterRows,fields:counterFields.map(f=>f[0])};if(typeof module!=='undefined')module.exports={NightlinkHealth,counterRows};})(globalThis);
+diff --git a/health.test.cjs b/health.test.cjs
+index 256d9ef..360068e 100644
+--- a/health.test.cjs
++++ b/health.test.cjs
+@@ -1,6 +1,11 @@
+-const {test}=require('node:test'),assert=require('node:assert/strict'),{NightlinkHealth}=require('./health.js');
++const {test}=require('node:test'),assert=require('node:assert/strict'),{NightlinkHealth,counterRows}=require('./health.js');
+ test('uptime and successful reconnections exclude attempts and duplicate state events',()=>{let now=0;const h=new NightlinkHealth(()=>now);h.transport('connecting');assert.equal(h.snapshot().reconnects,0);h.transport('connected');now=4500;assert.equal(h.snapshot().uptimeMs,4500);h.transport('connected');assert.equal(h.connections,1);h.transport('disconnected');assert.equal(h.snapshot().uptimeMs,0);h.transport('connecting');h.transport('disconnected');h.transport('connected');assert.equal(h.snapshot().reconnects,1);});
+ test('full synchronization and queue totals distinguish empty queue and no sync',()=>{let now=100;const h=new NightlinkHealth(()=>now);h.identity('a');assert.equal(h.snapshot().lastSyncFetched,null);h.sync('syncing');h.catchup({count:5,complete:true});h.catchup({count:3,complete:false});h.sync('ready');assert.equal(h.snapshot().lastSyncFetched,5);assert.equal(h.snapshot().fetched,5);h.catchup({count:2,complete:true});assert.equal(h.snapshot().lastSyncFetched,5);assert.equal(h.snapshot().fetched,7);h.sync('syncing');h.catchup({count:0,complete:true});h.sync('ready');assert.equal(h.snapshot().lastSyncFetched,0);});
+ test('errors do not mark a successful sync, same-radio refresh preserves evidence and switching resets it',()=>{const h=new NightlinkHealth(()=>123);h.identity('a');h.sync('syncing');h.sync('error','Timeout');assert.equal(h.snapshot().lastSyncAt,null);assert.equal(h.snapshot().error,'Timeout');h.sync('syncing');h.catchup({count:2,complete:true});h.sync('ready');h.transport('disconnected');h.identity('a');assert.equal(h.snapshot().lastSyncAt,123);h.identity('b');assert.equal(h.snapshot().lastSyncAt,null);assert.equal(h.snapshot().fetched,0);});
+ 
+ test('connection stage does not assume Bluetooth for USB sessions',()=>{const h=new NightlinkHealth();h.transport('connecting');assert.equal(h.snapshot().stage,'Connecting to radio');});
++test('radio counters show raw radio totals, read state and unavailable firmware',()=>{const rows=counterRows({packetsSent:12,packetsReceived:340,txAir:7,rxAir:0,uptime:3600},{readAt:Date.UTC(2026,9,31)}),get=k=>rows.find(r=>r.key===k);assert.equal(get('sent').value,'12');assert.equal(get('received').value,'340');assert.equal(get('rxair').value,'0');assert.equal(get('radiouptime').value,'3600');assert.match(get('sent').label,/radio total/);assert.match(get('txair').label,/raw radio value/);assert.notEqual(get('read').value,'Not read yet · refresh radio data');
++ const empty=counterRows({snr:5},{readAt:null});assert.equal(empty.find(r=>r.key==='sent').value,'—');assert.equal(empty.find(r=>r.key==='read').value,'Not read yet · refresh radio data');
++ const bad=counterRows({packetsSent:-1,packetsReceived:NaN},{readAt:1});assert.equal(bad.find(r=>r.key==='sent').value,'—');assert.equal(bad.find(r=>r.key==='received').value,'—');assert.equal(bad.find(r=>r.key==='read').value,'Not read yet · refresh radio data');
++ const off=counterRows({packetsSent:5},{available:false,readAt:1});assert.ok(off.every(r=>r.value==='Unavailable on this firmware'));assert.deepEqual(off.map(r=>r.key),['sent','received','txair','rxair','radiouptime','read']);});
++
+diff --git a/radio-counters.browser.test.cjs b/radio-counters.browser.test.cjs
+new file mode 100644
+index 0000000..c9ef642
+--- /dev/null
++++ b/radio-counters.browser.test.cjs
+@@ -0,0 +1,24 @@
++/* Radio Health counters from synthetic stats events; no radio commands. */
++const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
++(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
++ const page=await browser.newPage({viewport:{width:1100,height:950}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
++ await page.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();const file=u.pathname==='/'?'index.html':u.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':file.endsWith('.svg')?'image/svg+xml':'text/html'});}catch{await route.fulfill({status:404,body:''});}});
++ await page.goto('http://127.0.0.1:4173');await page.waitForFunction(()=>typeof showRadioHealth==='function'&&typeof NightlinkRadioCounters==='object');
++ const value=key=>page.locator('.radio-counters [data-health="'+key+'"]').textContent();
++ await page.evaluate(()=>{window.commandsSent=[];ble.command=async b=>{commandsSent.push([...b]);throw Error('blocked');};live.identity={key:'aa'.repeat(32),protocol:14,name:'Field Radio · DEMO',frequency:910.525,bandwidth:250,sf:10,cr:5,txPower:22,maxTxPower:22,lat:0,lon:0,located:false,model:'Companion · DEMO',version:'v1.0.0',build:'demo',maxChannels:8,repeatEnabled:false,type:1};radioSession.identity=live.identity;radioSession.emit('identity',live.identity);view('Radio');showRadioHealth();});
++ await page.locator('#radio-counters-title').waitFor();
++ assert.equal(await value('sent'),'—');assert.equal(await value('read'),'Not read yet · refresh radio data');
++ await page.evaluate(()=>{radioSession.emit('stats',{uptime:3600,queue:0});radioSession.emit('stats',{noise:-110,rssi:-90,snr:6,txAir:42,rxAir:9001});radioSession.emit('stats',{packetsReceived:340,packetsSent:12});});
++ await page.waitForFunction(()=>document.querySelector('.radio-counters [data-health="sent"]')?.textContent==='12');
++ assert.equal(await value('received'),'340');assert.equal(await value('txair'),'42');assert.equal(await value('rxair'),'9001');assert.equal(await value('radiouptime'),'3600');assert.notEqual(await value('read'),'Not read yet · refresh radio data');
++ assert.match(await page.locator('.radio-counters .ble-note').textContent(),/since it last started/);
++ assert.equal(await page.locator('.radio-counters dl > div').count(),6);
++ await page.evaluate(()=>{radioSession.statsDisabled.add(live.identity.key);renderRadioHealth();});
++ assert.equal(await value('sent'),'Unavailable on this firmware');assert.equal(await value('read'),'Unavailable on this firmware');
++ await page.evaluate(()=>{radioSession.statsDisabled.clear();const old={key:'bb'.repeat(32),protocol:7,name:'Old Radio · DEMO',frequency:910.525,bandwidth:250,sf:10,cr:5,txPower:22,maxTxPower:22,lat:0,lon:0,located:false,model:'Companion · DEMO',version:'v1.0.0',build:'demo',maxChannels:8,repeatEnabled:false,type:1};live.identity=old;radioSession.identity=old;radioSession.emit('identity',old);renderRadioHealth();});
++ assert.equal(await value('sent'),'Unavailable on this firmware');
++ await page.setViewportSize({width:760,height:560});
++ assert.equal(await page.evaluate(()=>{const d=document.querySelector('#dialog');return d.scrollWidth>d.clientWidth+1;}),false);
++ assert.deepEqual(await page.evaluate(()=>commandsSent),[]);assert.deepEqual(errors,[]);
++ console.log('PASS Radio Health counters: synthetic stats values, raw-value labels, not-read state, statsDisabled and protocol<8 unavailable states, compact width and no radio commands. Synthetic events only.');
++}finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1);});
+diff --git a/releases/0.8.27-propagation-acceptance-plan.md b/releases/0.8.27-propagation-acceptance-plan.md
+index d15b7d1..4e0bd70 100644
+--- a/releases/0.8.27-propagation-acceptance-plan.md
++++ b/releases/0.8.27-propagation-acceptance-plan.md
+@@ -38,7 +38,7 @@ Nightlink does not enable RX logging. Signal (SNR/RSSI) and distance evidence de
+ Purpose: confirm the monitor adds no transmissions.
+ 
+ 1. Note whether the companion sends automatic adverts and at what interval, if known. Automatic adverts are the radio's own behavior, not the monitor's.
+-2. Nightlink does not currently display the radio's sent-packet counter (radio.js reads it, but no screen shows it). If another trusted tool can read the companion's sent-packet count, record it before and after 1 hour idle with **Enable monitoring** on and no messages sent, then repeat for 1 hour with monitoring off. If no such tool is available, record "transmit count not measured".
++2. Open Radio > Radio Health and select **Refresh radio data**. Under **Radio counters**, record **Packets sent · radio total** and **Counters read**. Leave the radio idle for 1 hour with **Enable monitoring** on and no messages sent, refresh again and record the new value. Repeat for 1 hour with monitoring off. The counter is the radio's total since it last started and updates only on refresh. If it shows **Unavailable on this firmware**, record "transmit count not measured" and use step 3.
+ 3. Optional cross-check with a second radio in range running RX log: during the idle hour, record any packets from the companion other than its scheduled adverts.
+ 4. Pass: no transmission attributable to the monitor. A count increase that matches scheduled adverts alone is a pass; record it with the interval.
+ 
+-- 
+2.43.0
+
+
+From 0a0e11e5de785bded7d811d8eeb6de44bbebe4f8 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 31 Oct 2026 21:59:00 +0000
+Subject: [PATCH 4/6] Run the radio counters browser suite in test:browser
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019jwdUNLdgFDTkdkrPTAK1B
+---
+ package.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/package.json b/package.json
+index 4811042..a0600c2 100644
+--- a/package.json
++++ b/package.json
+@@ -8,7 +8,7 @@
+     "preview": "node server.cjs",
+     "dist": "electron-builder --win nsis portable",
+     "test": "node --test echo-layout.test.cjs feature-retention.test.cjs send-feedback.test.cjs performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs security-store.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs radio-workbench.test.cjs reactions.test.cjs chat-signals.test.cjs workspace-confidence.test.cjs outbox.test.cjs compact-workspace.test.cjs support-report.test.cjs contact-deletion.test.cjs desktop-window.test.cjs bulk-contact-removal.test.cjs bulk-contact-removal-radio.test.cjs propagation.test.cjs device-management.test.cjs device-serial.test.cjs",
+-    "test:browser": "node combined-ui.browser.test.cjs && node device-management.browser.test.cjs && node radio-tools-design.browser.test.cjs && node shared-design.browser.test.cjs && node submenus-design.browser.test.cjs && node radio-page.browser.test.cjs && node map-provider-settings.browser.test.cjs && node delivery-details.browser.test.cjs && node contact-deletion.browser.test.cjs && node bulk-contact-removal.browser.test.cjs && node radio-tools.browser.test.cjs && node radio-cli.browser.test.cjs && node propagation.browser.test.cjs && node attention-dm-memory.browser.test.cjs && node attention-memory.browser.test.cjs && node attention.browser.test.cjs && node compact-workspace.browser.test.cjs && node connection-simple.browser.test.cjs && node contact-flow.browser.test.cjs && node corescope-fallback.browser.test.cjs && node corescope-lifecycle.browser.test.cjs && node corescope-recovery.browser.test.cjs && node corescope-slow-start.browser.test.cjs && node corescope-startup.browser.test.cjs && node corescope.browser.test.cjs && node diagnostics.browser.test.cjs && node dm-performance.browser.test.cjs && node echo-command-shortcuts.browser.test.cjs && node header-controls.browser.test.cjs && node help.browser.test.cjs && node identity-verification.browser.test.cjs && node link-preview.browser.test.cjs && node login-vault.browser.test.cjs && node map-annotations.browser.test.cjs && node mention-highlight.browser.test.cjs && node meshmapper-region.browser.test.cjs && node meshmapper.browser.test.cjs && node message-actions.browser.test.cjs && node message-media.browser.test.cjs && node message-path.browser.test.cjs && node messages-navigation.browser.test.cjs && node navigation.browser.test.cjs && node node-discovery.browser.test.cjs && node outbox.browser.test.cjs && node outgoing-message.browser.test.cjs && node performance.browser.test.cjs && node radio-workbench.browser.test.cjs && node reactions.browser.test.cjs && node rf-trends.browser.test.cjs && node search.browser.test.cjs && node support-report.browser.test.cjs && node switchboard-flows.browser.test.cjs && node switchboard-settings.browser.test.cjs && node switchboard.browser.test.cjs && node voice.browser.test.cjs",
++    "test:browser": "node combined-ui.browser.test.cjs && node device-management.browser.test.cjs && node radio-tools-design.browser.test.cjs && node shared-design.browser.test.cjs && node submenus-design.browser.test.cjs && node radio-page.browser.test.cjs && node map-provider-settings.browser.test.cjs && node delivery-details.browser.test.cjs && node contact-deletion.browser.test.cjs && node bulk-contact-removal.browser.test.cjs && node radio-tools.browser.test.cjs && node radio-cli.browser.test.cjs && node propagation.browser.test.cjs && node attention-dm-memory.browser.test.cjs && node attention-memory.browser.test.cjs && node attention.browser.test.cjs && node compact-workspace.browser.test.cjs && node connection-simple.browser.test.cjs && node contact-flow.browser.test.cjs && node corescope-fallback.browser.test.cjs && node corescope-lifecycle.browser.test.cjs && node corescope-recovery.browser.test.cjs && node corescope-slow-start.browser.test.cjs && node corescope-startup.browser.test.cjs && node corescope.browser.test.cjs && node diagnostics.browser.test.cjs && node dm-performance.browser.test.cjs && node echo-command-shortcuts.browser.test.cjs && node header-controls.browser.test.cjs && node help.browser.test.cjs && node identity-verification.browser.test.cjs && node link-preview.browser.test.cjs && node login-vault.browser.test.cjs && node map-annotations.browser.test.cjs && node mention-highlight.browser.test.cjs && node meshmapper-region.browser.test.cjs && node meshmapper.browser.test.cjs && node message-actions.browser.test.cjs && node message-media.browser.test.cjs && node message-path.browser.test.cjs && node messages-navigation.browser.test.cjs && node navigation.browser.test.cjs && node node-discovery.browser.test.cjs && node outbox.browser.test.cjs && node outgoing-message.browser.test.cjs && node performance.browser.test.cjs && node radio-workbench.browser.test.cjs && node reactions.browser.test.cjs && node rf-trends.browser.test.cjs && node search.browser.test.cjs && node support-report.browser.test.cjs && node switchboard-flows.browser.test.cjs && node switchboard-settings.browser.test.cjs && node switchboard.browser.test.cjs && node voice.browser.test.cjs && node radio-counters.browser.test.cjs",
+     "verify:package": "node verify-package.cjs"
+   },
+   "devDependencies": {
+-- 
+2.43.0
+
+
+From 0d6bf27e1a85ebe44fc52bd4689f0e7faf04e284 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 31 Oct 2026 21:59:23 +0000
+Subject: [PATCH 5/6] Check published update checksums before offering a
+ download
+
+Nightlink opens update downloads in the browser (desktop.cjs
+updates:open uses shell.openExternal), so it cannot hash the file the
+user downloads. It now confirms what GitHub publishes instead:
+
+- Read SHA256SUMS.txt from the same release, accepting only the exact
+  release download URL, following a redirect only to GitHub release
+  storage over HTTPS, with a 16 KB cap and 10 s timeout. Malformed,
+  duplicate, path-like or empty checksum files are rejected.
+- Report the expected SHA-256 only when the asset digest and
+  SHA256SUMS.txt agree. Disagreement is "mismatch"; one or both
+  missing is "incomplete"/"missing"; a failed checksum fetch is
+  "unavailable".
+- Settings shows the expected SHA-256, copy buttons and the PowerShell
+  Get-FileHash command. On mismatch the download button is hidden, the
+  banner warns, and updates:open falls back to the release page.
+
+The updates browser test now opens Settings > Data & updates before
+checking the panel; it predated the categorised Settings layout.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019jwdUNLdgFDTkdkrPTAK1B
+---
+ desktop.cjs              |  2 +-
+ updates-ui.js            | 25 +++++++++++++++---
+ updates.browser.test.cjs |  9 +++++--
+ updates.cjs              | 56 +++++++++++++++++++++++++++++++++++-----
+ updates.test.cjs         | 37 ++++++++++++++++++++++++++
+ 5 files changed, 115 insertions(+), 14 deletions(-)
+
+diff --git a/desktop.cjs b/desktop.cjs
+index 1c9745b..c5e7bbc 100644
+--- a/desktop.cjs
++++ b/desktop.cjs
+@@ -31,7 +31,7 @@ else app.whenReady().then(async()=>{
+  });
+  ipcMain.handle('updates:open',async(e,download)=>{
+   if(!trusted(e))return false;
+-  const url=download===true&&updateResult?.status==='available'?(updateResult.download||updateResult.url):nightlinkUpdates.RELEASES;
++  const url=download===true&&updateResult?.status==='available'?(updateResult.verification!=='mismatch'&&updateResult.download||updateResult.url):nightlinkUpdates.RELEASES;
+   await shell.openExternal(url);return true;
+  });
+  ipcMain.on('layout:focus',e=>{if(!trusted(e))return;if(win.isMinimized())win.restore();win.show();win.focus();});
+diff --git a/updates-ui.js b/updates-ui.js
+index 40924ab..67cfa9f 100644
+--- a/updates-ui.js
++++ b/updates-ui.js
+@@ -4,16 +4,33 @@ function paintUpdateStatus(){
+  const status=$('#update-status'),check=$('#check-updates'),download=$('#download-update'),version=$('#installed-version');if(!status)return;
+  version.textContent=updateInfo?'Installed version '+updateInfo.version+' · '+(updateInfo.mode==='portable'?'Portable':'Windows app'):'Web preview';
+  check.hidden=!window.meshlineUpdates;check.disabled=updateBusy;
+- download.hidden=updateState?.status!=='available';
++ download.hidden=updateState?.status!=='available'||updateState.verification==='mismatch';
+  if(updateBusy)status.textContent='Checking GitHub releases…';
+  else if(!window.meshlineUpdates)status.textContent='Version checks are available in the Windows app. Open GitHub releases to check downloads.';
+  else if(!updateState)status.textContent='Checks use public GitHub releases without credentials. Local candidates are not offered by the stable feed.';
+  else status.textContent=({available:'Nightlink '+updateState.latest+' is available.',current:'You have the latest available release.',ahead:'This build is newer than the latest published release.'})[updateState.status]||updateState.message;
++ paintUpdateIntegrity();
+  const last=$('#update-last-check');last.textContent=updateState?.checkedAt?'Last attempt: '+new Date(updateState.checkedAt).toLocaleString():'Not checked this session';
+ }
++// Nightlink opens downloads in the browser, so the user compares the file against the published checksum.
++function updateHashCommand(name){return 'Get-FileHash -Algorithm SHA256 "$env:USERPROFILE\\Downloads\\'+name+'"';}
++async function copyUpdateText(value,label){try{await navigator.clipboard.writeText(value);$('#update-integrity-copied').textContent=label+' copied.';}catch{$('#update-integrity-copied').textContent='Copy failed. Select the text instead.';}}
++function paintUpdateIntegrity(){
++ const box=$('#update-integrity');if(!box)return;const state=updateState;
++ if(state?.status!=='available'||!state.name){box.hidden=true;return;}
++ box.hidden=false;const note=$('#update-integrity-note'),details=$('#update-integrity-details');
++ if(state.verification==='consistent'){
++  box.removeAttribute('role');box.dataset.state='consistent';details.hidden=false;
++  note.textContent='Before running '+state.name+', check that its SHA-256 matches the published value. Nightlink opens the download in your browser and cannot check the downloaded file itself.';
++  $('#update-integrity-sha').textContent=state.sha256;$('#update-integrity-command').textContent=updateHashCommand(state.name);
++ }else{
++  box.setAttribute('role','alert');box.dataset.state=state.verification||'missing';details.hidden=true;
++  note.textContent=state.verification==='mismatch'?'The published checksums for '+state.name+' disagree. Do not run this download. Open GitHub releases and report the problem.':'Nightlink could not confirm published checksums for '+state.name+'. Compare the download with SHA256SUMS.txt on the GitHub release page before running it.';
++ }
++}
+ async function checkNightlinkUpdates(){
+  if(updateBusy||!window.meshlineUpdates)return;updateBusy=true;paintUpdateStatus();
+- try{updateState=await window.meshlineUpdates.check();if(updateState?.status==='available'){updateBanner.textContent='Nightlink '+updateState.latest+' available · Open download ↗';updateBanner.hidden=false;}else updateBanner.hidden=true;}
++ try{updateState=await window.meshlineUpdates.check();if(updateState?.status==='available'){updateBanner.textContent='Nightlink '+updateState.latest+' available · '+(updateState.verification==='consistent'?'Open download ↗':'Checksum warning · open release ↗');updateBanner.hidden=false;}else updateBanner.hidden=true;}
+  catch{updateState={status:'error',message:'Update check failed. Open GitHub releases to check manually.'};updateBanner.hidden=true;}
+  finally{updateBusy=false;paintUpdateStatus();}
+ }
+@@ -24,8 +41,8 @@ function scheduleUpdateChecks(){
+  }
+ }
+ function renderUpdateSettings(){
+- const panel=document.createElement('section');panel.className='update-settings';panel.innerHTML='<h3>Nightlink updates</h3><p id="installed-version"></p><p id="update-status" role="status"></p><small id="update-last-check"></small><div class="update-actions"><button id="check-updates" type="button">Check for updates</button><button id="download-update" type="button" hidden>Open download ↗</button><button id="open-update-releases" type="button">Open GitHub releases ↗</button></div><label class="update-auto"><input id="automatic-update-checks" type="checkbox"> Check for updates while Nightlink is open</label><p>Checks run about every six hours when enabled. Updates are never installed automatically. Close Nightlink before running an installer; your radio connection is left alone. Local candidates and prereleases are not offered by the stable feed.</p>';$('.settings-grid').append(panel);
+- $('#check-updates').onclick=checkNightlinkUpdates;$('#download-update').onclick=()=>window.meshlineUpdates?.open(true);
++ const panel=document.createElement('section');panel.className='update-settings';panel.innerHTML='<h3>Nightlink updates</h3><p id="installed-version"></p><p id="update-status" role="status"></p><small id="update-last-check"></small><div id="update-integrity" hidden><p id="update-integrity-note"></p><div id="update-integrity-details"><p>Expected SHA-256: <code id="update-integrity-sha"></code></p><p>PowerShell: <code id="update-integrity-command"></code></p><div class="update-actions"><button id="copy-update-sha" type="button">Copy checksum</button><button id="copy-update-command" type="button">Copy command</button></div><small id="update-integrity-copied" role="status"></small></div></div><div class="update-actions"><button id="check-updates" type="button">Check for updates</button><button id="download-update" type="button" hidden>Open download ↗</button><button id="open-update-releases" type="button">Open GitHub releases ↗</button></div><label class="update-auto"><input id="automatic-update-checks" type="checkbox"> Check for updates while Nightlink is open</label><p>Checks run about every six hours when enabled. Updates are never installed automatically. Close Nightlink before running an installer; your radio connection is left alone. Local candidates and prereleases are not offered by the stable feed.</p>';$('.settings-grid').append(panel);
++ $('#check-updates').onclick=checkNightlinkUpdates;$('#copy-update-sha').onclick=()=>updateState?.sha256&&copyUpdateText(updateState.sha256,'Checksum');$('#copy-update-command').onclick=()=>updateState?.name&&copyUpdateText(updateHashCommand(updateState.name),'Command');$('#download-update').onclick=()=>window.meshlineUpdates?.open(true);
+  $('#open-update-releases').onclick=()=>{if(window.meshlineUpdates)window.meshlineUpdates.open(false);else window.open('https://github.com/njsnowman/nightlink/releases/latest','_blank','noopener,noreferrer');};
+  const toggle=$('#automatic-update-checks');toggle.disabled=!window.meshlineUpdates;toggle.checked=localStorage.getItem('nightlink.update-checks')==='true';toggle.onchange=()=>{localStorage.setItem('nightlink.update-checks',String(toggle.checked));scheduleUpdateChecks();if(toggle.checked)checkNightlinkUpdates();};paintUpdateStatus();
+ }
+diff --git a/updates.browser.test.cjs b/updates.browser.test.cjs
+index 8b9abb5..d5a2a7a 100644
+--- a/updates.browser.test.cjs
++++ b/updates.browser.test.cjs
+@@ -3,10 +3,15 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),assert=
+ (async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
+ const page=await browser.newPage({viewport:{width:1500,height:1000}});page.setDefaultTimeout(6000);const errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.route('https://tile.openstreetmap.org/**',r=>r.abort());
+ await page.addInitScript(()=>{window.updateOpenCalls=[];window.updateChecks=0;window.fakeUpdate={status:'unavailable',message:'Private releases require GitHub access.'};window.meshlineUpdates={info:async()=>({version:'0.8.8',mode:'portable'}),check:async()=>{window.updateChecks++;return{...window.fakeUpdate,checkedAt:Date.now()};},open:async download=>window.updateOpenCalls.push(download)};});
+-await page.goto('http://127.0.0.1:4173');await page.locator('.settings').click();await page.getByText('Installed version 0.8.8 · Portable',{exact:true}).waitFor();assert.equal(await page.evaluate(()=>window.updateChecks),0);assert.equal(await page.locator('#automatic-update-checks').isChecked(),false);
++await page.goto('http://127.0.0.1:4173');await page.locator('.settings').click();await page.evaluate(()=>NightlinkSettings.open('data'));await page.getByText('Installed version 0.8.8 · Portable',{exact:true}).waitFor();assert.equal(await page.evaluate(()=>window.updateChecks),0);assert.equal(await page.locator('#automatic-update-checks').isChecked(),false);
+ await page.locator('#check-updates').click();await page.locator('#update-status').filter({hasText:'Private releases'}).waitFor();assert.equal(await page.locator('#download-update').isVisible(),false);assert.equal(await page.locator('#update-available').isVisible(),false);await page.locator('#open-update-releases').click();assert.deepEqual(await page.evaluate(()=>window.updateOpenCalls),[false]);
+ await page.evaluate(()=>window.fakeUpdate={status:'available',latest:'0.8.9'});await page.locator('#check-updates').click();await page.locator('#update-available').waitFor();await page.locator('#download-update').click();assert.deepEqual(await page.evaluate(()=>window.updateOpenCalls),[false,true]);assert.equal(await page.evaluate(()=>ble.state),'disconnected');
+-await page.locator('#automatic-update-checks').check();await page.waitForFunction(()=>localStorage.getItem('nightlink.update-checks')==='true');await page.reload();await page.locator('.settings').click();assert.equal(await page.locator('#automatic-update-checks').isChecked(),true);await page.locator('#automatic-update-checks').uncheck();
++const sha='c'.repeat(64);await page.evaluate(sha=>window.fakeUpdate={status:'available',latest:'0.8.9',name:'Nightlink-Portable-0.8.9.exe',verification:'consistent',sha256:sha},sha);await page.locator('#check-updates').click();await page.locator('#update-integrity-sha').filter({hasText:sha}).waitFor();
++assert.equal(await page.locator('#update-integrity-command').textContent(),'Get-FileHash -Algorithm SHA256 "$env:USERPROFILE\\Downloads\\Nightlink-Portable-0.8.9.exe"');assert.equal(await page.locator('#update-integrity').getAttribute('role'),null);assert.match(await page.locator('#update-available').textContent(),/Open download/);assert.equal(await page.locator('#download-update').isVisible(),true);
++await page.evaluate(()=>window.fakeUpdate={status:'available',latest:'0.8.9',name:'Nightlink-Portable-0.8.9.exe',verification:'mismatch',sha256:null});await page.locator('#check-updates').click();await page.locator('#update-integrity-note').filter({hasText:'disagree'}).waitFor();
++assert.equal(await page.locator('#update-integrity').getAttribute('role'),'alert');assert.equal(await page.locator('#update-integrity-details').isVisible(),false);assert.equal(await page.locator('#download-update').isVisible(),false);assert.match(await page.locator('#update-available').textContent(),/Checksum warning/);
++await page.evaluate(()=>window.fakeUpdate={status:'available',latest:'0.8.9',name:'Nightlink-Portable-0.8.9.exe',verification:'unavailable',sha256:null});await page.locator('#check-updates').click();await page.locator('#update-integrity-note').filter({hasText:'could not confirm'}).waitFor();assert.equal(await page.locator('#download-update').isVisible(),true);assert.equal(await page.locator('#update-integrity-details').isVisible(),false);
++await page.locator('#automatic-update-checks').check();await page.waitForFunction(()=>localStorage.getItem('nightlink.update-checks')==='true');await page.reload();await page.locator('.settings').click();await page.evaluate(()=>NightlinkSettings.open('data'));assert.equal(await page.locator('#automatic-update-checks').isChecked(),true);await page.locator('#automatic-update-checks').uncheck();
+ await page.evaluate(()=>window.fakeUpdate={status:'error',message:'Offline test'});await page.locator('#check-updates').click();await page.locator('#update-status').filter({hasText:'Offline test'}).waitFor();assert.equal(await page.locator('#download-update').isVisible(),false);
+ await page.locator('.update-settings').scrollIntoViewIfNeeded();await page.screenshot({path:require('node:path').join(process.env.NIGHTLINK_ARTIFACTS||require('node:os').tmpdir(),'nightlink-updates.png')});
+ for(const width of [920,760]){await page.setViewportSize({width,height:740});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);}
+diff --git a/updates.cjs b/updates.cjs
+index a8f7205..2674049 100644
+--- a/updates.cjs
++++ b/updates.cjs
+@@ -21,22 +21,64 @@ function compare(a,b){
+  }return 0;
+ }
+ function releaseURL(tag){return 'https://github.com/njsnowman/nightlink/releases/tag/'+tag;}
++const SUMS='SHA256SUMS.txt',SUMS_LIMIT=16*1024,DOWNLOAD='https://github.com/njsnowman/nightlink/releases/download/';
++// GitHub serves release assets through a redirect; only these storage hosts are followed.
++const ASSET_HOSTS=new Set(['objects.githubusercontent.com','release-assets.githubusercontent.com']);
++function assetURL(tag,name){return DOWNLOAD+tag+'/'+encodeURIComponent(name);}
++function findAsset(data,name){return data.assets.find(a=>a&&a.name===name&&a.state==='uploaded'&&Number.isFinite(a.size)&&a.size>0&&a.browser_download_url===assetURL(data.tag_name,name));}
++async function readCapped(response,limit,message){
++ const reader=response.body?.getReader();let text='';
++ if(reader){const decoder=new TextDecoder();let size=0;try{while(true){const {value,done}=await reader.read();if(done)break;size+=value.byteLength;if(size>limit)throw Error(message);text+=decoder.decode(value,{stream:true});}text+=decoder.decode();}finally{reader.releaseLock();}}
++ else{text=await response.text();if(Buffer.byteLength(text)>limit)throw Error(message);}
++ return text;
++}
++// SHA256SUMS.txt lines are "<64 hex>  <file name>" (verify-package.cjs); any other line rejects the file.
++function parseSums(text){
++ if(typeof text!=='string'||Buffer.byteLength(text)>SUMS_LIMIT)throw Error('Checksum file is too large.');
++ const sums=new Map();
++ for(const raw of text.split(/\r?\n/)){const line=raw.trim();if(!line)continue;const m=/^([a-fA-F0-9]{64}) [ *]?([^\s/\\](?:[^/\\]*[^\s/\\])?)$/.exec(line);if(!m||sums.has(m[2]))throw Error('Checksum file is malformed.');sums.set(m[2],m[1].toLowerCase());}
++ if(!sums.size)throw Error('Checksum file is empty.');
++ return sums;
++}
++// Both published sources must agree before a value is shown as the expected checksum.
++function integrity(name,digest,sums){
++ if(!name)return{verification:'no-asset',sha256:null};
++ const fromDigest=typeof digest==='string'&&/^sha256:[a-f0-9]{64}$/.test(digest)?digest.slice(7):null,fromSums=sums instanceof Map?sums.get(name)||null:null;
++ if(fromDigest&&fromSums)return fromDigest===fromSums?{verification:'consistent',sha256:fromDigest}:{verification:'mismatch',sha256:null};
++ return{verification:fromDigest||fromSums?'incomplete':'missing',sha256:null};
++}
++async function fetchSums(url,installed,fetcher=fetch){
++ if(typeof url!=='string'||!url.startsWith(DOWNLOAD)||!url.endsWith('/'+SUMS))throw Error('Unexpected checksum location.');
++ const headers={Accept:'application/octet-stream','User-Agent':'Nightlink/'+installed};
++ let response=await fetcher(url,{headers,redirect:'manual',signal:AbortSignal.timeout(10000)});
++ if([301,302,303,307,308].includes(response.status)){
++  const location=response.headers?.get?.('location');let next;try{next=new URL(location);}catch{throw Error('Checksum redirect is invalid.');}
++  if(next.protocol!=='https:'||!ASSET_HOSTS.has(next.hostname))throw Error('Checksum redirect left GitHub release storage.');
++  response=await fetcher(next.href,{headers,redirect:'error',signal:AbortSignal.timeout(10000)});
++ }
++ if(!response.ok)throw Error('Checksum file returned HTTP '+response.status+'.');
++ return parseSums(await readCapped(response,SUMS_LIMIT,'Checksum file is too large.'));
++}
+ function selectRelease(data,installed,mode='portable'){
+  if(!installedVersion(installed)||!data||data.draft||data.prerelease||!/^v\d+\.\d+\.\d+$/.test(data.tag_name)||!version(data.tag_name)||data.html_url!==releaseURL(data.tag_name)||!Array.isArray(data.assets))throw Error('GitHub returned unsupported release information.');
+  const v=data.tag_name.slice(1),names=mode==='installer'?['Nightlink-Setup-'+v+'.exe']:['Nightlink-Portable-'+v+'.exe','Nightlink.'+v+'.exe','Nightlink '+v+'.exe'];
+- const asset=names.map(name=>data.assets.find(a=>a.name===name&&a.state==='uploaded'&&Number.isFinite(a.size)&&a.size>0&&a.browser_download_url==='https://github.com/njsnowman/nightlink/releases/download/'+data.tag_name+'/'+encodeURIComponent(name))).find(Boolean);
++ const asset=names.map(name=>findAsset(data,name)).find(Boolean),sums=findAsset(data,SUMS);
+  const diff=compare(data.tag_name,installed);
+- return{status:diff>0?'available':diff===0?'current':'ahead',installed,latest:v,url:data.html_url,download:asset?.browser_download_url||null,digest:/^sha256:[a-f0-9]{64}$/.test(asset?.digest)?asset.digest:null};
++ return{status:diff>0?'available':diff===0?'current':'ahead',installed,latest:v,url:data.html_url,download:asset?.browser_download_url||null,name:asset?.name||null,sumsUrl:sums?.browser_download_url||null,digest:/^sha256:[a-f0-9]{64}$/.test(asset?.digest)?asset.digest:null};
+ }
+ async function check(installed,mode,fetcher=fetch){
+  try{
+   const response=await fetcher(API,{headers:{Accept:'application/vnd.github+json','User-Agent':'Nightlink/'+installed},redirect:'error',signal:AbortSignal.timeout(10000)});
+   if([401,403,404].includes(response.status))return{status:'unavailable',installed,message:'GitHub could not provide release information. This private repository may require access in your signed-in browser. Rate limits can also prevent checks.',url:RELEASES};
+   if(!response.ok)throw Error('GitHub returned HTTP '+response.status+'.');
+-  const reader=response.body?.getReader();let text='';
+-  if(reader){const decoder=new TextDecoder();let size=0;try{while(true){const {value,done}=await reader.read();if(done)break;size+=value.byteLength;if(size>1024*1024)throw Error('Release response was too large.');text+=decoder.decode(value,{stream:true});}text+=decoder.decode();}finally{reader.releaseLock();}}
+-  else{text=await response.text();if(Buffer.byteLength(text)>1024*1024)throw Error('Release response was too large.');}
+-  return selectRelease(JSON.parse(text),installed,mode);
++  const result=selectRelease(JSON.parse(await readCapped(response,1024*1024,'Release response was too large.')),installed,mode);
++  if(result.status==='available'&&result.download){
++   let sums=null,unavailable=false;
++   if(result.sumsUrl){try{sums=await fetchSums(result.sumsUrl,installed,fetcher);}catch{unavailable=true;}}
++   Object.assign(result,integrity(result.name,result.digest,sums));
++   if(unavailable&&result.verification!=='mismatch')result.verification='unavailable';
++  }
++  return result;
+  }catch(error){return{status:'error',installed,message:'Update check failed. Check your internet connection or open GitHub releases.',url:RELEASES};}
+ }
+-module.exports={RELEASES,API,version,compare,selectRelease,check};
++module.exports={RELEASES,API,SUMS,version,compare,selectRelease,parseSums,integrity,fetchSums,check};
+diff --git a/updates.test.cjs b/updates.test.cjs
+index 1ea9d94..0672c89 100644
+--- a/updates.test.cjs
++++ b/updates.test.cjs
+@@ -23,3 +23,40 @@ test('installed candidates compare against approved stable releases without acce
+  assert.equal(U.selectRelease(next,'0.8.22-rc.32','installer').status,'available');
+  assert.throws(()=>U.selectRelease({...next,tag_name:'v0.8.22-rc.33'},'0.8.22-rc.32'));
+ });
++
++const H='a'.repeat(64),H2='b'.repeat(64),SUMS_URL='https://github.com/njsnowman/nightlink/releases/download/v0.8.9/SHA256SUMS.txt';
++test('SHA256SUMS parsing accepts the published format and rejects malformed, duplicate, path and oversized input',()=>{
++ const sums=U.parseSums(H+'  Nightlink-Setup-0.8.9.exe\n'+H2.toUpperCase()+' *Nightlink-Portable-0.8.9.exe\r\n\n');
++ assert.equal(sums.get('Nightlink-Setup-0.8.9.exe'),H);assert.equal(sums.get('Nightlink-Portable-0.8.9.exe'),H2);
++ for(const bad of ['zz  Nightlink-Setup-0.8.9.exe',H+'Nightlink.exe',H+'  ../evil.exe',H+'  dir\\evil.exe',H+'  a.exe\n'+H2+'  a.exe','','\n\n','x'.repeat(17000)])assert.throws(()=>U.parseSums(bad),bad.slice(0,20));
++});
++test('integrity requires the asset digest and SHA256SUMS to agree',()=>{
++ const sums=new Map([['Nightlink-Setup-0.8.9.exe',H]]);
++ assert.deepEqual(U.integrity('Nightlink-Setup-0.8.9.exe','sha256:'+H,sums),{verification:'consistent',sha256:H});
++ assert.deepEqual(U.integrity('Nightlink-Setup-0.8.9.exe','sha256:'+H2,sums),{verification:'mismatch',sha256:null});
++ assert.equal(U.integrity('Nightlink-Setup-0.8.9.exe',null,sums).verification,'incomplete');
++ assert.equal(U.integrity('Nightlink-Setup-0.8.9.exe','sha256:'+H,null).verification,'incomplete');
++ assert.equal(U.integrity('Nightlink-Setup-0.8.9.exe',null,null).verification,'missing');
++ assert.equal(U.integrity('Nightlink-Setup-0.8.9.exe','md5:'+H,sums).verification,'incomplete');
++});
++const body=text=>({status:200,ok:true,headers:{get:()=>null},text:async()=>text});
++test('checksum download follows only GitHub release storage redirects with bounded size',async()=>{
++ const calls=[];const sums=await U.fetchSums(SUMS_URL,'0.8.8',async(url,options)=>{calls.push([url,options.redirect]);if(url===SUMS_URL)return{status:302,ok:false,headers:{get:k=>k==='location'?'https://release-assets.githubusercontent.com/x/SHA256SUMS.txt':null}};return body(H+'  Nightlink-Setup-0.8.9.exe\n');});
++ assert.equal(sums.get('Nightlink-Setup-0.8.9.exe'),H);assert.deepEqual(calls.map(c=>c[1]),['manual','error']);
++ await assert.rejects(U.fetchSums(SUMS_URL,'0.8.8',async()=>({status:302,ok:false,headers:{get:()=>'https://example.com/SHA256SUMS.txt'}})),/left GitHub/);
++ await assert.rejects(U.fetchSums(SUMS_URL,'0.8.8',async()=>({status:302,ok:false,headers:{get:()=>'http://objects.githubusercontent.com/x'}})),/left GitHub/);
++ await assert.rejects(U.fetchSums('https://example.com/SHA256SUMS.txt','0.8.8',async()=>body('')),/Unexpected/);
++ await assert.rejects(U.fetchSums(SUMS_URL,'0.8.8',async()=>body('x'.repeat(17000))),/too large/);
++ await assert.rejects(U.fetchSums(SUMS_URL,'0.8.8',async()=>({status:404,ok:false,headers:{get:()=>null}})),/HTTP 404/);
++});
++test('update check reports consistent, mismatched, incomplete and unavailable checksums',async()=>{
++ const release=(digest,withSums=true)=>({...base,assets:[{...asset('Nightlink-Setup-0.8.9.exe'),digest},...(withSums?[asset('SHA256SUMS.txt')]:[])]});
++ const run=(data,sumsText,sumsStatus=200)=>U.check('0.8.8','installer',async url=>url===U.API?body(JSON.stringify(data)):sumsStatus===200?body(sumsText):{status:sumsStatus,ok:false,headers:{get:()=>null}});
++ const ok=await run(release('sha256:'+H),H+'  Nightlink-Setup-0.8.9.exe\n');assert.equal(ok.verification,'consistent');assert.equal(ok.sha256,H);assert.equal(ok.name,'Nightlink-Setup-0.8.9.exe');
++ assert.equal((await run(release('sha256:'+H2),H+'  Nightlink-Setup-0.8.9.exe\n')).verification,'mismatch');
++ assert.equal((await run(release('sha256:'+H,false),'')).verification,'incomplete');
++ assert.equal((await run(release(undefined,false),'')).verification,'missing');
++ const down=await run(release('sha256:'+H),'',500);assert.equal(down.verification,'unavailable');assert.equal(down.sha256,null);
++ assert.equal((await run(release('sha256:'+H),'garbage')).verification,'unavailable');
++ const current=await U.check('0.8.9','installer',async url=>{assert.equal(url,U.API);return body(JSON.stringify(release('sha256:'+H)));});assert.equal(current.status,'current');assert.equal(current.verification,undefined);
++});
+-- 
+2.43.0
+
+
+From 4b2527318e6a2799c31004ff58c27b0c93f87fd2 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 31 Oct 2026 21:59:23 +0000
+Subject: [PATCH 6/6] Document update checksum checks
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019jwdUNLdgFDTkdkrPTAK1B
+---
+ CHANGELOG.md  | 2 ++
+ UPDATES.md    | 2 ++
+ USER_GUIDE.md | 5 ++++-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 84f7ffb..04cae0c 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -4,6 +4,8 @@
+ 
+ - Show radio-reported counters in Radio Health: packets sent and received since radio start, raw TX/RX airtime and uptime values, and when they were read; firmware without radio statistics shows Unavailable. No additional radio commands. Synthetic tests only.
+ 
++- Show the expected SHA-256 for an available update when the GitHub asset digest and the release SHA256SUMS.txt agree, with copy buttons and the PowerShell Get-FileHash command; warn and withhold the download link when they disagree, and warn when either is missing. Nightlink still opens downloads in the browser and does not hash the downloaded file.
++
+ - Add a passive RF Propagation Monitor: a header indicator, a Radio > Observe & diagnose panel with evidence, trend, observations and event history, and settings under Settings > Notifications. It compares received packets with a per-radio local baseline and reports "Possible RF opening" or "Strong RF anomaly" with hysteresis and cooldown. It never transmits, enables RX logging or uses the network, and does not claim an atmospheric cause. Thresholds are untested hypotheses; synthetic tests only.
+ 
+ ## 0.8.26 — 2026-10-31
+diff --git a/UPDATES.md b/UPDATES.md
+index 086f48b..52224a6 100644
+--- a/UPDATES.md
++++ b/UPDATES.md
+@@ -6,6 +6,8 @@ The Windows client reads the public GitHub latest-release API (`https://api.gith
+ 
+ An available update opens its GitHub download in the browser. Nightlink does not download or install executables automatically, restart itself, or disconnect a radio during a check. Quit Nightlink cleanly before running an installer. Existing installed clients retain the update behavior in their installed version.
+ 
++Checksum check (0.8.27 candidates and later): when an update is available, Nightlink also reads `SHA256SUMS.txt` from the same release. It accepts only the exact release download URL for this repository and tag, follows a redirect only to GitHub release storage (`objects.githubusercontent.com` or `release-assets.githubusercontent.com`) over HTTPS, caps the file at 16 KB, times out after 10 seconds and rejects malformed lines. The expected SHA-256 is shown only when the GitHub asset digest and `SHA256SUMS.txt` agree. Settings > Data & updates then shows the file name, the expected SHA-256, copy buttons and the PowerShell command `Get-FileHash -Algorithm SHA256 "$env:USERPROFILE\Downloads\<file>"`. Nightlink opens the download in the browser and cannot hash the downloaded file itself; comparing the values is the user's step. If the two published values disagree, Nightlink shows a warning, hides Open download and opens the release page instead. If a value is missing or cannot be read, it shows a warning and no expected checksum.
++
+ Installed candidate versions are compared against stable versions in rc.33 and later: a stable release of the same version is newer than its candidate, while a candidate with a higher base version is ahead of an older stable release. Candidates are not offered by the stable update feed. Local candidate files do not become remote updates until an approved release is published.
+ 
+ Repository visibility was changed to public at the owner's request on 2026-10-25. The public feed and full downloads of both v0.8.19 Windows artifacts were verified without authentication, including matching GitHub SHA-256 digests. This confirms distribution and download access, not successful installation on every client. No new stable release was published as part of this verification.
+diff --git a/USER_GUIDE.md b/USER_GUIDE.md
+index ee367c4..ac6909f 100644
+--- a/USER_GUIDE.md
++++ b/USER_GUIDE.md
+@@ -682,7 +682,10 @@ Download the matching Windows build and understand candidates.
+ 1. Open Settings > Data & updates > Nightlink updates.
+ 2. Select Check for updates. Enable the optional checks-while-open toggle for a check after about thirty seconds and every six hours.
+ 3. When a newer stable version is offered, choose Open download. Setup installations select Setup; portable clients select Portable when available.
+-4. Export a backup, quit Nightlink cleanly and run the downloaded installer. Reopen and confirm the version in Help & About.
++4. Before running the download, compare its SHA-256 with the Expected SHA-256 shown under the update status. Select Copy command, paste it into PowerShell and compare the Hash line. If they differ, do not run the file.
++5. Export a backup, quit Nightlink cleanly and run the downloaded installer. Reopen and confirm the version in Help & About.
++
++If Nightlink reports that the published checksums disagree, it hides Open download. Do not run that release's file; open GitHub releases and report it. If it cannot confirm the checksums, compare the download with SHA256SUMS.txt on the release page yourself.
+ 
+ ### Downloads are not automatic installation
+ 
+-- 
+2.43.0
+
