@@ -10,8 +10,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - name: Enable pnpm
@@ -28,7 +28,7 @@ jobs:
           NIGHTLINK_SCREENSHOTS: ${{ runner.temp }}/nightlink-layout
       - name: Archive layout evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nightlink-layout-evidence
           path: ${{ runner.temp }}/nightlink-layout
@@ -38,8 +38,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - run: corepack enable
@@ -53,7 +53,7 @@ jobs:
       - name: Verify every packaged feature and record source/checksums
         run: pnpm run verify:package
       - name: Archive verified candidate
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nightlink-${{ steps.version.outputs.value }}-windows-candidate
           path: |
