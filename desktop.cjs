@@ -31,7 +31,7 @@ else app.whenReady().then(async()=>{
  });
  ipcMain.handle('updates:open',async(e,download)=>{
   if(!trusted(e))return false;
-  const url=download===true&&updateResult?.status==='available'?(updateResult.download||updateResult.url):nightlinkUpdates.RELEASES;
+  const url=download===true&&updateResult?.status==='available'?(updateResult.verification!=='mismatch'&&updateResult.download||updateResult.url):nightlinkUpdates.RELEASES;
   await shell.openExternal(url);return true;
  });
  ipcMain.on('layout:focus',e=>{if(!trusted(e))return;if(win.isMinimized())win.restore();win.show();win.focus();});
