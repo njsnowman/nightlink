@@ -1,19 +1,22 @@
 # Nightlink
 
+![NightLink military-inspired ANSI terminal logo](docs/assets/nightlink-tactical-terminal.svg)
+
+<details>
+<summary>Plain-text ANSI-style wordmark</summary>
+
 ```text
-##   ##  ####   #####   ##   ##  ######  ##      ####  ##   ##  ##  ##
-###  ##   ##   ##       ##   ##    ##    ##       ##   ###  ##  ## ##
-## # ##   ##   ## ####  #######    ##    ##       ##   ## # ##  ####
-##  ###   ##   ##   ##  ##   ##    ##    ##       ##   ##  ###  ## ##
-##   ##  ####   #####   ##   ##    ##    ######  ####  ##   ##  ##  ##
+ _   _ ___ ____ _   _ _____ _     ___ _   _ _  __
+| \ | |_ _/ ___| | | |_   _| |   |_ _| \ | | |/ /
+|  \| || | |  _| |_| | | | | |    | ||  \| | ' /
+| |\  || | |_| |  _  | | | | |___ | || |\  | . \
+|_| \_|___\____|_| |_| |_| |____|___|_| \_|_|\_\
 
-        (( o ))          o-----o-----o
-          |              |    / \    |
-         [=]   ~~~~~~~   o---o   o---o
-
-  Windows desktop client for MeshCore companion radios
-  Bluetooth LE or USB serial | local message history
+[ NIGHTLINK // MESHCORE FIELD TERMINAL ]
+[ PC <=> COMPANION RADIO <=> LoRa MESH ]
 ```
+
+</details>
 
 Windows desktop client for MeshCore companion radios over Bluetooth LE or USB serial. Built with Electron and a local HTML/CSS/JavaScript interface.
 
