@@ -376,7 +376,7 @@ When #echo is selected and the radio is connected and synchronized, buttons for 
 
 ### Hide CoreScope or MeshMapper
 
-1. Open Settings and find Map visibility.
+1. Open Settings > Data & updates and find Map visibility.
 2. Clear Show CoreScope or Show MeshMapper to hide that provider. The status line confirms Map visibility saved.
 3. A hidden provider is unloaded and its source button is hidden in Overview, Network and #echo. The local Radio map stays available.
 4. The choice is saved on this computer and kept across restarts. Select the box again to show the provider.
