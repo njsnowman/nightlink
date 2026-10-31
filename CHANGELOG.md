@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Device Center: after a local companion change, update the Live, Radio page and Radio Tools views through a separate identity-updated event that does not reset sessions, using the device's readback even when verification fails. Require a value for a cleared numeric field even when the inspected value is 0. Inspect core settings only unless optional settings are explicitly requested. Export the verified device key for Direct USB instead of a placeholder, and warn when staging a file exported from a different or unidentified device. Keep integer fields and the retryable core-read allowlist in one place each. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Verify each radio-contact removal with an exact-key lookup (CMD_GET_CONTACT_BY_KEY expecting not found) instead of a full contact-list readback whose frame count must match exactly. Advertisements that add other contacts during verification no longer fail removal, and bulk removal no longer reads the entire roster per deletion. Lookup failures now report the underlying error. Synthetic tests only; physical revalidation remains required. Tracks [#104](https://github.com/njsnowman/nightlink/issues/104).
+
+- During core-read recovery, consume one late reply per earlier transmission before releasing serialization, instead of a fixed quiet window that could pass a late reply to the next command. Quarantine the target when recovery is stopped or a session guard fails while a command is outstanding. [#109](https://github.com/njsnowman/nightlink/issues/109).
+
+- Refuse to record package provenance when packaged sources differ from HEAD. On pull-request CI, also record the pull-request head and base commits, because HEAD is a synthetic merge commit.
+
 - Keep an open Message delivery dialog synchronized with attempts, ACK/failure state and cancellation availability; clear stale actions when the radio changes or the dialog is replaced. Tracks [#115](https://github.com/njsnowman/nightlink/issues/115).
 
 - Add independent CoreScope and MeshMapper visibility controls under Settings > Data & updates. Hidden providers unload and stay hidden across restarts; local Radio maps remain available, including #echo fallback. Tracks [#114](https://github.com/njsnowman/nightlink/issues/114).

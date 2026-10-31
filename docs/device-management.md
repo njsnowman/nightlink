@@ -43,7 +43,7 @@ Remote companion contacts are not infrastructure management endpoints. Sensor an
 - Remote CLI replies expose only a six-byte sender prefix, without a per-command correlation ID. Ambiguous saved prefixes are blocked; serialization and quarantine reduce ambiguity but cannot add authentication or correlation that firmware does not supply.
 - Guest and legacy sessions may inspect supported fields, but legacy login success without an administrator flag does not authorize structured writes. Firmware remains responsible for enforcing permissions on advanced commands.
 - Passwords stay in memory and password inputs clear on submit, target change, connection reset and close. Login ACL/firmware metadata clears on reset/logout. Sensitive advanced commands have hidden command history and hidden response output, including firmware replies that echo a new password. CLI replies are excluded from ordinary message persistence by the existing live message handler.
-- Settings exports contain only the displayed schema and target identifier. No private key, password, PIN or channel key is queried or exported. Import requires a fresh snapshot, validates compatible fields, and still requires review/apply. This is a settings transfer file, not a complete radio backup.
+- Settings exports contain only the displayed schema and the target's full public key; Direct USB exports record the key read from the device, not a placeholder. No private key, password, PIN or channel key is queried or exported. Import requires a fresh snapshot, validates compatible fields, and still requires review/apply. A file exported from a different or unidentified device still stages, with a visible warning to check every value. This is a settings transfer file, not a complete radio backup.
 
 ## Compatibility limits and follow-up work
 
@@ -65,7 +65,7 @@ A physical trace showed six successful replies before an optional path-hash read
 
 ## Bounded core read recovery (rc.8)
 
-After the user restored the companion, a core name read succeeded but the TX read timed out. The client now permits up to three transmissions only for five exact read-only core queries. Recovery drains queued messages and holds serialization through a bounded duplicate-reply quiet interval. Writes, arbitrary CLI and optional probes remain single-attempt. The firmware has no per-command reply ID, so late-reply handling remains bounded best effort; preflight and setting readback remain mandatory. This does not alter the radio clock or any RF setting.
+After the user restored the companion, a core name read succeeded but the TX read timed out. The client now permits up to three transmissions only for five exact read-only core queries. Recovery drains queued messages and holds serialization until one late reply per earlier transmission has been consumed, or until the reply budget expires and the remaining replies are presumed lost. Stopping or a session guard failure during recovery quarantines the target, because a command is outstanding. Writes, arbitrary CLI and optional probes remain single-attempt. The firmware has no per-command reply ID, so late-reply handling remains bounded best effort; preflight and setting readback remain mandatory. This does not alter the radio clock or any RF setting.
 
 ## Inspection latency (rc.9 / rc.10)
 
