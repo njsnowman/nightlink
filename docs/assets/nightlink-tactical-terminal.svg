@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="390" viewBox="0 0 1100 390" role="img" aria-labelledby="title desc">
+<title id="title">NightLink tactical terminal wordmark</title>
+<desc id="desc">Monospaced ASCII NIGHTLINK logo in ice blue above a radio mesh network diagram, with amber field-terminal accents.</desc>
+<rect width="1100" height="390" rx="16" fill="#03080c"/>
+<g stroke="#1e3337" stroke-width="1" opacity=".45">
+<path d="M0 0V390"/>
+<path d="M50 0V390"/>
+<path d="M100 0V390"/>
+<path d="M150 0V390"/>
+<path d="M200 0V390"/>
+<path d="M250 0V390"/>
+<path d="M300 0V390"/>
+<path d="M350 0V390"/>
+<path d="M400 0V390"/>
+<path d="M450 0V390"/>
+<path d="M500 0V390"/>
+<path d="M550 0V390"/>
+<path d="M600 0V390"/>
+<path d="M650 0V390"/>
+<path d="M700 0V390"/>
+<path d="M750 0V390"/>
+<path d="M800 0V390"/>
+<path d="M850 0V390"/>
+<path d="M900 0V390"/>
+<path d="M950 0V390"/>
+<path d="M1000 0V390"/>
+<path d="M1050 0V390"/>
+<path d="M1100 0V390"/>
+<path d="M0 0H1100"/>
+<path d="M0 50H1100"/>
+<path d="M0 100H1100"/>
+<path d="M0 150H1100"/>
+<path d="M0 200H1100"/>
+<path d="M0 250H1100"/>
+<path d="M0 300H1100"/>
+<path d="M0 350H1100"/>
+<path d="M0 400H1100"/>
+</g>
+<path d="M22 72V22H72 M1028 22H1078V72 M22 318V368H72 M1028 368H1078V318" fill="none" stroke="#d7a452" stroke-width="3"/>
+<g font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="17" letter-spacing="1">
+<text x="48" y="51" fill="#e8b45a">[NL] // NIGHTLINK</text>
+<text x="1050" y="51" fill="#87e3f8" text-anchor="end">MESHCORE / FIELD TERMINAL</text>
+</g>
+<path d="M48 67H1052" stroke="#365358"/>
+<g fill="#87e3f8" font-size="24" font-family="Consolas, 'DejaVu Sans Mono', monospace" xml:space="preserve">
+<text x="109" y="117"> _   _ ___ ____ _   _ _____ _     ___ _   _ _  __</text>
+<text x="109" y="148">| \ | |_ _/ ___| | | |_   _| |   |_ _| \ | | |/ /</text>
+<text x="109" y="179">|  \| || | |  _| |_| | | | | |    | ||  \| | ' /</text>
+<text x="109" y="210">| |\  || | |_| |  _  | | | | |___ | || |\  | . \</text>
+<text x="109" y="241">|_| \_|___\____|_| |_| |_| |____|___|_| \_|_|\_\</text>
+</g>
+<path d="M48 276H1052" stroke="#365358"/>
+<g font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="17" text-anchor="middle">
+<text x="178" y="310" fill="#e8b45a">[ PC / NIGHTLINK ]</text>
+<text x="550" y="310" fill="#87e3f8">[ COMPANION RADIO ]</text>
+<text x="921" y="310" fill="#e8b45a">[ LoRa / MESH ]</text>
+<path d="M286 304H416 M686 304H813" stroke="#87e3f8" stroke-width="2" stroke-dasharray="7 5"/>
+<circle cx="416" cy="304" r="4" fill="#e8b45a"/>
+<circle cx="813" cy="304" r="4" fill="#e8b45a"/>
+<text x="550" y="354" fill="#8fa5a7" font-size="15">LOCAL-FIRST COMMUNICATIONS  //  NO INTERNET REQUIRED FOR MESH MESSAGING</text>
+</g>
+</svg>
