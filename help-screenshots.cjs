@@ -1,10 +1,12 @@
 /* Capture the real interface in an isolated browser profile, using fictional data only. */
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),version=require('./package.json').version;
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const page=await browser.newPage({viewport:{width:1360,height:900},deviceScaleFactor:1}),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.addInitScript(()=>{window.meshlineUpdates={info:async()=>({version:'0.8.22-rc.34',mode:'installer'}),check:async()=>({status:'ahead',latest:'0.8.19',checkedAt:1792937700000}),open:async()=>true};});
+ await page.addInitScript(version=>{window.meshlineUpdates={info:async()=>({version,mode:'installer'}),check:async()=>({status:'current',latest:version,checkedAt:1792937700000}),open:async()=>true};},version);
  await page.route('**/*',async route=>{const u=new URL(route.request().url());if(u.hostname!=='127.0.0.1')return route.abort();const file=u.pathname==='/'?'index.html':u.pathname.slice(1),types={'.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png'};try{await route.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:types[path.extname(file)]||'text/html'});}catch{await route.fulfill({status:404,body:''});}});
+ // Fix the displayed clock so captures do not depend on when the script runs.
+ await page.clock.setFixedTime(1792937700000);
  await page.goto('http://127.0.0.1:4173',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>document.readyState==='complete'&&typeof NightlinkSettings!=='undefined');
  await page.evaluate(async()=>{await cardsReady;const mark=document.createElement('div');mark.id='guide-demo-mark';mark.textContent='GUIDE EXAMPLE / FICTIONAL DATA';Object.assign(mark.style,{position:'fixed',bottom:'9px',right:'14px',padding:'5px 9px',font:'10px Segoe UI',letterSpacing:'1px',background:'#101820',color:'#b8c9d6',border:'1px solid #344957',zIndex:99999,pointerEvents:'none'});document.body.append(mark);view('Messages');showBluetooth();});
  const capture=async name=>{await page.waitForTimeout(150);const target=page.locator('dialog[open]');if(await target.count())await target.last().screenshot({path:path.join(__dirname,'help-assets',name+'.png')});else await page.screenshot({path:path.join(__dirname,'help-assets',name+'.png')});};
@@ -14,7 +16,10 @@ const fs=require('node:fs/promises'),path=require('node:path'),assert=require('n
  await page.evaluate(()=>showAddChannel());await capture('channels');await page.locator('#close-dialog').click();
  await page.evaluate(()=>{view('Radio');showRadioTools();});await capture('radio-tools');await page.locator('#close-dialog').click();
  await page.evaluate(()=>{radioHealth.identity(live.identity.key);radioHealth.transport('connected');radioHealth.sync('syncing');radioHealth.catchup({complete:true,count:3});radioHealth.sync('ready');showRadioHealth();});await capture('health');await page.locator('#close-dialog').click();
+ // Let the previous dialog's close handler finish; it resets dialog classes.
+ await page.waitForFunction(()=>!document.querySelector('#dialog').open);await page.waitForTimeout(200);
+ await page.evaluate(()=>{const hop=live.contacts[1];Object.assign(hop,{lat:44.5,lon:-100.3,located:true});showMessageRoute({...live.messages[0],observedRoute:{path:[hop.key.slice(0,2)],direct:false,snr:9,rssi:-102}});});await page.locator('#message-hop-list li').first().waitFor();await capture('message-path');await page.locator('#close-dialog').click();
  await page.evaluate(()=>NightlinkSettings.open('data'));await page.locator('#backup-export').scrollIntoViewIfNeeded();await capture('backup');
  await page.locator('#check-updates').scrollIntoViewIfNeeded();await page.locator('#check-updates').click();await page.waitForFunction(()=>!updateBusy);await capture('updates');
- assert.deepEqual(await page.evaluate(()=>guideWrites),[]);assert.deepEqual(errors,[]);console.log('Captured eight application screenshots with fictional data; no radio commands or external requests.');
+ assert.deepEqual(await page.evaluate(()=>guideWrites),[]);assert.deepEqual(errors,[]);console.log('Captured nine application screenshots with fictional data; no radio commands or external requests.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
