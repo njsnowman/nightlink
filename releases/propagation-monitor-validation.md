@@ -44,3 +44,7 @@ Captured from the application page with synthetic observations injected only int
 - Advert locations are self-reported. Path prefixes are not unique and are never used as identities.
 - An antenna change is not detected automatically; radio parameter changes raise a baseline comparability warning.
 - In-app Help (user-guide.js) is unchanged; the topic count is fixed at 21.
+
+## Follow-up - October 31, 2026
+
+Unusual direct receptions now read Unknown, not 0, when no observation in the window had a measurable distance (commit ebd82ad, with a unit assertion). Screenshots were regenerated with `PROPAGATION_SCREENSHOTS=docs/images/propagation node propagation.browser.test.cjs` and reduced to a 256-colour palette. Candidate version 0.8.27-rc.1.
