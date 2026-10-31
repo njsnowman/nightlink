@@ -1,0 +1,62 @@
+/* RF Propagation Monitor. Uses shared nightlink-design.css tokens; semantic amber/red only for alert states. */
+:root{--propagation-amber:#f0b44c;--propagation-red:#ff858f;--propagation-ok:#7be0b3}
+.propagation-live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.propagation-indicator[hidden]{display:none!important}
+.propagation-indicator:is([data-level=normal],[data-level=unavailable],[data-level=insufficient-data]) .header-control-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.propagation-indicator:is([data-level=normal],[data-level=unavailable]){color:var(--nl-muted,#b9b9bf);opacity:.7}
+.propagation-indicator[data-level=insufficient-data]{color:var(--nl-muted,#b9b9bf)}
+.propagation-indicator[data-level=possible-opening]{color:var(--propagation-amber);border-color:color-mix(in srgb,var(--propagation-amber) 55%,transparent)!important;background:color-mix(in srgb,var(--propagation-amber) 10%,transparent)!important}
+.propagation-indicator[data-level=strong-anomaly]{color:var(--propagation-red);border-color:color-mix(in srgb,var(--propagation-red) 60%,transparent)!important;background:color-mix(in srgb,var(--propagation-red) 12%,transparent)!important}
+.propagation-indicator.propagation-animate[data-level=possible-opening] svg{animation:propagation-pulse 2.4s ease-in-out infinite}
+.propagation-indicator.propagation-animate.propagation-flash[data-level=strong-anomaly]{animation:propagation-flash .6s ease-in-out 3}
+@keyframes propagation-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes propagation-flash{0%,100%{background:color-mix(in srgb,var(--propagation-red) 12%,transparent)}50%{background:color-mix(in srgb,var(--propagation-red) 34%,transparent)}}
+body.reduced-motion .propagation-indicator,body.reduced-motion .propagation-indicator svg{animation:none!important}
+@media(prefers-reduced-motion:reduce){.propagation-indicator,.propagation-indicator svg{animation:none!important}}
+
+.propagation-panel{display:grid;gap:16px;min-width:0;max-width:880px}
+.propagation-panel h3,.propagation-panel h4,.propagation-panel p{margin:0}
+.propagation-panel h4{font-size:.95rem;font-weight:650;letter-spacing:-.1px}
+.propagation-status{display:grid;gap:4px;padding:16px;border:1px solid var(--nl-edge,#303030);border-left-width:4px;border-radius:14px;background:var(--nl-surface,#080808)}
+.propagation-status h3{font-size:1.2rem;font-weight:650;letter-spacing:-.3px}
+.propagation-status[data-level=possible-opening]{border-color:color-mix(in srgb,var(--propagation-amber) 55%,var(--nl-edge,#303030));border-left-color:var(--propagation-amber)}
+.propagation-status[data-level=possible-opening] h3{color:var(--propagation-amber)}
+.propagation-status[data-level=strong-anomaly]{border-color:color-mix(in srgb,var(--propagation-red) 55%,var(--nl-edge,#303030));border-left-color:var(--propagation-red)}
+.propagation-status[data-level=strong-anomaly] h3{color:var(--propagation-red)}
+.propagation-status[data-level=normal]{border-left-color:var(--propagation-ok)}
+.propagation-eyebrow{font-size:.72rem;letter-spacing:.08em;color:var(--nl-muted,#b9b9bf);font-weight:650}
+.propagation-muted,.propagation-note,.propagation-chart figcaption{color:var(--nl-muted,#b9b9bf);font-size:.88rem;line-height:1.5}
+.propagation-warning{padding:12px 16px;border:1px solid color-mix(in srgb,var(--propagation-amber) 45%,var(--nl-edge,#303030));border-radius:9px;color:var(--nl-copy,#eee);background:color-mix(in srgb,var(--propagation-amber) 6%,transparent);line-height:1.5}
+.propagation-evidence{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0}
+.propagation-evidence div{display:grid;gap:4px;padding:12px;border:1px solid var(--nl-edge,#303030);border-radius:14px;background:var(--nl-surface,#080808);min-width:0}
+.propagation-evidence dt{font-size:.8rem;color:var(--nl-muted,#b9b9bf)}
+.propagation-evidence dd{margin:0;font-size:1.15rem;font-weight:650;overflow-wrap:anywhere}
+.propagation-chart{margin:0;display:grid;gap:8px;padding:12px;border:1px solid var(--nl-edge,#303030);border-radius:14px;background:var(--nl-surface,#080808)}
+.propagation-chart svg{width:100%;height:96px;display:block}
+.propagation-bar{fill:color-mix(in srgb,var(--nl-accent,#ffbf56) 70%,transparent)}
+.propagation-gap{fill:var(--nl-edge,#303030)}
+.propagation-table-wrap{overflow-x:auto;border:1px solid var(--nl-edge,#303030);border-radius:14px}
+.propagation-table{width:100%;border-collapse:collapse;font-size:.86rem}
+.propagation-table th,.propagation-table td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--nl-edge,#303030);white-space:nowrap}
+.propagation-table th{color:var(--nl-muted,#b9b9bf);font-weight:600}
+.propagation-table tbody tr:last-child td{border-bottom:0}
+.propagation-table td:last-child{white-space:normal;min-width:160px}
+.propagation-history ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+.propagation-history li{display:grid;gap:4px;padding:12px 16px;border:1px solid var(--nl-edge,#303030);border-left-width:4px;border-radius:9px}
+.propagation-history li[data-level=possible-opening]{border-left-color:var(--propagation-amber)}
+.propagation-history li[data-level=strong-anomaly]{border-left-color:var(--propagation-red)}
+.propagation-history span,.propagation-history small{color:var(--nl-muted,#b9b9bf)}
+.propagation-actions,.propagation-settings-actions{display:flex;flex-wrap:wrap;gap:8px}
+button.propagation-danger{border-color:var(--propagation-red)!important;color:var(--propagation-red)!important}
+
+.propagation-settings{display:grid;gap:16px;padding:20px;border:1px solid var(--nl-edge,#303030);border-radius:14px;background:var(--nl-surface,#080808)}
+.propagation-settings h3,.propagation-settings p{margin:0}
+.propagation-settings p,.propagation-settings small{color:var(--nl-muted,#b9b9bf);line-height:1.5}
+.propagation-settings label{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px;border:1px solid var(--nl-edge,#303030);border-radius:9px;cursor:pointer}
+.propagation-settings label span{display:grid;gap:4px;min-width:0}
+.propagation-settings input[type=checkbox]{flex:0 0 auto;accent-color:var(--nl-accent,#ffbf56);width:18px;height:18px}
+.propagation-settings select{flex:0 0 auto;min-width:180px}
+.propagation-settings-actions button{min-height:38px;padding:9px 13px;border:1px solid var(--nl-edge,#303030);border-radius:9px;background:var(--nl-surface,#080808);color:var(--nl-copy,#eee);font:inherit}
+@media(max-width:640px){.propagation-settings label{flex-wrap:wrap}.propagation-settings select{min-width:0;width:100%}}
+dialog:has(.propagation-panel){width:min(920px,calc(100vw - 32px));max-width:920px}
+.propagation-panel{width:100%;max-width:none}

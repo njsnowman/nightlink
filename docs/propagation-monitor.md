@@ -89,3 +89,11 @@ States: `disabled`, `unavailable` (not connected), `insufficient-data`, `normal`
 - Prefix collisions: different stations can share a DM prefix.
 - The 0xFF path length and direct-routed packets carry no distance evidence.
 - Thresholds are untested on real data; tune them after field observation.
+
+## Interface
+
+- propagation-ui.js feeds the monitor from existing events only: `ble` 0x88 frames (parsed by `NightlinkEvidence.packet` inside `normalize.rxLog`), `radioSession` message events, and 0x8a frames parsed by `MeshlineProtocol.contact`. It connects on `identity` (same radio keeps its state), disconnects on `disconnected`, and passes radio parameters to `noteConfig` on `identity` and `identity-updated`.
+- State is saved per radio to IndexedDB `nightlink-propagation` (debounced, and on unload). Settings are in localStorage `nightlink.propagation.settings`. Neither is in the backup allowlist.
+- The header indicator sits beside the connection control. Normal, learning and unavailable states show a subdued icon only; alert states show "Possible RF Opening" or "Strong RF Anomaly". Animations are removed by the Reduced motion setting, the system preference, or the Alert animations setting.
+- The panel opens from Radio > Observe & diagnose or the indicator. Settings are in Settings > Notifications.
+- Strong-anomaly alerts can play the existing mention sound and send a desktop notice (conversation id `propagation`) through the existing quiet-hours policy. Both default to off.
