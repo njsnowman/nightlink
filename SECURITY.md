@@ -22,8 +22,20 @@ Security IPC validates the main window and exact main frame. Remote map frames h
 
 Save recovery codes outside this computer. They cannot recover a forgotten password. Do not enable the feature without retaining the password and recovery codes. There is no automatic account-recovery service. Unreadable protected settings intentionally keep the application gate closed; data is not erased.
 
-See the matching candidate record for evidence and limitations. Automated validation uses ephemeral profiles and test credentials, not the user's profile or radio. This feature has not received an independent security audit.
+See the matching candidate record for evidence and limitations. Automated validation uses ephemeral profiles and test credentials, not the user's profile or radio. Enrollment, restart and unlock on a normal installed profile are not verified for 0.8.26; the release notes disclose this. This feature has not received an independent security audit.
 
 References:
 - https://www.rfc-editor.org/rfc/rfc6238
 - https://www.electronjs.org/docs/latest/api/safe-storage/
+
+# Verifying downloads
+
+Nightlink executables are not code-signed. Windows SmartScreen may warn before the first launch. Each GitHub release attaches `SHA256SUMS.txt` with one `<sha256>  <filename>` line for the Setup and Portable executables. The in-app update check does not verify downloads; compare the checksum yourself before running a downloaded file.
+
+In PowerShell, in the download folder:
+
+```powershell
+Get-FileHash .\Nightlink-Setup-<version>.exe -Algorithm SHA256
+```
+
+The hash must match the `SHA256SUMS.txt` line and the SHA-256 listed in the release notes. Do not run a file whose hash differs.

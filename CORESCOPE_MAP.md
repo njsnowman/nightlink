@@ -32,3 +32,15 @@ Embed parameters cov_grid=1 and fail_grid=1 enable bidirectional green coverage 
 ## Overview default
 
 Overview starts with CoreScope on launch and each entry, regardless of the saved Network source. A manual Radio map choice on Overview applies only to that visit and does not change the Network preference. CoreScope health/offline failure still falls back to Radio map; returning to Overview retries CoreScope.
+
+## Map visibility
+
+Settings → Data & updates → Map visibility provides two independent switches: Show CoreScope (live mesh activity in Overview, Network and #echo) and Show MeshMapper (regional coverage maps in Network). Choices are saved on this computer and kept after restart. A hidden provider's embed is unloaded, its source buttons and provider-specific actions are hidden, and it receives no location request. The local Radio map remains available with either or both hidden. In #echo, a hidden CoreScope shows "CoreScope hidden in Settings · local radio map." Tracked in [#114](https://github.com/njsnowman/nightlink/issues/114).
+
+## Overview split
+
+Overview shows messages beside the map. Drag the divider between them to resize. With the divider focused, Left and Right arrow keys resize, Home and End go to the limits, and Enter or a double-click restores the balanced split.
+
+## #echo Chat / Map / Split
+
+The selected #echo channel shows Chat, Map and Split controls; other channels do not. Split places the chat beside the map; drag the divider ("Resize echo chat and map") to resize. Expand map switches to the map-only layout, and the same button then reads Restore split. Recenter, Local map and Reload are in the map header. The map uses CoreScope when it is shown and online, and the local radio map otherwise, including offline. Observer activity on the map is separate from message delivery status.
