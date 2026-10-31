@@ -70,7 +70,7 @@
  const short={'possible-opening':'Possible RF Opening','strong-anomaly':'Strong RF Anomaly','insufficient-data':'Learning baseline',unavailable:'Monitor unavailable',normal:'RF normal',disabled:'Monitor off'};
  let last=null,lastLevel=null;
  function paint(st){
-  indicator.hidden=!prefs.indicator||st.state==='disabled';
+  indicator.hidden=!prefs.indicator;
   indicator.dataset.level=st.state;indicator.classList.toggle('propagation-animate',prefs.animations!==false);
   indicator.querySelector('.header-control-label').textContent=short[st.state]||st.label;
   const detail=st.state==='unavailable'?'Connect a radio to monitor reception.':st.state==='insufficient-data'?'Collecting baseline; not enough history for reliable detection.':'Open the Propagation Monitor.';

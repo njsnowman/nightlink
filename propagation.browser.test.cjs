@@ -112,9 +112,15 @@ const shots=process.env.PROPAGATION_SCREENSHOTS;
  const history=await page.evaluate(()=>NightlinkPropagationUI.monitor.summary(Date.now()).events.map(e=>[e.peakLevel,e.active,e.stale]));
  assert.ok(history.length>=1&&history.every(e=>e[1]===false),'restored events are historical, not active: '+JSON.stringify(history));
  assert.notEqual(await level(),'strong-anomaly','no active alert from restored history alone');
- // Disconnect never leaves an active alert; disabling hides the indicator.
+ // Disconnect never leaves an active alert; disabling remains explicit unless the indicator is opted out.
  await page.evaluate(()=>{ble.state='disconnected';radioSession.dispatchEvent(new Event('disconnected'));});assert.equal(await level(),'unavailable');
- await page.evaluate(()=>{view('Settings');window.NightlinkSettings?.open?.('Notifications');});await page.locator('#propagation-enabled').uncheck();assert.equal(await page.locator('#propagation-indicator').isHidden(),true);
+ await page.evaluate(()=>{view('Settings');window.NightlinkSettings?.open?.('Notifications');});await page.locator('#propagation-enabled').uncheck();assert.equal(await page.locator('#propagation-indicator').isVisible(),true);
+ assert.equal(await page.locator('#propagation-indicator .header-control-label').textContent(),'Monitor off');
+ await page.locator('#propagation-indicator').click();await page.locator('#propagation-panel').waitFor();
+ assert.match(await page.locator('#propagation-panel').textContent(),/Monitoring is turned off in Settings/);
+ await page.evaluate(()=>document.querySelector('#dialog').close());
+ await page.locator('#propagation-indicator-setting').uncheck();assert.equal(await page.locator('#propagation-indicator').isHidden(),true);
+ await page.locator('#propagation-indicator-setting').check();assert.equal(await page.locator('#propagation-indicator').isVisible(),true);
  assert.deepEqual(await page.evaluate(()=>radioWrites),[],'the monitor never sends radio commands');
  await page.locator('#propagation-enabled').check();
  // Damaged stored history: the monitor must still reach ready, process events and stay usable.

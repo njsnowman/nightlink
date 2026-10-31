@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep the RF monitor indicator visible as Monitor off when monitoring is disabled, unless its indicator preference is off; preserve collapsed Conversations across immediate rerenders. Fixes found during [rc.3 validation](https://github.com/njsnowman/nightlink/pull/120).
+
 - Show radio-reported counters in Radio Health: packets sent and received since radio start, raw TX/RX airtime and uptime values, and when they were read; firmware without radio statistics shows Unavailable. No additional radio commands. Synthetic tests only.
 
 - Show the expected SHA-256 for an available update when the GitHub asset digest and the release SHA256SUMS.txt agree, with copy buttons and the PowerShell Get-FileHash command; warn and withhold the download link when they disagree, and warn when either is missing. Nightlink still opens downloads in the browser and does not hash the downloaded file.

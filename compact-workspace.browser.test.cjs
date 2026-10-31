@@ -47,6 +47,7 @@ const fs=require('node:fs/promises'),path=require('node:path'),assert=require('n
   const group=page.locator('#channels [data-sidebar-group=channels]');await group.locator('summary').click();
   const open=await group.evaluate(e=>e.open);await page.evaluate(()=>renderChannels());
   assert.equal(await group.evaluate(e=>e.open),open,'existing conversation disclosure retains choice');
+  for(const choice of [false,true]){await page.evaluate(open=>{document.querySelector('#channels [data-sidebar-group=channels]').open=open;renderChannels();},choice);assert.equal(await group.evaluate(e=>e.open),choice,'synchronous rerender preserves disclosure before queued toggle event');}
   assert.equal(await page.locator('aside nav>button').count(),5,'no new primary destinations');
   await page.evaluate(()=>view('Messages'));assert.equal(await splitter.isVisible(),false);
   assert.deepEqual(await page.evaluate(()=>window.layoutCommands||[]),[]);assert.deepEqual(errors,[]);
