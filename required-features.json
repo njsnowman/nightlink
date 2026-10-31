@@ -29,6 +29,8 @@
     "map-provider-settings.js",
     "propagation.js",
     "propagation-ui.js",
-    "propagation.css"
+    "propagation.css",
+    "echo-workspace.js",
+    "echo-workspace.css"
   ]
 }
