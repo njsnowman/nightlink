@@ -1,2 +1,51 @@
 .radio-tools{min-width:0}.tools-actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.radio-tools button{padding:10px 14px}.radio-tools textarea{display:block;width:100%;box-sizing:border-box;margin:10px 0;overflow-wrap:anywhere}.radio-tools label{display:block;margin:12px 0 6px}.radio-tools input[type=file]{max-width:100%}#contact-qr{display:block;max-width:100%;width:260px;height:auto;margin:12px auto}#advert-preview .public-key{overflow-wrap:anywhere}#tools-result,#import-result,#share-result{color:#bcebdc;line-height:1.5}
 #advert-confirm{cursor:pointer}#advert-confirm[aria-busy=true]{cursor:wait}#tools-result{font-size:15px;padding:12px;border:1px solid #718b81;border-radius:8px}#tools-result:empty{display:none}#tools-result[data-state=accepted]{background:#163127;color:#b7f1d4}#tools-result[data-state=error]{background:#36251c;color:#ffdab5;border-color:#b18a68}
+
+/* Radio Tools landing panel; shared subdialogs retain their own layouts. */
+html body #dialog:has(.radio-tools-hub){width:min(1080px,calc(100vw - 40px));max-width:1080px;max-height:calc(100dvh - 40px);padding:28px;border:1px solid var(--line);border-radius:20px;background:var(--bg);box-shadow:0 24px 100px #0009}
+html body #dialog:has(.radio-tools-hub) .dialog-heading{padding:0 0 20px;margin:0;border:0;border-bottom:1px solid var(--line);background:none;align-items:center}
+html body #dialog:has(.radio-tools-hub) .dialog-heading h2{font-size:22px;letter-spacing:-.5px;font-weight:650;margin:0}
+html body #dialog:has(.radio-tools-hub) #close-dialog{display:grid;place-items:center;width:36px;height:36px;min-height:36px;padding:0;border:1px solid var(--line);border-radius:10px;background:var(--panel);font-size:16px;color:var(--muted)}
+.radio-tools-hub{min-width:0;padding-top:24px}
+.radio-tools-hero{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:22px 24px;border:1px solid color-mix(in srgb,var(--accent) 23%,var(--line));border-radius:14px;background:linear-gradient(115deg,color-mix(in srgb,var(--accent) 7%,var(--panel)),var(--panel));margin-bottom:28px}
+.radio-tools-eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:650;color:var(--accent)}
+html body #dialog .radio-tools-name{font-size:24px;letter-spacing:-.6px;line-height:1.25;margin:7px 0;color:var(--text);font-weight:650;overflow-wrap:anywhere}
+html body #dialog .radio-tools-hero p{font-size:13px;color:var(--muted);margin:0;line-height:1.6}
+.radio-tools-status{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;padding:9px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:12px;font-weight:550;background:var(--bg)}
+.radio-tools-status:before{content:'';width:6px;height:6px;flex-shrink:0;border-radius:50%;background:currentColor}
+.radio-tools-status[data-ready=true]{color:#9edbb6;border-color:#315e43;background:#10221a}
+html body #dialog .radio-tools-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:22px;margin:0}
+.radio-tool-group{min-width:0}
+html body #dialog .radio-tool-group h3{font-size:14px;font-weight:650;margin:0 0 4px;letter-spacing:0;color:var(--text)}
+html body #dialog .radio-tool-group-note{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 14px}
+.radio-tool-list{display:grid;gap:10px}
+html body #dialog .radio-tools-hub button.radio-tool-card{width:100%;min-width:0;min-height:calc(108px * var(--read-scale,1));margin:0;padding:17px 14px;display:flex;align-items:center;justify-content:flex-start;gap:12px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);box-shadow:0 2px 3px #0002;line-height:1.4;font:inherit;white-space:normal;transition:background .16s,border-color .16s,box-shadow .16s}
+html body #dialog .radio-tools-hub button.radio-tool-card:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 6%,var(--panel));border-color:color-mix(in srgb,var(--accent) 65%,var(--line));box-shadow:0 4px 12px #0003;color:var(--text)}
+html body #dialog .radio-tools-hub button.radio-tool-card:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+html body #dialog .radio-tools-hub button.radio-tool-card:disabled{cursor:not-allowed;opacity:.48}
+.radio-tool-icon{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border:1px solid color-mix(in srgb,var(--accent) 20%,var(--line));border-radius:10px;background:color-mix(in srgb,var(--accent) 7%,var(--bg));color:var(--accent)}
+.radio-tool-icon svg{width:20px;height:20px}
+.radio-tool-copy{display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:0;flex:1}
+.radio-tool-copy strong{font-size:calc(13px * var(--read-scale,1));font-weight:600;color:var(--text);line-height:1.35}
+.radio-tool-copy>span{font-size:calc(11.5px * var(--read-scale,1));color:var(--muted);line-height:1.5}
+.radio-tool-arrow{font-size:22px;color:var(--muted);font-weight:300;flex-shrink:0}
+.radio-tool-maintenance{margin-top:24px;border-top:1px solid var(--line);padding-top:20px}
+html body #dialog .radio-tool-maintenance button.radio-tool-card{min-height:76px;background:transparent;border-style:dashed;padding:14px 18px}
+.radio-tool-maintenance .radio-tool-icon{color:var(--muted);background:var(--panel);border-color:var(--line)}
+html body #dialog .radio-tool-maintenance .radio-tool-copy strong{font-size:12px;color:var(--muted)}
+html body #dialog .radio-tools-foot{font-size:11px;line-height:1.6;color:var(--muted);margin:16px 0 0;text-align:center}
+@media(max-width:900px){html body #dialog:has(.radio-tools-hub){padding:22px}html body #dialog .radio-tools-grid{gap:18px;grid-template-columns:repeat(2,minmax(0,1fr))}.radio-tool-group:last-child{grid-column:1/-1}.radio-tool-group:last-child .radio-tool-list{grid-template-columns:repeat(2,minmax(0,1fr))}.radio-tools-hero{padding:20px}.radio-tools-hero-copy{min-width:0}}
+@media(max-width:560px){html body #dialog:has(.radio-tools-hub){width:calc(100vw - 20px);max-height:calc(100dvh - 20px);padding:18px;border-radius:16px}.radio-tools-hero{flex-direction:column;align-items:flex-start;gap:14px;margin-bottom:22px}.radio-tools-status{font-size:11px}html body #dialog .radio-tools-grid{grid-template-columns:1fr;gap:22px}.radio-tool-group:last-child .radio-tool-list{grid-template-columns:1fr}html body #dialog .radio-tools-hub button.radio-tool-card{min-height:92px}.radio-tools-hub{padding-top:18px}}
+@media(prefers-reduced-motion:reduce){html body #dialog .radio-tools-hub button.radio-tool-card{transition:none}}
+
+/* Contact exchange and advert sheets use the same control language. */
+html body #dialog:has(.radio-tools :is(#advert-confirm,#advert-input,#share-uri)){width:min(620px,calc(100vw - 32px));padding:26px;border:1px solid var(--line);border-radius:18px;background:var(--bg)}
+html body #dialog .radio-tools:has(#advert-confirm,#advert-input,#share-uri) :is(p,label){color:var(--muted);font-size:13px;line-height:1.7}
+html body #dialog .radio-tools:has(#advert-confirm,#advert-input,#share-uri) button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);font-size:13px;font-weight:600;line-height:1.4;text-align:center}
+html body #dialog .radio-tools:has(#advert-confirm,#advert-input,#share-uri) button:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+html body #dialog .radio-tools:has(#advert-confirm,#advert-input,#share-uri) button.primary{background:var(--accent);border-color:var(--accent);color:#101410}
+html body #dialog .radio-tools:has(#advert-confirm,#advert-input,#share-uri) :is(textarea,input[type=file]){padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);font-size:13px;line-height:1.6}
+html body #dialog .radio-tools:has(#share-uri) .tools-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+html body #dialog #share-name{text-align:center;color:var(--text);font-size:18px;font-weight:600}
+html body #dialog #preview-advert{width:100%;margin-top:16px}
+@media(max-width:560px){html body #dialog .radio-tools:has(#share-uri) .tools-actions{grid-template-columns:1fr}}

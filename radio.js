@@ -6,7 +6,7 @@
  const dv=d=>new DataView(d.buffer,d.byteOffset,d.byteLength);
  const validLocation=(lat,lon)=>Number.isFinite(lat)&&Number.isFinite(lon)&&Math.abs(lat)<=90&&Math.abs(lon)<=180&&(lat!==0||lon!==0);
  function contact(d){if(d.length<148)throw new Error('Incomplete contact frame');const v=dv(d),lat=v.getInt32(136,true)/1e6,lon=v.getInt32(140,true)/1e6;return{key:hex(d.slice(1,33)),type:d[33],flags:d[34],pathLength:d[35],path:hex(d.slice(36,100)),name:text(d,100,132)||hex(d.slice(1,5)),lastAdvert:v.getUint32(132,true),lat,lon,located:validLocation(lat,lon),lastModified:v.getUint32(144,true)};}
- function identity(self,info){if(self.length<52||info.length<2)throw new Error('Incomplete radio identity');const v=dv(self),lat=v.getInt32(36,true)/1e6,lon=v.getInt32(40,true)/1e6;return{key:hex(self.slice(4,36)),name:text(self,58)||'MeshCore radio',type:self[1],txPower:v.getInt8(2),frequency:v.getUint32(48,true)/1000,bandwidth:self.length>=56?v.getUint32(52,true)/1000:null,sf:self[56],cr:self[57],lat,lon,located:validLocation(lat,lon),protocol:info[1],maxChannels:info.length>=4?info[3]:8,model:text(info,20,60)||'MeshCore companion',version:text(info,60,80)||'Unknown',build:text(info,8,20)};}
+ function identity(self,info){if(self.length<52||info.length<2)throw new Error('Incomplete radio identity');const v=dv(self),lat=v.getInt32(36,true)/1e6,lon=v.getInt32(40,true)/1e6;return{key:hex(self.slice(4,36)),name:text(self,58)||'MeshCore radio',type:self[1],txPower:v.getInt8(2),maxTxPower:self[3],repeatEnabled:info.length>=81?!!info[80]:null,frequency:v.getUint32(48,true)/1000,bandwidth:self.length>=56?v.getUint32(52,true)/1000:null,sf:self[56],cr:self[57],lat,lon,located:validLocation(lat,lon),protocol:info[1],maxChannels:info.length>=4?info[3]:8,model:text(info,20,60)||'MeshCore companion',version:text(info,60,80)||'Unknown',build:text(info,8,20)};}
  function message(d){const channel=[8,17].includes(d[0]),direct=[7,16].includes(d[0]);if(!channel&&!direct)return null;const modern=[16,17].includes(d[0]),start=modern?4:1,min=start+(channel?7:12);if(d.length<min)throw new Error('Incomplete message frame');let at=start;const m={kind:channel?'channel':'direct',snr:modern?dv(d).getInt8(1)/4:null};if(channel)m.slot=d[at++];else{m.prefix=hex(d.slice(at,at+6));at+=6;}m.pathLength=d[at++];m.textType=d[at++];m.timestamp=dv(d).getUint32(at,true);at+=4;if(direct&&m.textType===2){if(d.length<at+4)throw new Error('Incomplete signed message');m.signature=hex(d.slice(at,at+4));at+=4;}m.text=decoder.decode(d.slice(at)).split('\0')[0];return m;}
  class MeshlineRadio extends EventTarget{
   constructor(ble,{pollInterval=30000}={}){super();this.pollInterval=pollInterval;this.ble=ble;this.generation=0;this.tail=Promise.resolve();this.contacts=[];this.channels=[];this.ready=false;this.draining=false;this.identity=null;this.poll=null;this.lastTimestamp=0;this.telemetryBusy=false;this.statsDisabled=new Set();ble.addEventListener('identity',e=>{const work=this.start(e.detail),generation=this.generation;work.catch(error=>{if(generation!==this.generation)return;this.ready=false;this.syncing=false;this.emit('sync',{state:'error',message:error.message});this.warn(error);});});ble.addEventListener('state',e=>{if(e.detail.state==='disconnected'){this.stop();this.emit('disconnected');}});ble.addEventListener('packet',e=>this.packet(e.detail));}
@@ -24,6 +24,27 @@
    try{key=key.trim().toLowerCase();name=name.trim();if(!/^[a-f0-9]{64}$/.test(key)||/^0+$/.test(key))throw new Error('Enter the contact’s full 64-character public key.');if(key===this.identity.key)throw new Error('This is your own radio’s public key.');if(!name||encoder.encode(name).length>31||name.includes('\0'))throw new Error('Radio name must be 1–31 UTF-8 bytes.');if(![1,2,3,4].includes(Number(type)))throw new Error('Choose a valid node type.');if(this.contacts.some(c=>c.key===key))throw new Error('This contact already exists. Open its contact card to add a nickname.');
     const publicKey=Uint8Array.from(key.match(/../g),h=>parseInt(h,16));try{await configRequest([30,...publicKey],3);throw new Error('This contact already exists on the radio. Refresh your contacts.');}catch(error){if(error.radioCode!==2)throw error;}
     const bytes=new Uint8Array(144);bytes[0]=9;bytes.set(publicKey,1);bytes[33]=Number(type);bytes[35]=255;bytes.set(encoder.encode(name),100);await configRequest(bytes,0);const response=await configRequest([30,...publicKey],3);const added=contact(response);if(added.key!==key)throw new Error('Radio returned a different contact. Refresh before retrying.');const i=this.contacts.findIndex(c=>c.key===key);if(i<0)this.contacts.push(added);else this.contacts[i]=added;this.emit('contacts',this.contacts.slice());return added;
+   }finally{this.configuring=false;}
+  }
+  async removeContact(key,{guard:beforeRemove=()=>{}}={}){
+   if(!this.ready||this.syncing||!this.identity?.key||this.ble.state!=='connected')throw new Error('Connect and synchronize your radio first.');
+   if(this.configuring)throw new Error('Another radio update is in progress.');
+   key=typeof key==='string'?key.trim().toLowerCase():'';
+   if(!/^[a-f0-9]{64}$/.test(key)||/^0+$/.test(key))throw new Error('Enter the contact’s full 64-character public key.');
+   if(key===this.identity.key)throw new Error('This is your own radio’s public key.');
+   if(!this.contacts.some(c=>c.key===key))throw new Error('This contact is not saved on the connected radio. Refresh contacts before retrying.');
+   const generation=this.generation,owner=this.identity.key;
+   const guard=()=>{if(generation!==this.generation||owner!==this.identity?.key||!this.ready||this.syncing||this.ble.state!=='connected')throw new Error('Radio connection changed during contact removal. Refresh before retrying.');};
+   const configRequest=(bytes,type,timeout=8000,before=()=>{})=>{guard();return this.request(bytes,type,timeout,()=>{guard();before();});};
+   this.configuring=true;
+   try{
+    // Companion CMD_REMOVE_CONTACT: one command byte plus the entire public key.
+    const response=await configRequest([15,...key.match(/../g).map(h=>parseInt(h,16))],0,8000,beforeRemove);guard();
+    if(response.length!==1||response[0]!==0)throw new Error('Contact removal was not acknowledged by the radio. Refresh before retrying.');
+    // Verify by exact-key lookup (CMD_GET_CONTACT_BY_KEY). A full-list count is not stable while adverts add contacts.
+    let present;try{present=contact(await configRequest([30,...key.match(/../g).map(h=>parseInt(h,16))],3));}catch(error){if(error.radioCode!==2)throw new Error('Radio accepted removal, but the exact-key lookup failed ('+error.message+'). Refresh contacts before retrying.');}guard();
+    if(present)throw new Error(present.key===key?'This contact is still present on the radio, or was added again. Refresh contacts before retrying.':'Radio returned a different contact during removal verification. Refresh contacts before retrying.');
+    this.forgetContact(key);return{key,removed:true};
    }finally{this.configuring=false;}
   }
   emit(type,detail){this.dispatchEvent(new CustomEvent(type,{detail}));}

@@ -1,0 +1,3 @@
+#contact-actions .contact-delete-action,.delete-contact-actions .contact-delete-action{color:#ffa5aa;border-color:#9a4e56}.delete-contact-actions{display:flex;gap:10px;flex-wrap:wrap}.delete-contact-actions button{padding:10px 14px;border:1px solid var(--accent-line);background:#10171b;color:#dce8ef}.delete-contact-actions button:disabled{opacity:.5}#delete-contact-feedback{min-height:24px}
+
+#bulk-contact-panel ul{max-height:25vh;overflow:auto;overflow-wrap:anywhere} .bulk-contact-ack{display:flex;align-items:flex-start;gap:10px;margin:16px 0} .bulk-contact-ack input{width:auto;flex:none} #bulk-contact-remove{font-size:12px;white-space:normal;margin-left:auto}

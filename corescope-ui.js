@@ -2,12 +2,12 @@
 (function(){
  let mode='corescope',overviewMode='corescope',frame=null,frameKey='',timer=null,stopHealth=null,finishPage=null,locationSignature='',retryTimer=null,retryEpoch=0,recenterRequest=0;
  let pcPosition=null,pcPending=null,pcAttempted=false;
- function locatePC(){if(pcPending)return pcPending;pcAttempted=true;pcPending=Promise.resolve().then(()=>window.nightlinkMeshMapper?.location?.()).then(p=>{pcPosition=p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&Math.abs(p.lat)<=85&&Math.abs(p.lon)<=180?p:null;}).catch(()=>{pcPosition=null;}).finally(()=>{pcPending=null;if(current==='Network map'&&effective()==='meshmapper')show();});return pcPending;}
+ function locatePC(){if(!NightlinkMapProviders.enabled('meshmapper'))return Promise.resolve();if(pcPending)return pcPending;pcAttempted=true;pcPending=Promise.resolve().then(()=>window.nightlinkMeshMapper?.location?.()).then(p=>{pcPosition=p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&Math.abs(p.lat)<=85&&Math.abs(p.lon)<=180?p:null;}).catch(()=>{pcPosition=null;}).finally(()=>{pcPending=null;if(current==='Network map'&&effective()==='meshmapper')show();});return pcPending;}
  const pcLabel=()=>pcPending?'Locating PC…':pcPosition?'PC location · Windows estimate':region()+' region center · PC location unavailable; enable Windows Location and Recenter';
  const region=()=>NightlinkMeshMapperRegion.get();
  const failed={corescope:false,meshmapper:false};
  try{const saved=localStorage.getItem('nightlink.network-map');if(['corescope','radio','meshmapper'].includes(saved))mode=saved;}catch{}
- const wanted=()=>current==='Overview'?overviewMode:mode;
+ const wanted=()=>{const source=current==='Overview'?overviewMode:mode;return NightlinkMapProviders.enabled(source)?source:'radio';};
  const effective=()=>{const source=wanted();return source!=='radio'&&navigator.onLine&&!failed[source]?source:'radio';};
  const context=()=>current==='Network map'?'network':undefined;
  const bar=document.createElement('section');bar.className='network-source-bar';
@@ -56,7 +56,7 @@
   if(bar.parentElement!==host){if(overview)host.querySelector('.panel-heading').after(bar);else host.prepend(bar);}
   mapPanel.classList.toggle('overview-corescope',overview&&active!=='radio');
   for(const source of ['corescope','radio','meshmapper'])bar.querySelector('#network-'+source).setAttribute('aria-pressed',String(active===source));
-  bar.querySelector('#network-meshmapper').hidden=overview;bar.querySelector('#network-meshmapper').textContent='MeshMapper '+region();bar.querySelector('#network-meshmapper-region').hidden=overview;bar.querySelector('#network-meshmapper-region').textContent='Region: '+region();bar.querySelector('#network-open-meshmapper').hidden=active!=='meshmapper';
+  bar.querySelector('#network-corescope').hidden=!NightlinkMapProviders.enabled('corescope');bar.querySelector('#network-meshmapper').hidden=overview||!NightlinkMapProviders.enabled('meshmapper');bar.querySelector('#network-meshmapper').textContent='MeshMapper '+region();bar.querySelector('#network-meshmapper-region').hidden=overview||!NightlinkMapProviders.enabled('meshmapper');bar.querySelector('#network-meshmapper-region').textContent='Region: '+region();bar.querySelector('#network-open-meshmapper').hidden=active!=='meshmapper';
   const remote=wanted(),label=remote==='meshmapper'?'MeshMapper '+region():'CoreScope';
   bar.querySelector('#network-source-note').textContent=active==='meshmapper'?pcLabel()+' · green coverage / red dropped packets':active==='corescope'?'CoreScope · external live feed':!navigator.onLine?'Offline radio map · downloaded street tiles':failed[remote]?label+' unavailable · local radio map · retrying automatically':'Local radio map · '+(MeshlineStreetMaps.radioView()?'radio-reported location':'saved or regional location');
   const reload=bar.querySelector('#network-reload');reload.hidden=remote==='radio';reload.textContent='Reload '+label;
@@ -65,14 +65,15 @@
   if(active!=='radio'){mapPanel.hidden=!overview;if(pane.parentElement!==host)host.append(pane);start(force);}
   else{stop();pane.remove();mapPanel.hidden=false;if(!overview)host.append(mapPanel);centerNetworkStreetMap();requestAnimationFrame(()=>networkStreetMap?.invalidateSize());}
  }
- function choose(source){recenterRequest++;failed[source]=false;if(current==='Overview'){overviewMode=source;show();return;}mode=source;if(source==='meshmapper')locatePC();try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
+ function choose(source){if(!NightlinkMapProviders.enabled(source))return;recenterRequest++;failed[source]=false;if(current==='Overview'){overviewMode=source;show();return;}mode=source;if(source==='meshmapper')locatePC();try{localStorage.setItem('nightlink.network-map',mode);}catch{}show();}
  for(const source of ['corescope','radio','meshmapper'])bar.querySelector('#network-'+source).onclick=()=>choose(source);
- bar.querySelector('#network-open-meshmapper').onclick=()=>window.nightlinkMeshMapper?.open(region());
- bar.querySelector('#network-meshmapper-region').onclick=()=>showMeshMapperRegion();
+ bar.querySelector('#network-open-meshmapper').onclick=()=>{if(NightlinkMapProviders.enabled('meshmapper'))window.nightlinkMeshMapper?.open(region());};
+ bar.querySelector('#network-meshmapper-region').onclick=()=>{if(NightlinkMapProviders.enabled('meshmapper'))showMeshMapperRegion();};
  window.addEventListener('nightlink-meshmapper-region',()=>{failed.meshmapper=false;show();});
  bar.querySelector('#network-center').onclick=()=>{if(effective()==='meshmapper'){const request=++recenterRequest,expectedFrame=frame;locatePC().then(()=>{if(request===recenterRequest&&current==='Network map'&&effective()==='meshmapper'&&frame===expectedFrame)show(true);});return;}if(effective()!=='radio')start(true);else centerNetworkStreetMap();};
  bar.querySelector('#network-reload').onclick=()=>{failed[wanted()]=false;show(true);};
  radioSession.addEventListener('identity',()=>{if(frame&&effective()!=='meshmapper'&&locationSignature!==NightlinkCoreScopeLocation.signature(context()))start();});
+ window.addEventListener('nightlink-map-providers-changed',()=>{recenterRequest++;stop();show();});
  window.addEventListener('offline',()=>show());window.addEventListener('online',()=>{failed.corescope=failed.meshmapper=false;show();});
  const sourceRenderMap=renderMap;renderMap=function(){sourceRenderMap();if(current==='Overview'&&effective()!=='radio')mapPanel.querySelector('.live').textContent='OKI MESH';};
  const sourceView=view;view=function(name){recenterRequest++;stop();bar.remove();pane.remove();mapPanel.hidden=false;mapPanel.classList.remove('overview-corescope');$('#alternate').classList.remove('network-source-view');sourceView(name);if(name==='Overview'){overviewMode='corescope';failed.corescope=false;}if(name==='Network map'&&wanted()==='meshmapper')locatePC();if(['Overview','Network map'].includes(name))show();};

@@ -1,17 +1,20 @@
 {
   "name": "meshline",
-  "version": "0.8.24",
+  "version": "0.8.26-rc.17",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
     "start": "electron .",
     "preview": "node server.cjs",
     "dist": "electron-builder --win nsis portable",
-    "test": "node --test send-feedback.test.cjs performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs security-store.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs radio-workbench.test.cjs reactions.test.cjs"
+    "test": "node --test echo-layout.test.cjs feature-retention.test.cjs send-feedback.test.cjs performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs security-store.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs radio-workbench.test.cjs reactions.test.cjs chat-signals.test.cjs workspace-confidence.test.cjs outbox.test.cjs compact-workspace.test.cjs support-report.test.cjs contact-deletion.test.cjs desktop-window.test.cjs bulk-contact-removal.test.cjs bulk-contact-removal-radio.test.cjs device-management.test.cjs device-serial.test.cjs",
+    "test:browser": "node combined-ui.browser.test.cjs && node device-management.browser.test.cjs && node radio-tools-design.browser.test.cjs && node shared-design.browser.test.cjs && node submenus-design.browser.test.cjs && node radio-page.browser.test.cjs && node map-provider-settings.browser.test.cjs && node delivery-details.browser.test.cjs && node contact-deletion.browser.test.cjs && node bulk-contact-removal.browser.test.cjs && node radio-tools.browser.test.cjs && node radio-cli.browser.test.cjs",
+    "verify:package": "node verify-package.cjs"
   },
   "devDependencies": {
     "electron": "^42.11.12",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "playwright": "1.62.1"
   },
   "build": {
     "appId": "local.meshline.desktop",
@@ -191,7 +194,33 @@
       "radio-status-ui.js",
       "radio-status.css",
       "mention-highlight.css",
-      "mention.wav"
+      "mention.wav",
+      "chat-signals.js",
+      "chat-signals-ui.js",
+      "chat-signals-native.js",
+      "chat-signals.css",
+      "workspace-confidence.js",
+      "workspace-confidence-ui.js",
+      "workspace-confidence.css",
+      "compact-workspace.js",
+      "compact-workspace.css",
+      "support-report.js",
+      "support-report-ui.js",
+      "contact-deletion-ui.js",
+      "contact-deletion.css",
+      "desktop-window.cjs",
+      "bulk-contact-removal.js",
+      "bulk-contact-removal-ui.js",
+      "echo-command-shortcuts.js",
+      "layout-consistency.css",
+      "device-management.js",
+      "device-serial.js",
+      "device-management-ui.js",
+      "device-management.css",
+      "nightlink-design.css",
+      "nightlink-design.js",
+      "radio-page-ui.js",
+      "map-provider-settings.js"
     ],
     "win": {
       "target": [

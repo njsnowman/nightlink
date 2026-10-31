@@ -1,4 +1,6 @@
-# Nightlink 0.8.22 release readiness
+# Nightlink release readiness
+
+Current candidate readiness: [0.8.26 acceptance matrix](releases/0.8.26-readiness.md). The older 0.8.22 record below is retained as dated history.
 
 > Current disposition: stable [0.8.22 is public](releases/0.8.22.md) under the owner-approved publication exception recorded below. Earlier hold/candidate statements are dated history. Installer lifecycle and production lock re-enrollment checks remain unverified.
 
