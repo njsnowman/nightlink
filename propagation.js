@@ -14,9 +14,14 @@
   thresholds:{low:{possible:55,strong:80},medium:{possible:40,strong:70},high:{possible:30,strong:55}},
   hysteresis:10,clearMs:20*MINUTE,cooldownMs:30*MINUTE,
   unusualDistanceKm:80,distanceFactor:1.5,minDistanceSamples:5,rareMaxBuckets:1,minStationsNew:2,
-  snrMinDelta:3,snrFullDelta:12,snrMinComparable:3,snrMinSamples:3,sustainedWindows:3
+  snrMinDelta:3,snrFullDelta:12,snrMinComparable:3,snrMinSamples:3,sustainedWindows:3,
+  // Full sustained credit needs flagged observations spread over (sustainedWindows-1) x sustainedSlotMs; evaluation calls add nothing.
+  sustainedSlotMs:10*MINUTE,
+  // Time without any observation or heartbeat beyond this gap is not counted as monitored coverage (null disables).
+  idleGapMs:30*MINUTE,maxLocations:5000
  });
  const baselineChoices=[14,30,60],sensitivities=['low','medium','high'];
+ const levels=['normal','possible-opening','strong-anomaly'];
  const labels={disabled:'Monitoring disabled',unavailable:'Monitoring unavailable','insufficient-data':'Learning baseline',normal:'Normal','possible-opening':'Possible RF opening','strong-anomaly':'Strong RF anomaly'};
  const clamp=x=>Math.max(0,Math.min(1,x));
  const finite=x=>typeof x==='number'&&Number.isFinite(x);
@@ -58,7 +63,9 @@
  };
 
  function emptyRadio(){return {buckets:[],stations:new Map(),distances:[],events:[],locations:new Map(),own:null,fingerprint:null,comparable:true,warning:null,
-  window:[],seen:new Map(),seenQ:[],recent:[],level:'normal',score:0,anomalyStreak:0,below:null,lastQualifying:null,current:null,lastEnd:null,lastEndLevel:null};}
+  window:[],seen:new Map(),seenQ:[],seenHead:0,recent:[],level:'normal',score:0,anomalyStreak:0,below:null,lastQualifying:null,current:null,lastEnd:null,lastEndLevel:null,baseCache:null};}
+ // SNR comparison class: same station, packet type and reception route.
+ const snrClass=o=>o.station+'|'+o.type+'|'+o.relation+'|'+(o.hops==null?'u':o.hops);
 
  function score(input,options=defaults){
   const w={...defaults.weights,...(options.weights||{})},parts={distance:null,stations:null,snr:null,sustained:null};
@@ -73,7 +80,7 @@
  function createMonitor(opts={}){
   const settings={...defaults,...opts,weights:{...defaults.weights,...(opts.weights||{})},thresholds:{...defaults.thresholds,...(opts.thresholds||{})}};
   const now=opts.now||(()=>Date.now()),listeners=new Set(),radios=new Map();
-  let key=null,connected=false,coverFrom=null,rxlogSeen=false,rejected=0;
+  let key=null,connected=false,coverFrom=null,lastActivity=null,rxlogSeen=false,rejected=0,settingsVersion=0;
   const emit=(type,detail)=>{for(const f of listeners){try{f({type,detail});}catch{}}};
   const radio=()=>{if(!key)return null;if(!radios.has(key))radios.set(key,emptyRadio());return radios.get(key);};
   const thresholds=()=>settings.thresholds[sensitivities.includes(settings.sensitivity)?settings.sensitivity:'medium'];
@@ -86,24 +93,31 @@
    if(r.stations.size>settings.maxStations){const old=[...r.stations].sort((a,b)=>a[1].last-b[1].last).slice(0,r.stations.size-settings.maxStations);for(const [k] of old)r.stations.delete(k);}
    r.distances=r.distances.filter(d=>d.at>=min).slice(-settings.maxDistances);}
   function cover(at){const r=radio();if(!r||!connected)return;if(coverFrom==null||at<=coverFrom){if(coverFrom==null)coverFrom=at;return;}
-   let t=coverFrom;while(t<at){const b=bucketAt(r,t);const end=Math.min(at,(b?b.start:t)+settings.bucketMs);if(b)b.coverageMs=Math.min(settings.bucketMs,b.coverageMs+(end-t));t=end;}coverFrom=at;}
+   // A link silent beyond idleGapMs (no observation, no heartbeat) may be down without a disconnect event.
+   const until=settings.idleGapMs!=null&&lastActivity!=null?Math.min(at,Math.max(coverFrom,lastActivity+settings.idleGapMs)):at;
+   let t=coverFrom;while(t<until){const b=bucketAt(r,t);const end=Math.min(until,(b?b.start:Math.floor(t/settings.bucketMs)*settings.bucketMs)+settings.bucketMs);if(b)b.coverageMs=Math.min(settings.bucketMs,b.coverageMs+(end-t));t=end;}coverFrom=at;}
 
   function baselineRange(at){return {from:at-settings.baselineDays*86400000,to:at-settings.windowMs};}
+  // Cached per radio for the current from/to bucket pair; completed buckets do not change within it.
   function baseline(r,at){
-   const {from,to}=baselineRange(at),usable=r.buckets.filter(b=>b.start>=from&&b.start+settings.bucketMs<=to&&b.coverageMs>=settings.bucketMs*settings.minCoverageRatio);
+   const {from,to}=baselineRange(at),ck=settingsVersion+'|'+Math.floor(from/settings.bucketMs)+'|'+Math.floor(to/settings.bucketMs)+'|'+r.buckets.length;
+   if(r.baseCache&&r.baseCache.key===ck)return r.baseCache.value;
+   const usable=r.buckets.filter(b=>b.start>=from&&b.start+settings.bucketMs<=to&&b.coverageMs>=settings.bucketMs*settings.minCoverageRatio);
    const hours=usable.reduce((a,b)=>a+b.coverageMs,0)/HOUR,snr=new Map();let packets=0,newKeys=0;
    for(const b of usable){packets+=b.packets;newKeys+=b.newKeys;for(const [c,v] of b.snr){const s=snr.get(c)||{n:0,sum:0};s.n+=v.n;s.sum+=v.sum;snr.set(c,s);}}
    const dist=r.distances.filter(d=>d.at>=from&&d.at<=to).map(d=>d.km);
-   return {hours,buckets:usable.length,packetRate:hours?packets/hours:null,newRate:hours?newKeys/hours:null,snr,distanceP95:dist.length>=settings.minDistanceSamples?percentile(dist,0.95):null,distanceSamples:dist.length};
+   const value={hours,buckets:usable.length,packetRate:hours?packets/hours:null,newRate:hours?newKeys/hours:null,snr,distanceP95:dist.length>=settings.minDistanceSamples?percentile(dist,0.95):null,distanceSamples:dist.length};
+   r.baseCache={key:ck,value};return value;
   }
 
   function observe(obs){
    if(!obs||!finite(obs.at)){rejected++;return false;}
    const r=radio();if(!r||!settings.enabled)return false;
    if(obs.source==='rxlog')rxlogSeen=true;
-   if(obs.location&&obs.station)r.locations.set(obs.station,obs.location);
-   const at=obs.at;cover(at);
-   while(r.seenQ.length&&r.seenQ[0][1]<at-settings.dedupMs){const [k,t]=r.seenQ.shift();if(r.seen.get(k)===t)r.seen.delete(k);}
+   if(obs.location&&obs.station)setLocation(r,obs.station,obs.location);
+   const at=obs.at;cover(at);if(connected)lastActivity=Math.max(lastActivity??at,at);
+   while(r.seenHead<r.seenQ.length&&r.seenQ[r.seenHead][1]<at-settings.dedupMs){const [k,t]=r.seenQ[r.seenHead++];if(r.seen.get(k)===t)r.seen.delete(k);}
+   if(r.seenHead>1024&&r.seenHead*2>r.seenQ.length){r.seenQ=r.seenQ.slice(r.seenHead);r.seenHead=0;}
    if(obs.dedup&&r.seen.has(obs.dedup))return false;if(obs.dedup){r.seen.set(obs.dedup,at);r.seenQ.push([obs.dedup,at]);}
    const b=bucketAt(r,at);if(!b)return false;b.packets++;if(obs.source==='rxlog')b.rxlog++;
    const flags=[];let distance=null;
@@ -114,7 +128,7 @@
     const prior=fresh?0:s.buckets-1;s.last=Math.max(s.last,at);
     if(b.keys.size<settings.maxStationsPerBucket)b.keys.add(obs.station);
     if(fresh)flags.push('new station');else if(prior<=settings.rareMaxBuckets&&s.first<at-settings.windowMs)flags.push('rarely received station');
-    if(obs.snr!=null){const c=obs.station+'|'+obs.type;const v=b.snr.get(c)||(b.snr.size<settings.maxSnrClassesPerBucket?{n:0,sum:0}:null);if(v){v.n++;v.sum+=obs.snr;b.snr.set(c,v);}}
+    if(obs.snr!=null){const c=snrClass(obs);const v=b.snr.get(c)||(b.snr.size<settings.maxSnrClassesPerBucket?{n:0,sum:0}:null);if(v){v.n++;v.sum+=obs.snr;b.snr.set(c,v);}}
    }
    // Distance only for a zero-hop flood reception whose originator key and both locations are known.
    if(obs.source==='rxlog'&&obs.relation==='direct'&&obs.stationKind==='key'&&located(r.own)&&r.locations.has(obs.station)&&workbench?.geometry){
@@ -134,12 +148,13 @@
    const enough=base.hours>=settings.minBaselineHours&&r.comparable;
    const stations={available:enough,unusual:unusualKeys.size,expected:enough&&base.newRate!=null?base.newRate*hours:0};
    let snr={delta:null,comparable:0};
-   if(enough){const per=new Map();for(const x of win){if(x.snr==null||!x.station)continue;const c=x.station+'|'+x.type;const v=per.get(c)||{n:0,sum:0};v.n++;v.sum+=x.snr;per.set(c,v);}
+   if(enough){const per=new Map();for(const x of win){if(x.snr==null||!x.station)continue;const c=snrClass(x);const v=per.get(c)||{n:0,sum:0};v.n++;v.sum+=x.snr;per.set(c,v);}
     const deltas=[];for(const [c,v] of per){const b=base.snr.get(c);if(b&&b.n>=settings.snrMinSamples)deltas.push(v.sum/v.n-b.sum/b.n);}
     if(deltas.length>=settings.snrMinComparable)snr={delta:deltas.reduce((a,v)=>a+v,0)/deltas.length,comparable:deltas.length};}
    const distance=directKeys.size?{stations:directKeys.size}:null;
    const packets=win.length,unique=new Set(win.filter(x=>x.station).map(x=>x.station)).size;
-   return {base,enough,stations,snr,distance,packets,unique,
+   const flaggedAt=win.filter(x=>x.flags.length).map(x=>x.at),flaggedSpanMs=flaggedAt.length>1?Math.max(...flaggedAt)-Math.min(...flaggedAt):0;
+   return {base,enough,stations,snr,distance,packets,unique,flaggedSpanMs,
     summary:{newStations:win.filter(x=>x.flags.includes('new station')).length,unusualStations:unusualKeys.size,unusualDirect:win.some(x=>x.distanceKm!=null)?directKeys.size:null,
      snrDelta:snr.delta,snrComparable:snr.comparable,packetRate:packets/hours,baselinePacketRate:base.packetRate,uniqueStations:unique,baselineHours:base.hours}};
   }
@@ -149,9 +164,10 @@
    if(!settings.enabled)return status('disabled');
    if(!r||!connected)return status('unavailable');
    cover(at);const m=measure(r,at);
-   if(!m.enough){r.level='insufficient-data';r.score=0;r.anomalyStreak=0;return status('insufficient-data',m);}
+   if(!m.enough){close(r,at,'insufficient data');r.level='insufficient-data';r.score=0;r.anomalyStreak=0;r.below=null;return status('insufficient-data',m);}
    const partial=score({distance:m.distance,stations:m.stations,snr:m.snr},settings).total,th=thresholds();
-   r.anomalyStreak=partial>=th.possible?r.anomalyStreak+1:0;
+   // Sustained evidence is the time spread of flagged observations in the window, so repeated evaluations add nothing.
+   r.anomalyStreak=partial>=th.possible?1+m.flaggedSpanMs/settings.sustainedSlotMs:0;
    const s=score({distance:m.distance,stations:m.stations,snr:m.snr,sustained:r.anomalyStreak||null},settings);r.score=s.total;
    // Hysteresis: enter at a threshold, leave only below threshold minus hysteresis; clearing also needs clearMs below.
    let level=r.level==='insufficient-data'?'normal':r.level;
@@ -190,22 +206,27 @@
 
   function connect(radioKey,at=now()){
    if(typeof radioKey!=='string'||!radioKey)throw Error('Radio identity required.');
-   if(key&&key!==radioKey){const prev=radio();if(prev){prev.window=[];close(prev,at,'radio changed');}}
-   key=radioKey;radio();connected=true;coverFrom=at;rxlogSeen=false;}
-  function disconnect(at=now()){cover(at);const r=radio();connected=false;coverFrom=null;if(r){r.window=[];r.anomalyStreak=0;close(r,at,'disconnected');r.level='normal';}}
+   if(key&&key!==radioKey){const prev=radio();if(prev){cover(at);close(prev,at,'radio switched');resetState(prev);}}
+   key=radioKey;radio();connected=true;coverFrom=at;lastActivity=at;rxlogSeen=false;}
+  // Clears transient detection state so a later reconnect starts from new evidence only.
+  function resetState(r){r.window=[];r.level='normal';r.score=0;r.anomalyStreak=0;r.below=null;}
+  // Link-alive signal (e.g. radio statistics or sync) so quiet but connected time still counts as coverage.
+  function heartbeat(at=now()){if(!connected||!finite(at))return;cover(at);lastActivity=Math.max(lastActivity??at,at);}
+  function setLocation(r,k,loc){r.locations.delete(k);r.locations.set(k,loc);if(r.locations.size>settings.maxLocations){let extra=r.locations.size-settings.maxLocations;for(const old of r.locations.keys()){if(extra--<=0)break;r.locations.delete(old);}}}
+  function disconnect(at=now()){cover(at);const r=radio();connected=false;coverFrom=null;lastActivity=null;if(r){close(r,at,'disconnected');resetState(r);}}
 
   function fingerprint(cfg){return JSON.stringify(['frequency','bandwidth','sf','cr','txPower','antenna','rxLog'].map(k=>cfg?.[k]??null));}
   function noteConfig(cfg){const r=radio();if(!r)return null;const f=fingerprint(cfg);
    if(r.fingerprint!=null&&r.fingerprint!==f&&r.buckets.some(b=>b.coverageMs>0)){r.comparable=false;r.warning='Radio or logging configuration changed. The historical baseline may no longer be comparable; reset it to start learning again.';emit('baseline-warning',{radio:key,warning:r.warning});}
    r.fingerprint=f;return r.warning;}
-  function resetBaseline(){const r=radio();if(!r)return;const keep={own:r.own,locations:r.locations,events:r.events,fingerprint:r.fingerprint};radios.set(key,Object.assign(emptyRadio(),keep));coverFrom=connected?now():null;emit('baseline-reset',{radio:key});}
+  function resetBaseline(){const r=radio();if(!r)return;close(r,now(),'baseline reset');const keep={own:r.own,locations:r.locations,events:r.events,fingerprint:r.fingerprint,lastEnd:r.lastEnd,lastEndLevel:r.lastEndLevel};radios.set(key,Object.assign(emptyRadio(),keep));coverFrom=connected?now():null;emit('baseline-reset',{radio:key});}
   function clearHistory(){const r=radio();if(r){r.events=r.current&&!r.current.suppressed?[r.current]:[];r.lastEnd=null;}}
   function setOwnLocation(p){const r=radio();if(r)r.own=located(p)?{lat:p.lat,lon:p.lon}:null;}
-  function setContacts(list){const r=radio();if(!r||!Array.isArray(list))return;for(const c of list)if(c&&typeof c.key==='string'&&located(c))r.locations.set(c.key,{lat:c.lat,lon:c.lon});}
+  function setContacts(list){const r=radio();if(!r||!Array.isArray(list))return;for(const c of list)if(c&&typeof c.key==='string'&&located(c))setLocation(r,c.key,{lat:c.lat,lon:c.lon});}
   function configure(next={}){
    if(next.sensitivity!==undefined&&!sensitivities.includes(next.sensitivity))throw Error('Sensitivity must be low, medium or high.');
    if(next.baselineDays!==undefined&&!baselineChoices.includes(next.baselineDays))throw Error('Baseline period must be 14, 30 or 60 days.');
-   Object.assign(settings,next);if(next.enabled===false)for(const r of radios.values()){r.window=[];r.anomalyStreak=0;close(r,now(),'disabled');r.level='normal';}}
+   Object.assign(settings,next);settingsVersion++;if(next.enabled===false)for(const r of radios.values()){close(r,now(),'disabled');resetState(r);}}
 
   function summary(at=now()){const r=radio(),st=evaluate(at);
    return {...st,recent:r?r.recent.slice(-50).reverse():[],flagged:r?r.recent.filter(x=>x.flags.length).slice(-50).reverse():[],
@@ -216,19 +237,41 @@
    out.radios[k]={buckets:r.buckets.map(b=>({start:b.start,coverageMs:b.coverageMs,packets:b.packets,rxlog:b.rxlog,keys:[...b.keys],newKeys:b.newKeys,snr:[...b.snr].map(([c,v])=>[c,v.n,v.sum])})),
     stations:[...r.stations].map(([s,v])=>[s,v.first,v.last,v.buckets,v.lastBucket,v.kind]),distances:r.distances,
     events:r.events.filter(e=>!e.suppressed).map(e=>e.end==null?{...e,end:null,stale:true,endReason:e.endReason||'not observed after restart'}:e),
-    own:r.own,locations:[...r.locations],fingerprint:r.fingerprint,comparable:r.comparable,warning:r.warning,lastEnd:r.lastEnd,lastQualifying:r.lastQualifying};}
+    own:r.own,locations:[...r.locations],fingerprint:r.fingerprint,comparable:r.comparable,warning:r.warning,lastEnd:r.lastEnd,lastEndLevel:r.lastEndLevel,lastQualifying:r.lastQualifying};}
    return JSON.stringify(out);}
-  function restore(json){let data;try{data=typeof json==='string'?JSON.parse(json):json;}catch{return false;}
-   if(!data||data.version!==1||typeof data.radios!=='object')return false;radios.clear();
-   for(const [k,v] of Object.entries(data.radios)){if(!/^[a-f0-9]{64}$/.test(k)||!v||!Array.isArray(v.buckets))continue;const r=emptyRadio();
-    r.buckets=v.buckets.filter(b=>finite(b?.start)).map(b=>({start:b.start,coverageMs:Math.min(settings.bucketMs,Math.max(0,+b.coverageMs||0)),packets:+b.packets||0,rxlog:+b.rxlog||0,keys:new Set(Array.isArray(b.keys)?b.keys.slice(0,settings.maxStationsPerBucket):[]),newKeys:+b.newKeys||0,snr:new Map((Array.isArray(b.snr)?b.snr:[]).filter(x=>Array.isArray(x)&&x.length===3).map(([c,n,sum])=>[c,{n,sum}]))}));
-    r.stations=new Map((Array.isArray(v.stations)?v.stations:[]).filter(x=>Array.isArray(x)&&typeof x[0]==='string').map(([s,first,last,buckets,lastBucket,kind])=>[s,{first,last,buckets,lastBucket,kind}]));
-    r.distances=Array.isArray(v.distances)?v.distances.filter(d=>finite(d?.km)&&finite(d?.at)):[];
-    r.events=Array.isArray(v.events)?v.events.map(e=>e.end==null?{...e,stale:true}:e):[];r.own=located(v.own)?v.own:null;r.locations=new Map(Array.isArray(v.locations)?v.locations:[]);
-    r.fingerprint=v.fingerprint??null;r.comparable=v.comparable!==false;r.warning=v.warning||null;r.lastEnd=v.lastEnd??null;r.lastQualifying=v.lastQualifying??null;radios.set(k,r);}
+  // Restores validated state only. Malformed entries are skipped or clamped; the call never throws.
+  function restore(json){
+   let data;try{data=typeof json==='string'?JSON.parse(json):json;}catch{return false;}
+   if(!data||typeof data!=='object'||data.version!==1||!data.radios||typeof data.radios!=='object'||Array.isArray(data.radios))return false;
+   const num=(x,d=0)=>finite(x)?x:d,count=x=>finite(x)&&x>=0?Math.floor(x):0,opt=x=>finite(x)?x:null,str=x=>typeof x==='string'?x:null,list=x=>Array.isArray(x)?x:[];
+   const cap=Math.ceil(settings.baselineDays*86400000/settings.bucketMs)+2,next=new Map();
+   for(const [k,v] of Object.entries(data.radios)){
+    if(!/^[a-f0-9]{64}$/.test(k)||!v||typeof v!=='object')continue;
+    try{
+     const r=emptyRadio();
+     r.buckets=list(v.buckets).filter(b=>b&&finite(b.start)).sort((a,b)=>a.start-b.start).slice(-cap).map(b=>({start:b.start,
+      coverageMs:Math.min(settings.bucketMs,Math.max(0,num(b.coverageMs))),packets:count(b.packets),rxlog:count(b.rxlog),
+      keys:new Set(list(b.keys).filter(x=>typeof x==='string').slice(0,settings.maxStationsPerBucket)),newKeys:count(b.newKeys),
+      snr:new Map(list(b.snr).filter(x=>Array.isArray(x)&&x.length===3&&typeof x[0]==='string'&&finite(x[1])&&x[1]>=0&&finite(x[2])).slice(0,settings.maxSnrClassesPerBucket).map(([c,n,sum])=>[c,{n,sum}]))}));
+     r.stations=new Map(list(v.stations).filter(x=>Array.isArray(x)&&typeof x[0]==='string'&&finite(x[1])&&finite(x[2]))
+      .sort((a,b)=>a[2]-b[2]).slice(-settings.maxStations)
+      .map(([id,first,last,buckets,lastBucket,kind])=>[id,{first,last,buckets:count(buckets),lastBucket:opt(lastBucket),kind:kind==='key'||kind==='prefix'?kind:null}]));
+     r.distances=list(v.distances).filter(d=>d&&finite(d.km)&&d.km>=0&&finite(d.at)).slice(-settings.maxDistances).map(d=>({at:d.at,km:d.km,station:str(d.station)}));
+     r.events=list(v.events).filter(e=>e&&typeof e==='object'&&finite(e.start)).slice(-settings.maxEvents).map(e=>({
+      id:str(e.id)||'event-'+e.start,start:e.start,end:opt(e.end),peakLevel:e.peakLevel==='strong-anomaly'?'strong-anomaly':'possible-opening',
+      peakScore:Math.max(0,Math.min(100,num(e.peakScore))),evidence:e.evidence&&typeof e.evidence==='object'&&!Array.isArray(e.evidence)?e.evidence:null,
+      endReason:str(e.endReason)||(finite(e.end)?null:'not observed after restart'),stale:finite(e.end)?!!e.stale:true}));
+     r.own=located(v.own)?{lat:v.own.lat,lon:v.own.lon}:null;
+     for(const x of list(v.locations).slice(-settings.maxLocations))if(Array.isArray(x)&&typeof x[0]==='string'&&located(x[1]))r.locations.set(x[0],{lat:x[1].lat,lon:x[1].lon});
+     r.fingerprint=str(v.fingerprint);r.comparable=v.comparable!==false;r.warning=str(v.warning);
+     r.lastEnd=opt(v.lastEnd);r.lastEndLevel=v.lastEndLevel==='strong-anomaly'||v.lastEndLevel==='possible-opening'?v.lastEndLevel:null;r.lastQualifying=opt(v.lastQualifying);
+     next.set(k,r);
+    }catch{continue;}
+   }
+   radios.clear();for(const [k,r] of next)radios.set(k,r);
    return true;}
 
-  return {observe,evaluate,summary,connect,disconnect,noteConfig,resetBaseline,clearHistory,setOwnLocation,setContacts,configure,serialize,restore,
+  return {observe,evaluate,summary,connect,disconnect,heartbeat,noteConfig,resetBaseline,clearHistory,setOwnLocation,setContacts,configure,serialize,restore,
    on(f){listeners.add(f);return()=>listeners.delete(f);},get settings(){return {...settings};},get radio(){return key;}};
  }
  root.NightlinkPropagation={createMonitor,normalize,score,relation,defaults,labels,baselineChoices,sensitivities};

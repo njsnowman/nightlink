@@ -31,7 +31,8 @@ test('verified zero-hop receptions from distant known stations score distance ev
  s.tick(MIN);feed(s,rx({station:key(50),hops:0,nonce:900}));s.tick(MIN);feed(s,rx({station:key(51),hops:0,nonce:901}));
  const st=s.m.evaluate(s.now),rows=s.m.summary(s.now).flagged;assert.equal(st.parts.distance,40);assert.equal(st.evidence.unusualDirect,2);
  const d=rows.find(r=>r.station===key(50)).distanceKm;assert.ok(d>190&&d<210,String(d));assert.ok(['possible-opening','strong-anomaly'].includes(st.state));
- assert.equal(s.events.filter(e=>e.type==='alert').length,1);assert.notEqual(st.label,'Propagation confirmed');});
+ assert.equal(s.events.filter(e=>e.type==='alert').length,1);assert.equal(st.label,P.labels[st.state]);
+ assert.deepEqual(Object.values(P.labels).sort(),['Learning baseline','Monitoring disabled','Monitoring unavailable','Normal','Possible RF opening','Strong RF anomaly']);});
 test('one distant station gives at most half distance credit; unknown location gives none',()=>{const s=setup();learn(s);s.m.setOwnLocation({lat:40,lon:-86});s.m.setContacts([{key:key(60),lat:42,lon:-86}]);
  s.tick(MIN);feed(s,rx({station:key(60),hops:0,nonce:1}));s.tick(MIN);feed(s,rx({station:key(61),hops:0,nonce:2}));
  const st=s.m.evaluate(s.now);assert.equal(st.parts.distance,20);assert.equal(s.m.summary(s.now).recent.find(r=>r.station===key(61)).distanceKm,null);});
@@ -85,3 +86,44 @@ test('50,000 observations are processed within a bounded time',()=>{const s=setu
  for(let i=0;i<50000;i++){s.now=T0+i*500;s.m.observe(P.normalize.rxLog(frames[i%500].map((v,j)=>j===frames[i%500].length-5?(i&255):v),s.now));if(i%600===0)s.m.evaluate(s.now);}
  const ms=performance.now()-t;assert.ok(ms<4000,'took '+ms+' ms');});
 test('score awards no points for unavailable evidence',()=>{const r=P.score({});assert.equal(r.total,0);assert.deepEqual(r.parts,{distance:null,stations:null,snr:null,sustained:null});});
+// Review follow-ups (#120).
+const burst=(s,ids,n0=0)=>{s.m.setContacts(ids.map(id=>({key:key(id),lat:42,lon:-86})));ids.forEach((id,i)=>{s.tick(1000);feed(s,rx({station:key(id),hops:0,nonce:n0+i}));});};
+test('repeated evaluate and summary calls on one burst cannot add sustained points',()=>{const s=setup();learn(s);s.m.setOwnLocation({lat:40,lon:-86});
+ burst(s,[300,301,302,303,304,305,306,307]);const first=s.m.evaluate(s.now);assert.ok(first.score>=40&&first.score<70,String(first.score));
+ for(let i=0;i<50;i++){s.tick(600);(i%2?s.m.summary:s.m.evaluate)(s.now);}
+ const st=s.m.evaluate(s.now);assert.notEqual(st.state,'strong-anomaly');assert.ok(st.parts.sustained<2,String(st.parts.sustained));assert.equal(s.events.filter(e=>e.type==='alert'&&e.detail.level==='strong-anomaly').length,0);});
+test('flagged evidence spread over time earns sustained credit',()=>{const s=setup();learn(s);s.m.setOwnLocation({lat:40,lon:-86});
+ for(let k=0;k<5;k++){burst(s,[400+k*2,401+k*2],k*10);s.tick(5*MIN);s.m.evaluate(s.now);}
+ assert.ok(s.m.evaluate(s.now).parts.sustained>=14);});
+test('switching back to a radio left mid-alert raises no alert without new evidence',()=>{const s=setup();learn(s);s.m.setOwnLocation({lat:40,lon:-86});
+ burst(s,[500,501]);assert.notEqual(s.m.evaluate(s.now).state,'normal');const alerts=()=>s.events.filter(e=>e.type==='alert').length;const before=alerts();
+ s.m.connect(OTHER,s.tick(MIN));s.m.evaluate(s.now);s.m.connect(RADIO,s.tick(MIN));const st=s.m.evaluate(s.now);
+ assert.equal(st.state,'normal');assert.equal(alerts(),before);const ev=s.m.summary(s.now).events.find(e=>e.endReason==='radio switched');assert.ok(ev&&ev.stale&&!ev.active);});
+test('restore skips structurally corrupt entries, clamps values and never throws',()=>{const m=P.createMonitor({now:()=>T0});
+ const bad={version:1,radios:{[RADIO]:{buckets:[null,{start:'x'},{start:T0,coverageMs:9e15,packets:-4,keys:[1,'a'],snr:[['c','n','x'],['ok',2,'s'],['good',2,-6],null]}],
+  stations:[null,['a',1],['b',T0,T0,2,null,'evil']],distances:[{km:NaN,at:1},{km:5,at:T0}],events:[null,{start:'x'},{start:T0,end:null,peakLevel:'bogus',peakScore:1e9}],
+  locations:[null,['k',null],['k2',{lat:41,lon:-86}]],own:{lat:'x'},lastEndLevel:'bogus'},[OTHER]:null,zz:{buckets:[]}}};
+ assert.doesNotThrow(()=>m.restore(bad));assert.equal(m.restore(bad),true);assert.equal(m.restore('[]'),false);assert.equal(m.restore({version:1,radios:[]}),false);
+ const d=JSON.parse(m.serialize()).radios[RADIO];assert.equal(d.buckets.length,1);assert.equal(d.buckets[0].coverageMs,HOUR);assert.equal(d.buckets[0].packets,0);assert.deepEqual(d.buckets[0].snr,[['good',2,-6]]);
+ assert.equal(d.stations.length,1);assert.equal(d.distances.length,1);assert.equal(d.events.length,1);assert.equal(d.events[0].peakScore,100);assert.equal(d.locations.length,1);assert.equal(d.lastEndLevel,null);
+ m.connect(RADIO,T0+HOUR);const st=m.evaluate(T0+HOUR);assert.ok(['insufficient-data','normal'].includes(st.state));assert.ok(!Number.isNaN(st.score));});
+test('cooldown state survives restart',()=>{const s=setup({cooldownMs:60*MIN,clearMs:5*MIN});learn(s);s.m.setOwnLocation({lat:40,lon:-86});
+ burst(s,[600,601]);s.m.evaluate(s.now);for(let i=0;i<25;i++){s.tick(2*MIN);s.m.evaluate(s.now);}
+ const data=JSON.parse(s.m.serialize()).radios[RADIO];assert.ok(['possible-opening','strong-anomaly'].includes(data.lastEndLevel),String(data.lastEndLevel));
+ const m2=P.createMonitor({now:()=>s.now});assert.equal(m2.restore(JSON.stringify({version:1,radios:{[RADIO]:data}})),true);assert.equal(JSON.parse(m2.serialize()).radios[RADIO].lastEndLevel,data.lastEndLevel);});
+test('baseline reset and insufficient data close an open event',()=>{const s=setup();learn(s);s.m.setOwnLocation({lat:40,lon:-86});burst(s,[700,701]);assert.ok(s.m.evaluate(s.now).activeEvent);
+ s.m.resetBaseline();let ev=s.m.summary(s.now).events[0];assert.equal(ev.endReason,'baseline reset');assert.notEqual(ev.end,null);assert.equal(ev.active,false);
+ const t=setup();t.m.noteConfig({frequency:1});learn(t);t.m.setOwnLocation({lat:40,lon:-86});burst(t,[702,703]);assert.ok(t.m.evaluate(t.now).activeEvent);
+ t.m.noteConfig({frequency:2});const st=t.m.evaluate(t.now);assert.equal(st.state,'insufficient-data');assert.equal(st.activeEvent,null);ev=t.m.summary(t.now).events[0];assert.equal(ev.endReason,'insufficient data');});
+test('SNR comparison does not mix different routes for one station',()=>{const s=setup();learn(s);s.tick(31*MIN);for(let i=0;i<3;i++)for(const id of [1,2,3]){s.tick(MIN);feed(s,rx({station:key(id),hops:3,snr:4,nonce:7000+i*10+id}));}
+ const st=s.m.evaluate(s.now);assert.equal(st.evidence.snrDelta,null);assert.equal(st.parts.snr,null);});
+test('silent link time beyond the idle gap is not counted as coverage unless heartbeats arrive',()=>{
+ const a=setup();a.m.observe(P.normalize.rxLog(rx({station:key(1),hops:1,nonce:1}),a.now));a.tick(5*HOUR);a.m.evaluate(a.now);
+ const ha=JSON.parse(a.m.serialize()).radios[RADIO].buckets.reduce((x,b)=>x+b.coverageMs,0);assert.ok(ha<=31*MIN,String(ha));
+ const b=setup();b.m.observe(P.normalize.rxLog(rx({station:key(1),hops:1,nonce:1}),b.now));for(let i=0;i<10;i++){b.tick(30*MIN);b.m.heartbeat(b.now);}b.m.evaluate(b.now);
+ const hb=JSON.parse(b.m.serialize()).radios[RADIO].buckets.reduce((x,c)=>x+c.coverageMs,0);assert.equal(hb,5*HOUR);});
+test('locations are capped',()=>{const s=setup({maxLocations:50});s.m.setContacts(Array.from({length:200},(_,i)=>({key:key(i+1),lat:41,lon:-86})));assert.equal(JSON.parse(s.m.serialize()).radios[RADIO].locations.length,50);});
+test('50,000 direct observations with known locations stay within a bounded time',()=>{const s=setup();learn(s,30);s.m.setOwnLocation({lat:40,lon:-86});
+ s.m.setContacts(Array.from({length:120},(_,i)=>({key:key(i+1000),lat:40+i/100,lon:-86})));const frames=Array.from({length:500},(_,i)=>rx({station:key(i%120+1000),hops:0,nonce:i}));const start=s.now,t=performance.now();
+ for(let i=0;i<50000;i++){s.now=start+i*500;s.m.observe(P.normalize.rxLog(frames[i%500].map((v,j)=>j===frames[i%500].length-5?(i&255):v),s.now));if(i%600===0)s.m.evaluate(s.now);}
+ const ms=performance.now()-t;assert.ok(ms<6000,'took '+ms+' ms');});
