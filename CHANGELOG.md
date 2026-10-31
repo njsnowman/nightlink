@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Show radio-reported counters in Radio Health: packets sent and received since radio start, raw TX/RX airtime and uptime values, and when they were read; firmware without radio statistics shows Unavailable. No additional radio commands. Synthetic tests only.
+
 - Add a passive RF Propagation Monitor: a header indicator, a Radio > Observe & diagnose panel with evidence, trend, observations and event history, and settings under Settings > Notifications. It compares received packets with a per-radio local baseline and reports "Possible RF opening" or "Strong RF anomaly" with hysteresis and cooldown. It never transmits, enables RX logging or uses the network, and does not claim an atmospheric cause. Thresholds are untested hypotheses; synthetic tests only.
 
 ## 0.8.26 — 2026-10-31

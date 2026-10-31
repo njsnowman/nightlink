@@ -533,6 +533,14 @@ Open Radio to see connection/synchronization activity, last successful full sync
 3. Compare queue frames fetched with locally saved messages. Counts can include duplicates or command responses.
 4. Use Refresh radio data when connected and idle, or Reconnect radio when disconnected.
 
+### Read radio counters
+
+1. Open Radio > Radio Health and find **Radio counters**.
+2. Read **Packets sent Â· radio total** and **Packets received Â· radio total**. These are totals since the radio last started, not since Nightlink connected. Packets sent includes the radio's own adverts and forwarded packets.
+3. The airtime and uptime rows show raw values from the radio; their units are not documented here.
+4. **Counters read** shows when Nightlink last read them. They update during synchronization and when you select Refresh radio data, not live.
+5. Older firmware without radio statistics shows **Unavailable on this firmware**.
+
 ### Export a diagnostic log
 
 Use Export diagnostic log in the Radio controls. Include your Nightlink version, radio model/firmware, Bluetooth or USB, the time the problem occurred and exact error text in a support report. Check any exported file before posting it publicly; do not include message backups, passwords or keys.
