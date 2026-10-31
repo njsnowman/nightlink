@@ -60,3 +60,7 @@ GitHub Actions [run 41170654150](https://github.com/njsnowman/nightlink/actions/
 
 CI artifact `nightlink-0.8.27-rc.1-windows-candidate` ID 13030997234, expires November 14, 2026. Unsigned. Prerelease candidate for physical evaluation only; no physical radio evidence exists for the monitor.
 
+## 0.8.27-rc.2 - review fixes
+
+The rc.1 build above is superseded. A code review of #120 found issues fixed in 0ca8b21 (core: time-based sustained evidence, radio-switch reset, validated restore, baseline cache, closed orphan events, route-aware SNR class, idle coverage gap, heartbeat), 8bf5fb3 (UI: corrupt-record recovery, 60 s persistence max-wait, IndexedDB error reporting, focus-preserving refresh, Clear monitor data) and 57abd25 (browser test with simulated time). The reported desktop-notice rejection was not reproduced: desktop-shell.cjs already accepts `propagation`. 329 unit tests and 13 test:browser suites pass locally and on Windows CI run 41204868316 (synthetic only). rc.2 checksums are recorded after its CI build.
+
