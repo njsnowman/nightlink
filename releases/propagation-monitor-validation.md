@@ -48,3 +48,15 @@ Captured from the application page with synthetic observations injected only int
 ## Follow-up - October 31, 2026
 
 Unusual direct receptions now read Unknown, not 0, when no observation in the window had a measurable distance (commit ebd82ad, with a unit assertion). Screenshots were regenerated with `PROPAGATION_SCREENSHOTS=docs/images/propagation node propagation.browser.test.cjs` and reduced to a 256-colour palette. Candidate version 0.8.27-rc.1.
+
+## 0.8.27-rc.1 Windows CI build
+
+GitHub Actions [run 41170654150](https://github.com/njsnowman/nightlink/actions/runs/41170654150) for #120: test job (unit and test:browser suites) and Windows package job passed on windows-latest. verify-package matched all 204 packaged files to source; required assets include propagation.js, propagation-ui.js and propagation.css. Packaged source ad41e11cb3b53078153180c609f1b6fa04875c62 is the synthetic merge of head fbcb9031b7c3f548f0ef5d100a188ffdb1a491ab into main 93f5277d251730c77c4c9933e2b2f2c6b2e8b320.
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Nightlink-Setup-0.8.27-rc.1.exe | 103171707 | a00b5991352bb17a6fbd38701e74be22cc51ca9fb10fa7571db15a74a43384e4 |
+| Nightlink-Portable-0.8.27-rc.1.exe | 102927837 | fb0202fa4e5920da9b043013250fd8ebea66f61774d330f5ad72cfc0aa102565 |
+
+CI artifact `nightlink-0.8.27-rc.1-windows-candidate` ID 13030997234, expires November 14, 2026. Unsigned. Prerelease candidate for physical evaluation only; no physical radio evidence exists for the monitor.
+
