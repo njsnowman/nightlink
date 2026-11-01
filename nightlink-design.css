@@ -12,6 +12,8 @@ html:root:root:root:root body :is(.page-heading h1,.switchboard-settings-title){
 html:root:root:root:root body .page-heading p{color:var(--nl-muted);line-height:1.6}
 html:root:root:root:root body #overview>.stats{border:0;background:transparent;gap:12px}
 html:root:root:root:root body #overview>.stats article{border:1px solid var(--nl-edge);border-radius:12px;background:var(--nl-surface);padding:12px 16px}
+html:root:root:root:root body #overview>.stats strong{color:var(--nl-ready)}
+html:root:root:root:root body .chat-channel{align-items:center}
 /* Navigation and compact controls share the same rounded, restrained accent treatment. */
 html:root:root:root:root body :is(aside,body.compact aside){border-radius:16px;border-color:var(--nl-edge);background:var(--bg,#000)}
 html:root:root:root:root body aside :is(nav button,.channel,.sidebar-browse,.settings){border-radius:9px}
