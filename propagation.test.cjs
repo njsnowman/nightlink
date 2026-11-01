@@ -75,7 +75,7 @@ test('hysteresis holds the alert in the band, clears after clearMs, and cooldown
  s.tick(MIN);far(202,3);far(203,4);s.m.evaluate(s.now);assert.equal(s.events.filter(e=>e.type==='alert').length,1);
  for(let i=0;i<40;i++){s.tick(2*MIN);s.m.evaluate(s.now);}
  s.tick(MIN);far(204,5);far(205,6);s.m.evaluate(s.now);assert.equal(s.events.filter(e=>e.type==='alert').length,2);});
-test('configuration changes mark the baseline not comparable until reset',()=>{const s=setup();s.m.noteConfig({frequency:910.525,sf:7});learn(s);assert.equal(s.m.evaluate(s.now).state,'normal');
+test('configuration changes mark the baseline not comparable until reset',()=>{const s=setup();s.m.noteConfig({frequency:910.525,sf:7,antenna:'old'});learn(s);assert.equal(s.m.evaluate(s.now).state,'normal');
  const w=s.m.noteConfig({frequency:910.525,sf:7,antenna:'new'});assert.match(w,/no longer be comparable/);const st=s.m.evaluate(s.now);assert.equal(st.state,'insufficient-data');assert.equal(st.comparable,false);
  s.m.resetBaseline();assert.equal(s.m.evaluate(s.now).comparable,true);assert.equal(s.m.evaluate(s.now).state,'insufficient-data');});
 test('settings validate sensitivity and baseline period; disabled stops evaluation',()=>{const s=setup();assert.throws(()=>s.m.configure({sensitivity:'extreme'}));assert.throws(()=>s.m.configure({baselineDays:7}));
