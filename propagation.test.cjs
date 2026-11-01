@@ -127,3 +127,16 @@ test('50,000 direct observations with known locations stay within a bounded time
  s.m.setContacts(Array.from({length:120},(_,i)=>({key:key(i+1000),lat:40+i/100,lon:-86})));const frames=Array.from({length:500},(_,i)=>rx({station:key(i%120+1000),hops:0,nonce:i}));const start=s.now,t=performance.now();
  for(let i=0;i<50000;i++){s.now=start+i*500;s.m.observe(P.normalize.rxLog(frames[i%500].map((v,j)=>j===frames[i%500].length-5?(i&255):v),s.now));if(i%600===0)s.m.evaluate(s.now);}
  const ms=performance.now()-t;assert.ok(ms<6000,'took '+ms+' ms');});
+
+// Session-bound receive regression: late transport events cannot contaminate historical observations.
+test('observations after disconnect are rejected until radio reconnects',()=>{
+ const s=setup(),first=P.normalize.rxLog(rx({station:key(997),nonce:1}),s.now);
+ assert.equal(s.m.observe(first),true);
+ const before=s.m.summary(s.now).recent.length;
+ s.m.disconnect(s.now);s.tick(MIN);
+ assert.equal(s.m.observe(P.normalize.rxLog(rx({station:key(998),nonce:2}),s.now)),false);
+ assert.equal(s.m.summary(s.now).recent.length,before);
+ s.m.connect(RADIO,s.now);
+ assert.equal(s.m.observe(P.normalize.rxLog(rx({station:key(999),nonce:3}),s.now)),true);
+ assert.equal(s.m.summary(s.now).recent.length,before+1);
+});
