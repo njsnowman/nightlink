@@ -112,7 +112,7 @@
 
   function observe(obs){
    if(!obs||!finite(obs.at)){rejected++;return false;}
-   const r=radio();if(!r||!settings.enabled)return false;
+   const r=radio();if(!r||!connected||!settings.enabled)return false;
    if(obs.source==='rxlog')rxlogSeen=true;
    if(obs.location&&obs.station)setLocation(r,obs.station,obs.location);
    const at=obs.at;cover(at);if(connected)lastActivity=Math.max(lastActivity??at,at);
