@@ -1,6 +1,6 @@
 /* Nightlink design standard: approved Radio Tools vocabulary, shared by every document.
    Keep this layer last. Component layouts and interaction semantics remain authoritative. */
-:root{--nl-radius-card:14px;--nl-radius-control:9px;--nl-radius-dialog:20px;--nl-space:16px;--nl-accent:var(--accent,#ffbf56);--nl-surface:var(--panel,#080808);--nl-edge:var(--line,#303030);--nl-copy:var(--text,#eeeeef);--nl-muted:var(--muted,#b9b9bf);--nl-hover:color-mix(in srgb,var(--nl-accent) 6%,var(--nl-surface));--nl-focus:0 0 0 1px var(--nl-accent)}
+:root{--nl-radius-card:14px;--nl-radius-control:9px;--nl-radius-dialog:20px;--nl-space:16px;--nl-accent:var(--accent,#ffbf56);--nl-ready:#7be0b3;--nl-surface:var(--panel,#080808);--nl-edge:var(--line,#303030);--nl-copy:var(--text,#eeeeef);--nl-muted:var(--muted,#b9b9bf);--nl-hover:color-mix(in srgb,var(--nl-accent) 6%,var(--nl-surface));--nl-focus:0 0 0 1px var(--nl-accent)}
 html:root:root:root:root body{font-family:'Segoe UI Variable','Segoe UI',sans-serif;line-height:1.5}
 /* Quiet surfaces replace decorative console corners, without changing panel geometry. */
 html:root:root:root:root body :is(.panel,.dm-inbox,.contact-card,.history-search,.switchboard-settings-shell){border:1px solid var(--nl-edge);border-radius:var(--nl-radius-card);background:var(--nl-surface);box-shadow:0 3px 16px #0002;min-width:0}
@@ -154,7 +154,7 @@ html body #radio-page-hub .nl-radio-name p{font-size:12px;line-height:1.5;color:
 html:root:root:root:root body #radio-page-hub #radio-status-title{font:550 12px/1.4 'Segoe UI',sans-serif;border:1px solid var(--nl-edge);border-radius:999px;padding:8px 12px;margin:0;color:var(--nl-muted);background:var(--nl-surface);max-width:200px;text-align:center}
 html:root:root:root:root body #radio-page-hub #radio-status-title[data-ready=true]{color:#9edbb6;border-color:#315e43;background:#10221a}
 html:root:root:root:root body #radio-page-hub #radio-status-title[data-error=true]{color:#ffb2b8;border-color:#86444f;background:#241216}
-.nl-radio-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0;padding:14px 0;border-block:1px solid var(--nl-edge)}.nl-radio-facts dt{font-size:11px;color:var(--nl-muted);margin-bottom:4px}.nl-radio-facts dd{font-size:14px;font-weight:550;color:var(--nl-copy);margin:0;overflow-wrap:anywhere}
+.nl-radio-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0;padding:14px 0;border-block:1px solid var(--nl-edge)}.nl-radio-facts dt{font-size:11px;color:var(--nl-muted);margin-bottom:4px}.nl-radio-facts dd{font-size:14px;font-weight:550;color:var(--nl-ready);margin:0;overflow-wrap:anywhere}
 html:root:root:root:root body #radio-page-hub .radio-status-eyebrow{display:none}
 html:root:root:root:root body #radio-page-hub .radio-status-main{gap:16px;align-items:center}.radio-status-main>div:first-child{min-width:0}
 html:root:root:root:root body #radio-page-hub #radio-status-detail{font-size:12px;color:var(--nl-muted);line-height:1.6;max-width:70ch}
@@ -189,14 +189,14 @@ html:root:root:root:root body .map-provider-settings input{flex:0 0 auto;accent-
 .header-actions #connection>.header-control-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;padding:0 16px;text-align:center;line-height:1.2}
 .header-actions #connection>.header-control-label .connection-confidence-evidence{order:-1;color:var(--nl-copy);font-size:11px;font-weight:650;line-height:1.15;letter-spacing:.01em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .header-actions #connection>.header-control-label .connection-confidence-state{max-width:100%;color:var(--nl-muted);font-size:10px;font-weight:550;line-height:1.2;letter-spacing:0;text-align:center;text-overflow:ellipsis;white-space:nowrap}
-.header-actions #connection[data-confidence=ready]>.header-control-label .connection-confidence-state{color:#7be0b3}
+.header-actions #connection[data-confidence=ready]>.header-control-label .connection-confidence-state{color:var(--nl-ready)}
 .header-actions #connection[data-confidence=syncing]>.header-control-label .connection-confidence-state,.header-actions #connection[data-confidence=connecting]>.header-control-label .connection-confidence-state{color:var(--nl-accent)}
 .header-actions #connection[data-confidence=error]>.header-control-label .connection-confidence-state{color:#ff858f}
 .header-actions #connection>svg{position:absolute;left:10px;width:17px;height:17px}
 .header-actions .internet-status{display:flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 9px;border:1px solid var(--nl-edge);border-radius:9px;color:var(--nl-muted);font-size:11px;font-weight:600;white-space:nowrap}
 .header-actions .internet-status svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .header-actions .internet-status i{width:7px;height:7px;border-radius:50%;background:currentColor}
-.header-actions .internet-status[data-state=online]{color:#7be0b3;border-color:color-mix(in srgb,#7be0b3 34%,var(--nl-edge));background:color-mix(in srgb,#7be0b3 6%,var(--nl-surface))}
+.header-actions .internet-status[data-state=online]{color:var(--nl-ready);border-color:color-mix(in srgb,var(--nl-ready) 34%,var(--nl-edge));background:color-mix(in srgb,var(--nl-ready) 6%,var(--nl-surface))}
 .header-actions .internet-status[data-state=checking]{color:var(--nl-accent)}
 .header-actions .internet-status[data-state=offline],.header-actions .internet-status[data-state=unavailable]{color:var(--nl-muted)}
 .header-actions .header-status-group #propagation-indicator{width:38px;min-width:38px;padding:0}
