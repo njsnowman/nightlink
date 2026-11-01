@@ -9,7 +9,7 @@ function response(id,result){return {jsonrpc:'2.0',id,result};}
 async function handle(message){
  if(message.method==='notifications/initialized')return null;
  if(message.method==='ping')return response(message.id,{});
- if(message.method==='initialize')return response(message.id,{protocolVersion:PROTOCOL,capabilities:{tools:{}},serverInfo:{name:'nightlink-live',version:'0.1.0'}});
+ if(message.method==='initialize')return response(message.id,{protocolVersion:PROTOCOL,capabilities:{tools:{}},serverInfo:{name:'nightlink-live',version:'0.1.1'}});
  if(message.method==='tools/list')return response(message.id,{tools});
  if(message.method==='tools/call'){
   const args=message.params?.arguments||{};let value;
