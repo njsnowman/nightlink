@@ -159,3 +159,8 @@ test('missing or newly available radio configuration fields do not invalidate ba
  s.m.noteConfig({frequency:910.525});assert.equal(s.m.evaluate(s.now).comparable,true);
  s.m.noteConfig({frequency:906.875});assert.equal(s.m.evaluate(s.now).comparable,false);
 });
+test('withTimeout resolves with the value, or the fallback on timeout or rejection',async()=>{
+ assert.equal(await P.withTimeout(Promise.resolve(true),50,false),true);
+ assert.equal(await P.withTimeout(new Promise(()=>{}),20,false),false);
+ assert.equal(await P.withTimeout(Promise.reject(Error('x')),50,false),false);
+});

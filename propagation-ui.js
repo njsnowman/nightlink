@@ -18,9 +18,13 @@
  const opened=new Promise(resolve=>{try{const r=indexedDB.open('nightlink-propagation',1);r.onupgradeneeded=()=>r.result.createObjectStore('state');r.onerror=()=>resolve();r.onsuccess=()=>{db=r.result;resolve();};}catch{resolve();}});
  // Report a storage problem once in the panel instead of repeating it on every write.
  function storageFailed(message){if(storageNote)return;storageNote=message;renderPanel();}
- function persist(){clearTimeout(saveTimer);saveTimer=null;saveDue=0;if(!db||!ready)return;
-  try{const tx=db.transaction('state','readwrite');tx.onerror=tx.onabort=()=>storageFailed('Monitor history could not be saved on this computer. Monitoring continues for this session.');tx.objectStore('state').put(monitor.serialize(),'monitor');}
-  catch{storageFailed('Monitor history could not be saved on this computer. Monitoring continues for this session.');}}
+ // Resolves true once the write transaction completes, false if storage is unavailable or the write fails.
+ function persist(){clearTimeout(saveTimer);saveTimer=null;saveDue=0;if(!db||!ready)return Promise.resolve(false);
+  return new Promise(resolve=>{try{const tx=db.transaction('state','readwrite');tx.oncomplete=()=>resolve(true);tx.onerror=tx.onabort=()=>{storageFailed('Monitor history could not be saved on this computer. Monitoring continues for this session.');resolve(false);};tx.objectStore('state').put(monitor.serialize(),'monitor');}
+  catch{storageFailed('Monitor history could not be saved on this computer. Monitoring continues for this session.');resolve(false);}});}
+ // Save now and wait for the write, never longer than timeoutMs, so quitting cannot hang on storage.
+ function flush(timeoutMs=2000){return P.withTimeout(opened.then(()=>ready?persist():false),timeoutMs,false);}
+ window.NightlinkPropagationStore={flush};
  // Debounce writes, but never postpone them longer than SAVE_MAX_WAIT under continuous traffic.
  function schedule(){const now=Date.now();if(!saveDue)saveDue=now+SAVE_MAX_WAIT;if(now>=saveDue)return persist();clearTimeout(saveTimer);saveTimer=setTimeout(persist,Math.min(SAVE_DELAY,saveDue-now));}
  function clearStored(){if(!db)return;try{db.transaction('state','readwrite').objectStore('state').delete('monitor');}catch{}}
@@ -39,7 +43,7 @@
  function noteConfig(id){const warning=monitor.noteConfig({frequency:id.frequency,bandwidth:id.bandwidth,sf:id.sf,cr:id.cr,txPower:id.txPower});if(warning)schedule();}
  radioSession.addEventListener('identity',e=>{const epoch=++sessionEpoch,sourceKey=e.detail?.key;whenReady(()=>{if(epoch!==sessionEpoch||!sourceKey)return;attach(sourceKey);refresh();});});
  radioSession.addEventListener('identity-updated',e=>whenReady(()=>{if(e.detail?.key!==monitor.radio)return;monitor.setOwnLocation(e.detail);noteConfig(e.detail);refresh();}));
- radioSession.addEventListener('disconnected',()=>{const epoch=++sessionEpoch;whenReady(()=>{if(epoch!==sessionEpoch)return;monitor.disconnect();schedule();refresh();});});
+ radioSession.addEventListener('disconnected',()=>{const epoch=++sessionEpoch;whenReady(()=>{if(epoch!==sessionEpoch)return;monitor.disconnect();persist();refresh();});});
  radioSession.addEventListener('contacts',()=>whenReady(()=>monitor.setContacts(live.contacts||[])));
  // Radio status traffic shows the link is alive; the core uses it for coverage when available.
  for(const name of ['sync','stats','battery'])radioSession.addEventListener(name,()=>whenReady(()=>{if(typeof monitor.heartbeat==='function'){monitor.heartbeat(Date.now());schedule();}}));

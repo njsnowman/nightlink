@@ -97,3 +97,10 @@ States: `disabled`, `unavailable` (not connected), `insufficient-data`, `normal`
 - The header indicator sits beside the connection control. Normal, learning and unavailable states show a subdued icon only; alert states show "Possible RF Opening" or "Strong RF Anomaly". Animations are removed by the Reduced motion setting, the system preference, or the Alert animations setting.
 - The panel opens from Radio > Observe & diagnose or the indicator. Settings are in Settings > Notifications.
 - Strong-anomaly alerts can play the existing mention sound and send a desktop notice (conversation id `propagation`) through the existing quiet-hours policy. Both default to off.
+
+## Persistence across restarts
+
+Monitor state (baseline buckets, stations, events, cooldown) is stored per radio in the local IndexedDB database `nightlink-propagation`, so daily quit and reopen continues the same baseline. Writes are debounced (2 s) with a 60 s maximum wait under continuous traffic, and are also attempted on `pagehide`, `beforeunload` and when the window is hidden. A radio disconnect saves immediately. On application quit, the existing `desktop:quit-request` handshake awaits `NightlinkPropagationStore.flush()`, which resolves when the IndexedDB transaction completes, bounded to 2 s; the main process still finishes quitting after its 3 s cap, so storage can never block quit. Data stays on this computer and is excluded from backups.
+
+Automated coverage: a unit test for the bounded wait, and a browser test that flushes, reloads and compares restored baseline buckets and event history. The Electron quit path (tray Quit with the radio connected, then reopen) needs a native Windows check.
+

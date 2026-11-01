@@ -288,6 +288,8 @@
   return {observe,evaluate,summary,connect,disconnect,heartbeat,noteConfig,resetBaseline,clearHistory,setOwnLocation,setContacts,configure,serialize,restore,
    on(f){listeners.add(f);return()=>listeners.delete(f);},get settings(){return {...settings};},get radio(){return key;}};
  }
- root.NightlinkPropagation={createMonitor,normalize,score,relation,defaults,labels,baselineChoices,sensitivities};
+ // Settle with the promise's value, or with fallback after ms, whichever comes first; rejections also yield fallback.
+ function withTimeout(promise,ms,fallback){let timer;return Promise.race([Promise.resolve(promise).catch(()=>fallback),new Promise(resolve=>{timer=setTimeout(()=>resolve(fallback),ms);})]).finally(()=>clearTimeout(timer));}
+ root.NightlinkPropagation={createMonitor,normalize,score,relation,defaults,labels,baselineChoices,sensitivities,withTimeout};
  if(typeof module!=='undefined')module.exports=root.NightlinkPropagation;
 })(globalThis);
