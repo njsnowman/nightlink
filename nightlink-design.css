@@ -184,15 +184,15 @@ html:root:root:root:root body .map-provider-settings input{flex:0 0 auto;accent-
 
 /* One aligned tray for connectivity, RF, inbox, and radio-sync indicators. */
 .header-actions .header-status-group{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;padding:4px;border:1px solid var(--nl-edge);border-radius:12px;background:var(--nl-surface)}
-.header-actions .header-status-group>button.header-control{height:38px;min-height:38px}
-.header-actions #connection{position:relative;display:flex;justify-content:center;min-width:190px;max-width:230px;min-height:46px;padding:5px 12px;white-space:normal}
+.header-actions .header-status-group>button.header-control{height:42px;min-height:42px}
+.header-actions #connection{position:relative;display:flex;justify-content:center;min-width:190px;max-width:230px;min-height:42px;padding:3px 12px;white-space:normal}
 .header-actions #connection>.header-control-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;padding:0 16px;text-align:center;line-height:1.2}
 .header-actions #connection>.header-control-label .connection-confidence-evidence{order:-1;color:var(--nl-copy);font-size:11px;font-weight:650;line-height:1.15;letter-spacing:.01em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .header-actions #connection>.header-control-label .connection-confidence-state{max-width:100%;color:var(--nl-muted);font-size:10px;font-weight:550;line-height:1.2;letter-spacing:0;text-align:center;text-overflow:ellipsis;white-space:nowrap}
 .header-actions #connection[data-confidence=ready]>.header-control-label .connection-confidence-state{color:#7be0b3}
 .header-actions #connection[data-confidence=syncing]>.header-control-label .connection-confidence-state,.header-actions #connection[data-confidence=connecting]>.header-control-label .connection-confidence-state{color:var(--nl-accent)}
 .header-actions #connection[data-confidence=error]>.header-control-label .connection-confidence-state{color:#ff858f}
-.header-actions #connection>svg{position:absolute;left:10px;width:16px;height:16px}
+.header-actions #connection>svg{position:absolute;left:10px;width:17px;height:17px}
 .header-actions .internet-status{display:flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 9px;border:1px solid var(--nl-edge);border-radius:9px;color:var(--nl-muted);font-size:11px;font-weight:600;white-space:nowrap}
 .header-actions .internet-status svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .header-actions .internet-status i{width:7px;height:7px;border-radius:50%;background:currentColor}
