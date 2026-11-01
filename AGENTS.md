@@ -4,6 +4,10 @@ Follow RELEASE_PROCESS.md for every Nightlink release and downloadable candidate
 
 Use factual, professional language in repository documentation, commits, issues, and release notes. Describe confirmed behavior and limitations without promotional language or unsupported claims.
 
+## Non-negotiable offline-first engineering requirement
+
+Read and follow [docs/OFFLINE_FIRST_ENGINEERING.md](docs/OFFLINE_FIRST_ENGINEERING.md) for every change that affects startup, transport, messaging, persistence, network access, or optional integrations. NightLink must start and support core local MeshCore BLE/USB radio and messaging workflows without internet, cloud authentication, external APIs, CoreScope, MQTT, or self-hosted services. Online enhancements must remain optional and fail gracefully. Include offline test evidence, or mark the offline checks explicitly unverified, in relevant pull requests, and distinguish simulated from hardware tests.
+
 ## Required visual standard
 
 The owner approved the rc.11 Radio Tools design and requires every page and menu to follow it, including future work. Read DESIGN_SYSTEM.md before changing interface presentation. Use nightlink-design.css tokens and the approved Radio Tools panel as the reference. Extend shared components rather than introducing a competing style. Preserve readable hierarchy, rounded quiet cards, visible controls, matching line icons, balanced spacing, keyboard focus, semantic status colors and compact layouts. Check main, detached DM and startup-lock documents as applicable.
