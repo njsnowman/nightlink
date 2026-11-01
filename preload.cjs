@@ -20,6 +20,8 @@ contextBridge.exposeInMainWorld('meshlineBluetooth',{
  pairingResponse:response=>ipcRenderer.send('ble:pairing-response',response)
 });
 
+if(process.isMainFrame)contextBridge.exposeInMainWorld('meshlineInternet',{status:()=>ipcRenderer.invoke('internet:status')});
+
 contextBridge.exposeInMainWorld('meshlineSerial',{onPorts:listener=>subscribe('usb:ports',listener),onEnded:listener=>subscribe('usb:ended',listener),select:id=>ipcRenderer.send('usb:select',id)});
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('meshlineDesktop',{state:data=>ipcRenderer.send('desktop:state',data),notify:data=>ipcRenderer.send('desktop:notice',data),quit:()=>ipcRenderer.send('desktop:quit'),readyToQuit:()=>ipcRenderer.send('desktop:quit-ready'),onOpen:listener=>subscribe('desktop:open',listener),onQuit:listener=>subscribe('desktop:quit-request',listener)});

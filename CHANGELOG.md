@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Refine the RF Propagation monitor with coverage progress, aligned live readouts, grouped evidence and trend sections, and compact route/flag indicators. Group Internet reachability, radio synchronization, RF-monitor and inbox status in the main header; Internet reports online only after a successful connectivity probe. Center the sync timestamp over its Ready / Bluetooth-or-USB state and make the inbox control icon-only with an accessible label. Tracks [#125](https://github.com/njsnowman/nightlink/issues/125); physical RF acceptance remains tracked separately in [#120](https://github.com/njsnowman/nightlink/pull/120).
 
 - Keep the RF monitor indicator visible as Monitor off when monitoring is disabled, unless its indicator preference is off; preserve collapsed Conversations across immediate rerenders. Fixes found during [rc.3 validation](https://github.com/njsnowman/nightlink/pull/120).
 

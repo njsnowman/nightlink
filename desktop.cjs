@@ -17,6 +17,7 @@ else app.whenReady().then(async()=>{
  let select=null,pair=null,devices=new Set(),deviceDetails=new Map(),scanTimer,pairTimer;
  const trusted=e=>windowLifecycle.available(win)&&security.unlocked&&e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
 
+ require('./internet-status.cjs').install({ipcMain,net:require('electron').net,trusted});
  require('./pc-location.cjs').install({ipcMain,trusted});
  ipcMain.handle('meshmapper:open',async(e,region='CVG')=>{if(!trusted(e))return false;try{const url=require('./meshmapper-region.js').base(region);await shell.openExternal(url);return true;}catch{return false;}});
  require('./voice-desktop.cjs').install({app,win,ipcMain,dialog,trusted});

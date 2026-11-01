@@ -11,3 +11,13 @@
  let scheduled=false;const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;refresh();});};
  new MutationObserver(records=>{if(records.some(r=>r.type==='attributes'?r.target.matches('dialog'):r.target.closest?.('dialog,.message-more,aside .sidebar-group')||[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches('dialog,.message-more')||n.querySelector('dialog,.message-more')))))schedule();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['open']});refresh();
 })();
+
+/* Load the grouped system-status toolbar after all status controls exist in the main document. */
+(()=>{
+ function load(){
+  if(document.querySelector('.header-status-group'))return;
+  const js=document.createElement('script');js.src='header-status-ui.js';
+  document.body.append(js);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load,{once:true});else load();
+})();

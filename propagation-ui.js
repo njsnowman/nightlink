@@ -105,26 +105,49 @@
   for(const [n,top] of scrolls)n.scrollTop=top;const wrap=panelRoot.querySelector('.propagation-table-wrap');if(wrap)wrap.scrollLeft=across;
   if(focused){const again=document.getElementById(focused.id);if(again&&panelRoot.contains(again))again.focus({preventScroll:true});}}
  function build(){const st=last,root=panelRoot;root.replaceChildren();
-  const head=el('section','propagation-status');head.dataset.level=st.state;head.append(el('p','propagation-eyebrow','CURRENT STATUS'),el('h3',null,st.label),el('p',null,explain[st.state]||''));
+  const sectionHeading=(title,meta)=>{const heading=el('div','propagation-section-heading');heading.append(el('h4',null,title),el('span',null,meta));return heading;};
+  const head=el('section','propagation-status');head.dataset.level=st.state;
+  const headTop=el('div','propagation-status-top');headTop.append(el('p','propagation-eyebrow','RF PROPAGATION MONITOR'));
+  const stateTag=el('span','propagation-state-tag',short[st.state]||st.label);stateTag.dataset.level=st.state;headTop.append(stateTag);
+  const headMain=el('div','propagation-status-main');headMain.append(el('h3',null,st.label),el('p',null,explain[st.state]||''));head.append(headTop,headMain);
   if(st.lastQualifying)head.append(el('p','propagation-muted','Last qualifying event: '+time(st.lastQualifying)));root.append(head);
+  const readouts=el('section','propagation-readouts');readouts.setAttribute('aria-label','Live radio indicators');
+  const readout=(label,value,state)=>{const item=el('div','propagation-readout');item.dataset.state=state;item.append(el('span','propagation-readout-dot'),el('span','propagation-readout-copy',label),el('strong',null,value));readouts.append(item);};
+  readout('RADIO LINK',st.connected?'Connected':'Offline',st.connected?'online':'offline');
+  readout('RX LOG',st.rxLogObserved?'Observed':st.connected?'Not observed':'Unavailable',st.rxLogObserved?'online':st.connected?'limited':'offline');
+  const monitorState=st.state==='normal'?'normal':st.state==='possible-opening'?'warning':st.state==='strong-anomaly'?'alert':st.state==='insufficient-data'?'learning':'offline';
+  readout('MONITOR',short[st.state]||st.label,monitorState);root.append(readouts);
   root.append(el('p','propagation-note','Alerts mean reception is unusual for this radio. They do not confirm an atmospheric propagation event.'));
   if(st.connected&&!st.rxLogObserved)root.append(el('p','propagation-warning','RX logging off: monitoring limited. Nightlink does not enable RX logging. Only decoded messages and adverts are observed, so signal and distance evidence may be unavailable.'));
   if(st.warning){const w=el('div','propagation-warning');w.append(el('p',null,st.warning));root.append(w);}
   if(storageNote)root.append(el('p','propagation-warning',storageNote));
   if(dropped)root.append(el('p','propagation-muted',dropped+' early receive events were not analysed while monitor history was loading.'));
-  const ev=st.evidence||{},grid=el('dl','propagation-evidence');
-  for(const [label,value] of [['New stations',ev.newStations??null],['Unusual direct receptions',ev.unusualDirect??null],['SNR change vs baseline',ev.snrDelta==null?null:(ev.snrDelta>0?'+':'')+ev.snrDelta.toFixed(1)+' dB'],['Packets per hour',ev.packetRate==null?null:Math.round(ev.packetRate)],['Baseline packets per hour',ev.baselinePacketRate==null?null:Math.round(ev.baselinePacketRate)],['Unique stations',ev.uniqueStations??null],['Confidence',st.confidence?st.confidence[0].toUpperCase()+st.confidence.slice(1):null],['Baseline hours',ev.baselineHours==null?null:Math.floor(ev.baselineHours)]]){
+  const ev=st.evidence||{};
+  if(Number.isFinite(ev.baselineHours)){
+   const required=P.defaults.minBaselineHours,hours=Math.max(0,ev.baselineHours),meter=el('section','propagation-baseline');meter.setAttribute('aria-label','Baseline coverage progress');
+   const line=el('div','propagation-baseline-heading');line.append(el('span',null,'BASELINE COVERAGE'),el('strong',null,hours>=required?'Minimum met':Math.floor(hours)+' / '+required+' hours'));
+   meter.dataset.complete=String(hours>=required);
+   const progress=document.createElement('progress');progress.max=required;progress.value=Math.min(required,hours);progress.setAttribute('aria-label','Covered baseline hours');
+   meter.append(line,progress,el('p','propagation-muted',hours>=required?'Enough covered history is available for detection.':'Only connected, covered time counts toward learning.'));root.append(meter);
+  }
+  const evidenceSection=el('section','propagation-section');evidenceSection.append(sectionHeading('Evidence','CURRENT WINDOW'));
+  const grid=el('dl','propagation-evidence');
+  for(const [label,value] of [['New stations',ev.newStations??null],['Unusual direct receptions',ev.unusualDirect??null],['SNR change vs baseline',ev.snrDelta==null?null:(ev.snrDelta>0?'+':'')+ev.snrDelta.toFixed(1)+' dB'],['Packets per hour',ev.packetRate==null?null:Math.round(ev.packetRate)],['Baseline packets per hour',ev.baselinePacketRate==null?null:Math.round(ev.baselinePacketRate)],['Unique stations',ev.uniqueStations??null],['Confidence',st.confidence?st.confidence[0].toUpperCase()+st.confidence.slice(1):null]]){
    const row=el('div');row.append(el('dt',null,label),el('dd',null,value==null||value===''?'Unknown':String(value)));grid.append(row);}
-  root.append(el('h4',null,'Evidence'),grid);
-  root.append(el('h4',null,'Reception trend'),chart(st.trend||[]));
-  root.append(el('h4',null,'Recent observations'));const rows=[...(st.flagged||[]).slice(0,10),...(st.recent||[]).filter(r=>!r.flags.length).slice(0,5)].slice(0,12);
+  evidenceSection.append(grid);root.append(evidenceSection);
+  const trendSection=el('section','propagation-section'),trend=st.trend||[];trendSection.append(sectionHeading('Reception trend',trend.length?trend.length+' HOUR WINDOW':'NO COVERAGE YET'),chart(trend));root.append(trendSection);
+  const rows=[...(st.flagged||[]).slice(0,10),...(st.recent||[]).filter(r=>!r.flags.length).slice(0,5)].slice(0,12),observationSection=el('section','propagation-section');
+  observationSection.append(sectionHeading('Recent observations',rows.length?rows.length+' SHOWN':'NO OBSERVATIONS'));
   if(rows.length){const wrap=el('div','propagation-table-wrap'),table=el('table','propagation-table'),thead=el('thead'),tr=el('tr');for(const h of ['Time','Station','SNR','RSSI','Reception','Distance','Flagged because'])tr.append(el('th',null,h));thead.append(tr);table.append(thead);const body=el('tbody');
-   for(const r of rows){const line=el('tr');for(const v of [new Date(r.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),stationName(r),fmt(r.snr,' dB',1),fmt(r.rssi,' dBm'),r.relation==='direct'?'Direct':r.relation==='forwarded'?'Forwarded'+(r.hops!=null?' · '+r.hops+' hops':''):'Unknown',fmt(r.distanceKm,' km',1),r.flags.length?r.flags.join(', '):'—'])line.append(el('td',null,v));body.append(line);}
-   table.append(body);wrap.append(table);root.append(wrap);}else root.append(el('p','propagation-muted','No observations yet.'));
-  const history=el('section','propagation-history');history.id='propagation-history';history.append(el('h4',null,'Event history'));
+   for(const r of rows){const line=el('tr');const values=[new Date(r.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),stationName(r),fmt(r.snr,' dB',1),fmt(r.rssi,' dBm'),r.relation==='direct'?'Direct':r.relation==='forwarded'?'Forwarded'+(r.hops!=null?' · '+r.hops+' hops':''):'Unknown',fmt(r.distanceKm,' km',1),r.flags.length?r.flags.join(', '):'—'];
+    values.forEach((value,index)=>{const cell=el('td');if(index===4){const route=el('span','propagation-route',value);route.dataset.relation=r.relation||'unknown';cell.append(route);}
+     else if(index===6&&r.flags.length){const flags=el('span','propagation-flags');for(const flag of r.flags){const chip=el('span','propagation-flag',flag);chip.dataset.kind=flag.includes('unusual')?'unusual':'context';flags.append(chip);}cell.append(flags);}
+     else cell.textContent=value;line.append(cell);});body.append(line);}
+   table.append(body);wrap.append(table);observationSection.append(wrap);}else observationSection.append(el('p','propagation-empty','No observations have arrived in this session.'));root.append(observationSection);
+  const history=el('section','propagation-history');history.id='propagation-history';history.append(sectionHeading('Event history',st.events?.length?st.events.length+' RECORDED':'NO ALERTS'));
   if(st.events&&st.events.length){const list=el('ul');for(const e of st.events.slice(0,20)){const item=el('li');item.dataset.level=e.peakLevel;item.append(el('strong',null,P.labels[e.peakLevel]||e.peakLevel),el('span',null,time(e.start)+' to '+(e.end?time(e.end):'now')+' · score '+e.peakScore+(e.active?' · active':e.stale?' · ended: '+(e.endReason||'not observed'):'')));
     const x=e.evidence||{};item.append(el('small',null,'Evidence: '+[x.unusualStations!=null&&x.unusualStations+' unusual stations',x.unusualDirect&&x.unusualDirect+' unusual direct receptions',x.snrDelta!=null&&'SNR '+(x.snrDelta>0?'+':'')+x.snrDelta.toFixed(1)+' dB'].filter(Boolean).join(' · ')||'not recorded'));list.append(item);}history.append(list);}
-  else history.append(el('p','propagation-muted','No alert windows recorded.'));root.append(history);
+  else history.append(el('p','propagation-empty','No alert windows recorded.'));root.append(history);
   const actions=el('div','propagation-actions'),settings=el('button',null,'Monitor settings');settings.type='button';settings.id='propagation-open-settings';settings.onclick=()=>{document.querySelector('#dialog').close();view('Settings');window.NightlinkSettings?.open?.('Notifications');setTimeout(()=>document.querySelector('.propagation-settings')?.scrollIntoView({block:'start'}),50);};
   const reset=el('button',confirmReset?'propagation-danger':null,confirmReset?'Confirm baseline reset':'Reset baseline…');reset.type='button';reset.id='propagation-reset-baseline';
   reset.onclick=()=>{if(!confirmReset){confirmReset=true;renderPanel();return;}confirmReset=false;monitor.resetBaseline();persist();refresh();toast('Baseline reset. Learning starts again.');};
