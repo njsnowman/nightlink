@@ -25,6 +25,15 @@ const shots=process.env.PROPAGATION_SCREENSHOTS;
   radioSession.dispatchEvent(new CustomEvent('message',{detail:{kind:'channel',slot:1,pathLength:2,textType:0,timestamp:1700000000,snr:6,text:'test'}}));
   const s=NightlinkPropagationUI.monitor.summary(Date.now());return {rx:s.rxLogObserved,recent:s.recent.map(r=>[r.source,r.station,r.snr,r.rssi,r.relation])};});
  assert.equal(observed.rx,true);assert.deepEqual(observed.recent.find(r=>r[0]==='rxlog'),['rxlog','ee'.repeat(32),7,-96,'direct']);assert.ok(observed.recent.some(r=>r[0]==='message'&&r[2]===6&&r[3]===null),'missing RSSI stays unknown');
+ // A stale receive event after radio disconnect must not alter this radio's saved observations.
+ await page.evaluate(()=>{const before=NightlinkPropagationUI.monitor.summary(Date.now()).recent.length;
+  radioSession.dispatchEvent(new CustomEvent('disconnected'));ble.state='disconnected';
+  const payload=new Uint8Array(110),frame=new Uint8Array([0x88,4*7,256-96,(4<<2)|1,0,...payload]);
+  ble.dispatchEvent(new CustomEvent('packet',{detail:frame}));
+  radioSession.dispatchEvent(new CustomEvent('message',{detail:{kind:'channel',slot:1,pathLength:0,snr:5,timestamp:1700000001,text:'late'}}));
+  if(NightlinkPropagationUI.monitor.summary(Date.now()).recent.length!==before)throw Error('Late receive events changed RF history after disconnect');
+  ble.state='connected';radioSession.dispatchEvent(new CustomEvent('identity',{detail:live.identity}));
+ });
  // Synthetic 30-hour baseline from ten regular stations, then a normal window.
  await page.evaluate(()=>{const m=NightlinkPropagationUI.monitor,now=Date.now(),key=live.identity.key,start=now-30*3600000;m.disconnect(start-1);m.restore('{"version":1,"radios":{}}');m.connect(key,start);
   const stable=Array.from({length:10},(_,i)=>(0x10+i).toString(16).repeat(32));let n=0;

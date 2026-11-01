@@ -112,7 +112,7 @@
 
   function observe(obs){
    if(!obs||!finite(obs.at)){rejected++;return false;}
-   const r=radio();if(!r||!settings.enabled)return false;
+   const r=radio();if(!r||!connected||!settings.enabled)return false;
    if(obs.source==='rxlog')rxlogSeen=true;
    if(obs.location&&obs.station)setLocation(r,obs.station,obs.location);
    const at=obs.at;cover(at);if(connected)lastActivity=Math.max(lastActivity??at,at);
@@ -189,7 +189,12 @@
     r.current={id:key.slice(0,8)+'-'+at,start:at,end:null,peakLevel:level,peakScore:s.total,evidence:evidenceSnapshot,endReason:null,stale:false};
     r.events.push(r.current);if(r.events.length>settings.maxEvents)r.events.splice(0,r.events.length-settings.maxEvents);
     emit('alert',{radio:key,level,label:labels[level],score:s.total,event:{...r.current}});return;}
-   if(r.current&&r.current.suppressed&&level==='strong-anomaly'&&r.current.level!=='strong-anomaly'&&r.lastEndLevel!=='strong-anomaly'){r.current=null;return transition(r,level,s,m,at);}
+   if(r.current&&r.current.suppressed&&level!=='normal'){
+    // A suppressed anomaly becomes eligible again once cooldown expires; do not suppress it indefinitely.
+    const expired=r.lastEnd!=null&&at-r.lastEnd>=settings.cooldownMs;
+    const escalated=level==='strong-anomaly'&&r.current.level!=='strong-anomaly'&&r.lastEndLevel!=='strong-anomaly';
+    if(expired||escalated){r.current=null;return transition(r,level,s,m,at);}
+   }
    if(r.current&&!r.current.suppressed&&level!=='normal'){
     if(s.total>r.current.peakScore){r.current.peakScore=s.total;r.current.evidence=evidenceSnapshot;}
     if(level==='strong-anomaly'&&r.current.peakLevel!=='strong-anomaly'){r.current.peakLevel=level;emit('alert',{radio:key,level,label:labels[level],score:s.total,escalated:true,event:{...r.current}});}
@@ -215,10 +220,19 @@
   function setLocation(r,k,loc){r.locations.delete(k);r.locations.set(k,loc);if(r.locations.size>settings.maxLocations){let extra=r.locations.size-settings.maxLocations;for(const old of r.locations.keys()){if(extra--<=0)break;r.locations.delete(old);}}}
   function disconnect(at=now()){cover(at);const r=radio();connected=false;coverFrom=null;lastActivity=null;if(r){close(r,at,'disconnected');resetState(r);}}
 
-  function fingerprint(cfg){return JSON.stringify(['frequency','bandwidth','sf','cr','txPower','antenna','rxLog'].map(k=>cfg?.[k]??null));}
-  function noteConfig(cfg){const r=radio();if(!r)return null;const f=fingerprint(cfg);
-   if(r.fingerprint!=null&&r.fingerprint!==f&&r.buckets.some(b=>b.coverageMs>0)){r.comparable=false;r.warning='Radio or logging configuration changed. The historical baseline may no longer be comparable; reset it to start learning again.';emit('baseline-warning',{radio:key,warning:r.warning});}
-   r.fingerprint=f;return r.warning;}
+  const configFields=['frequency','bandwidth','sf','cr','txPower','antenna','rxLog'];
+  function fingerprint(cfg){return JSON.stringify(configFields.map(k=>cfg?.[k]??null));}
+  function noteConfig(cfg){const r=radio();if(!r)return null;
+   let previous=null;try{const v=JSON.parse(r.fingerprint);if(Array.isArray(v)&&v.length===configFields.length)previous=v;}catch{}
+   const incoming=configFields.map(k=>cfg?.[k]??null);
+   // Missing telemetry is unknown, not a verified hardware change. Retain previously observed values.
+   const merged=incoming.map((v,i)=>v==null?previous?.[i]??null:v);
+   const changed=previous?.some((v,i)=>v!=null&&incoming[i]!=null&&v!==incoming[i])||false;
+   if(changed&&r.buckets.some(b=>b.coverageMs>0)){
+    r.comparable=false;r.warning='Radio or logging configuration changed. The historical baseline may no longer be comparable; reset it to start learning again.';
+    emit('baseline-warning',{radio:key,warning:r.warning});
+   }
+   r.fingerprint=JSON.stringify(merged);return r.warning;}
   function resetBaseline(){const r=radio();if(!r)return;close(r,now(),'baseline reset');const keep={own:r.own,locations:r.locations,events:r.events,fingerprint:r.fingerprint,lastEnd:r.lastEnd,lastEndLevel:r.lastEndLevel};radios.set(key,Object.assign(emptyRadio(),keep));coverFrom=connected?now():null;emit('baseline-reset',{radio:key});}
   function clearHistory(){const r=radio();if(r){r.events=r.current&&!r.current.suppressed?[r.current]:[];r.lastEnd=null;}}
   function setOwnLocation(p){const r=radio();if(r)r.own=located(p)?{lat:p.lat,lon:p.lon}:null;}

@@ -13,6 +13,8 @@
  // Bounded local persistence in its own IndexedDB store; not part of backups.
  let db=null,ready=false,saveTimer=null,saveDue=0,storageNote=null,dropped=0;const pending=[];
  const MAX_PENDING=500,SAVE_DELAY=2000,SAVE_MAX_WAIT=60000,EMPTY=JSON.stringify({version:1,radios:{}});
+ // A queued receive event belongs to the radio session at arrival, not the session when storage finishes opening.
+ let sessionEpoch=0;
  const opened=new Promise(resolve=>{try{const r=indexedDB.open('nightlink-propagation',1);r.onupgradeneeded=()=>r.result.createObjectStore('state');r.onerror=()=>resolve();r.onsuccess=()=>{db=r.result;resolve();};}catch{resolve();}});
  // Report a storage problem once in the panel instead of repeating it on every write.
  function storageFailed(message){if(storageNote)return;storageNote=message;renderPanel();}
@@ -35,17 +37,19 @@
 
  function attach(key){monitor.connect(key);const id=live.identity||radioSession.identity;if(id){monitor.setOwnLocation(id);noteConfig(id);}monitor.setContacts(live.contacts||[]);}
  function noteConfig(id){const warning=monitor.noteConfig({frequency:id.frequency,bandwidth:id.bandwidth,sf:id.sf,cr:id.cr,txPower:id.txPower});if(warning)schedule();}
- radioSession.addEventListener('identity',e=>whenReady(()=>{attach(e.detail.key);refresh();}));
+ radioSession.addEventListener('identity',e=>{const epoch=++sessionEpoch,sourceKey=e.detail?.key;whenReady(()=>{if(epoch!==sessionEpoch||!sourceKey)return;attach(sourceKey);refresh();});});
  radioSession.addEventListener('identity-updated',e=>whenReady(()=>{if(e.detail?.key!==monitor.radio)return;monitor.setOwnLocation(e.detail);noteConfig(e.detail);refresh();}));
- radioSession.addEventListener('disconnected',()=>whenReady(()=>{monitor.disconnect();schedule();refresh();}));
+ radioSession.addEventListener('disconnected',()=>{const epoch=++sessionEpoch;whenReady(()=>{if(epoch!==sessionEpoch)return;monitor.disconnect();schedule();refresh();});});
  radioSession.addEventListener('contacts',()=>whenReady(()=>monitor.setContacts(live.contacts||[])));
  // Radio status traffic shows the link is alive; the core uses it for coverage when available.
  for(const name of ['sync','stats','battery'])radioSession.addEventListener(name,()=>whenReady(()=>{if(typeof monitor.heartbeat==='function'){monitor.heartbeat(Date.now());schedule();}}));
- radioSession.addEventListener('message',e=>{const at=Date.now(),m=e.detail;whenReady(()=>{if(monitor.observe(P.normalize.message(m,at)))changed();});});
+ const queueReceive=run=>{const epoch=sessionEpoch,sourceKey=radioSession.identity?.key||live.identity?.key;
+  if(!sourceKey)return;whenReady(()=>{if(epoch!==sessionEpoch||monitor.radio!==sourceKey)return;run();});};
+ radioSession.addEventListener('message',e=>{const at=Date.now(),m=e.detail;queueReceive(()=>{if(monitor.observe(P.normalize.message(m,at)))changed();});});
  // Raw frames are parsed only by the existing parsers: NightlinkEvidence.packet (0x88) and MeshlineProtocol.contact (0x8a).
  ble.addEventListener('packet',e=>{const d=e.detail,at=Date.now();if(!d||!d.length)return;
-  if(d[0]===0x88)whenReady(()=>{if(monitor.observe(P.normalize.rxLog(d,at)))changed();});
-  else if(d[0]===0x8a){let c=null;try{c=MeshlineProtocol.contact(d);}catch{}if(c)whenReady(()=>{if(monitor.observe(P.normalize.advert(c,at)))changed();});}});
+  if(d[0]===0x88)queueReceive(()=>{if(monitor.observe(P.normalize.rxLog(d,at)))changed();});
+  else if(d[0]===0x8a){let c=null;try{c=MeshlineProtocol.contact(d);}catch{}if(c)queueReceive(()=>{if(monitor.observe(P.normalize.advert(c,at)))changed();});}});
  let evalTimer=null;function changed(){schedule();if(!evalTimer)evalTimer=setTimeout(()=>{evalTimer=null;refresh();},5000);}
  setInterval(()=>{if(ready)refresh();},60000);
  window.addEventListener('beforeunload',persist);window.addEventListener('pagehide',persist);
