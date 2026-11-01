@@ -6,7 +6,7 @@ Use factual, professional language in repository documentation, commits, issues,
 
 ## Non-negotiable offline-first engineering requirement
 
-**Connected when possible. Independent by design.** Read and follow [docs/OFFLINE_FIRST_ENGINEERING.md](docs/OFFLINE_FIRST_ENGINEERING.md) for every change that affects startup, transport, messaging, persistence, network access, or optional integrations. NightLink must start and support core local MeshCore BLE/USB radio and messaging workflows without internet, cloud authentication, external APIs, CoreScope, MQTT, or the owner's homelab. Online enhancements must remain optional and fail gracefully. Include offline test evidence (and distinguish simulated from hardware tests) in relevant pull requests.
+Read and follow [docs/OFFLINE_FIRST_ENGINEERING.md](docs/OFFLINE_FIRST_ENGINEERING.md) for every change that affects startup, transport, messaging, persistence, network access, or optional integrations. NightLink must start and support core local MeshCore BLE/USB radio and messaging workflows without internet, cloud authentication, external APIs, CoreScope, MQTT, or self-hosted services. Online enhancements must remain optional and fail gracefully. Include offline test evidence, or mark the offline checks explicitly unverified, in relevant pull requests, and distinguish simulated from hardware tests.
 
 ## Required visual standard
 

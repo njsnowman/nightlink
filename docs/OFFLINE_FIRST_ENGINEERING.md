@@ -1,6 +1,6 @@
 # NightLink Offline-First Engineering Policy
 
-> **Connected when possible. Independent by design.**
+> Core radio and messaging functions must work without internet access; online services are optional.
 
 ## Non-negotiable product contract
 
@@ -58,7 +58,7 @@ Automated mocks are useful but **must not** be reported as proof of physical-rad
 - [ ] Core behavior remains usable without internet.
 - [ ] All new online calls are optional, bounded, and non-blocking.
 - [ ] Local message, contact, and preference data remain available offline.
-- [ ] No new mandatory cloud, homelab, CoreScope, or MQTT dependency.
+- [ ] No new mandatory cloud, self-hosted service, CoreScope, or MQTT dependency.
 - [ ] Offline and connectivity-transition tests are covered or explicitly marked unverified.
 - [ ] User-facing errors distinguish internet service failure from radio or RF delivery failure.
 
