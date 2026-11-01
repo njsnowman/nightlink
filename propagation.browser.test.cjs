@@ -31,7 +31,7 @@ const shots=process.env.PROPAGATION_SCREENSHOTS;
   const payload=new Uint8Array(110),frame=new Uint8Array([0x88,4*7,256-96,(4<<2)|1,0,...payload]);
   ble.dispatchEvent(new CustomEvent('packet',{detail:frame}));
   radioSession.dispatchEvent(new CustomEvent('message',{detail:{kind:'channel',slot:1,pathLength:0,snr:5,timestamp:1700000001,text:'late'}}));
-  assert.equal(NightlinkPropagationUI.monitor.summary(Date.now()).recent.length,before);
+  if(NightlinkPropagationUI.monitor.summary(Date.now()).recent.length!==before)throw Error('Late receive events changed RF history after disconnect');
   ble.state='connected';radioSession.dispatchEvent(new CustomEvent('identity',{detail:live.identity}));
  });
  // Synthetic 30-hour baseline from ten regular stations, then a normal window.
