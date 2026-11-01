@@ -7,6 +7,7 @@ on:
       - 'propagation-ui.js'
       - 'propagation.test.cjs'
       - 'propagation.browser.test.cjs'
+      - 'navigation.browser.test.cjs'
       - '.github/workflows/rf-monitor-validation.yml'
   workflow_dispatch:
 permissions:
