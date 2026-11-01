@@ -83,7 +83,12 @@
    if(lastLevel!==null&&['possible-opening','strong-anomaly'].includes(st.state))status.textContent=st.label+' detected. Unusual reception, not a confirmed propagation event.';
    else if(lastLevel!==null&&st.state==='normal'&&['possible-opening','strong-anomaly'].includes(lastLevel))status.textContent='Propagation monitor returned to normal.';}
   lastLevel=st.state;}
- function refresh(){if(!ready)return;try{last=monitor.summary(Date.now());}catch{storageFailed('Monitor data could not be evaluated. Use Clear monitor data in Settings to start again.');return;}paint(last);renderPanel();}
+ function refresh(){if(!ready)return;try{last=monitor.summary(Date.now());}catch{storageFailed('Monitor data could not be evaluated. Use Clear monitor data in Settings to start again.');return;}
+  const evidence=last.evidence||{};window.nightlinkCodexBridge?.publish({state:last.state,connected:last.connected,rxLogObserved:last.rxLogObserved,
+   baselineHours:evidence.baselineHours,baselineTargetHours:24,packetRate:evidence.packetRate,baselinePacketRate:evidence.baselinePacketRate,
+   observations:(Array.isArray(last.recent)?last.recent.slice(0,50):[]).map(row=>({at:row.at,source:row.source,relation:row.relation,hops:row.hops,snr:row.snr,rssi:row.rssi,flagCount:Array.isArray(row.flags)?row.flags.length:0})),
+   activeAlert:last.activeEvent?.peakLevel||null,alertCount:Array.isArray(last.events)?last.events.length:0,comparable:last.comparable});
+  paint(last);renderPanel();}
 
  // Panel.
  const fmt=(v,unit,digits=0)=>v==null||!Number.isFinite(v)?'Unknown':(digits?v.toFixed(digits):Math.round(v))+(unit||'');

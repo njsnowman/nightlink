@@ -296,3 +296,4 @@ Contact storage upgrades to IndexedDB version 2. Older Nightlink versions reques
 ## 0.7.1 — 2026-10-14 (GitHub preview)
 - Initial published Windows preview with Bluetooth messaging, contact cards, maps, and local history.
 
+- Add the local, read-only Nightlink Live Codex bridge for sanitized RF-monitor status and cursor-paged events. Tracks [#128](https://github.com/njsnowman/nightlink/issues/128).

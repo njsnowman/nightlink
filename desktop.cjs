@@ -16,6 +16,7 @@ else app.whenReady().then(async()=>{
  require('./serial-desktop.cjs').installSerial(win,ipcMain,startup);
  let select=null,pair=null,devices=new Set(),deviceDetails=new Map(),scanTimer,pairTimer;
  const trusted=e=>windowLifecycle.available(win)&&security.unlocked&&e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
+ require('./codex-bridge-desktop.cjs').install({app,ipcMain,trusted});
 
  require('./internet-status.cjs').install({ipcMain,net:require('electron').net,trusted});
  require('./pc-location.cjs').install({ipcMain,trusted});
