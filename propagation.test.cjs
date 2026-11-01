@@ -141,16 +141,16 @@ test('observations after disconnect are rejected until radio reconnects',()=>{
  assert.equal(s.m.summary(s.now).recent.length,before+1);
 });
 
-test('cooldown suppression expires and reports an ongoing qualifying anomaly exactly once',()=>{
- const s=setup({cooldownMs:5*MIN,clearMs:MIN});learn(s);s.m.setOwnLocation({lat:40,lon:-86});
+test('suppressed RF anomaly can alert again after cooldown with fresh qualifying evidence',()=>{
+ const s=setup({cooldownMs:60*MIN,clearMs:MIN});learn(s);s.m.setOwnLocation({lat:40,lon:-86});
  const burst=(id)=>{s.m.setContacts([{key:key(id),lat:42,lon:-86},{key:key(id+1),lat:42,lon:-86}]);for(let j=0;j<2;j++){s.tick(1000);feed(s,rx({station:key(id+j),hops:0,nonce:id+j}));}s.m.evaluate(s.now);};
  burst(1500);assert.equal(s.events.filter(e=>e.type==='alert').length,1);
  s.tick(32*MIN);s.m.evaluate(s.now);s.tick(2*MIN);s.m.evaluate(s.now);
  assert.equal(s.m.evaluate(s.now).state,'normal');
- burst(1502);assert.equal(s.events.filter(e=>e.type==='alert').length,1,'cooldown initially suppresses the repeat');
- s.tick(5*MIN);const status=s.m.evaluate(s.now);
+ burst(1502);assert.equal(s.events.filter(e=>e.type==='alert').length,1,'repeat suppressed inside cooldown');
+ s.tick(61*MIN);burst(1504);const status=s.m.evaluate(s.now);
  assert.notEqual(status.state,'normal');assert.equal(s.events.filter(e=>e.type==='alert').length,2);
- s.m.evaluate(s.now);assert.equal(s.events.filter(e=>e.type==='alert').length,2,'no repeated notification on re-evaluation');
+ s.m.evaluate(s.now);assert.equal(s.events.filter(e=>e.type==='alert').length,2,'no duplicate on re-evaluation');
 });
 test('missing or newly available radio configuration fields do not invalidate baseline',()=>{
  const s=setup();s.m.noteConfig({frequency:910.525});learn(s);
