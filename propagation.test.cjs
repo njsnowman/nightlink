@@ -75,7 +75,7 @@ test('hysteresis holds the alert in the band, clears after clearMs, and cooldown
  s.tick(MIN);far(202,3);far(203,4);s.m.evaluate(s.now);assert.equal(s.events.filter(e=>e.type==='alert').length,1);
  for(let i=0;i<40;i++){s.tick(2*MIN);s.m.evaluate(s.now);}
  s.tick(MIN);far(204,5);far(205,6);s.m.evaluate(s.now);assert.equal(s.events.filter(e=>e.type==='alert').length,2);});
-test('configuration changes mark the baseline not comparable until reset',()=>{const s=setup();s.m.noteConfig({frequency:910.525,sf:7});learn(s);assert.equal(s.m.evaluate(s.now).state,'normal');
+test('configuration changes mark the baseline not comparable until reset',()=>{const s=setup();s.m.noteConfig({frequency:910.525,sf:7,antenna:'old'});learn(s);assert.equal(s.m.evaluate(s.now).state,'normal');
  const w=s.m.noteConfig({frequency:910.525,sf:7,antenna:'new'});assert.match(w,/no longer be comparable/);const st=s.m.evaluate(s.now);assert.equal(st.state,'insufficient-data');assert.equal(st.comparable,false);
  s.m.resetBaseline();assert.equal(s.m.evaluate(s.now).comparable,true);assert.equal(s.m.evaluate(s.now).state,'insufficient-data');});
 test('settings validate sensitivity and baseline period; disabled stops evaluation',()=>{const s=setup();assert.throws(()=>s.m.configure({sensitivity:'extreme'}));assert.throws(()=>s.m.configure({baselineDays:7}));
@@ -139,4 +139,23 @@ test('observations after disconnect are rejected until radio reconnects',()=>{
  s.m.connect(RADIO,s.now);
  assert.equal(s.m.observe(P.normalize.rxLog(rx({station:key(999),nonce:3}),s.now)),true);
  assert.equal(s.m.summary(s.now).recent.length,before+1);
+});
+
+test('suppressed RF anomaly can alert again after cooldown with fresh qualifying evidence',()=>{
+ const s=setup({cooldownMs:60*MIN,clearMs:MIN});learn(s);s.m.setOwnLocation({lat:40,lon:-86});
+ const burst=(id)=>{s.m.setContacts([{key:key(id),lat:42,lon:-86},{key:key(id+1),lat:42,lon:-86}]);for(let j=0;j<2;j++){s.tick(1000);feed(s,rx({station:key(id+j),hops:0,nonce:id+j}));}s.m.evaluate(s.now);};
+ burst(1500);assert.equal(s.events.filter(e=>e.type==='alert').length,1);
+ s.tick(32*MIN);s.m.evaluate(s.now);s.tick(2*MIN);s.m.evaluate(s.now);
+ assert.equal(s.m.evaluate(s.now).state,'normal');
+ burst(1502);assert.equal(s.events.filter(e=>e.type==='alert').length,1,'repeat suppressed inside cooldown');
+ s.tick(61*MIN);burst(1504);const status=s.m.evaluate(s.now);
+ assert.notEqual(status.state,'normal');assert.equal(s.events.filter(e=>e.type==='alert').length,2);
+ s.m.evaluate(s.now);assert.equal(s.events.filter(e=>e.type==='alert').length,2,'no duplicate on re-evaluation');
+});
+test('missing or newly available radio configuration fields do not invalidate baseline',()=>{
+ const s=setup();s.m.noteConfig({frequency:910.525});learn(s);
+ s.m.noteConfig({frequency:910.525,sf:7});assert.equal(s.m.evaluate(s.now).comparable,true);
+ s.m.noteConfig({sf:7});assert.equal(s.m.evaluate(s.now).comparable,true);
+ s.m.noteConfig({frequency:910.525});assert.equal(s.m.evaluate(s.now).comparable,true);
+ s.m.noteConfig({frequency:906.875});assert.equal(s.m.evaluate(s.now).comparable,false);
 });
