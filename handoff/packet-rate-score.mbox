@@ -1,0 +1,165 @@
+From e0d08b206904829e3e774b5f3b3248fe7ca323b8 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 1 Nov 2026 11:18:04 +0000
+Subject: [PATCH] Score sustained multi-station traffic rises in the RF monitor
+
+Add a bounded traffic-rise part (up to 10 points) to the Propagation
+Monitor score. It counts only when the deduplicated packet rate in the
+window is at least 3x the coverage-weighted baseline rate, at least 5
+unique stations were heard and that count is at least 1.5x the baseline
+per-hour unique count, and window observations span 20 minutes. Full
+credit at 6x. It is zero without a usable baseline and cannot raise an
+alert on its own (the possible threshold is 40 at Medium).
+
+The owner-reported overnight sample on SNOMAN HQ (about 2.1x baseline,
+7 forwarded stations) scores 0 traffic points and stays Normal. Tests
+cover that case, a sustained multi-station rise, and a single-station
+burst. Thresholds are untested hypotheses and configurable.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019jwdUNLdgFDTkdkrPTAK1B
+---
+ docs/propagation-monitor.md |  5 +++--
+ propagation.js              | 27 ++++++++++++++++++---------
+ propagation.test.cjs        | 13 ++++++++++++-
+ 3 files changed, 33 insertions(+), 12 deletions(-)
+
+diff --git a/docs/propagation-monitor.md b/docs/propagation-monitor.md
+index 6b44a51..b5b3d7b 100644
+--- a/docs/propagation-monitor.md
++++ b/docs/propagation-monitor.md
+@@ -51,12 +51,13 @@ The evaluation window is the last 30 minutes. Weights are starting hypotheses, n
+ | Multiple unusual stations | 25 | Needs at least 2 new or rarely received stations; scales with the excess over the baseline's expected new-station rate |
+ | Comparable SNR change | 20 | Mean change for the same station and packet type versus baseline; needs 3 comparable pairs with 3 baseline samples each; 3 dB gives 0, 12 dB gives full |
+ | Sustained anomaly | 15 | Consecutive evaluations at or above the possible threshold; full at 3 |
++| Traffic rise | 10 | Deduplicated packet rate at least 3x the baseline rate, unique stations at least 5 and at least 1.5x the baseline per-hour unique count, and window observations spanning 20 minutes; full credit at 6x. Never enough to alert alone. |
+ 
+ Unavailable evidence scores no points. Retransmissions of one packet (same payload type and payload within 2 minutes) count once, so one packet cannot raise more than one station's credit.
+ 
+ Sensitivity thresholds (possible / strong): low 55 / 80, medium 40 / 70, high 30 / 55.
+ 
+-Packet rate and unique-station rate are reported for context and do not score.
++Packet rate alone does not score. The traffic-rise part needs a sustained, multi-station rise well above the coverage-weighted baseline, so local bursts from one node or one repeater flood score nothing. An owner-reported overnight sample on SNOMAN HQ (about 2.1x baseline, 7 unique stations, all forwarded) stays Normal with 0 traffic points at Medium. Thresholds are hypotheses and configurable (`trafficMinRatio`, `trafficFullRatio`, `trafficMinUnique`, `trafficMinUniqueRatio`, `trafficMinSpanMs`).
+ 
+ ## States and events
+ 
+@@ -84,7 +85,7 @@ States: `disabled`, `unavailable` (not connected), `insufficient-data`, `normal`
+ - With RX logging off, only message and advert evidence exists: no RSSI, no per-packet route type and no direct-distance evidence.
+ - Antenna, location or radio parameter changes change reception; record them with `noteConfig()` and reset the baseline.
+ - New nodes joining the mesh, a new repeater or a repeater outage can produce new-station evidence unrelated to propagation.
+-- Busy local traffic raises packet counts; counts do not score for this reason.
++- Busy local traffic raises packet counts; counts score only through the bounded traffic-rise part above, and never alone.
+ - Advert locations are self-reported and may be wrong or stale.
+ - Prefix collisions: different stations can share a DM prefix.
+ - The 0xFF path length and direct-routed packets carry no distance evidence.
+diff --git a/propagation.js b/propagation.js
+index 49198bb..2ac0636 100644
+--- a/propagation.js
++++ b/propagation.js
+@@ -10,7 +10,7 @@
+   enabled:true,sensitivity:'medium',baselineDays:30,bucketMs:HOUR,windowMs:30*MINUTE,dedupMs:2*MINUTE,
+   minBaselineHours:24,minCoverageRatio:0.5,maxStations:5000,maxStationsPerBucket:512,maxSnrClassesPerBucket:256,
+   maxRecent:200,maxEvents:100,maxDistances:500,
+-  weights:{distance:40,stations:25,snr:20,sustained:15},
++  weights:{distance:40,stations:25,snr:20,sustained:15,traffic:10},
+   thresholds:{low:{possible:55,strong:80},medium:{possible:40,strong:70},high:{possible:30,strong:55}},
+   hysteresis:10,clearMs:20*MINUTE,cooldownMs:30*MINUTE,
+   unusualDistanceKm:80,distanceFactor:1.5,minDistanceSamples:5,rareMaxBuckets:1,minStationsNew:2,
+@@ -18,7 +18,10 @@
+   // Full sustained credit needs flagged observations spread over (sustainedWindows-1) x sustainedSlotMs; evaluation calls add nothing.
+   sustainedSlotMs:10*MINUTE,
+   // Time without any observation or heartbeat beyond this gap is not counted as monitored coverage (null disables).
+-  idleGapMs:30*MINUTE,maxLocations:5000
++  idleGapMs:30*MINUTE,maxLocations:5000,
++  // Traffic rise scores only when deduplicated packet rate is at least trafficMinRatio x baseline, unique stations also rise,
++  // and the window's observations span trafficMinSpanMs. Full credit at trafficFullRatio. It cannot raise an alert alone.
++  trafficMinRatio:3,trafficFullRatio:6,trafficMinUnique:5,trafficMinUniqueRatio:1.5,trafficMinSpanMs:20*MINUTE
+  });
+  const baselineChoices=[14,30,60],sensitivities=['low','medium','high'];
+  const levels=['normal','possible-opening','strong-anomaly'];
+@@ -68,10 +71,13 @@
+  const snrClass=o=>o.station+'|'+o.type+'|'+o.relation+'|'+(o.hops==null?'u':o.hops);
+ 
+  function score(input,options=defaults){
+-  const w={...defaults.weights,...(options.weights||{})},parts={distance:null,stations:null,snr:null,sustained:null};
++  const w={...defaults.weights,...(options.weights||{})},parts={distance:null,stations:null,snr:null,sustained:null,traffic:null};
+   if(input.distance)parts.distance=w.distance*clamp(input.distance.stations/2);
+   if(input.stations&&input.stations.available)parts.stations=input.stations.unusual>=(options.minStationsNew??defaults.minStationsNew)?w.stations*clamp((input.stations.unusual-input.stations.expected-1)/4):0;
+   if(input.snr&&input.snr.delta!=null){const lo=options.snrMinDelta??defaults.snrMinDelta,hi=options.snrFullDelta??defaults.snrFullDelta;parts.snr=w.snr*clamp((input.snr.delta-lo)/(hi-lo));}
++  if(input.traffic){const t=input.traffic,lo=options.trafficMinRatio??defaults.trafficMinRatio,hi=options.trafficFullRatio??defaults.trafficFullRatio;
++   const qualifies=t.ratio>=lo&&t.unique>=(options.trafficMinUnique??defaults.trafficMinUnique)&&t.uniqueRatio>=(options.trafficMinUniqueRatio??defaults.trafficMinUniqueRatio)&&t.spanMs>=(options.trafficMinSpanMs??defaults.trafficMinSpanMs);
++   parts.traffic=qualifies?w.traffic*clamp((t.ratio-lo)/(hi-lo)):0;}
+   if(input.sustained!=null)parts.sustained=w.sustained*clamp((input.sustained-1)/Math.max(1,(options.sustainedWindows??defaults.sustainedWindows)-1));
+   const total=Object.values(parts).reduce((a,v)=>a+(v||0),0);
+   return {total:Math.round(Math.min(100,total)),parts};
+@@ -103,10 +109,10 @@
+    const {from,to}=baselineRange(at),ck=settingsVersion+'|'+Math.floor(from/settings.bucketMs)+'|'+Math.floor(to/settings.bucketMs)+'|'+r.buckets.length;
+    if(r.baseCache&&r.baseCache.key===ck)return r.baseCache.value;
+    const usable=r.buckets.filter(b=>b.start>=from&&b.start+settings.bucketMs<=to&&b.coverageMs>=settings.bucketMs*settings.minCoverageRatio);
+-   const hours=usable.reduce((a,b)=>a+b.coverageMs,0)/HOUR,snr=new Map();let packets=0,newKeys=0;
+-   for(const b of usable){packets+=b.packets;newKeys+=b.newKeys;for(const [c,v] of b.snr){const s=snr.get(c)||{n:0,sum:0};s.n+=v.n;s.sum+=v.sum;snr.set(c,s);}}
++   const hours=usable.reduce((a,b)=>a+b.coverageMs,0)/HOUR,snr=new Map();let packets=0,newKeys=0,uniqueSum=0;
++   for(const b of usable){packets+=b.packets;newKeys+=b.newKeys;uniqueSum+=b.keys.size;for(const [c,v] of b.snr){const s=snr.get(c)||{n:0,sum:0};s.n+=v.n;s.sum+=v.sum;snr.set(c,s);}}
+    const dist=r.distances.filter(d=>d.at>=from&&d.at<=to).map(d=>d.km);
+-   const value={hours,buckets:usable.length,packetRate:hours?packets/hours:null,newRate:hours?newKeys/hours:null,snr,distanceP95:dist.length>=settings.minDistanceSamples?percentile(dist,0.95):null,distanceSamples:dist.length};
++   const value={hours,buckets:usable.length,packetRate:hours?packets/hours:null,newRate:hours?newKeys/hours:null,uniquePerBucket:usable.length?uniqueSum/usable.length:null,snr,distanceP95:dist.length>=settings.minDistanceSamples?percentile(dist,0.95):null,distanceSamples:dist.length};
+    r.baseCache={key:ck,value};return value;
+   }
+ 
+@@ -153,8 +159,11 @@
+     if(deltas.length>=settings.snrMinComparable)snr={delta:deltas.reduce((a,v)=>a+v,0)/deltas.length,comparable:deltas.length};}
+    const distance=directKeys.size?{stations:directKeys.size}:null;
+    const packets=win.length,unique=new Set(win.filter(x=>x.station).map(x=>x.station)).size;
++   // Packet rate is compared only with a usable baseline; window observations are already deduplicated.
++   const span=win.length>1?win[win.length-1].at-win[0].at:0;
++   const traffic=enough&&base.packetRate>0&&base.uniquePerBucket!=null?{ratio:(packets/hours)/base.packetRate,unique,uniqueRatio:unique/Math.max(1,base.uniquePerBucket),spanMs:span}:null;
+    const flaggedAt=win.filter(x=>x.flags.length).map(x=>x.at),flaggedSpanMs=flaggedAt.length>1?Math.max(...flaggedAt)-Math.min(...flaggedAt):0;
+-   return {base,enough,stations,snr,distance,packets,unique,flaggedSpanMs,
++   return {base,enough,stations,snr,distance,traffic,packets,unique,flaggedSpanMs,
+     summary:{newStations:win.filter(x=>x.flags.includes('new station')).length,unusualStations:unusualKeys.size,unusualDirect:win.some(x=>x.distanceKm!=null)?directKeys.size:null,
+      snrDelta:snr.delta,snrComparable:snr.comparable,packetRate:packets/hours,baselinePacketRate:base.packetRate,uniqueStations:unique,baselineHours:base.hours}};
+   }
+@@ -165,10 +174,10 @@
+    if(!r||!connected)return status('unavailable');
+    cover(at);const m=measure(r,at);
+    if(!m.enough){close(r,at,'insufficient data');r.level='insufficient-data';r.score=0;r.anomalyStreak=0;r.below=null;return status('insufficient-data',m);}
+-   const partial=score({distance:m.distance,stations:m.stations,snr:m.snr},settings).total,th=thresholds();
++   const partial=score({distance:m.distance,stations:m.stations,snr:m.snr,traffic:m.traffic},settings).total,th=thresholds();
+    // Sustained evidence is the time spread of flagged observations in the window, so repeated evaluations add nothing.
+    r.anomalyStreak=partial>=th.possible?1+m.flaggedSpanMs/settings.sustainedSlotMs:0;
+-   const s=score({distance:m.distance,stations:m.stations,snr:m.snr,sustained:r.anomalyStreak||null},settings);r.score=s.total;
++   const s=score({distance:m.distance,stations:m.stations,snr:m.snr,traffic:m.traffic,sustained:r.anomalyStreak||null},settings);r.score=s.total;
+    // Hysteresis: enter at a threshold, leave only below threshold minus hysteresis; clearing also needs clearMs below.
+    let level=r.level==='insufficient-data'?'normal':r.level;
+    if(s.total>=th.strong)level='strong-anomaly';
+diff --git a/propagation.test.cjs b/propagation.test.cjs
+index 7d83ede..bd8a894 100644
+--- a/propagation.test.cjs
++++ b/propagation.test.cjs
+@@ -85,7 +85,7 @@ test('storage stays bounded over long runs',()=>{const s=setup({baselineDays:14,
+ test('50,000 observations are processed within a bounded time',()=>{const s=setup();const frames=Array.from({length:500},(_,i)=>rx({station:key(i%120+1),hops:i%4,nonce:i}));const t=performance.now();
+  for(let i=0;i<50000;i++){s.now=T0+i*500;s.m.observe(P.normalize.rxLog(frames[i%500].map((v,j)=>j===frames[i%500].length-5?(i&255):v),s.now));if(i%600===0)s.m.evaluate(s.now);}
+  const ms=performance.now()-t;assert.ok(ms<4000,'took '+ms+' ms');});
+-test('score awards no points for unavailable evidence',()=>{const r=P.score({});assert.equal(r.total,0);assert.deepEqual(r.parts,{distance:null,stations:null,snr:null,sustained:null});});
++test('score awards no points for unavailable evidence',()=>{const r=P.score({});assert.equal(r.total,0);assert.deepEqual(r.parts,{distance:null,stations:null,snr:null,sustained:null,traffic:null});});
+ // Review follow-ups (#120).
+ const burst=(s,ids,n0=0)=>{s.m.setContacts(ids.map(id=>({key:key(id),lat:42,lon:-86})));ids.forEach((id,i)=>{s.tick(1000);feed(s,rx({station:key(id),hops:0,nonce:n0+i}));});};
+ test('repeated evaluate and summary calls on one burst cannot add sustained points',()=>{const s=setup();learn(s);s.m.setOwnLocation({lat:40,lon:-86});
+@@ -159,3 +159,14 @@ test('missing or newly available radio configuration fields do not invalidate ba
+  s.m.noteConfig({frequency:910.525});assert.equal(s.m.evaluate(s.now).comparable,true);
+  s.m.noteConfig({frequency:906.875});assert.equal(s.m.evaluate(s.now).comparable,false);
+ });
++test('overnight-like traffic (about 2x baseline, few new forwarded stations) stays normal at medium',()=>{const s=setup();learn(s,30,[1,2,3]);let n=1e6;
++ // Baseline is 18 packets/h from 3 stations; send 18 packets in 30 min (36/h, 2x) from 7 stations.
++ for(let i=0;i<18;i++){s.tick(100*1000);s.m.observe(P.normalize.rxLog(rx({station:key(1+i%7),hops:3,snr:-8,nonce:n++}),s.now));}
++ const st=s.m.evaluate(s.now);assert.equal(st.state,'normal');assert.equal(st.parts.traffic,0);});
++test('sustained traffic rise with many new unique stations adds traffic points',()=>{const s=setup();learn(s,30,[1,2,3]);let n=2e6;
++ for(let i=0;i<30;i++){s.tick(MIN);for(let j=0;j<4;j++)s.m.observe(P.normalize.rxLog(rx({station:key(300+((i*4+j)%20)),hops:2,snr:-8,nonce:n++}),s.now));}
++ const st=s.m.evaluate(s.now);assert.ok(st.parts.traffic>0,String(st.parts.traffic));assert.ok(st.parts.traffic<=10);});
++test('a burst from one station never earns traffic points',()=>{const s=setup();learn(s,30,[1,2,3]);let n=3e6;
++ for(let i=0;i<30;i++){s.tick(MIN);for(let j=0;j<8;j++)s.m.observe(P.normalize.rxLog(rx({station:key(1),hops:1,snr:-8,nonce:n++}),s.now));}
++ const st=s.m.evaluate(s.now);assert.equal(st.parts.traffic,0);assert.equal(st.state,'normal');});
++
+-- 
+2.43.0
+
