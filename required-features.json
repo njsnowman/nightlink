@@ -34,6 +34,8 @@
     "echo-workspace.css",
     "text-art.js",
     "text-art-ui.js",
-    "text-art.css"
+    "text-art.css",
+    "ansi-text.js",
+    "ansi-text.css"
   ]
 }

@@ -1,0 +1,18 @@
+/* ANSI and mIRC message formatting. Hues are mixed with the scheme text and surface tokens so contrast follows the active display scheme. */
+:root{--ansi-copy:var(--nl-copy,#eeeeef);--ansi-surface:var(--nl-surface,#080808);
+--ansi-0:color-mix(in srgb,#000 55%,var(--ansi-copy));--ansi-1:color-mix(in srgb,#e5534b 80%,var(--ansi-copy));--ansi-2:color-mix(in srgb,#3fb950 80%,var(--ansi-copy));--ansi-3:color-mix(in srgb,#d29922 80%,var(--ansi-copy));
+--ansi-4:color-mix(in srgb,#4c8dff 75%,var(--ansi-copy));--ansi-5:color-mix(in srgb,#bc6cd8 80%,var(--ansi-copy));--ansi-6:color-mix(in srgb,#2fb5c4 80%,var(--ansi-copy));--ansi-7:color-mix(in srgb,#b0b0b8 70%,var(--ansi-copy));
+--ansi-8:color-mix(in srgb,#808088 70%,var(--ansi-copy));--ansi-9:color-mix(in srgb,#ff7b72 85%,var(--ansi-copy));--ansi-10:color-mix(in srgb,#7ee787 85%,var(--ansi-copy));--ansi-11:color-mix(in srgb,#f2cc60 85%,var(--ansi-copy));
+--ansi-12:color-mix(in srgb,#79b8ff 85%,var(--ansi-copy));--ansi-13:color-mix(in srgb,#e39cf7 85%,var(--ansi-copy));--ansi-14:color-mix(in srgb,#76e3ea 85%,var(--ansi-copy));--ansi-15:var(--ansi-copy);
+--ansi-bg-mix:35%}
+.ansi-text{white-space:pre-wrap;overflow-wrap:anywhere}
+.ansi-segment{border-radius:3px}
+.ansi-bold{font-weight:700}.ansi-italic{font-style:italic}.ansi-underline{text-decoration:underline;text-underline-offset:2px}
+.ansi-fg-0{color:var(--ansi-0)}.ansi-fg-1{color:var(--ansi-1)}.ansi-fg-2{color:var(--ansi-2)}.ansi-fg-3{color:var(--ansi-3)}.ansi-fg-4{color:var(--ansi-4)}.ansi-fg-5{color:var(--ansi-5)}.ansi-fg-6{color:var(--ansi-6)}.ansi-fg-7{color:var(--ansi-7)}
+.ansi-fg-8{color:var(--ansi-8)}.ansi-fg-9{color:var(--ansi-9)}.ansi-fg-10{color:var(--ansi-10)}.ansi-fg-11{color:var(--ansi-11)}.ansi-fg-12{color:var(--ansi-12)}.ansi-fg-13{color:var(--ansi-13)}.ansi-fg-14{color:var(--ansi-14)}.ansi-fg-15{color:var(--ansi-15)}
+.ansi-fg-surface{color:var(--ansi-surface)}.ansi-bg-copy{background:var(--ansi-copy);padding:0 1px}
+[class*=" ansi-bg-"]{padding:0 1px}
+.ansi-bg-0{background:color-mix(in srgb,#000 70%,var(--ansi-surface))}.ansi-bg-1{background:color-mix(in srgb,#e5534b var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-2{background:color-mix(in srgb,#3fb950 var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-3{background:color-mix(in srgb,#d29922 var(--ansi-bg-mix),var(--ansi-surface))}
+.ansi-bg-4{background:color-mix(in srgb,#4c8dff var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-5{background:color-mix(in srgb,#bc6cd8 var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-6{background:color-mix(in srgb,#2fb5c4 var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-7{background:color-mix(in srgb,#b0b0b8 var(--ansi-bg-mix),var(--ansi-surface))}
+.ansi-bg-8{background:color-mix(in srgb,#808088 var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-9{background:color-mix(in srgb,#ff7b72 var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-10{background:color-mix(in srgb,#7ee787 var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-11{background:color-mix(in srgb,#f2cc60 var(--ansi-bg-mix),var(--ansi-surface))}
+.ansi-bg-12{background:color-mix(in srgb,#79b8ff var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-13{background:color-mix(in srgb,#e39cf7 var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-14{background:color-mix(in srgb,#76e3ea var(--ansi-bg-mix),var(--ansi-surface))}.ansi-bg-15{background:color-mix(in srgb,#fff 45%,var(--ansi-surface))}
