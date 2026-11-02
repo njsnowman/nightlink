@@ -308,7 +308,7 @@ html:root:root:root:root[data-theme="bbs-camo"] body .bbs-masthead{position:rela
 html:root:root:root:root[data-theme="bbs-camo"] body .bbs-masthead:after{position:absolute;z-index:-1;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#e7edcd66 24%,#f7f9e819 68%,transparent);content:""}
 html:root:root:root:root[data-theme="bbs-camo"] body .bbs-ansi-art{grid-template-columns:150px minmax(0,1fr);gap:18px;border-color:#d2dda378}
 html:root:root:root:root[data-theme="bbs-camo"] body .bbs-ansi-art pre{overflow:visible;font-size:12px;line-height:1.04;letter-spacing:0}
-html:root:root:root:root[data-theme="bbs-camo"] body .bbs-ansi-tower{text-align:center}
+html:root:root:root:root[data-theme="bbs-camo"] body .bbs-ansi-tower{font-size:10.5px;text-align:center}
 html:root:root:root:root[data-theme="bbs-camo"] body .ansi-bold{font-weight:700}
 html:root:root:root:root[data-theme="bbs-camo"] body .ansi-fg-default{color:#b8c0a1}
 html:root:root:root:root[data-theme="bbs-camo"] body .ansi-fg-dim{color:#a0ad82}
@@ -324,7 +324,7 @@ html:root:root:root:root[data-theme="bbs-camo"] body #alternate.bbs-irc-active .
 html:root:root:root:root[data-theme="bbs-camo"] body #alternate.bbs-irc-active #chat-log{background:linear-gradient(145deg,#121912e8,#0c120eeF);backdrop-filter:blur(8px)}
 html:root:root:root:root[data-theme="bbs-camo"] body .bbs-count-item,html:root:root:root:root[data-theme="bbs-camo"] body .bbs-rf-chart,html:root:root:root:root[data-theme="bbs-camo"] body .bbs-rf-empty{border-color:#c3d19a5e;background:linear-gradient(145deg,#6178495c,#1c2a20db 78%);backdrop-filter:blur(16px);box-shadow:inset 0 1px #eff5d752,0 8px 18px #0003}
 html:root:root:root:root[data-theme="bbs-camo"] body .bbs-irc-shell{position:relative;isolation:isolate}
-html:root:root:root:root[data-theme="bbs-camo"] body .bbs-ansi-camo-layer{position:absolute;z-index:0;inset:0;overflow:hidden;border-radius:inherit;opacity:.25;mix-blend-mode:screen;pointer-events:none;mask-image:linear-gradient(180deg,#000 0%,#000c 74%,transparent 100%)}
+html:root:root:root:root[data-theme="bbs-camo"] body .bbs-ansi-camo-layer{position:absolute;z-index:0;inset:0;overflow:hidden;border-radius:inherit;opacity:.22;mix-blend-mode:screen;pointer-events:none;mask-image:linear-gradient(180deg,#000 0%,#000c 74%,transparent 100%)}
 html:root:root:root:root[data-theme="bbs-camo"] body .bbs-ansi-camo-art{position:absolute;inset:0 auto auto 0;width:max-content;margin:0;overflow:hidden;white-space:pre;font:9px/9px Consolas,"Cascadia Mono",monospace;letter-spacing:0}
 html:root:root:root:root[data-theme="bbs-camo"] body .bbs-ansi-camo-layer+.bbs-masthead,html:root:root:root:root[data-theme="bbs-camo"] body .bbs-ansi-camo-layer+.bbs-masthead+.bbs-workspace-grid{position:relative;z-index:1}
 html:root:root:root:root[data-theme="bbs-camo"] body .bbs-masthead{background:linear-gradient(118deg,#aabb7b50 0%,#687b4c45 25%,#27392d90 62%,#596d437d 100%),linear-gradient(155deg,#27352bba,#17231bd9)}

@@ -47,27 +47,27 @@
   const appendText=text=>{if(!text)return;const span=make('span','ansi-fg-'+fg+(bold?' ansi-bold':''),text);target.append(span);};
   while((match=sgr.exec(source))){appendText(source.slice(cursor,match.index));for(const code of (match[1]||'0').split(';').map(Number)){if(code===0){fg='default';bold=false;}else if(code===1)bold=true;else if(code===22)bold=false;else if(code===39)fg='default';else if(code>=30&&code<=37)fg=['black','red','green','amber','blue','magenta','cyan','white'][code-30];else if(code>=90&&code<=97)fg=['dim','red-bright','green-bright','amber-bright','blue-bright','magenta-bright','cyan-bright','white-bright'][code-90];}cursor=sgr.lastIndex;}
   appendText(source.slice(cursor));}
- const towerSource=[ansi('96','       .   |   .       '),ansi('36','     .  \\  |  /  .     '),ansi('96','   .---\\  |  /---.   '),ansi('36','       \\  |  /       '),ansi('93','  ------\\ * /------  '),ansi('92','         \\|/         '),ansi('32','          |           '),ansi('33','         /|\\          '),ansi('32','        / | \\         '),ansi('33','       /  |  \\        '),ansi('32','      /___|___\\       '),ansi('33','          |           '),ansi('32','         /|\\          '),ansi('33','        /_|_\\         '),ansi('92','       |_____ |        ')].join('\n');
+ const towerSource=[ansi('90','         .          '),ansi('96','      .  |  .       '),ansi('36','    .   \\|/   .     '),ansi('1;96',' .----\\ | /----.   '),ansi('1;93',' ------\\* /------  '),ansi('92','        \\|/        '),ansi('32','         |          '),ansi('33','        /|\\         '),ansi('32','       / | \\        '),ansi('33','      /  |  \\       '),ansi('32','     /___|___\\      '),ansi('33','        /|\\         '),ansi('32','       /_|_\\        '),ansi('1;93','      |_____|        ')].join('\n');
  const glyphs={N:['█   █','██  █','█ █ █','█  ██','█   █','█   █','█   █'],I:['█████','  █  ','  █  ','  █  ','  █  ','  █  ','█████'],G:[' ████','█    ','█    ','█ ███','█   █','█   █',' ████'],H:['█   █','█   █','█   █','█████','█   █','█   █','█   █'],T:['█████','  █  ','  █  ','  █  ','  █  ','  █  ','  █  '],L:['█    ','█    ','█    ','█    ','█    ','█    ','█████'],K:['█  █ ','█ █  ','██   ','██   ','█ █  ','█  █ ','█   █']};
- const word='NIGHTLINK',ink=['92','93','32','92','93','32','92','93','32'],logoWidth=word.length*5+word.length-1;let wordRows=[];
- for(let row=0;row<7;row++){let line='';for(let i=0;i<word.length;i++)line+=ansi('1;'+ink[i],glyphs[word[i]][row])+(i<word.length-1?' ':'');wordRows.push(line);}
- const frameColor='1;36',innerWidth=logoWidth+2,top='╔'+'═'.repeat(innerWidth)+'╗',bottom='╚'+'═'.repeat(innerWidth)+'╝',tagline='SIGNAL LINK // LOCAL MESH // FIELD BBS',tagPad=Math.max(0,innerWidth-tagline.length),tagLine=' '.repeat(Math.floor(tagPad/2))+tagline+' '.repeat(Math.ceil(tagPad/2));
- let wordSource=ansi(frameColor,top)+'\n';for(const line of wordRows)wordSource+=ansi(frameColor,'║')+' '+line+' '+ansi(frameColor,'║')+'\n';wordSource+=ansi(frameColor,'║')+ansi('1;93',tagLine)+ansi(frameColor,'║')+'\n'+ansi(frameColor,bottom);
+ const word='NIGHTLINK',logoWidth=word.length*5+word.length-1;let wordRows=[];
+ for(let row=0;row<7;row++){let line='';const ink=row===0?'1;93':row===6?'32':'1;92';for(let i=0;i<word.length;i++)line+=ansi(ink,glyphs[word[i]][row])+(i<word.length-1?' ':'');wordRows.push(line);}
+ const innerWidth=logoWidth+2,top='╔'+'═'.repeat(innerWidth)+'╗',bottom='╚'+'═'.repeat(innerWidth)+'╝',tagline='SIGNAL LINK // LOCAL MESH // FIELD BBS',tagPad=Math.max(0,innerWidth-tagline.length),tagLine=' '.repeat(Math.floor(tagPad/2))+tagline+' '.repeat(Math.ceil(tagPad/2));
+ let wordSource=ansi('1;96',top)+'\n';for(const line of wordRows)wordSource+=ansi('1;96','║')+' '+line+' '+ansi('36','║')+'\n';wordSource+=ansi('36','║')+ansi('1;93',tagLine)+ansi('90','║')+'\n'+ansi('32',bottom);
  const camoLayer=make('div','bbs-ansi-camo-layer');camoLayer.setAttribute('aria-hidden','true');const camoArt=document.createElement('pre');camoArt.className='bbs-ansi-camo-art';camoLayer.append(camoArt);
  function buildCamoSource(){const cols=210,rows=88,patches=[
-  [20,13,27,10,'32','▒'],[57,30,34,12,'90','▓'],[94,15,27,10,'33','▓'],[132,34,38,13,'32','▒'],[181,18,27,10,'92','▓'],
-  [14,61,31,13,'33','▒'],[53,75,38,13,'92','▓'],[101,58,32,14,'90','▒'],[146,77,40,12,'33','▓'],[194,58,28,15,'32','▒'],
-  [35,43,22,9,'92','░'],[118,43,24,9,'36','░'],[174,42,21,9,'90','░']
+  [20,13,27,10,'32'],[57,30,34,12,'90'],[94,15,27,10,'33'],[132,34,38,13,'32'],[181,18,27,10,'92'],
+  [14,61,31,13,'33'],[53,75,38,13,'92'],[101,58,32,14,'90'],[146,77,40,12,'33'],[194,58,28,15,'32'],
+  [35,43,22,9,'92'],[118,43,24,9,'36'],[174,42,21,9,'90']
  ];let output='';
   for(let y=0;y<rows;y++){let last='',run='';const flush=()=>{if(run)output+=ansi(last,run);};
-   for(let x=0;x<cols;x++){let hash=(x+1)*374761393+(y+1)*668265263;hash=Math.imul(hash^(hash>>>13),1274126177)>>>0;let picked=['90','░'];let best=1.13;
-    for(const [cx,cy,rx,ry,sgr,glyph]of patches){const dx=(x-cx)/rx,dy=(y-cy)/ry,edge=((hash%101)/100-.5)*.16,d=dx*dx+dy*dy;if(d<1+edge&&d<best){best=d;picked=[sgr,glyph];}}
-    if(best===1.13&&hash%37===0)picked=['90','·'];const key=picked[0]+'/'+picked[1];if(key!==last){flush();last=key;run=picked[1];}else run+=picked[1];
+   for(let x=0;x<cols;x++){let hash=(x+1)*374761393+(y+1)*668265263;hash=Math.imul(hash^(hash>>>13),1274126177)>>>0;let picked=['90','░'];let best=1.08;
+    for(const [cx,cy,rx,ry,sgr]of patches){const dx=(x-cx)/rx,dy=(y-cy)/ry,edge=((hash%101)/100-.5)*.04,d=Math.pow(Math.abs(dx),2.4)+Math.pow(Math.abs(dy),2.4);if(d<1+edge&&d<best){best=d;picked=[sgr,d>.86?'▒':'█'];}}
+    const key=picked[0]+'/'+picked[1];if(key!==last){flush();last=key;run=picked[1];}else run+=picked[1];
    }flush();if(y<rows-1)output+='\n';
   }return output;
  }
  let camoRendered=false;function ensureCamo(){if(camoRendered)return;renderAnsi(camoArt,buildCamoSource());camoRendered=true;}
- renderAnsi(towerArt,towerSource);renderAnsi(wordArt,wordSource);mastArt.append(towerArt,wordArt);const mastCopy=make('div','bbs-masthead-copy');mastCopy.append(make('span','bbs-kicker','FIELD BBS // MESH RADIO'),make('strong','bbs-title','BBS / IRC'),make('span','bbs-subtitle','CHANNEL ACCESS · LOCAL FIRST'));
+ renderAnsi(towerArt,towerSource);renderAnsi(wordArt,wordSource);mastArt.append(towerArt,wordArt);const mastCopy=make('div','bbs-masthead-copy');mastCopy.append(make('span','bbs-kicker','RADIO MESSAGING'),make('strong','bbs-title','BBS / IRC'));
  masthead.append(mastArt,mastCopy);
  const mastState=make('span','bbs-masthead-state','RADIO LINK · OFFLINE');mastState.setAttribute('role','status');masthead.append(mastState);
  const grid=make('div','bbs-workspace-grid'),channels=make('nav','bbs-channel-rail');channels.setAttribute('aria-label','Radio channels');
