@@ -40,7 +40,15 @@
  const alternate=document.getElementById('alternate'),conversation=document.querySelector('.conversation');if(!alternate||!conversation)return;
  const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!=null)node.textContent=text;return node;};
  const shell=make('section','bbs-irc-shell');shell.setAttribute('aria-label','BBS and IRC workspace');
- const masthead=make('div','bbs-masthead'),mastCopy=make('div','bbs-masthead-copy');mastCopy.append(make('span','bbs-kicker','NIGHTLINK // FIELD CONSOLE'),make('strong','bbs-title','BBS / IRC'));masthead.append(mastCopy);
+ const masthead=make('div','bbs-masthead'),mastArt=make('div','bbs-ansi-art');mastArt.setAttribute('role','img');mastArt.setAttribute('aria-label','Original ANSI-style radio mast and NIGHTLINK block-letter wordmark');
+ const towerArt=document.createElement('pre'),wordArt=document.createElement('pre');towerArt.className='bbs-ansi-tower';wordArt.className='bbs-ansi-wordmark';towerArt.setAttribute('aria-hidden','true');wordArt.setAttribute('aria-hidden','true');
+ const towerLines=[['       ░░░       ','dim'],['      ░▒█▒░      ','olive'],['   ░▒▓█████▓▒░   ','khaki'],[' ░▒▓██▀     ▀██▓▒░','green'],['      ▀███▀      ','olive'],['        ██        ','khaki'],['    ▄▄▄███▄▄▄    ','green'],['        ██        ','khaki'],['       ▄███▄       ','olive'],['      ▟█████▙      ','khaki'],['      ▀█████▀      ','green']];
+ for(const [line,color]of towerLines){const span=make('span','ansi-'+color,line);towerArt.append(span,document.createTextNode('\n'));}
+ const glyphs={N:['█   █','██  █','█ █ █','█  ██','█   █'],I:['█████','  █  ','  █  ','  █  ','█████'],G:[' ████','█    ','█ ███','█   █',' ████'],H:['█   █','█   █','█████','█   █','█   █'],T:['█████','  █  ','  █  ','  █  ','  █  '],L:['█    ','█    ','█    ','█    ','█████'],K:['█  █ ','█ █  ','██   ','█ █  ','█  █ ']};
+ const word='NIGHTLINK',ink=['green','khaki','olive','green','khaki','olive','green','khaki','olive'];
+ for(let row=0;row<5;row++){for(let i=0;i<word.length;i++){wordArt.append(make('span','ansi-'+ink[i],glyphs[word[i]][row]));if(i<word.length-1)wordArt.append(document.createTextNode(' '));}if(row<4)wordArt.append(document.createTextNode('\n'));}
+ mastArt.append(towerArt,wordArt);const mastCopy=make('div','bbs-masthead-copy');mastCopy.append(make('span','bbs-kicker','FIELD BBS // MESH RADIO'),make('strong','bbs-title','BBS / IRC'),make('span','bbs-subtitle','CHANNEL ACCESS · LOCAL FIRST'));
+ masthead.append(mastArt,mastCopy);
  const mastState=make('span','bbs-masthead-state','RADIO LINK · OFFLINE');mastState.setAttribute('role','status');masthead.append(mastState);
  const grid=make('div','bbs-workspace-grid'),channels=make('nav','bbs-channel-rail');channels.setAttribute('aria-label','Radio channels');
  const channelHeader=make('div','bbs-rail-heading');channelHeader.append(make('span',null,'CHANNEL DIRECTORY'),make('span','bbs-rail-count','0'));channels.append(channelHeader);
