@@ -17,7 +17,7 @@
  // An embedded page (CoreScope, MeshMapper) takes focus inside its own document, so the host iframe matches no
  // :focus selector. Mark it while it holds focus so terminal.css can draw the focus ring.
  function markFrame(){for(const f of doc.querySelectorAll('iframe.term-frame-focused'))if(f!==doc.activeElement)f.classList.remove('term-frame-focused');const a=doc.activeElement;if(a&&a.tagName==='IFRAME')a.classList.add('term-frame-focused');}
- root.addEventListener('blur',()=>setTimeout(markFrame,0));root.addEventListener('focus',markFrame);doc.addEventListener('focusin',markFrame);
+ root.addEventListener('blur',()=>{markFrame();setTimeout(markFrame,0);});root.addEventListener('focus',markFrame);doc.addEventListener('focusin',markFrame);doc.addEventListener('focus',e=>{if(e.target?.tagName==='IFRAME')e.target.classList.add('term-frame-focused');},true);
  root.addEventListener('storage',e=>{if(e.key===KEY){apply(e.newValue);root.dispatchEvent(new CustomEvent('nightlink-interface',{detail:active()}));}});
 
  // Main window only: Settings control, terminal menu bar and function-key bar.

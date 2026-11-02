@@ -33,6 +33,8 @@ function audit(scope){
   if(!name)out.push({kind:'name',el:label(e)});}
  return out;}
 async function focusCheck(page,max){const out=[];for(let i=0;i<max;i++){await page.keyboard.press('Tab');
+  // Read after the next frame: what the operator sees, not the style mid-event.
+  await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0))));
   const r=await page.evaluate(()=>{const e=document.activeElement;if(!e||e===document.body)return null;const s=getComputedStyle(e),r=e.getBoundingClientRect();
    const has=n=>{const t=getComputedStyle(n);return (t.outlineStyle!=='none'&&parseFloat(t.outlineWidth)>=1)||(/rgb/.test(t.boxShadow)&&t.boxShadow!=='none');};
    // A ring on the element, or on an ancestor that draws it through :focus-within (MRC input line).
