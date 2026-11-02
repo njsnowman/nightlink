@@ -13,3 +13,22 @@
 :root:not([data-scheme=console]) .network-source-switch button[aria-pressed=true]{background:var(--accent-dim);color:var(--accent)}
 
 html:root:not([data-scheme=console]) .header-actions button.header-control{background:#111112;color:#dedee5}html:root:not([data-scheme=console]) .header-actions #connection[data-signal-state=connected]{background:var(--accent-soft);color:var(--accent)}:root:not([data-scheme=console]) .web-preview{background:#101011}:root:not([data-scheme=console]) .web-preview-picture{background:#1a1a1d}
+
+/* Terminal: optional BBS-inspired token scheme on the same shared components.
+   System monospace fonts only, no glow or animation. Geometry, icons and semantic status colors are unchanged. */
+html:root[data-scheme=terminal]{color-scheme:dark;--bg:#030607;--panel:#071013;--line:#1e4a50;--text:#d7f4ea;--muted:#9cc4b9;--console-surface:#071013;--console-copy:#d7f4ea;--console-secondary:#9cc4b9;--console-edge:#235259;--terminal-heading:#6fe3f5;--terminal-mono:'Cascadia Mono','Cascadia Code',Consolas,'Lucida Console',monospace;--accent-dim:color-mix(in srgb,var(--accent) 18%,#04090a);--accent-soft:color-mix(in srgb,var(--accent) 7%,#071013);--accent-line:color-mix(in srgb,var(--accent) 32%,#1e4a50)}
+html:root[data-scheme=terminal] body{background:#030607;color:#d7f4ea}
+html:root[data-scheme=terminal] :is(aside,body.compact aside,main,main>header,.content){background:#030607}
+html:root[data-scheme=terminal] :is(.panel,.stats article,dialog,.dm-window,.dm-floating,.settings-grid,.contact-profile,.contact-card,.dm-inbox,.corescope-pane,.corescope-startup){background:#071013;color:#d7f4ea}
+html:root[data-scheme=terminal] :is(.panel-heading,.dialog-heading,.dm-heading,.chat-channel,.conversation-tools,.workspace-message-tabs,.network-source-bar,.network-source-switch,.dm-compose,.dm-feedback,.composer-hint){background:#0a161a;color:#cdeee4}
+html:root[data-scheme=terminal] :is(input,select,textarea,#chat-form,.dm-compose input,dialog input,dialog select,.settings-grid select){background:#040b0d;color:#d7f4ea;border-color:#2b5c63}
+html:root[data-scheme=terminal] :is(.message p,.message.own p,body.compact .message p,.dm-bubble p,.dm-bubble.own p){background:#0b1a1e;color:#e2f8f0;border-color:#24535a}
+html:root[data-scheme=terminal] :is(.radio-manage,.conversation-tools button,.voice-actions button,.message-route,.layout-toggle,.header-search,.header-control,.network-source-switch button){background:#081316;color:#cdeee4}
+html:root[data-scheme=terminal] :is(.message>.avatar,.message>.contact-avatar,.signal-message-avatar .avatar,.contact-profile #contact-quick-photo .avatar){background:#0b1a1e}
+html:root[data-scheme=terminal] :is(.link-preview,.webpage-preview,.web-preview){background:#081316}
+html:root[data-scheme=terminal] .header-actions button.header-control{background:#081316;color:#cdeee4}
+/* Monospace for body, headings, message text and the lock card. Hierarchy, radii and spacing are unchanged. */
+html:root:root:root:root:root[data-scheme=terminal] body{font-family:var(--terminal-mono);letter-spacing:0}
+html:root:root:root:root:root[data-scheme=terminal] body :is(.page-heading h1,.panel-heading h2,.switchboard-settings-title,.dialog-heading h2,.dm-heading strong,.security-lock-card h1){color:var(--terminal-heading);letter-spacing:0;font-family:var(--terminal-mono)}
+html:root:root:root:root:root[data-scheme=terminal] body :is(input,select,textarea,button,.local-time){font-family:var(--terminal-mono)}
+html:root[data-scheme=terminal] *{text-shadow:none}
