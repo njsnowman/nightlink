@@ -30,5 +30,5 @@ html:root[data-scheme=terminal] .header-actions button.header-control{background
 /* Monospace for body, headings, message text and the lock card. Hierarchy, radii and spacing are unchanged. */
 html:root:root:root:root:root[data-scheme=terminal] body{font-family:var(--terminal-mono);letter-spacing:0}
 html:root:root:root:root:root[data-scheme=terminal] body :is(.page-heading h1,.panel-heading h2,.switchboard-settings-title,.dialog-heading h2,.dm-heading strong,.security-lock-card h1){color:var(--terminal-heading);letter-spacing:0;font-family:var(--terminal-mono)}
-html:root:root:root:root:root[data-scheme=terminal] body :is(input,select,textarea,button,.local-time){font-family:var(--terminal-mono)}
+html:root:root:root:root:root[data-scheme=terminal] body :is(input,select,textarea,button,.local-time,#message-input,#dm-text){font-family:var(--terminal-mono)}
 html:root[data-scheme=terminal] *{text-shadow:none}
