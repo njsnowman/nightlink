@@ -49,8 +49,24 @@
   appendText(source.slice(cursor));}
  const towerSource=[ansi('96','       .   |   .       '),ansi('36','     .  \\  |  /  .     '),ansi('96','   .---\\  |  /---.   '),ansi('36','       \\  |  /       '),ansi('93','  ------\\ * /------  '),ansi('92','         \\|/         '),ansi('32','          |           '),ansi('33','         /|\\          '),ansi('32','        / | \\         '),ansi('33','       /  |  \\        '),ansi('32','      /___|___\\       '),ansi('33','          |           '),ansi('32','         /|\\          '),ansi('33','        /_|_\\         '),ansi('92','       |_____ |        ')].join('\n');
  const glyphs={N:['█   █','██  █','█ █ █','█  ██','█   █','█   █','█   █'],I:['█████','  █  ','  █  ','  █  ','  █  ','  █  ','█████'],G:[' ████','█    ','█    ','█ ███','█   █','█   █',' ████'],H:['█   █','█   █','█   █','█████','█   █','█   █','█   █'],T:['█████','  █  ','  █  ','  █  ','  █  ','  █  ','  █  '],L:['█    ','█    ','█    ','█    ','█    ','█    ','█████'],K:['█  █ ','█ █  ','██   ','██   ','█ █  ','█  █ ','█   █']};
- const word='NIGHTLINK',ink=['92','93','32','92','93','32','92','93','32'];let wordSource='';
- for(let row=0;row<7;row++){for(let i=0;i<word.length;i++)wordSource+=ansi('1;'+ink[i],glyphs[word[i]][row])+(i<word.length-1?' ':'');if(row<6)wordSource+='\n';}
+ const word='NIGHTLINK',ink=['92','93','32','92','93','32','92','93','32'],logoWidth=word.length*5+word.length-1;let wordRows=[];
+ for(let row=0;row<7;row++){let line='';for(let i=0;i<word.length;i++)line+=ansi('1;'+ink[i],glyphs[word[i]][row])+(i<word.length-1?' ':'');wordRows.push(line);}
+ const frameColor='1;36',innerWidth=logoWidth+2,top='╔'+'═'.repeat(innerWidth)+'╗',bottom='╚'+'═'.repeat(innerWidth)+'╝',tagline='SIGNAL LINK // LOCAL MESH // FIELD BBS',tagPad=Math.max(0,innerWidth-tagline.length),tagLine=' '.repeat(Math.floor(tagPad/2))+tagline+' '.repeat(Math.ceil(tagPad/2));
+ let wordSource=ansi(frameColor,top)+'\n';for(const line of wordRows)wordSource+=ansi(frameColor,'║')+' '+line+' '+ansi(frameColor,'║')+'\n';wordSource+=ansi(frameColor,'║')+ansi('1;93',tagLine)+ansi(frameColor,'║')+'\n'+ansi(frameColor,bottom);
+ const camoLayer=make('div','bbs-ansi-camo-layer');camoLayer.setAttribute('aria-hidden','true');const camoArt=document.createElement('pre');camoArt.className='bbs-ansi-camo-art';camoLayer.append(camoArt);
+ function buildCamoSource(){const cols=210,rows=88,patches=[
+  [20,13,27,10,'32','▒'],[57,30,34,12,'90','▓'],[94,15,27,10,'33','▓'],[132,34,38,13,'32','▒'],[181,18,27,10,'92','▓'],
+  [14,61,31,13,'33','▒'],[53,75,38,13,'92','▓'],[101,58,32,14,'90','▒'],[146,77,40,12,'33','▓'],[194,58,28,15,'32','▒'],
+  [35,43,22,9,'92','░'],[118,43,24,9,'36','░'],[174,42,21,9,'90','░']
+ ];let output='';
+  for(let y=0;y<rows;y++){let last='',run='';const flush=()=>{if(run)output+=ansi(last,run);};
+   for(let x=0;x<cols;x++){let hash=(x+1)*374761393+(y+1)*668265263;hash=Math.imul(hash^(hash>>>13),1274126177)>>>0;let picked=['90','░'];let best=1.13;
+    for(const [cx,cy,rx,ry,sgr,glyph]of patches){const dx=(x-cx)/rx,dy=(y-cy)/ry,edge=((hash%101)/100-.5)*.16,d=dx*dx+dy*dy;if(d<1+edge&&d<best){best=d;picked=[sgr,glyph];}}
+    if(best===1.13&&hash%37===0)picked=['90','·'];const key=picked[0]+'/'+picked[1];if(key!==last){flush();last=key;run=picked[1];}else run+=picked[1];
+   }flush();if(y<rows-1)output+='\n';
+  }return output;
+ }
+ let camoRendered=false;function ensureCamo(){if(camoRendered)return;renderAnsi(camoArt,buildCamoSource());camoRendered=true;}
  renderAnsi(towerArt,towerSource);renderAnsi(wordArt,wordSource);mastArt.append(towerArt,wordArt);const mastCopy=make('div','bbs-masthead-copy');mastCopy.append(make('span','bbs-kicker','FIELD BBS // MESH RADIO'),make('strong','bbs-title','BBS / IRC'),make('span','bbs-subtitle','CHANNEL ACCESS · LOCAL FIRST'));
  masthead.append(mastArt,mastCopy);
  const mastState=make('span','bbs-masthead-state','RADIO LINK · OFFLINE');mastState.setAttribute('role','status');masthead.append(mastState);
@@ -68,7 +84,7 @@
  const rfChart=document.createElementNS('http://www.w3.org/2000/svg','svg');rfChart.classList.add('bbs-rf-chart');rfChart.setAttribute('viewBox','0 0 280 88');rfChart.setAttribute('role','img');rfChart.setAttribute('aria-label','Received packets per monitored hour');rfCard.append(rfChart);
  const rfEmpty=make('p','bbs-rf-empty','No monitored hours yet.');rfCard.append(rfEmpty,make('p','bbs-card-detail','Received packets per covered hour. Gaps mean no coverage.'));
  const openMonitor=make('button','bbs-open-monitor','Open full RF monitor');openMonitor.type='button';openMonitor.onclick=()=>window.showPropagationMonitor?.();rfCard.append(openMonitor);status.append(rfCard);
- grid.append(channels,conversation,status);shell.append(masthead,grid);
+ grid.append(channels,conversation,status);shell.append(camoLayer,masthead,grid);
  const setState=(node,value)=>{node.dataset.state=value;};
  function paintChannels(){const list=Array.isArray(live?.channels)?live.channels:[],selected=live?.selected;channelHeader.lastElementChild.textContent=String(list.length);channelList.replaceChildren();
   if(!list.length){channelNote.hidden=false;return;}channelNote.hidden=true;
@@ -86,7 +102,7 @@
   linkValue.textContent=ready?'Ready · Bluetooth':'Offline';setState(linkCard,ready?'ready':'offline');linkCard.querySelector('.bbs-card-detail').textContent=ready?'Radio synchronized.':'Saved messages stay on this computer.';
   channelCount.textContent=String(live?.channels?.length||0);contactCount.textContent=String(live?.contacts?.length||0);paintChannels();paintMonitor();}
  function layout(name=current){const enabled=document.documentElement.dataset.theme==='bbs-camo'&&name==='Messages';alternate.classList.toggle('bbs-irc-active',enabled);
-  if(enabled){grid.replaceChildren(channels,conversation,status);alternate.replaceChildren(shell);paint();}
+  if(enabled){ensureCamo();grid.replaceChildren(channels,conversation,status);alternate.replaceChildren(shell);paint();}
   else if(shell.parentElement===alternate)alternate.replaceChildren(conversation);}
  const oldView=view;view=function(name){const result=oldView(name);layout(name);return result;};
  const oldRender=renderMessages;renderMessages=function(...args){const result=oldRender.apply(this,args);paint();return result;};
