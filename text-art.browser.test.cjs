@@ -13,7 +13,7 @@ assert.match(await page.locator('.text-art-left').textContent(),/^124 of 133 byt
 assert.equal(await page.evaluate(()=>document.activeElement.dataset.art),'▁▃▅▇ copy');
 await page.keyboard.press('ArrowRight');await page.keyboard.press('ArrowDown');
 const chosen=await page.evaluate(()=>document.activeElement.dataset.art);assert.equal(chosen,'~ /\\/\\/\\ ~');
-await page.screenshot({path:process.env.NIGHTLINK_SCREENSHOT||path.join(__dirname,'text-art.png')});
+if(process.env.NIGHTLINK_SCREENSHOT)await page.screenshot({path:process.env.NIGHTLINK_SCREENSHOT});
 await page.keyboard.press('Enter');
 assert.equal(await input.inputValue(),'hi '+chosen+' there');assert.equal(await page.locator('.text-art-popover').isHidden(),true);
 assert.equal(await page.evaluate(()=>document.activeElement.id),'message-input');
