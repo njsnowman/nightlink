@@ -222,3 +222,4 @@ html:root:root:root:root:root[data-interface=terminal] body :is(.term-key,.term-
 html:root:root:root:root:root[data-interface=terminal] body main>header .breadcrumb span{color:var(--t-grey)}
 html:root:root:root:root:root[data-interface=terminal] body :focus-visible{transition:none !important}
 html:root:root:root:root:root[data-interface=terminal] body :is(input,select,textarea):not(#mrc-input):is(:focus,:focus-within){outline:2px solid var(--t-bright-cyan) !important;outline-offset:1px;transition:none !important}
+html:root:root:root:root:root[data-interface=terminal] body iframe:focus{outline:2px solid var(--t-bright-cyan) !important;outline-offset:-2px}

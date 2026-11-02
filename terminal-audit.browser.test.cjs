@@ -56,6 +56,6 @@ async function focusCheck(page,max){const out=[];for(let i=0;i<max;i++){await pa
  report['detached DM']=[...await dm.evaluate(audit,null),...await focusCheck(dm,8)];
  const total=Object.values(report).reduce((n,l)=>n+l.length,0);
  if(process.env.NIGHTLINK_AUDIT_REPORT)console.log(JSON.stringify(report,null,1));
- for(const [k,l] of Object.entries(report))if(l.length)console.log(k+': '+l.length+' finding(s)');
+ for(const [k,l] of Object.entries(report))if(l.length)console.log(k+': '+l.length+' finding(s)\n'+l.map(f=>'  '+JSON.stringify(f)).join('\n'));
  assert.deepEqual(errors,[]);assert.equal(total,0,'accessibility findings: '+total);console.log('terminal accessibility audit passed: '+Object.keys(report).length+' screens');
 }finally{await browser.close();}})().catch(e=>{console.error(e.message);process.exit(1);});
