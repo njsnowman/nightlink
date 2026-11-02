@@ -31,6 +31,9 @@
     "propagation-ui.js",
     "propagation.css",
     "echo-workspace.js",
-    "echo-workspace.css"
+    "echo-workspace.css",
+    "text-art.js",
+    "text-art-ui.js",
+    "text-art.css"
   ]
 }
