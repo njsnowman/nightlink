@@ -1,4 +1,4 @@
-const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'));
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const page=await browser.newPage();let remoteLoads=0;

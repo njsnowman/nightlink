@@ -1,5 +1,5 @@
 
-const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'));
 const assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const page=await browser.newPage({viewport:{width:1500,height:1000}});page.setDefaultTimeout(6000);const errors=[];page.on('pageerror',e=>errors.push(e.stack));

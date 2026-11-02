@@ -1,5 +1,5 @@
 /* Actual workspace and detached-DM documents; synthetic data and no radio/network access. */
-const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright')),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const context=await browser.newContext({viewport:{width:1360,height:900}}),errors=[];await context.route('**/*',async route=>{const u=new URL(route.request().url());if(u.hostname!=='127.0.0.1')return route.abort();try{const file=u.pathname==='/'?'index.html':u.pathname.slice(1),types={'.js':'text/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'};await route.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:types[path.extname(file)]||'text/html'});}catch{await route.fulfill({status:404,body:''});}});
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:4173/');await page.waitForFunction(()=>typeof NightlinkReactionUI!=='undefined');
