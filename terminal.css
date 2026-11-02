@@ -1,0 +1,182 @@
+/* Terminal interface (default, issue #131). VGA 16-color tokens and shared terminal components.
+   Every rule is scoped to html[data-interface=terminal]; cards mode is unaffected. System monospace fonts only. */
+html[data-interface=terminal]{color-scheme:dark;
+ --t-black:#000000;--t-blue:#0000aa;--t-green:#00aa00;--t-cyan:#00aaaa;--t-red:#aa0000;--t-magenta:#aa00aa;--t-brown:#aa5500;--t-grey:#aaaaaa;
+ --t-dark-grey:#555555;--t-bright-blue:#5555ff;--t-bright-green:#55ff55;--t-bright-cyan:#55ffff;--t-bright-red:#ff5555;--t-bright-magenta:#ff55ff;--t-yellow:#ffff55;--t-white:#ffffff;
+ --t-mono:'Cascadia Mono',Consolas,'Lucida Console',monospace;--t-size:14px;--t-line:20px;--t-bar:24px;
+ --t-ok:var(--t-bright-green);--t-pending:var(--t-yellow);--t-bad:var(--t-bright-red);--t-info:var(--t-bright-cyan);--t-frame:var(--t-bright-blue);
+ --bg:#000;--panel:#000;--line:#555555;--text:#aaaaaa;--muted:#aaaaaa;--console-surface:#000;--console-copy:#aaaaaa;--console-secondary:#aaaaaa;--console-edge:#555555;
+ --nl-radius-card:0px;--nl-radius-control:0px;--nl-radius-dialog:0px;--nl-ready:#55ff55;--nl-surface:#000;--nl-edge:#555555;--nl-copy:#ffffff;--nl-muted:#aaaaaa;--nl-hover:#0000aa;--nl-focus:0 0 0 2px #55ffff;
+ --sb-bg:#000;--sb-surface:#000;--sb-edge:#555555;--sb-copy:#aaaaaa;--sb-muted:#aaaaaa;
+ --accent:#55ffff !important;--accent-dim:#0000aa;--accent-soft:#000;--accent-line:#5555ff;--lime:#55ff55;--propagation-ok:#55ff55;--propagation-amber:#ffff55;--propagation-red:#ff5555}
+html:not([data-interface=terminal]) .term-only{display:none !important}
+
+/* Base: black surface, grey text, monospace, square corners, no shadows. */
+html:root:root:root:root:root[data-interface=terminal] body{background:#000;color:var(--t-grey);font-family:var(--t-mono);font-size:var(--t-size);line-height:var(--t-line);letter-spacing:0}
+html:root:root:root:root:root[data-interface=terminal] body *,html:root:root:root:root:root[data-interface=terminal] body *::before,html:root:root:root:root:root[data-interface=terminal] body *::after{font-family:var(--t-mono) !important;border-radius:0 !important;box-shadow:none !important;text-shadow:none !important;letter-spacing:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(main,main>header,.content,aside,dialog,.panel,.stats article,.settings-grid,.dm-window,.contact-card,.contact-profile,.dm-inbox,.switchboard-settings-shell,.history-search,.panel-heading,.dialog-heading,.dm-heading,.chat-channel,.composer-hint,.dm-compose,.dm-feedback){background:#000;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body :is(h1,h2,h3,.page-heading h1,.panel-heading h2,.dialog-heading h2,.switchboard-settings-title,.dm-heading strong,.security-lock-card h1){color:var(--t-white);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body :is(small,.muted,.page-heading p,.eyebrow){color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body a{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] :focus-visible{outline:2px solid var(--t-bright-cyan) !important;outline-offset:1px}
+html:root:root:root:root:root[data-interface=terminal] ::selection{background:var(--t-cyan);color:#000}
+
+/* Frames: panels and dialogs on unconverted pages become single-line frames; dialogs get a double frame and a flat drop shadow. */
+html:root:root:root:root:root[data-interface=terminal] body :is(.panel,.settings-grid,.contact-card,.dm-inbox,.switchboard-settings-shell,.history-search,.stats article){border:1px solid var(--t-cyan) !important}
+html:root:root:root:root:root[data-interface=terminal] body dialog{border:3px double var(--t-bright-cyan) !important;box-shadow:8px 8px 0 #000a !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(.panel-heading,.dialog-heading){border-bottom:1px solid var(--t-dark-grey) !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(.panel-heading h2,.dialog-heading h2){color:var(--t-bright-cyan)}
+
+/* Controls: visible bordered fields; primary actions are flat cyan blocks; destructive actions red. */
+html:root:root:root:root:root[data-interface=terminal] body :is(input,select,textarea){background:#000;color:var(--t-white);border:1px solid var(--t-grey) !important}
+html:root:root:root:root:root[data-interface=terminal] body ::placeholder{color:var(--t-grey);opacity:1}
+html:root:root:root:root:root[data-interface=terminal] body button{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body :is(button.primary,.primary){background:var(--t-cyan) !important;color:#000 !important;border:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(button.danger,.danger,button.destructive,.destructive){background:var(--t-red) !important;color:var(--t-white) !important;border:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body button:disabled{color:var(--t-grey);opacity:.75}
+
+/* Chrome: grey menu bar on top, grey function-key bar at the bottom, the sidebar is replaced by the menu bar. */
+html:root:root:root:root:root[data-interface=terminal] body aside{display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body main{margin:var(--t-bar) 0 0 !important;width:auto !important;max-width:none !important;height:calc(100dvh - 2 * var(--t-bar)) !important;min-height:0;background:#000}
+html:root:root:root:root:root[data-interface=terminal] body main>header{height:34px !important;min-height:34px;padding:0 12px !important;border-bottom:1px solid var(--t-dark-grey) !important;background:#000}
+html:root:root:root:root:root[data-interface=terminal] body main>header :is(.header-actions,.header-status-group){height:30px;min-height:0;padding:0 !important;border:0 !important;background:#000 !important;gap:6px;align-items:center}
+html:root:root:root:root:root[data-interface=terminal] body main>header :is(.header-status-group>*,.internet-status){height:26px !important;min-height:0 !important;padding-block:0 !important;font-size:12px;line-height:12px}
+html:root:root:root:root:root[data-interface=terminal] body main>header .header-status-group *{line-height:12px !important;font-size:11px !important;margin-block:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body main>header .breadcrumb{color:var(--t-grey);text-transform:none}
+html:root:root:root:root:root[data-interface=terminal] body main>header .breadcrumb strong{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body main>header :is(button,.header-control,.header-search,#connection){background:#000 !important;color:var(--t-grey) !important;border:1px solid var(--t-dark-grey) !important;min-height:26px;height:26px}
+html:root:root:root:root:root[data-interface=terminal] body .content{padding:10px 14px 0 !important;max-width:none}
+html:root:root:root:root:root[data-interface=terminal] body footer{display:none}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar{position:fixed;inset:0 0 auto 0;height:var(--t-bar);z-index:50;display:flex;align-items:stretch;gap:0;background:#aaaaaa;color:#000;overflow:hidden;white-space:nowrap}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar button{background:transparent;border:0;color:#000;padding:0 9px;font-size:14px;line-height:var(--t-bar);cursor:pointer;flex:0 0 auto}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar button:hover{background:#ffffff}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar button.active{background:var(--t-green);color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .term-key,html:root:root:root:root:root[data-interface=terminal] body .term-fkey{color:#aa0000}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar button.active .term-key{color:#000;text-decoration:underline}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar-clock{margin-left:auto;padding:0 10px;line-height:var(--t-bar);color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .term-fkeys{position:fixed;inset:auto 0 0 0;height:var(--t-bar);z-index:50;display:flex;align-items:stretch;background:#aaaaaa;color:#000;overflow:hidden;white-space:nowrap}
+html:root:root:root:root:root[data-interface=terminal] body .term-fkeys button{background:transparent;border:0;color:#000;padding:0 10px;font-size:14px;line-height:var(--t-bar);cursor:pointer}
+html:root:root:root:root:root[data-interface=terminal] body .term-fkeys button:hover{background:#fff}
+html:root:root:root:root:root[data-interface=terminal] body .term-fkeys-link{margin-left:auto;padding:0 12px;line-height:var(--t-bar);color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .term-fkeys-link[data-state=ok]::first-letter{color:#00aa00}
+html:root:root:root:root:root[data-interface=terminal] body .term-fkeys-link[data-state=off]::first-letter{color:#aa0000}
+
+/* Shared components. */
+html:root:root:root:root:root[data-interface=terminal] body .term-frame{position:relative;border:1px solid var(--t-frame);padding:14px 14px 10px;margin-top:10px;min-width:0}
+html:root:root:root:root:root[data-interface=terminal] body .term-frame.term-frame-double{border:3px double var(--t-frame)}
+html:root:root:root:root:root[data-interface=terminal] body .term-frame-title{position:absolute;top:-11px;left:12px;margin:0;padding:0 6px;background:#000;color:var(--t-white);font-size:14px;line-height:20px;font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .term-kv{display:grid;grid-template-columns:auto 1fr;gap:0 14px;margin:0}
+html:root:root:root:root:root[data-interface=terminal] body .term-kv dt{color:var(--t-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .term-kv dt{color:#00aaaa}
+html:root:root:root:root:root[data-interface=terminal] body .term-kv dd{margin:0;color:var(--t-grey);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html:root:root:root:root:root[data-interface=terminal] body .term-strong,html:root:root:root:root:root[data-interface=terminal] body .term-name{color:var(--t-white);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .term-name{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .term-dim{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .term-ok{color:var(--t-ok)}
+html:root:root:root:root:root[data-interface=terminal] body .term-pending{color:var(--t-pending)}
+html:root:root:root:root:root[data-interface=terminal] body .term-bad{color:var(--t-bad)}
+html:root:root:root:root:root[data-interface=terminal] body .term-info{color:var(--t-info)}
+html:root:root:root:root:root[data-interface=terminal] body .term-hotkey{white-space:pre}
+html:root:root:root:root:root[data-interface=terminal] body .term-hotkey-bracket,html:root:root:root:root:root[data-interface=terminal] body .term-hotkey-key{color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .term-meter-fill{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body .term-meter-empty{color:var(--t-dark-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .term-logo-svg{display:block;max-width:100%;height:auto}
+
+/* BBS main menu (Overview). */
+html:root:root:root:root:root[data-interface=terminal] body.term-bbs :is(#overview,.page-heading){display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body.term-bbs .content{overflow-y:auto !important;overflow-x:hidden}
+html:root:root:root:root:root[data-interface=terminal] body .bbs{display:flex;flex-direction:column;gap:14px;padding:4px 4px 12px;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:24px;align-items:start}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-brand{min-width:0}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-brand .term-logo-svg{width:min(100%,800px)}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-tagline{margin:6px 0 0;color:var(--t-grey);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-node{margin-top:12px}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-band{overflow:hidden;height:16px}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-band .term-logo-svg{max-width:none;width:1200px;height:16px}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-menu-grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;grid-template-rows:repeat(6,auto);gap:2px 24px}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-item{display:grid;grid-template-columns:4ch 15ch minmax(0,1fr);gap:0 10px;align-items:baseline;text-align:left;background:transparent;border:0;color:var(--t-grey);padding:2px 6px;font-size:14px;line-height:22px;cursor:pointer;min-width:0}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-item:hover,html:root:root:root:root:root[data-interface=terminal] body .bbs-item:focus-visible{background:var(--t-blue)}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-item-label{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-item-desc{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-lower{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-list{list-style:none;margin:0;padding:0}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-caller{display:grid;grid-template-columns:6ch minmax(8ch,14ch) 7ch minmax(0,1fr) 9ch;gap:0 8px;white-space:nowrap}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-caller>span{overflow:hidden;text-overflow:ellipsis}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-prompt{display:flex;align-items:center;gap:0;margin-top:4px;color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-prompt label strong{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-prompt input{width:3ch;background:#000 !important;border:0 !important;border-bottom:1px solid var(--t-grey) !important;color:var(--t-white);padding:0 2px;font-size:14px}
+@media (max-width:980px){html:root:root:root:root:root[data-interface=terminal] body .bbs-top{grid-template-columns:1fr}html:root:root:root:root:root[data-interface=terminal] body .bbs-node{max-width:none}}
+@media (max-width:860px){html:root:root:root:root:root[data-interface=terminal] body .bbs-menu-grid{grid-template-columns:1fr 1fr}html:root:root:root:root:root[data-interface=terminal] body .bbs-item{grid-template-columns:4ch minmax(0,1fr)}html:root:root:root:root:root[data-interface=terminal] body .bbs-item-desc{display:none}html:root:root:root:root:root[data-interface=terminal] body .bbs-lower{grid-template-columns:1fr}}
+
+/* MRC (Messages). The card conversation stays mounted but hidden so existing modules keep working. */
+html:root:root:root:root:root[data-interface=terminal] body.term-mrc :is(.page-heading){display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body.term-mrc .content{padding:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body #alternate.mrc-active{display:flex !important;flex-direction:column;flex:1;min-height:0;overflow:hidden;padding:0;margin:0}
+html:root:root:root:root:root[data-interface=terminal] body #alternate.mrc-active>:not(#mrc){display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body .mrc{display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;flex:1;min-height:0;background:#000;color:var(--t-grey);font-size:14px;line-height:20px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-topic,html:root:root:root:root:root[data-interface=terminal] body .mrc-statusbar{background:var(--t-blue);color:var(--t-white);padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:22px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-topic-dim{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-statusbar{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-statusbar strong{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-bar-ok{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-bar-pending{color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-bar-bad{color:var(--t-bright-red)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-bytes.mrc-over{color:var(--t-bright-red)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-body{display:grid;grid-template-columns:180px minmax(0,1fr) 200px;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-windows{border-right:1px solid var(--t-blue);padding:6px 8px;overflow-y:auto;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-nodes{border-left:1px solid var(--t-dark-grey);padding:6px 8px;overflow-y:auto;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pane-title{color:var(--t-white);font-weight:700;border-bottom:1px solid var(--t-dark-grey);padding-bottom:4px;margin-bottom:6px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-count{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-window-list,html:root:root:root:root:root[data-interface=terminal] body .mrc-node-list{list-style:none;margin:0;padding:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-window{display:flex;width:100%;gap:0;background:transparent;border:0;color:var(--t-grey);padding:0 6px;font-size:14px;line-height:20px;text-align:left;cursor:pointer;white-space:nowrap}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-window:hover{background:#0000aa}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-window.active{background:var(--t-cyan);color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-window.active .mrc-window-name,html:root:root:root:root:root[data-interface=terminal] body .mrc-window.active .mrc-unread{color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-window-num{width:2ch;text-align:right;margin-right:1ch}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-window-name{flex:1;overflow:hidden;text-overflow:ellipsis}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-window-name.mrc-dm{color:var(--t-bright-magenta)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-unread{color:var(--t-yellow);margin-left:6px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-legend{margin:10px 0 0;font-size:13px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-node{display:flex;justify-content:space-between;gap:6px;white-space:nowrap}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-node>span:first-child{overflow:hidden;text-overflow:ellipsis}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-node-snr{flex:0 0 auto}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-log{overflow-y:auto;overflow-x:hidden;padding:4px 8px;min-height:0;outline-offset:-2px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-line{white-space:pre-wrap;overflow-wrap:anywhere;padding-left:6ch;text-indent:-6ch}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-time{color:var(--t-grey);white-space:pre}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-wrap{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-peer,html:root:root:root:root:root[data-interface=terminal] body .mrc-node-name{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-own{color:var(--t-white);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-repeater{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-own-mark{color:var(--t-white);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-text{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-own .mrc-text{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-action{color:var(--t-bright-magenta)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-info{color:var(--t-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-info{color:#00aaaa}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-notice{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-error{color:var(--t-bright-red)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-dim{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-ok{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pending{color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-bad{color:var(--t-bright-red)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery-row{padding-left:6ch}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery{background:transparent;border:0;padding:0 0 0 7ch;font-size:14px;line-height:20px;text-align:left;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;text-indent:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery:hover{background:var(--t-blue)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery.mrc-recv{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery.mrc-ok{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery.mrc-pending{color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery.mrc-bad{color:var(--t-bright-red)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-input-line{display:flex;align-items:center;gap:0;background:#000;padding:0 8px;min-height:26px;position:relative}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-prompt{color:var(--t-white);font-weight:700;white-space:pre}
+html:root:root:root:root:root[data-interface=terminal] body #mrc-input{flex:1;min-width:0;background:#000 !important;border:0 !important;color:var(--t-white);font-size:14px;line-height:20px;padding:3px 0}
+html:root:root:root:root:root[data-interface=terminal] body #mrc-input:focus-visible{outline:none !important}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-input-line:focus-within{outline:2px solid var(--t-bright-cyan);outline-offset:-2px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-input-line .text-art-toggle{background:#000 !important;border:1px solid var(--t-dark-grey) !important;color:var(--t-grey);height:22px;width:28px;padding:0;display:grid;place-items:center}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-input-line .text-art-popover{bottom:30px;right:8px;background:#000 !important;border:3px double var(--t-bright-cyan) !important}
+@media (max-width:980px){html:root:root:root:root:root[data-interface=terminal] body .mrc-body{grid-template-columns:150px minmax(0,1fr)}html:root:root:root:root:root[data-interface=terminal] body .mrc-nodes{display:none}}
+@media (max-width:640px){html:root:root:root:root:root[data-interface=terminal] body .mrc-body{grid-template-columns:minmax(0,1fr)}html:root:root:root:root:root[data-interface=terminal] body .mrc-windows{display:none}}
+
+/* Detached DM and startup lock pick up the tokens, font, square corners and frames through the base rules above. */
+html:root:root:root:root:root[data-interface=terminal] body.security-lock{background:#000}
+html:root:root:root:root:root[data-interface=terminal] body .security-lock-card{background:#000;border:3px double var(--t-bright-cyan) !important}
+html:root:root:root:root:root[data-interface=terminal] body .dm-window{border:0}

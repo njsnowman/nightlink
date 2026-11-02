@@ -39,6 +39,11 @@
     "ansi-text.css",
     "ansi-logo-data.js",
     "ansi-logo.js",
-    "ansi-logo.css"
+    "ansi-logo.css",
+    "terminal.css",
+    "terminal.js",
+    "terminal-logo.js",
+    "terminal-menu.js",
+    "terminal-mrc.js"
   ]
 }

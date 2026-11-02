@@ -22,6 +22,6 @@ function attach(form,input,before){
   document.addEventListener('pointerdown',e=>{if(!pop.hidden&&!pop.contains(e.target)&&!button.contains(e.target))close(false);});
 }
 function init(){const main=document.querySelector('#chat-form'),dm=document.querySelector('#dm-reply');if(main)attach(main,main.querySelector('#message-input'),main.querySelector('button:not(.text-art-toggle)'));if(dm)attach(dm,dm.querySelector('#dm-text'),dm.querySelector('#dm-send'));}
-window.NightlinkTextArtUI={init};
+window.NightlinkTextArtUI={init,attach};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

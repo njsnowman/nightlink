@@ -14,7 +14,7 @@ Type. Monospace everywhere, from the system stack `'Cascadia Mono', Consolas, 'L
 
 Frames. Panels are frames drawn with CSS borders: double borders for the main window of a page, single borders for secondary windows. The frame title sits on the top border (`[■] Title` or plain title) with the background color behind it. Corners are square. No shadows or glow except the flat one-cell drop shadow used by dialog windows.
 
-Bars. The top menu bar is grey with the active page highlighted. Chat and map views use a blue (#0000aa) topic bar and a blue status bar with bracketed fields such as `[13:42] [NAME] [2:#channel] [Act: 3]`. The bottom function-key bar is grey with red key names.
+Bars. The top menu bar is grey with the active page highlighted. Chat and map views use a blue (#0000aa) topic bar and a blue status bar with bracketed fields such as `[13:42] [NAME] [2:#channel] [Act: 3]`. The bottom function-key bar is grey with red key names. On the grey bars the red hotkey letter (#aa0000, about 3.4:1) is a marker only; the label it belongs to is black on grey and meets the 4.5:1 requirement.
 
 Hotkeys. Hotkeys are shown as `[C]` with yellow brackets and letter. Single-letter hotkeys are active only when no text field has focus. Every hotkey has a visible clickable equivalent.
 
