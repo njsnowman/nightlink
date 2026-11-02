@@ -25,11 +25,13 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
   assert.ok(await page.isHidden('.page-heading'),name);assert.ok(await page.$$eval('#term-menubar .active',b=>b.length<=1&&!b.some(x=>x.dataset.termView==='Help')),name+': Help is not marked');if(shots)await page.screenshot({path:path.join(shots,'term-page-'+title.toLowerCase()+'.png')});}
  // ANSI node map: located contacts and your radio, labelled for screen readers; updates when contacts change.
  await page.evaluate(()=>view('Network map'));
+ assert.equal(await page.evaluate(()=>document.querySelector('#term-node-map').open),false,'collapsed by default so the street map keeps its height');
+ await page.click('#term-node-map summary');assert.ok(await page.isVisible('#term-node-map .term-path-grid'));
  assert.match(await page.textContent('#term-node-map .term-frame-title'),/node map · 3 located of 3/);
  assert.match(await page.getAttribute('#term-node-map .term-path-grid','aria-label'),/Batesville Relay, Cedar Grove Relay, SNOMAN \(you\)/);
  const map=await page.textContent('#term-node-map .term-path-grid');assert.ok(map.includes('@')&&(map.match(/r/g)||[]).length===2,map);
  await page.evaluate(()=>{live.contacts=[];radioSession.dispatchEvent(new CustomEvent('contacts',{detail:[]}));});
- assert.match(await page.textContent('#term-node-map .term-frame-title'),/1 located of 1/);
+ assert.match(await page.textContent('#term-node-map .term-frame-title'),/1 located of 1/);assert.equal(await page.evaluate(()=>document.querySelector('#term-node-map').open),true,'stays open after a rerender');
  await fixture(page);
  await page.evaluate(()=>view('Messages'));assert.equal(await page.$('#term-page-title'),null,'MRC has its own topic bar');
  await page.evaluate(()=>view('Overview'));assert.equal(await page.$('#term-page-title'),null,'the main menu has no window bar');assert.equal(await page.$('#term-node-map'),null);

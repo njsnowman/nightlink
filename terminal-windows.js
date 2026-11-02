@@ -94,15 +94,17 @@
  }
  // ANSI node map (Network map page): saved contacts with advertised locations and your radio. Positions only;
  // no links are drawn because adverts do not report which nodes hear each other.
- const MAP_W=72,MAP_H=16;
+ const MAP_W=72,MAP_H=16;let nodeMapOpen=false;
  function nodeMap(){
   const content=doc.querySelector('main .content');doc.querySelector('#term-node-map')?.remove();
   if(!content||!on()||current!=='Network map')return;
   const id=live.identity,mark=c=>c.type===2?['r','term-path-beam']:c.type===3?['m','term-pending']:['c','term-ok'];
   const points=live.contacts.filter(c=>c.located!==false&&located(c)).map(c=>{const [ch,cls]=mark(c);return {lat:c.lat,lon:c.lon,ch,cls,name:typeof cardName==='function'?cardName(c.key,c.name):c.name};});
   if(id&&id.located&&located(id))points.push({lat:id.lat,lon:id.lon,ch:'@',cls:'term-path-rx',name:(id.name||'Your radio')+' (you)'});
-  const box=el('section','term-frame term-node-map');box.id='term-node-map';box.setAttribute('aria-label','ANSI node map');
-  box.append(el('h2','term-frame-title','node map · '+points.length+' located of '+(live.contacts.length+(id?1:0))));
+  // Collapsed by default so the street map keeps its height; the choice is remembered for this session.
+  const box=el('details','term-frame term-node-map');box.id='term-node-map';box.setAttribute('aria-label','ANSI node map');box.open=nodeMapOpen;
+  box.addEventListener('toggle',()=>{nodeMapOpen=box.open;});
+  const summary=el('summary','term-frame-title','node map · '+points.length+' located of '+(live.contacts.length+(id?1:0)));box.append(summary);
   if(!points.length){box.append(el('p','term-dim','No saved contacts or radio with advertised locations. The street map below stays available.'));}
   else{
    const lats=points.map(p=>p.lat),lons=points.map(p=>p.lon),pad=1e-3,minLat=Math.min(...lats)-pad,maxLat=Math.max(...lats)+pad,minLon=Math.min(...lons)-pad,maxLon=Math.max(...lons)+pad;
