@@ -207,3 +207,12 @@ html:root:root:root:root:root[data-interface=terminal] body .term-path-beam{colo
 html:root:root:root:root:root[data-interface=terminal] body .term-path-hop{color:#000;background:var(--t-bright-cyan);font-weight:700}
 html:root:root:root:root:root[data-interface=terminal] body .term-path-rx{color:#000;background:var(--t-bright-green);font-weight:700}
 html:root:root:root:root:root[data-interface=terminal] body .term-path-legend{margin:4px 0 0;color:var(--t-grey);font-size:12px}
+html:root:root:root:root:root[data-interface=terminal] body :is(.term-menubar,.term-fkeys) button{transition:none !important}
+/* Detached DM and startup lock: blue title bar and title on the frame. */
+html:root:root:root:root:root[data-interface=terminal] body .dm-heading{background:var(--t-blue) !important;border-bottom:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body .dm-heading :is(strong,h1,h2){color:var(--t-white) !important}
+html:root:root:root:root:root[data-interface=terminal] body .dm-heading :is(small,p,span){color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .dm-heading button{background:#000 !important;color:var(--t-white) !important;border:1px solid var(--t-grey) !important}
+html:root:root:root:root:root[data-interface=terminal] body .security-lock-card{position:relative;padding-top:44px !important}
+html:root:root:root:root:root[data-interface=terminal] body .security-lock-card::before{content:'[■] NIGHTLINK · STARTUP LOCK';position:absolute;inset:0 0 auto 0;height:var(--t-bar);padding:0 10px;background:var(--t-blue);color:var(--t-white);font-weight:700;line-height:var(--t-bar);letter-spacing:.06em}
+html:root:root:root:root:root[data-interface=terminal] body .dm-heading .dm-person{background:transparent !important;border:0 !important;box-shadow:none !important}

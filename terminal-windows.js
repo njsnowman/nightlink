@@ -11,7 +11,12 @@
  // Page windows: a title bar replaces the card page heading; the key line names the shortcuts that work there.
  const PAGES={
   Radio:{title:'RADIO',sub:'status · tools · counters',keys:[['Tab','Next control'],['F9','Main menu'],['Esc','Back']]},
-  Settings:{title:'SETTINGS',sub:'interface · sounds · lock · data',keys:[['Tab','Next control'],['F1','Help'],['Esc','Back']]}
+  Settings:{title:'SETTINGS',sub:'interface · sounds · lock · data',keys:[['Tab','Next control'],['F1','Help'],['Esc','Back']]},
+  Nodes:{title:'NODES',sub:'who is on the mesh · saved contacts',keys:[['Tab','Next control'],['F2','Chat'],['Esc','Back']]},
+  'Network map':{title:'MAP',sub:'ANSI node map · street map',keys:[['Tab','Next control'],['F2','Chat'],['Esc','Back']]},
+  Activity:{title:'ACTIVITY',sub:'local event log · newest first',keys:[['Tab','Next control'],['F9','Main menu'],['Esc','Back']]},
+  'Direct Messages':{title:'DIRECT',sub:'private conversations',keys:[['Tab','Next control'],['F2','Chat'],['Esc','Back']]},
+  Search:{title:'SEARCH',sub:'stored messages and contacts',keys:[['Tab','Next control'],['F2','Chat'],['Esc','Back']]}
  };
  function keyLine(keys){const p=el('p','term-window-keys');for(const [k,label] of keys){const s=el('span','term-window-key');s.append(el('span','term-fkey',k),' '+label);p.append(s);}return p;}
  function pageWindow(){
@@ -20,6 +25,7 @@
   const page=on()?(help?{title:'HELP',sub:'guide · shortcuts · about',keys:[['Tab','Next control'],['F9','Main menu'],['Esc','Back']]}:PAGES[current]):null;
   doc.body.classList.toggle('term-window-page',!!page);
   // Help lives inside Settings; the menu bar marks the item the operator chose.
+  if(!help){const h=doc.querySelector('#term-menubar [data-term-view=Help]');if(h){h.classList.remove('active');if(h.getAttribute('aria-current'))h.removeAttribute('aria-current');}}
   if(on()&&current==='Settings')for(const b of doc.querySelectorAll('#term-menubar [data-term-view]')){const active=b.dataset.termView===(help?'Help':'Settings');b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}
   let bar=doc.querySelector('#term-page-title');
   if(!page){bar?.remove();doc.querySelector('#term-page-keys')?.remove();return;}
@@ -86,6 +92,32 @@
   for(const row of grid){for(const c of row)pre.append(el('span',c.cls,c.ch));pre.append('\n');}
   return pre;
  }
+ // ANSI node map (Network map page): saved contacts with advertised locations and your radio. Positions only;
+ // no links are drawn because adverts do not report which nodes hear each other.
+ const MAP_W=72,MAP_H=16;
+ function nodeMap(){
+  const content=doc.querySelector('main .content');doc.querySelector('#term-node-map')?.remove();
+  if(!content||!on()||current!=='Network map')return;
+  const id=live.identity,mark=c=>c.type===2?['r','term-path-beam']:c.type===3?['m','term-pending']:['c','term-ok'];
+  const points=live.contacts.filter(c=>c.located!==false&&located(c)).map(c=>{const [ch,cls]=mark(c);return {lat:c.lat,lon:c.lon,ch,cls,name:typeof cardName==='function'?cardName(c.key,c.name):c.name};});
+  if(id&&id.located&&located(id))points.push({lat:id.lat,lon:id.lon,ch:'@',cls:'term-path-rx',name:(id.name||'Your radio')+' (you)'});
+  const box=el('section','term-frame term-node-map');box.id='term-node-map';box.setAttribute('aria-label','ANSI node map');
+  box.append(el('h2','term-frame-title','node map · '+points.length+' located of '+(live.contacts.length+(id?1:0))));
+  if(!points.length){box.append(el('p','term-dim','No saved contacts or radio with advertised locations. The street map below stays available.'));}
+  else{
+   const lats=points.map(p=>p.lat),lons=points.map(p=>p.lon),pad=1e-3,minLat=Math.min(...lats)-pad,maxLat=Math.max(...lats)+pad,minLon=Math.min(...lons)-pad,maxLon=Math.max(...lons)+pad;
+   const grid=Array.from({length:MAP_H},()=>Array.from({length:MAP_W},()=>({ch:'·',cls:'term-path-ground',n:0})));
+   for(const p of points){const x=Math.round((p.lon-minLon)/(maxLon-minLon)*(MAP_W-1)),y=Math.round((maxLat-p.lat)/(maxLat-minLat)*(MAP_H-1)),g=grid[y][x];
+    if(g.ch==='@')continue;g.n++;Object.assign(g,p.ch==='@'?{ch:'@',cls:p.cls}:g.n>1?{ch:String(Math.min(g.n,9)),cls:'term-path-hop'}:{ch:p.ch,cls:p.cls});}
+   const pre=el('pre','term-path-grid');pre.setAttribute('role','img');
+   pre.setAttribute('aria-label','Text map of '+points.length+' located node'+(points.length===1?'':'s')+': '+points.map(p=>p.name).join(', '));
+   for(const row of grid){for(const c of row)pre.append(el('span',c.cls,c.ch));pre.append('\n');}
+   box.append(pre,el('p','term-path-legend','@ = your radio · r = repeater · c = companion · m = room server · digit = nodes sharing a cell · north up'));
+  }
+  const title=doc.querySelector('#term-page-title');if(title)title.after(box);else content.prepend(box);
+ }
+ if(typeof radioSession==='object')for(const type of ['contacts','identity'])radioSession.addEventListener(type,()=>{if(current==='Network map')nodeMap();});
+
  function pathView(m){
   const host=doc.querySelector('.message-path-workspace');if(!host||!on())return;
   host.querySelector('.term-path')?.remove();
@@ -98,11 +130,11 @@
  }
  if(typeof showMessageRoute==='function'){const previous=showMessageRoute;showMessageRoute=function(m){const r=previous.apply(this,arguments);try{pathView(m);}catch{}return r;};}
 
- const previousView=view;view=function(){previousView.apply(this,arguments);pageWindow();};
+ const previousView=view;view=function(){previousView.apply(this,arguments);pageWindow();nodeMap();};
  // Settings categories (including Help) switch without a view change.
  doc.addEventListener('click',()=>{if(current==='Settings')setTimeout(pageWindow,0);});
  if(window.NightlinkSettings?.open){const open=NightlinkSettings.open;NightlinkSettings.open=function(){const r=open.apply(this,arguments);pageWindow();return r;};}
- window.addEventListener('nightlink-interface',()=>{pageWindow();dialogWindow();});
- window.NightlinkTerminalWindows={pageWindow,dialogWindow,pathModel,pathLine,pathGrid,pages:Object.keys(PAGES)};
+ window.addEventListener('nightlink-interface',()=>{pageWindow();dialogWindow();nodeMap();});
+ window.NightlinkTerminalWindows={pageWindow,dialogWindow,pathModel,pathLine,pathGrid,nodeMap,pages:Object.keys(PAGES)};
  pageWindow();
 })();

@@ -20,7 +20,19 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  await page.evaluate(()=>NightlinkSettings.open('help'));assert.equal(await page.textContent('#term-page-title .term-window-name'),'HELP');
  assert.equal(await page.getAttribute('#term-menubar [data-term-view=Help]','aria-current'),'page');
  if(shots)await page.screenshot({path:path.join(shots,'term-help.png')});
- await page.evaluate(()=>view('Messages'));assert.equal(await page.$('#term-page-title'),null,'other views have no page window bar');
+ for(const [name,title] of [['Nodes','NODES'],['Network map','MAP'],['Activity','ACTIVITY'],['Direct Messages','DIRECT'],['Search','SEARCH']]){
+  await page.evaluate(n=>view(n),name);assert.equal(await page.textContent('#term-page-title .term-window-name'),title,name);assert.ok(await page.isVisible('#term-page-keys'),name);
+  assert.ok(await page.isHidden('.page-heading'),name);assert.ok(await page.$$eval('#term-menubar .active',b=>b.length<=1&&!b.some(x=>x.dataset.termView==='Help')),name+': Help is not marked');if(shots)await page.screenshot({path:path.join(shots,'term-page-'+title.toLowerCase()+'.png')});}
+ // ANSI node map: located contacts and your radio, labelled for screen readers; updates when contacts change.
+ await page.evaluate(()=>view('Network map'));
+ assert.match(await page.textContent('#term-node-map .term-frame-title'),/node map · 3 located of 3/);
+ assert.match(await page.getAttribute('#term-node-map .term-path-grid','aria-label'),/Batesville Relay, Cedar Grove Relay, SNOMAN \(you\)/);
+ const map=await page.textContent('#term-node-map .term-path-grid');assert.ok(map.includes('@')&&(map.match(/r/g)||[]).length===2,map);
+ await page.evaluate(()=>{live.contacts=[];radioSession.dispatchEvent(new CustomEvent('contacts',{detail:[]}));});
+ assert.match(await page.textContent('#term-node-map .term-frame-title'),/1 located of 1/);
+ await fixture(page);
+ await page.evaluate(()=>view('Messages'));assert.equal(await page.$('#term-page-title'),null,'MRC has its own topic bar');
+ await page.evaluate(()=>view('Overview'));assert.equal(await page.$('#term-page-title'),null,'the main menu has no window bar');assert.equal(await page.$('#term-node-map'),null);
  // Dialog windows: Device Center and Propagation Monitor open as text-mode windows with a key line; Escape closes.
  await page.evaluate(()=>showPropagationMonitor());
  assert.equal(await page.getAttribute('#dialog','data-term-window'),'Propagation Monitor');assert.ok(await page.isVisible('#dialog > .term-window-keys'));

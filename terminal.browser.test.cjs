@@ -121,6 +121,7 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  if(shots)await lock.screenshot({path:path.join(shots,'term-lock.png')});
  const dm=await context.newPage();dm.on('pageerror',e=>errors.push('dm: '+e.message));await dm.addInitScript(()=>{window.dmWindow={onUpdate:fn=>window.__dmUpdate=fn,contact(){},reply(){},action(){},read(){},draft(){},onFocus(){}};});await dm.goto('http://127.0.0.1:4173/dm.html');
  assert.equal(await dm.evaluate(()=>document.documentElement.dataset.interface),'terminal');
+ if(shots){await dm.setViewportSize({width:760,height:560});await dm.screenshot({path:path.join(shots,'term-dm.png')});}
  await page.evaluate(()=>NightlinkInterface.set('cards'));await dm.waitForFunction(()=>document.documentElement.dataset.interface==='cards');
  assert.equal(await lock.evaluate(()=>document.documentElement.dataset.interface),'cards','storage event updates open documents');
  assert.deepEqual(errors,[]);console.log('terminal interface browser checks passed');
