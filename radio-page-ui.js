@@ -47,12 +47,45 @@
   const appendText=text=>{if(!text)return;const span=make('span','ansi-fg-'+fg+(bold?' ansi-bold':''),text);target.append(span);};
   while((match=sgr.exec(source))){appendText(source.slice(cursor,match.index));for(const code of (match[1]||'0').split(';').map(Number)){if(code===0){fg='default';bold=false;}else if(code===1)bold=true;else if(code===22)bold=false;else if(code===39)fg='default';else if(code>=30&&code<=37)fg=['black','red','green','amber','blue','magenta','cyan','white'][code-30];else if(code>=90&&code<=97)fg=['dim','red-bright','green-bright','amber-bright','blue-bright','magenta-bright','cyan-bright','white-bright'][code-90];}cursor=sgr.lastIndex;}
   appendText(source.slice(cursor));}
- const towerSource=[ansi('90','         .          '),ansi('96','      .  |  .       '),ansi('36','    .   \\|/   .     '),ansi('1;96',' .----\\ | /----.   '),ansi('1;93',' ------\\* /------  '),ansi('92','        \\|/        '),ansi('32','         |          '),ansi('33','        /|\\         '),ansi('32','       / | \\        '),ansi('33','      /  |  \\       '),ansi('32','     /___|___\\      '),ansi('33','        /|\\         '),ansi('32','       /_|_\\        '),ansi('1;93','      |_____|        ')].join('\n');
+ const towerSource=[
+  ansi('90','          .          '),
+  ansi('1;96','       .  |  .       '),
+  ansi('36','     .   \\|/   .     '),
+  ansi('1;96','  .----\\ | /----.   '),
+  ansi('1;93','  ======\\* /======  '),
+  ansi('92','         \\|/        '),
+  ansi('1;92','      .--[+]--.      '),
+  ansi('32','      |  /|\\  |      '),
+  ansi('33','      | / | \\ |      '),
+  ansi('32','      |/  |  \\|      '),
+  ansi('1;93','    --+---+---+--    '),
+  ansi('32','       /  |  \\       '),
+  ansi('33','      /   |   \\      '),
+  ansi('32','     /____|____\\     '),
+  ansi('1;93','     |____|____|     '),
+  ansi('90','        /___\\        ')
+ ].join('\n');
  const glyphs={N:['█   █','██  █','█ █ █','█  ██','█   █','█   █','█   █'],I:['█████','  █  ','  █  ','  █  ','  █  ','  █  ','█████'],G:[' ████','█    ','█    ','█ ███','█   █','█   █',' ████'],H:['█   █','█   █','█   █','█████','█   █','█   █','█   █'],T:['█████','  █  ','  █  ','  █  ','  █  ','  █  ','  █  '],L:['█    ','█    ','█    ','█    ','█    ','█    ','█████'],K:['█  █ ','█ █  ','██   ','██   ','█ █  ','█  █ ','█   █']};
  const word='NIGHTLINK',logoWidth=word.length*5+word.length-1;let wordRows=[];
  for(let row=0;row<7;row++){let line='';const ink=row===0?'1;93':row===6?'32':'1;92';for(let i=0;i<word.length;i++)line+=ansi(ink,glyphs[word[i]][row])+(i<word.length-1?' ':'');wordRows.push(line);}
- const innerWidth=logoWidth+2,top='╔'+'═'.repeat(innerWidth)+'╗',bottom='╚'+'═'.repeat(innerWidth)+'╝',tagline='SIGNAL LINK // LOCAL MESH // FIELD BBS',tagPad=Math.max(0,innerWidth-tagline.length),tagLine=' '.repeat(Math.floor(tagPad/2))+tagline+' '.repeat(Math.ceil(tagPad/2));
- let wordSource=ansi('1;96',top)+'\n';for(const line of wordRows)wordSource+=ansi('1;96','║')+' '+line+' '+ansi('36','║')+'\n';wordSource+=ansi('36','║')+ansi('1;93',tagLine)+ansi('90','║')+'\n'+ansi('32',bottom);
+ // Compose a true 80-column ANSI-style BBS banner: inset armor frame, hard upper-left
+ // highlights, a one-cell offset extrusion and a compact field-system caption.
+ const bannerWidth=80,frame='╔'+'═'.repeat(bannerWidth-2)+'╗',lastFrame='╚'+'═'.repeat(bannerWidth-2)+'╝';
+ const centerText=(text,width)=>{const spare=Math.max(0,width-text.length);return ' '.repeat(Math.floor(spare/2))+text+' '.repeat(Math.ceil(spare/2));};
+ function logoArtRows(){
+  const width=bannerWidth-4,height=9,canvas=Array.from({length:height},()=>Array(width).fill(' ')),start=Math.floor((width-logoWidth)/2);
+  for(let row=0;row<7;row++){
+   const visible=wordRows[row].replace(/\x1b\[[\d;]*m/g,'');
+   for(let col=0;col<logoWidth;col++){
+    const ch=visible[col]||' ';if(ch!==' '){canvas[row+1][start+col+1]='▓';canvas[row][start+col]=ch;}
+   }
+  }
+  return canvas.map((cells,row)=>{
+   let out='',last='',run='';const flush=()=>{if(run)out+=ansi(last,run);};for(const ch of cells){const color=ch===' '?'90':ch==='▓'?'32':row===0?'1;93':row===7?'92':'1;92';if(color!==last){flush();last=color;run=ch;}else run+=ch;}flush();return '║ '+out+' ║';
+  });
+ }
+ const tagline='SIGNAL LINK  //  LOCAL MESH  //  FIELD BBS';
+ const wordSource=[ansi('1;96',frame),...logoArtRows(),ansi('36','║'+centerText(tagline,bannerWidth-2)+'║'),ansi('32',lastFrame)].join('\n');
  const camoLayer=make('div','bbs-ansi-camo-layer');camoLayer.setAttribute('aria-hidden','true');const camoArt=document.createElement('pre');camoArt.className='bbs-ansi-camo-art';camoLayer.append(camoArt);
  function buildCamoSource(){const cols=210,rows=88,patches=[
   [20,13,27,10,'32'],[57,30,34,12,'90'],[94,15,27,10,'33'],[132,34,38,13,'32'],[181,18,27,10,'92'],
