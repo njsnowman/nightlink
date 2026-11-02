@@ -14,6 +14,11 @@
  const active=()=>valid(doc.documentElement.dataset.interface);
  root.NightlinkInterface={...core,apply,set,current:active,isTerminal:()=>active()==='terminal'};
  apply(read(root.localStorage));
+ // Hide the card Overview until the main menu renders (terminal-menu.js runs at the end of <body>), so the
+ // card layout does not flash on start. Fallbacks: window load, then 4 s, so content can never stay hidden.
+ const boot=()=>doc.documentElement.classList.remove('term-boot');
+ if(active()==='terminal'&&typeof doc.documentElement.classList==='object'){doc.documentElement.classList.add('term-boot');root.addEventListener('load',()=>setTimeout(boot,0));setTimeout(boot,4000);}
+ root.NightlinkInterface.bootDone=boot;
  // An embedded page (CoreScope, MeshMapper) takes focus inside its own document, so the host iframe matches no
  // :focus selector. Mark it while it holds focus so terminal.css can draw the focus ring.
  function markFrame(){for(const f of doc.querySelectorAll('iframe.term-frame-focused'))if(f!==doc.activeElement)f.classList.remove('term-frame-focused');const a=doc.activeElement;if(a&&a.tagName==='IFRAME')a.classList.add('term-frame-focused');}

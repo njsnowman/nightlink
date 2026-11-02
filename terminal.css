@@ -223,3 +223,4 @@ html:root:root:root:root:root[data-interface=terminal] body main>header .breadcr
 html:root:root:root:root:root[data-interface=terminal] body :focus-visible{transition:none !important}
 html:root:root:root:root:root[data-interface=terminal] body :is(input,select,textarea):not(#mrc-input):is(:focus,:focus-within){outline:2px solid var(--t-bright-cyan) !important;outline-offset:1px;transition:none !important}
 html:root:root:root:root:root[data-interface=terminal] body iframe.term-frame-focused{outline:2px solid var(--t-bright-cyan) !important;outline-offset:-2px !important}
+html:root:root:root:root:root[data-interface=terminal].term-boot body main .content>:not(#bbs){visibility:hidden !important}

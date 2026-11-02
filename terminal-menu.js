@@ -33,7 +33,7 @@
   const on=NightlinkInterface.isTerminal()&&current==='Overview';
   doc.body.classList.toggle('term-bbs',on);
   let root=doc.querySelector('#bbs');
-  if(!on){root?.remove();return;}
+  if(!on){root?.remove();NightlinkInterface.bootDone?.();return;}
   if(!root){root=el('section','bbs');root.id='bbs';root.setAttribute('aria-label','Main menu');}
   const focusKey=doc.activeElement?.dataset?.bbsKey;
   root.replaceChildren();
@@ -76,6 +76,7 @@
   input.addEventListener('input',()=>{const v=input.value.trim();if(v){input.value='';if(!run(v))toast('Unknown command '+v+'.');}});
   prompt.append(label,input);root.append(prompt);
   if(!root.isConnected)content.prepend(root);
+  NightlinkInterface.bootDone?.();
   if(focusKey)root.querySelector(`[data-bbs-key="${CSS.escape(focusKey)}"]`)?.focus();
  }
  doc.addEventListener('keydown',e=>{

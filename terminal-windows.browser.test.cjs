@@ -63,5 +63,16 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  // Cards interface: no window bars, no key lines, no ANSI path view.
  await page.evaluate(()=>NightlinkInterface.set('cards'));await page.evaluate(()=>view('Radio'));assert.equal(await page.$('#term-page-title'),null);
  await page.evaluate(()=>showMessageRoute(pathMessage));assert.equal(await page.$('.term-path'),null);assert.equal(await page.$('#dialog > .term-window-keys'),null);
+ // Start-up: with the main menu script delayed, the card Overview stays hidden until the menu renders.
+ {const ctx=await browser.newContext({viewport:{width:1320,height:860}});await ctx.route('**/terminal-menu.js',async r=>{await new Promise(x=>setTimeout(x,1500));await r.fallback();});await serve(ctx);
+  const boot=await ctx.newPage();boot.on('pageerror',e=>errors.push('boot: '+e.message));const nav=boot.goto('http://127.0.0.1:4173');
+  await boot.waitForSelector('#overview',{state:'attached'});
+  assert.equal(await boot.evaluate(()=>document.documentElement.classList.contains('term-boot')),true);
+  assert.equal(await boot.evaluate(()=>getComputedStyle(document.querySelector('#overview')).visibility),'hidden','card Overview is hidden while the menu loads');
+  await nav;await boot.waitForFunction(()=>window.NightlinkBBS);
+  assert.equal(await boot.evaluate(()=>document.documentElement.classList.contains('term-boot')),false);assert.ok(await boot.isVisible('#bbs'));
+  await boot.evaluate(()=>NightlinkInterface.set('cards'));await boot.reload();await boot.waitForFunction(()=>window.NightlinkBBS);
+  assert.equal(await boot.evaluate(()=>document.documentElement.classList.contains('term-boot')),false,'cards mode never hides content');assert.ok(await boot.isVisible('#overview'));
+  await ctx.close();}
  assert.deepEqual(errors,[]);console.log('terminal windows browser checks passed');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1);});
