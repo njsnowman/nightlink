@@ -1,6 +1,34 @@
 # Nightlink visual standard
 
-Owner-approved reference: the Radio Tools panel in rc.11. This is the default for every existing and future page, dialog, menu and detached window.
+Nightlink has two interfaces, selected in Settings > Interface. The terminal interface is the default for 0.8.28 and later (owner decision, issue #131). The rc.11 card design is retained as the alternate interface and must keep working unchanged.
+
+## Terminal interface standard
+
+Reference: the approved terminal mockups attached to issue #131 (main menu, Mesh Relay Chat, message path map, Radio Tools). terminal.css owns the tokens and shared components; terminal.js stores the preference and applies `data-interface="terminal"` or `data-interface="cards"` to the root element of the main window, detached direct messages and the startup lock. Terminal styles are scoped to `html[data-interface="terminal"]` so cards mode is not affected.
+
+Palette. Use only the VGA 16-color tokens: `--t-black #000000`, `--t-blue #0000aa`, `--t-green #00aa00`, `--t-cyan #00aaaa`, `--t-red #aa0000`, `--t-magenta #aa00aa`, `--t-brown #aa5500`, `--t-grey #aaaaaa`, `--t-dark-grey #555555`, `--t-bright-blue #5555ff`, `--t-bright-green #55ff55`, `--t-bright-cyan #55ffff`, `--t-bright-red #ff5555`, `--t-bright-magenta #ff55ff`, `--t-yellow #ffff55`, `--t-white #ffffff`. The page background is black. Body text is grey; headings and names are white or bright cyan.
+
+Semantic colors. Green means confirmed or healthy. Yellow or brown/amber means an action, a hotkey or a pending state. Red means an error or a destructive action. Cyan means information and links. Dark grey is reserved for borders, separators and decorative fill; it is not used for text that must be read on black. Text on any surface keeps a contrast ratio of at least 4.5:1.
+
+Type. Monospace everywhere, from the system stack `'Cascadia Mono', Consolas, 'Lucida Console', monospace`. No web fonts. Cascadia Mono and Consolas include the box-drawing glyphs used in delivery lines and frames on Windows. Use one size step for text and one larger step for page titles; do not use negative letter spacing.
+
+Frames. Panels are frames drawn with CSS borders: double borders for the main window of a page, single borders for secondary windows. The frame title sits on the top border (`[■] Title` or plain title) with the background color behind it. Corners are square. No shadows or glow except the flat one-cell drop shadow used by dialog windows.
+
+Bars. The top menu bar is grey with the active page highlighted. Chat and map views use a blue (#0000aa) topic bar and a blue status bar with bracketed fields such as `[13:42] [NAME] [2:#channel] [Act: 3]`. The bottom function-key bar is grey with red key names.
+
+Hotkeys. Hotkeys are shown as `[C]` with yellow brackets and letter. Single-letter hotkeys are active only when no text field has focus. Every hotkey has a visible clickable equivalent.
+
+Focus. Keyboard focus is a visible 2-pixel bright cyan outline, or an inverted cyan bar on list rows. Focus is never removed.
+
+Buttons. Buttons are flat cyan blocks with black text; destructive buttons are red with white text. Disabled controls use grey text and keep their label.
+
+Main menu and chat. The Overview page in terminal mode is the BBS main menu: logo, node status box, main menu hotkeys mapped to existing views, recent callers and today's counts drawn from local data. The Messages page in terminal mode is Mesh Relay Chat (MRC): window list, scrollback with `HH:MM <nick>` lines, delivery lines that open the existing message path map, node list and an input line with `/msg`, `/join`, `/me` and `/help`. These views reuse the existing data and send paths; they do not issue radio commands to render.
+
+Pages not yet converted inherit terminal tokens, fonts and square frames through terminal.css and must remain usable at 760 x 560 and 1320 x 860.
+
+## Card interface (alternate)
+
+Owner-approved reference: the Radio Tools panel in rc.11. This design remains available as the Cards interface for every existing page, dialog, menu and detached window.
 
 Use the existing user-selected accent and black/console palette. Main content uses quiet bordered cards with 14-pixel corners; controls use 9-pixel corners; dialogs use 20-pixel corners. Surfaces have subtle contrast, not decorative console corner brackets or glow. Keep functional primary actions in the accent color and secondary controls visibly bordered. Destructive actions and delivery states retain their semantic colors.
 
