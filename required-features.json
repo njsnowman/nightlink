@@ -26,6 +26,19 @@
     "nightlink-design.css",
     "nightlink-design.js",
     "radio-page-ui.js",
-    "map-provider-settings.js"
+    "map-provider-settings.js",
+    "propagation.js",
+    "propagation-ui.js",
+    "propagation.css",
+    "echo-workspace.js",
+    "echo-workspace.css",
+    "text-art.js",
+    "text-art-ui.js",
+    "text-art.css",
+    "ansi-text.js",
+    "ansi-text.css",
+    "ansi-logo-data.js",
+    "ansi-logo.js",
+    "ansi-logo.css"
   ]
 }

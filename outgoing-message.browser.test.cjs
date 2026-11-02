@@ -1,10 +1,10 @@
 /* Real message DOM, synthetic messages only. No radio or production-profile access. */
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 function rgb(value){const values=value.match(/[\d.]+/g).map(Number);if(value.startsWith('color(srgb'))return values.slice(0,3).map(v=>v*255);return values.slice(0,3);}
 function luminance(v){return rgb(v).map(n=>n/255).map(n=>n<=.04045?n/12.92:((n+.055)/1.055)**2.4).reduce((sum,n,i)=>sum+n*[.2126,.7152,.0722][i],0);}
 function contrast(a,b){const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const page=await browser.newPage({viewport:{width:1440,height:950}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',async route=>{const url=new URL(route.request().url());if(url.hostname!=='127.0.0.1')return route.abort();const file=url.pathname==='/'?'index.html':url.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:({'.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml'})[path.extname(file)]||'text/html'});}catch{await route.fulfill({status:404,body:''});}});
  await page.goto('http://127.0.0.1:4173',{waitUntil:'load'});await page.waitForFunction(()=>typeof renderMessages==='function'&&typeof NightlinkAccent!=='undefined');
@@ -13,7 +13,7 @@ function contrast(a,b){const x=luminance(a),y=luminance(b);return (Math.max(x,y)
  for(const scheme of ['black','console'])for(const accent of ['ice-blue','amber','emerald','violet']){await page.evaluate(({scheme,accent})=>{NightlinkScheme.apply(scheme);NightlinkAccent.apply(accent);},{scheme,accent});await check('#chat-log .message');}
  for(const name of ['Overview','Messages']){await page.evaluate(name=>view(name),name);await check('#chat-log .message');}
  for(const [width,height]of [[760,560],[1440,950]]){await page.setViewportSize({width,height});await page.evaluate(()=>{document.body.classList.add('compact');view('Messages');});await check('#chat-log .message');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight),true);}
- await page.setViewportSize({width:1440,height:950});await page.evaluate(()=>{document.body.classList.remove('compact');NightlinkScheme.apply('black');NightlinkAccent.apply('ice-blue');view('Messages');});await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-own-messages.png'});
+ await page.setViewportSize({width:1440,height:950});await page.evaluate(()=>{document.body.classList.remove('compact');NightlinkScheme.apply('black');NightlinkAccent.apply('ice-blue');view('Messages');});await page.screenshot({path:require('node:path').join(process.env.NIGHTLINK_ARTIFACTS||require('node:os').tmpdir(),'nightlink-own-messages.png')});
  await page.addInitScript(()=>{window.dmWindow={onUpdate:fn=>window.__dmUpdate=fn,contact(){},reply(){},action(){},read(){},draft(){},onFocus(){}};});await page.goto('http://127.0.0.1:4173/dm.html',{waitUntil:'load'});
  await page.evaluate(()=>__dmUpdate({key:'synthetic-peer',name:'Synthetic peer',connected:true,messages:[{id:'dm-incoming-style',text:'Incoming DM stays neutral.',timestamp:1700000000,own:false,status:'Received',hopLabel:'2 hops'},{id:'dm-outgoing-style',text:'My DM uses the same outgoing treatment.',timestamp:1700000060,own:true,status:'Acknowledged by recipient',direct:true}]}));
  for(const scheme of ['black','console'])for(const accent of ['ice-blue','amber','emerald','violet']){await page.evaluate(({scheme,accent})=>{NightlinkScheme.apply(scheme);NightlinkAccent.apply(accent);},{scheme,accent});await check('#dm-thread .dm-bubble');}

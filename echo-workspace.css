@@ -8,4 +8,4 @@
 #echo-workspace .echo-map-panel>.panel-heading>div{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-width:0}
 #echo-workspace .echo-map-panel>.panel-heading button{min-height:30px;padding:5px 8px;white-space:nowrap}
 @media(max-width:850px){#echo-workspace .echo-tools{align-items:flex-start}#echo-workspace .echo-grid .conversation-tools{display:flex}}
-.echo-command-shortcuts{display:flex;gap:6px;flex-wrap:wrap;padding:5px 10px;flex:none}.echo-command-shortcuts[hidden]{display:none!important}.echo-command-shortcuts button{padding:6px 12px;border:1px solid var(--accent-line);border-radius:4px;color:var(--accent);font-family:monospace}.echo-command-shortcuts button:disabled{opacity:.45}.echo-command-shortcuts button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.echo-command-shortcuts{display:flex;gap:6px;flex-wrap:wrap;padding:5px 10px;flex:none}.echo-command-shortcuts[hidden]{display:none!important}

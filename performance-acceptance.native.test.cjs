@@ -1,5 +1,5 @@
 /* Packaged acceptance with isolated profile and synthetic history; no physical radio/provider. */
-const {_electron}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {_electron}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
 const fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
 (async()=>{
  const source=path.resolve(process.argv[2]),runtime=process.argv[3],fixture=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-performance-acceptance-'));

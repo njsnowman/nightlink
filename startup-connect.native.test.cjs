@@ -1,5 +1,5 @@
 // Native bridge and startup orchestration use a synthetic discovery event; no radio APIs run.
-const {_electron}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'),fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
+const {_electron}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
 (async()=>{const payload=path.resolve(process.argv[2]),runtime=process.argv[3],fixture=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-startup-native-'));
  await fs.mkdir(path.join(fixture,'profile'));await fs.writeFile(path.join(fixture,'profile','startup-connection.json'),JSON.stringify({enabled:true,last:{kind:'bluetooth',id:'fixture-id',name:'Native fixture'}}));
  await fs.writeFile(path.join(fixture,'package.json'),JSON.stringify({name:'nightlink-startup-test',version:'0.8.22-rc.3',main:'main.cjs'}));

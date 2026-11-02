@@ -1,6 +1,6 @@
 /* Real Windows protection across process restarts; synthetic credentials/profile only. */
 const fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict'),{execFileSync}=require('node:child_process');
-(async()=>{const source=path.resolve(process.argv[2]||__dirname),runtime=process.argv[3]||'C:/Users/ryank/.cache/nightlink-diagnostic-runtime-42.11.12/electron.exe',dir=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-security-persistence-'));
+(async()=>{const source=path.resolve(process.argv[2]||__dirname),runtime=process.argv[3]||(process.env.NIGHTLINK_ELECTRON||require('electron')),dir=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-security-persistence-'));
  const script=`const {app,safeStorage,BrowserWindow}=require('electron'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
  app.setPath('userData',path.join(__dirname,'profile'));
  app.whenReady().then(async()=>{const keepAlive=new BrowserWindow({show:false});try{const {createStore}=require(path.join(${JSON.stringify(source)},'security-store.cjs')),{Security,totp}=require(path.join(${JSON.stringify(source)},'security-core.cjs')),store=await createStore({file:path.join(__dirname,'protected.bin'),safeStorage}),s=new Security(store),stage=process.argv.at(-1);await s.load();

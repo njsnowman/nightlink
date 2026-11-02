@@ -1,5 +1,5 @@
 /* Synthetic isolated profile; network and physical radio operations blocked. */
-const {_electron}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {_electron}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
 const fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
 (async()=>{const source=path.resolve(process.argv[2]),runtime=process.argv[3],fixture=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-chat-signals-'));
 await fs.writeFile(path.join(fixture,'main.cjs'),`const {app,ipcMain,session}=require('electron'),path=require('path');const set=app.setPath.bind(app);app.setPath=(n,v)=>set(n,n==='userData'?path.join(__dirname,'profile'):v);const handle=ipcMain.handle.bind(ipcMain);ipcMain.handle=(n,f)=>handle(n,n==='startup:info'?()=>({enabled:false,last:null}):f);app.whenReady().then(()=>session.defaultSession.webRequest.onBeforeRequest({urls:['http://*/*','https://*/*']},(_d,done)=>done({cancel:true})));app.setAppPath(${JSON.stringify(source)});require(path.join(${JSON.stringify(source)},'desktop.cjs'));`);

@@ -1,8 +1,23 @@
 # Changelog
 
 ## Unreleased
+- Save RF Propagation Monitor state before the app quits through the tray Quit path (bounded wait of 2 s) and immediately on radio disconnect, so baseline hours and alert history are not lost when Nightlink restarts. In the 0.8.27-rc.4 hardware record, a relaunch showed 0 baseline hours. Verified with simulated storage and reload tests; the native Windows quit path needs a physical check. Tracks [#120](https://github.com/njsnowman/nightlink/pull/120).
+- Add BBS/ANSI graphics: a night-blue ANSI logo shown in the connection dialog, Help > About and the sidebar wordmark, with source art in `art/ansi/` (CP437 `.ans`, ASCII, mIRC and PNG, reproducible with `make-art.py` and `render-ansi.cjs`); a composer text art picker in the main window and detached DM that disables items exceeding the remaining 133-byte budget; an optional Terminal color scheme (colors and monospace fonts only); and styled rendering of ANSI SGR and mIRC formatting codes in chat and DM messages, with markup kept as text. Inbox previews, reply quotes, notifications and search snippets still show raw codes. The main composer now states the 133-byte limit. CI attaches each same-repository pull-request candidate to a draft pre-release. Tracks [#130](https://github.com/njsnowman/nightlink/issues/130); simulated tests only.
+- Vertically align the conversation header channel name with its radio synchronization status, and use the shared ready green for Overview metric values while keeping their labels and descriptions unchanged. Tracks [#127](https://github.com/njsnowman/nightlink/issues/127).
+- Center the successful-radio synchronization message in the connection console; style the #echo !test, !spam, !echo and !yolo shortcuts with the shared Nightlink secondary-button treatment; and show Radio status Frequency, TX power and Firmware values in the same green as the ready connection state. Preserve shortcut send guards and behavior. Tracks [#126](https://github.com/njsnowman/nightlink/issues/126).
+- Refine the RF Propagation monitor with coverage progress, aligned live readouts, grouped evidence and trend sections, and compact route/flag indicators. Group Internet reachability, radio synchronization, RF-monitor and inbox status in the main header; Internet reports online only after a successful connectivity probe. Center the sync timestamp over its Ready / Bluetooth-or-USB state and make the inbox control icon-only with an accessible label. Tracks [#125](https://github.com/njsnowman/nightlink/issues/125); physical RF acceptance remains tracked separately in [#120](https://github.com/njsnowman/nightlink/pull/120).
 
-## 0.8.26 — prepared, not published
+- Save RF Propagation Monitor history immediately on radio disconnect and wait (up to 2 s) for the write to finish before the application quits, so daily quit and reopen keeps the learned baseline and event history.
+
+- Keep the RF monitor indicator visible as Monitor off when monitoring is disabled, unless its indicator preference is off; preserve collapsed Conversations across immediate rerenders. Fixes found during [rc.3 validation](https://github.com/njsnowman/nightlink/pull/120).
+
+- Show radio-reported counters in Radio Health: packets sent and received since radio start, raw TX/RX airtime and uptime values, and when they were read; firmware without radio statistics shows Unavailable. No additional radio commands. Synthetic tests only.
+
+- Show the expected SHA-256 for an available update when the GitHub asset digest and the release SHA256SUMS.txt agree, with copy buttons and the PowerShell Get-FileHash command; warn and withhold the download link when they disagree, and warn when either is missing. Nightlink still opens downloads in the browser and does not hash the downloaded file.
+
+- Add a passive RF Propagation Monitor: a header indicator, a Radio > Observe & diagnose panel with evidence, trend, observations and event history, and settings under Settings > Notifications. It compares received packets with a per-radio local baseline and reports "Possible RF opening" or "Strong RF anomaly" with hysteresis and cooldown. It never transmits, enables RX logging or uses the network, and does not claim an atmospheric cause. Thresholds are untested hypotheses; synthetic tests only.
+
+## 0.8.26 — 2026-10-31
 
 - Update in-app Help for 0.8.26 features (Device Center, contact removal, Signal Rail and Outbox, delivery details, #echo commands and layouts, Overview divider, map visibility, reading position, support report) and regenerate all nine Help screenshots with demonstration data. The previous message-path image showed real place names. Remove a stale version from the unsigned-download note and correct the single-removal progress text.
 
@@ -285,3 +300,4 @@ Contact storage upgrades to IndexedDB version 2. Older Nightlink versions reques
 ## 0.7.1 — 2026-10-14 (GitHub preview)
 - Initial published Windows preview with Bluetooth messaging, contact cards, maps, and local history.
 
+- Add the local, read-only Nightlink Live Codex bridge for sanitized RF-monitor status and cursor-paged events. Tracks [#128](https://github.com/njsnowman/nightlink/issues/128).

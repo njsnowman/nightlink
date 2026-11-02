@@ -1,9 +1,9 @@
 /* Isolated Electron acceptance. All radio responses below are synthetic. */
-const {_electron}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {_electron}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
 const fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
 (async()=>{
  if(!process.argv[2])throw Error('Usage: node radio-workbench.native.test.cjs <app.asar-or-source-directory> [electron.exe]');
- const source=path.resolve(process.argv[2]),runtime=process.argv[3]||'C:/Users/ryank/.cache/nightlink-diagnostic-runtime-42.11.12/electron.exe';
+ const source=path.resolve(process.argv[2]),runtime=process.argv[3]||(process.env.NIGHTLINK_ELECTRON||require('electron'));
  const fixture=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-radio-workbench-'));
  await fs.writeFile(path.join(fixture,'package.json'),JSON.stringify({name:'nightlink-radio-workbench-validation',version:'0.0.0',main:'main.cjs'}));
  await fs.writeFile(path.join(fixture,'main.cjs'),"const {app,ipcMain,session}=require('electron'),path=require('node:path'),source="+JSON.stringify(source)+";const set=app.setPath.bind(app);app.setPath=(name,value)=>set(name,name==='userData'?path.join(__dirname,'profile'):value);const handle=ipcMain.handle.bind(ipcMain);ipcMain.handle=(name,fn)=>handle(name,name==='startup:info'?()=>({enabled:false,last:null}):fn);app.whenReady().then(()=>session.defaultSession.webRequest.onBeforeRequest({urls:['http://*/*','https://*/*']},(_details,callback)=>callback({cancel:true})));app.setAppPath(source);require(path.join(source,'desktop.cjs'));");

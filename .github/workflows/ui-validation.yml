@@ -10,8 +10,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - name: Enable pnpm
@@ -28,7 +28,7 @@ jobs:
           NIGHTLINK_SCREENSHOTS: ${{ runner.temp }}/nightlink-layout
       - name: Archive layout evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nightlink-layout-evidence
           path: ${{ runner.temp }}/nightlink-layout
@@ -38,8 +38,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - run: corepack enable
@@ -53,7 +53,7 @@ jobs:
       - name: Verify every packaged feature and record source/checksums
         run: pnpm run verify:package
       - name: Archive verified candidate
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nightlink-${{ steps.version.outputs.value }}-windows-candidate
           path: |
@@ -63,3 +63,34 @@ jobs:
             dist/release-manifest.json
           if-no-files-found: error
           retention-days: 14
+  draft-release:
+    # Attaches the verified candidate to a draft pre-release so collaborators can download it
+    # from the Releases page. Drafts are not public and the in-app updater rejects drafts and pre-releases.
+    needs: package
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: nightlink-*-windows-candidate
+          path: candidate
+          merge-multiple: true
+      - name: Create draft pre-release with candidate files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          cd candidate
+          sha256sum --check SHA256SUMS.txt
+          version=$(node -p "require('./release-manifest.json').version")
+          short=${HEAD_SHA:0:7}
+          gh release create "candidate-${version}-${short}" \
+            --repo "$GITHUB_REPOSITORY" --draft --prerelease \
+            --target "$HEAD_SHA" \
+            --title "Nightlink ${version} candidate (${short}, run ${GITHUB_RUN_ID})" \
+            --notes "Diagnostic build from CI run ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}, PR head ${HEAD_SHA}. Not a release. Verify SHA-256 against SHA256SUMS.txt before running." \
+            Nightlink-Setup-*.exe Nightlink-Portable-*.exe SHA256SUMS.txt release-manifest.json

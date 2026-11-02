@@ -22,7 +22,8 @@
  ['Observe & diagnose','Understand your radio activity.',[
  action('radio-page-rx','Receive log','Inspect packets already arriving at your radio.','Terminal',()=>openTool('RX Log')),
  action('radio-page-noise','Noise measurement','Open the noise tool; read a sample when ready.','Settings',()=>openTool('Noise Floor')),
- action('radio-page-diagnostics','Diagnostics & health','Review saved connection and radio evidence.','Settings',()=>view('Diagnostics'))]]];
+ action('radio-page-diagnostics','Diagnostics & health','Review saved connection and radio evidence.','Settings',()=>view('Diagnostics')),
+ action('radio-page-propagation','Propagation Monitor','Passively compare reception with this radio’s history.','Radio',()=>showPropagationMonitor())]]];
  for(const [title,subtitle,buttons]of entries){const group=document.createElement('section');group.className='nl-radio-group';const heading=document.createElement('h3'),note=document.createElement('p'),list=document.createElement('div');heading.textContent=title;note.textContent=subtitle;list.className='nl-radio-action-list';list.append(...buttons);group.append(heading,note,list);groups.append(group);}
  const more=document.createElement('details');more.className='nl-radio-more';const moreTitle=document.createElement('summary');moreTitle.textContent='Data & device details';const exports=document.createElement('div');exports.className='nl-radio-exports';for(const [id,title,description]of [['export-history','Export message history','Save this radio’s retained messages.'],['export-diagnostics','Export diagnostic log','Save local connection and command evidence.']]){const b=q('#'+id);if(b)exports.append(card(b,title,description,'Export'));}more.append(moreTitle,exports);root.append(more);
  const tabs=workbench.querySelector('.radio-workbench-tabs');tabs.addEventListener('click',e=>{if(e.target.closest('button'))workbench.scrollIntoView({block:'start'});});
