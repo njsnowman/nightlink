@@ -35,3 +35,49 @@
  let pageUI=null;const previous=view;view=function(page){const result=previous(page);alternate.classList.toggle('nl-radio-page',page==='Radio');if(page==='Radio'){if(!pageUI)pageUI=build();pageUI?.mount();}return result;};
  if(current==='Radio'){pageUI=build();pageUI?.mount();alternate.classList.add('nl-radio-page');}
 })();
+/* BBS / IRC workspace is an opt-in presentation of existing Messages and RF state. */
+(()=>{
+ const alternate=document.getElementById('alternate'),conversation=document.querySelector('.conversation');if(!alternate||!conversation)return;
+ const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!=null)node.textContent=text;return node;};
+ const shell=make('section','bbs-irc-shell');shell.setAttribute('aria-label','BBS and IRC workspace');
+ const masthead=make('div','bbs-masthead'),mastCopy=make('div','bbs-masthead-copy');mastCopy.append(make('span','bbs-kicker','NIGHTLINK // FIELD CONSOLE'),make('strong','bbs-title','BBS / IRC'));masthead.append(mastCopy);
+ const mastState=make('span','bbs-masthead-state','RADIO LINK · OFFLINE');mastState.setAttribute('role','status');masthead.append(mastState);
+ const grid=make('div','bbs-workspace-grid'),channels=make('nav','bbs-channel-rail');channels.setAttribute('aria-label','Radio channels');
+ const channelHeader=make('div','bbs-rail-heading');channelHeader.append(make('span',null,'CHANNEL DIRECTORY'),make('span','bbs-rail-count','0'));channels.append(channelHeader);
+ const channelList=make('div','bbs-channel-list'),channelNote=make('p','bbs-rail-note','Connect a radio to load its configured channels.');channels.append(channelList,channelNote);
+ const status=make('section','bbs-status-rail');status.setAttribute('aria-label','Radio and RF monitor status');
+ const linkCard=make('section','bbs-rail-card bbs-link-card');linkCard.append(make('span','bbs-kicker','RADIO LINK'));
+ const linkValue=make('strong','bbs-link-value','Offline');linkCard.append(linkValue,make('p','bbs-card-detail','Saved messages stay on this computer.'));status.append(linkCard);
+ const countCard=make('section','bbs-rail-card bbs-count-card');countCard.append(make('span','bbs-kicker','LOCAL DIRECTORY'));
+ const counts=make('div','bbs-count-grid'),channelCount=make('strong',null,'0'),contactCount=make('strong',null,'0');
+ for(const [label,value]of [['CHANNELS',channelCount],['CONTACTS',contactCount]]){const item=make('div','bbs-count-item');item.append(make('span',null,label),value);counts.append(item);}countCard.append(counts);status.append(countCard);
+ const rfCard=make('section','bbs-rail-card bbs-rf-card');rfCard.append(make('span','bbs-kicker','RF MONITOR'));
+ const rfState=make('strong','bbs-rf-state','Monitoring unavailable');rfCard.append(rfState);
+ const rfChart=document.createElementNS('http://www.w3.org/2000/svg','svg');rfChart.classList.add('bbs-rf-chart');rfChart.setAttribute('viewBox','0 0 280 88');rfChart.setAttribute('role','img');rfChart.setAttribute('aria-label','Received packets per monitored hour');rfCard.append(rfChart);
+ const rfEmpty=make('p','bbs-rf-empty','No monitored hours yet.');rfCard.append(rfEmpty,make('p','bbs-card-detail','Received packets per covered hour. Gaps mean no coverage.'));
+ const openMonitor=make('button','bbs-open-monitor','Open full RF monitor');openMonitor.type='button';openMonitor.onclick=()=>window.showPropagationMonitor?.();rfCard.append(openMonitor);status.append(rfCard);
+ grid.append(channels,conversation,status);shell.append(masthead,grid);
+ const setState=(node,value)=>{node.dataset.state=value;};
+ function paintChannels(){const list=Array.isArray(live?.channels)?live.channels:[],selected=live?.selected;channelHeader.lastElementChild.textContent=String(list.length);channelList.replaceChildren();
+  if(!list.length){channelNote.hidden=false;return;}channelNote.hidden=true;
+  for(const channel of list){const button=make('button','bbs-channel-button');button.type='button';const name=String(channel.name||'').replace(/^#\s*/,'');button.append(make('span','bbs-channel-hash','#'),make('span','bbs-channel-name',name||'Channel '+channel.slot));
+   button.setAttribute('aria-pressed',String(selected?.kind==='channel'&&selected.slot===channel.slot&&selected.id===channel.id));button.onclick=()=>selectConversation({kind:'channel',...channel});channelList.append(button);}}
+ function paintMonitor(){const monitor=window.NightlinkPropagationUI?.monitor;let snapshot=null;try{snapshot=monitor?.summary?.(Date.now())||null;}catch{}
+  const stateName=snapshot?.state||'unavailable',label=window.NightlinkPropagation?.labels?.[stateName]||'Monitoring unavailable';rfState.textContent=label;setState(rfCard,stateName);rfChart.replaceChildren();
+  const trend=Array.isArray(snapshot?.trend)?snapshot.trend.slice(-24):[],covered=trend.some(point=>Number.isFinite(point.packets));rfChart.setAttribute('aria-label','Received packets per monitored hour, last '+trend.length+' hours. Gaps mark hours without monitoring coverage.');
+  if(covered){const max=Math.max(1,...trend.map(point=>Number.isFinite(point.packets)?point.packets:0)),width=280/Math.max(1,trend.length);
+   trend.forEach((point,index)=>{const rect=document.createElementNS(rfChart.namespaceURI,'rect');rect.setAttribute('x',String(index*width+1));rect.setAttribute('width',String(Math.max(1,width-2)));rect.setAttribute('rx','2');
+    if(Number.isFinite(point.packets)){const height=Math.max(2,point.packets/max*68);rect.setAttribute('y',String(78-height));rect.setAttribute('height',String(height));rect.setAttribute('class','bbs-rf-bar');}
+    else{rect.setAttribute('y','76');rect.setAttribute('height','4');rect.setAttribute('class','bbs-rf-gap');}rfChart.append(rect);});}
+  rfChart.hidden=!covered;rfEmpty.hidden=covered;}
+ function paint(){if(document.documentElement.dataset.theme!=='bbs-camo'||current!=='Messages')return;const ready=live?.sync==='ready';mastState.textContent=ready?'RADIO LINK · READY':'RADIO LINK · OFFLINE';setState(shell,ready?'ready':'offline');
+  linkValue.textContent=ready?'Ready · Bluetooth':'Offline';setState(linkCard,ready?'ready':'offline');linkCard.querySelector('.bbs-card-detail').textContent=ready?'Radio synchronized.':'Saved messages stay on this computer.';
+  channelCount.textContent=String(live?.channels?.length||0);contactCount.textContent=String(live?.contacts?.length||0);paintChannels();paintMonitor();}
+ function layout(name=current){const enabled=document.documentElement.dataset.theme==='bbs-camo'&&name==='Messages';alternate.classList.toggle('bbs-irc-active',enabled);
+  if(enabled){grid.replaceChildren(channels,conversation,status);alternate.replaceChildren(shell);paint();}
+  else if(shell.parentElement===alternate)alternate.replaceChildren(conversation);}
+ const oldView=view;view=function(name){const result=oldView(name);layout(name);return result;};
+ const oldRender=renderMessages;renderMessages=function(...args){const result=oldRender.apply(this,args);paint();return result;};
+ window.addEventListener('nightlink-theme',()=>{if(current==='Messages')view('Messages');});
+ for(const eventName of ['sync','channels','contacts','identity','message','disconnected'])radioSession.addEventListener(eventName,paint);ble.addEventListener('state',paint);document.addEventListener('visibilitychange',paint);setInterval(paint,5000);layout();
+})();
