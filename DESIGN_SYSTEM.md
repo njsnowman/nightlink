@@ -16,7 +16,9 @@ Frames. Panels are frames drawn with CSS borders: double borders for the main wi
 
 Bars. The top menu bar is grey with the active page highlighted. Chat and map views use a blue (#0000aa) topic bar and a blue status bar with bracketed fields such as `[13:42] [NAME] [2:#channel] [Act: 3]`. The bottom function-key bar is grey with red key names. On the grey bars the red hotkey letter (#aa0000, about 3.4:1) is a marker only; the label it belongs to is black on grey and meets the 4.5:1 requirement.
 
-Hotkeys. Hotkeys are shown as `[C]` with yellow brackets and letter. Single-letter hotkeys are active only when no text field has focus. Every hotkey has a visible clickable equivalent.
+Hotkeys. Hotkeys are shown as `[C]` with yellow brackets and letter. Single-letter hotkeys are active only when no text field has focus. Every hotkey has a visible clickable equivalent. On the grey menu, function-key and dialog key bars, the hotkey letter is black, bold and underlined: VGA red (#aa0000) on grey (#aaaaaa) measures 3.34:1, below the 4.5:1 minimum.
+
+Audit. `terminal-audit.browser.test.cjs` checks every page, Settings category, dialog window, the detached DM and the startup lock in terminal mode: text contrast of at least 4.5:1 (3:1 for large text) against the nearest opaque background, an accessible name on every visible control, and a visible focus ring for each Tab stop. Fields draw the focus ring on `:focus` and `:focus-within` (date fields focus an inner segment), and focus rings do not animate. New terminal screens must pass this audit.
 
 Focus. Keyboard focus is a visible 2-pixel bright cyan outline, or an inverted cyan bar on list rows. Focus is never removed.
 
