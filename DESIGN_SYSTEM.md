@@ -24,6 +24,8 @@ Buttons. Buttons are flat cyan blocks with black text; destructive buttons are r
 
 Main menu and chat. The Overview page in terminal mode is the BBS main menu: logo, node status box, main menu hotkeys mapped to existing views, recent callers and today's counts drawn from local data. The Messages page in terminal mode is Mesh Relay Chat (MRC): window list, scrollback with `HH:MM <nick>` lines, delivery lines that open the existing message path map, node list and an input line with `/msg`, `/join`, `/me` and `/help`. These views reuse the existing data and send paths; they do not issue radio commands to render.
 
+Text-mode windows. terminal-windows.js gives the Radio and Settings pages a blue window title bar (`[■] NAME subtitle`) in place of the card page heading and a key line naming the shortcuts that work there; Help, which opens inside Settings, is titled HELP and is marked in the menu bar. Every dialog opened through the shared `#dialog` (Device Center, Propagation Monitor, Message path and others) becomes a text-mode window: a sticky blue title bar and a sticky grey key line (`Esc Close`, `Tab Next control`, `Enter Select`). The Message path dialog adds an ANSI path view above the street map: a sender-to-receiver line with resolved hops by name (green), ambiguous hops (yellow) and unknown hops by hash (red), and a character map that plots only located points and connects only consecutive known hops. A hop-count-only path is shown as a counted gap; no route is inferred.
+
 Pages not yet converted inherit terminal tokens, fonts and square frames through terminal.css and must remain usable at 760 x 560 and 1320 x 860.
 
 ## Card interface (alternate)
