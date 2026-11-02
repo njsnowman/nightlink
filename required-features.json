@@ -36,6 +36,9 @@
     "text-art-ui.js",
     "text-art.css",
     "ansi-text.js",
-    "ansi-text.css"
+    "ansi-text.css",
+    "ansi-logo-data.js",
+    "ansi-logo.js",
+    "ansi-logo.css"
   ]
 }

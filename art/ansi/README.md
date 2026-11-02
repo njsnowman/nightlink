@@ -9,7 +9,7 @@ Original text-mode logo and banner art for Nightlink. These files are not loaded
 | `nightlink-banner-small.txt` | Two-line compact banner, 29 columns. | ASCII (valid UTF-8) |
 | `nightlink-logo.irc.txt` | The ASCII logo with mIRC formatting codes (`\x03fg,bg` color, `\x02` bold, `\x0f` reset). Uses colors 14 (grey), 00 (white), 11 (light cyan), 12 (light blue), 02 (blue) and 10 (cyan) on 01 (black). | ASCII (valid UTF-8) |
 | `nightlink-logo.png` | Preview of `nightlink-logo.ans` produced by `render-ansi.cjs`. | PNG |
-| `make-art.py` | Generates the `.ans`, `.txt`, `.irc.txt` and banner files. Python 3 standard library only. | Python |
+| `make-art.py` | Generates the `.ans`, `.txt`, `.irc.txt` and banner files, and with `--app-data` the in-app logo data module `ansi-logo-data.js`. Python 3 standard library only. | Python |
 | `render-ansi.cjs` | Renders a CP437 ANSI file to PNG. | JavaScript |
 
 ## Colors
@@ -23,6 +23,14 @@ Regenerate the text art first, then the preview:
 ```
 python3 art/ansi/make-art.py
 ```
+
+The application shows the logo as text (connection dialog, Help > About) and a two-line wordmark in the sidebar brand, using `ansi-logo.js` and `ansi-logo.css` in the repository root. Regenerate their data with:
+
+```
+python3 art/ansi/make-art.py --app-data ansi-logo-data.js
+```
+
+`ansi-logo.test.cjs` checks that the committed data matches the generator output.
 
 
 `render-ansi.cjs` strips the SAUCE record, interprets SGR codes (reset, bold/bright, foreground 30-37, background 40-47), maps CP437 bytes to Unicode, and takes a Playwright Chromium screenshot with a monospace font on a black background using the standard VGA palette. It adds no dependencies to `package.json`.

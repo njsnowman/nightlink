@@ -1,0 +1,12 @@
+/* ANSI logo data: generated text art, no terminal control characters. */
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{execFileSync}=require('node:child_process'),os=require('node:os');
+const data=require('./ansi-logo-data.js'),logo=require('./ansi-logo.js');
+const text=rows=>rows.map(row=>row.map(([,t])=>t).join(''));
+test('logo has 8 rows of at most 80 columns with one frame width',()=>{const lines=text(data.logo);assert.equal(lines.length,8);for(const line of lines)assert.ok([...line].length<=80,line);assert.equal(new Set(lines.map(l=>[...l].length)).size,1);assert.match(lines[0],/^┌─/);assert.match(lines[7],/^└─+┘$/);assert.match(lines[6],/MeshCore client for Windows/);});
+test('logo and wordmark contain no control characters and use only palette indexes',()=>{for(const rows of [data.logo,data.wordmark])for(const row of rows)for(const [color,t]of row){assert.doesNotMatch(t,/[\u0000-\u001f\u007f-\u009f]/);assert.ok(color===null||[4,6,8,12,14,15].includes(color),String(color));}});
+test('letter rows fade from white through cyan and blue to dark blue',()=>{const letters=data.logo.slice(1,6).map(row=>row.find(([,t])=>t.includes('██'))[0]);assert.deepEqual(letters,[15,14,12,12,4]);});
+test('wordmark spells Nightlink on two rows',()=>{const lines=text(data.wordmark);assert.equal(lines.length,2);assert.equal(lines[0],'NIGHTLINK');assert.ok([...lines[1]].length<=lines[0].length);});
+const python=['python3','python'].find(cmd=>{try{return /Python 3/.test(execFileSync(cmd,['--version'],{encoding:'utf8',stdio:['ignore','pipe','pipe']}));}catch{return false;}});
+const lf=s=>s.replace(/\r\n/g,'\n');
+test('data module matches make-art.py output',{skip:python?false:'Python 3 is not available'},()=>{const out=path.join(fs.mkdtempSync(path.join(os.tmpdir(),'nightlink-logo-')),'ansi-logo-data.js'),dir=path.dirname(out);execFileSync(python,[path.join(__dirname,'art/ansi/make-art.py'),dir,'--app-data',out]);assert.equal(lf(fs.readFileSync(out,'utf8')),lf(fs.readFileSync(path.join(__dirname,'ansi-logo-data.js'),'utf8')));fs.rmSync(dir,{recursive:true,force:true});});
+test('renderer exports the data and builds with textContent only',()=>{assert.equal(logo.data,data);const src=fs.readFileSync(path.join(__dirname,'ansi-logo.js'),'utf8');assert.doesNotMatch(src,/innerHTML|insertAdjacentHTML|\.style\b|setAttribute\('style'/);});
