@@ -46,7 +46,7 @@
  radioSession.addEventListener('sync',async e=>{
   if(e.detail.state==='ready'){
    const wasStarting=running;finish();retry.hidden=true;await bridge.remember(ble.kind);config=await bridge.info();
-   if(wasStarting){if(bleSheet.open)bleSheet.close();view('Overview');}
+   if(wasStarting&&bleSheet.open)bleSheet.close();
   }else if(e.detail.state==='error'&&running){lastError='Synchronization failed. Retry manually.';stop(false);retry.hidden=false;status(lastError);}
  });
  const settingsView=view;view=function(name){settingsView(name);if(name!=='Settings')return;
