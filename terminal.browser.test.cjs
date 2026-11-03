@@ -98,6 +98,13 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
   if(shots&&w===760){await page.evaluate(()=>view('Messages'));await page.screenshot({path:path.join(shots,'term-mrc-760.png')});await page.evaluate(()=>view('Overview'));await page.screenshot({path:path.join(shots,'term-menu-760.png')});}}
  await page.setViewportSize({width:1320,height:860});
  if(shots){await page.evaluate(()=>view('Radio'));await page.waitForTimeout(200);await page.screenshot({path:path.join(shots,'term-radio.png')});}
+ // MRC extras: mention highlight, /whois, Tab completion of nicks.
+ await page.evaluate(()=>{const ch={kind:'channel',...live.channels[0]};live.messages.push({id:'t9',conversation:conversationId(ch),target:ch,kind:'channel',timestamp:Math.floor(Date.now()/1000),sender:'KD9XYZ',text:'@SNOMAN are you on?',status:'Received'});view('Messages');});
+ assert.equal(await page.$eval('[data-message-id="t9"]',e=>e.classList.contains('mrc-mention')),true);assert.equal(await page.$eval('[data-message-id="t1"]',e=>e.classList.contains('mrc-mention')),false);
+ await page.fill('#mrc-input','/whois KD9XYZ');await page.press('#mrc-input','Enter');
+ const who=await page.$$eval('#mrc-log .mrc-line',l=>l.map(x=>x.textContent).join('\n'));assert.match(who,/-!-   type    companion/);assert.match(who,/-!-   signal  SNR 8\.2 dB/);assert.match(who,/End of \/whois/);
+ await page.fill('#mrc-input','kd');await page.press('#mrc-input','Tab');assert.equal(await page.inputValue('#mrc-input'),'KD9XYZ: ');
+ await page.fill('#mrc-input','hi w9');await page.press('#mrc-input','Tab');assert.equal(await page.inputValue('#mrc-input'),'hi W9ABC-RPT ');await page.fill('#mrc-input','');
  // Settings: switch to Cards and back; each choice persists across reloads.
  await page.evaluate(()=>view('Settings'));
  assert.deepEqual(await page.$$eval('#interface-mode option',o=>o.map(x=>[x.value,x.textContent])),[['terminal','Terminal (default)'],['cards','Cards']]);
