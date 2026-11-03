@@ -1,0 +1,33 @@
+/* Event variant: VGA colors and quiet text-mode frames; no raster branding in the runtime UI. */
+html:root:root:root:root:root[data-interface=terminal] body .qcc-brand{width:100%;max-width:520px;min-width:0}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-brand .term-logo-svg{width:100%;height:auto;max-width:100%;display:block}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-credit{color:var(--t-bright-cyan);text-align:right;font-size:14px;line-height:20px;margin:3px 0 0}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-website{color:var(--t-grey);text-align:right;font-size:12px;line-height:18px;margin:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat{grid-template-rows:auto auto minmax(0,1fr) auto auto}
+html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.qcc-masthead{grid-column:1/-1;grid-row:1;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:8px 18px;border-bottom:3px double var(--t-blue)}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-masthead .qcc-brand{max-width:280px}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-display-label{display:flex;flex-direction:column;text-align:right;color:var(--t-white);gap:5px;font-size:18px}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-display-label span{font-size:14px;color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.mrc-heading{grid-row:2}
+html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.mrc-body{grid-row:3}
+html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.mrc-map{grid-row:3}
+html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.mrc-statusbar{grid-row:4}
+html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.mrc-input-line{grid-row:5}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-display-button{background:var(--t-blue)!important;color:var(--t-white)!important;border:1px solid var(--t-bright-cyan)!important;border-radius:0!important;padding:3px 8px!important;font-size:14px!important;margin:2px 8px!important;min-height:28px!important}
+html:root:root:root:root:root[data-interface=terminal] body .boot-logo .qcc-brand{max-width:300px;margin:auto}
+html:root:root:root:root:root[data-interface=terminal] body .boot-logo .qcc-brand svg{max-height:58px!important}
+html:root:root:root:root:root[data-interface=terminal] body .boot-logo .qcc-credit{font-size:12px;line-height:16px}
+html:root:root:root:root:root[data-interface=terminal] body .boot-logo .qcc-website{font-size:11px;line-height:14px}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air #term-menubar,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air #term-fkeys,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air main>header,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-windows,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-map,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-input-line,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-text-size,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air #toast,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .dm-popup{display:none!important}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air{padding:0!important}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .content{padding:0!important}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc.qcc-chat{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .qcc-masthead .qcc-brand{max-width:480px}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .qcc-credit{font-size:18px;line-height:26px}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .qcc-website{font-size:16px;line-height:22px}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-body{grid-template-columns:minmax(0,1fr)!important;grid-column:1/-1!important}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-log{padding:16px 32px}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-text{font-size:clamp(22px,1.6vw,34px)!important;line-height:1.55}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-line[data-message-id]{margin-top:18px;font-size:20px;line-height:28px}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-delivery,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc-hop{font-size:16px!important;line-height:24px}
+@media(max-width:1100px){html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat{grid-template-rows:auto auto auto minmax(0,1fr) auto auto}html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.mrc-map{grid-row:3}html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.mrc-body{grid-row:4}html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.mrc-statusbar{grid-row:5}html:root:root:root:root:root[data-interface=terminal] body .mrc.qcc-chat>.mrc-input-line{grid-row:6}html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc.qcc-chat{grid-template-rows:auto auto minmax(0,1fr) auto}html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc.qcc-chat>.mrc-body{grid-row:3}html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .mrc.qcc-chat>.mrc-statusbar{grid-row:4}html:root:root:root:root:root[data-interface=terminal] body .qcc-masthead .qcc-brand{max-width:220px}html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .qcc-masthead .qcc-brand{max-width:320px}}

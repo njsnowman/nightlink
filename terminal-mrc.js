@@ -23,7 +23,8 @@
  function syncMap(){
   if(!state.mapPanel?.isConnected||!terminal()||current!=='Messages'){stopMap();return;}
   let reason='';
-  if(!state.mapPanel.open)reason='Map collapsed';
+  if(window.NightlinkEventBrand?.presenting())reason='ANSI big-screen display';
+  else if(!state.mapPanel.open)reason='Map collapsed';
   else if(window.NightlinkMapProviders?.enabled('corescope')===false)reason='CoreScope hidden in Settings';
   else if(!navigator.onLine)reason='Offline · external map unavailable';
   else if(!window.nightlinkCoreScope?.chatMapSupported)reason='Map-only view requires the desktop app';
@@ -157,9 +158,9 @@
   let root=doc.querySelector('#mrc');
   if(!on){stopMap();root?.remove();return;}
   const focused=doc.activeElement===state.form?.querySelector('#mrc-input'),log=doc.querySelector('#mrc-log'),atEnd=!log||log.scrollHeight-log.scrollTop-log.clientHeight<24,keepTop=log?.scrollTop;
-  const list=windows(),win=activeWindow(list),index=list.indexOf(win)+1;
+  const list=windows(),win=window.NightlinkEventBrand?.publicWindow()||activeWindow(list),index=Math.max(1,list.findIndex(w=>w.id===win.id)+1);
   if(!root){root=el('section');root.id='mrc';root.className='mrc';root.setAttribute('aria-label','Mesh Relay Chat');}
-  for(const child of [...root.children])if(child!==state.mapPanel)child.remove();
+  for(const child of [...root.children])if(child!==state.mapPanel&&!child.classList.contains('qcc-masthead'))child.remove();
   if(!state.mapPanel?.isConnected)root.append(mapPanel());
   // Topic bar
   const topic=el('div','mrc-topic');topic.append(el('strong',null,'MRC'),el('span','mrc-topic-dim',' Mesh Relay Chat'),' │ ');
@@ -240,8 +241,9 @@
   if(!root.isConnected)host.prepend(root);
   syncMap();
   if(focused&&doc.activeElement!==field2)field2.focus();
-  const sl=doc.querySelector('#mrc-log');if(atEnd)sl.scrollTop=sl.scrollHeight;else sl.scrollTop=keepTop;
+  const sl=doc.querySelector('#mrc-log');if(atEnd||window.NightlinkEventBrand?.presenting())sl.scrollTop=sl.scrollHeight;else sl.scrollTop=keepTop;
   markRead(win,sl);
+  window.NightlinkEventBrand?.decorate?.();
  }
  function updateCount(){const input=state.form?.querySelector('#mrc-input'),count=state.count;if(!input||!count)return;const v=input.value,n=v.startsWith('/')?bytes(commandPayload(v)||''):bytes(v);count.textContent=String(n);count.classList.toggle('mrc-over',n>LIMIT);}
  function markRead(win,log){
