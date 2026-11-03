@@ -78,7 +78,7 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
   assert.equal(await boot.evaluate(()=>document.documentElement.classList.contains('term-boot')),false,'cards mode never hides content');assert.ok(await boot.isVisible('#overview'));
   await ctx.close();}
  // Detached DM in terminal mode: MRC-style lines, avatars hidden, outgoing marked >>>, contrast kept.
- {const dm=await context.newPage();await dm.addInitScript(()=>{window.dmWindow={onUpdate:fn=>window.__dmUpdate=fn,contact(){},reply(){},action(){},read(){},draft(){},onFocus(){}};});await dm.goto('http://127.0.0.1:4173/dm.html');await dm.waitForFunction(()=>window.__dmUpdate);
+ {const dm=await context.newPage();await dm.addInitScript(()=>{localStorage.setItem('nightlink.interface','terminal');window.dmWindow={onUpdate:fn=>window.__dmUpdate=fn,contact(){},reply(){},action(){},read(){},draft(){},onFocus(){}};});await dm.goto('http://127.0.0.1:4173/dm.html');await dm.waitForFunction(()=>window.__dmUpdate);
   await dm.evaluate(()=>__dmUpdate({key:'peer',name:'KD9XYZ',connected:true,messages:[{id:'a',text:'net check',timestamp:1700000000,own:false,status:'Received',hopLabel:'2 hops'},{id:'b',text:'copy',timestamp:1700000060,own:true,status:'Acknowledged by recipient',direct:true}]}));
   await dm.waitForSelector('.dm-bubble.own');
   assert.equal(await dm.$eval('.dm-bubble .signal-message-avatar',e=>getComputedStyle(e).display),'none');
