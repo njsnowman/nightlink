@@ -51,7 +51,7 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  assert.equal(line,'KD9XYZ ──► [1] Batesville Relay ──► [2] ee ──► [3] Cedar Grove Relay ──► RX SNOMAN');
  const grid=await page.textContent('.term-path-grid');assert.match(grid,/1/);assert.match(grid,/3/);assert.match(grid,/R/);
  assert.match(await page.getAttribute('.term-path-grid','aria-label'),/3 located points: 1 Batesville Relay, 3 Cedar Grove Relay, RX SNOMAN/);
- assert.ok(grid.includes('█'),'consecutive known hops 3 → RX are connected');
+ assert.ok(/[─│╱╲]/.test(grid.replace(/^[┌└].*$/gm,'').replace(/[│]$/gm,'').replace(/^│/gm,'')),'consecutive known hops 3 → RX are connected');assert.match(grid,/┌─ N ▲/);assert.match(grid,/├─+┤ [\d.]+ k?m/);
  if(shots)await page.screenshot({path:path.join(shots,'term-path.png')});
  await page.keyboard.press('Escape');
  await page.evaluate(()=>showMessageRoute({...pathMessage,id:'count',observedRoute:null}));

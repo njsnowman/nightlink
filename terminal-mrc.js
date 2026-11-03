@@ -46,7 +46,10 @@
   const parts=[];if(m.pathLength!=null&&window.MeshlineRoutes)parts.push(MeshlineRoutes.hopSummary(m.pathLength));if(m.snr!=null)parts.push('SNR '+m.snr);
   return parts.join(' · ');
  }
- function nick(name,cls){const s=el('span','mrc-nick-wrap');s.append('<',el('span','mrc-nick '+cls,name),'> ');return s;}
+ // Per-nick colors, as in IRC clients: a stable hash of the name picks one of eight VGA colors that meet 4.5:1 on black.
+ const NICK_COLORS=8;
+ function nickColor(name){let h=0;for(const ch of String(name))h=(h*31+ch.codePointAt(0))>>>0;return 'mrc-nc-'+(h%NICK_COLORS);}
+ function nick(name,cls){const s=el('span','mrc-nick-wrap');s.append(el('span','mrc-nick-bracket','<'),el('span','mrc-nick '+cls+(cls==='mrc-nick-peer'?' '+nickColor(name):''),name),el('span','mrc-nick-bracket','>'),' ');return s;}
  function messageLine(m){
   const line=el('div','mrc-line'+(m.own?' mrc-own':''));line.dataset.messageId=m.id;
   line.append(el('span','mrc-time',stamp(m.timestamp)));
@@ -78,7 +81,7 @@
   for(const c of adverts){
    const line=el('div','mrc-line mrc-advert');line.append(el('span','mrc-time',stamp(c.lastAdvert)),el('span','mrc-info','-!- '));
    const hops=c.pathLength==null||c.pathLength===255?'flood':window.MeshlineRoutes?MeshlineRoutes.contactRoute(c.pathLength):String(c.pathLength);
-   line.append(el('span',c.type===2?'mrc-nick-repeater':'mrc-nick-peer',display(c.key,c.name)),el('span','mrc-dim',' ['+c.key.slice(0,8)+'@'+hops+']'),' has joined');
+   line.append(el('span',c.type===2?'mrc-nick-repeater':'mrc-nick-peer '+nickColor(display(c.key,c.name)),display(c.key,c.name)),el('span','mrc-dim',' ['+c.key.slice(0,8)+'@'+hops+']'),' has joined');
    if(c.snr!=null)line.append(el('span','mrc-dim',' (advert, SNR '+c.snr+')'));
    log.append(line);
   }
@@ -93,7 +96,7 @@
   const sorted=live.contacts.slice().sort((a,b)=>(b.type===2)-(a.type===2)||(b.snr??-99)-(a.snr??-99));
   for(const c of sorted.slice(0,40)){
    const li=el('li','mrc-node');const [bar,cls]=nodeBar(c.snr);
-   li.append(el('span',c.type===2?'mrc-nick-repeater':'mrc-node-name',(c.type===2?'+':' ')+display(c.key,c.name)));
+   li.append(el('span',c.type===2?'mrc-nick-repeater':'mrc-node-name '+nickColor(display(c.key,c.name)),(c.type===2?'+':' ')+display(c.key,c.name)));
    const sig=el('span','mrc-node-snr '+cls);sig.append(el('span','mrc-bar',bar),' '+(c.snr==null?'—':String(Math.round(c.snr))));li.append(sig);list.append(li);
   }
   if(sorted.length>40)list.append(el('li','mrc-dim',(sorted.length-40)+' more…'));
@@ -123,7 +126,7 @@
   root.append(topic);
   // Window list
   const body=el('div','mrc-body'),side=el('div','mrc-windows');side.setAttribute('role','navigation');side.setAttribute('aria-label','Windows');
-  side.append(el('div','mrc-pane-title','windows'));
+  side.append(el('div','mrc-pane-title','windows'));side.lastChild.setAttribute('data-box','');
   const ol=el('ol','mrc-window-list');
   list.forEach((w,i)=>{const li=el('li'),b=el('button','mrc-window'+(w===win?' active':''));b.type='button';b.dataset.mrcWindow=w.id;const n=w.kind==='status'?0:unread(w.id);
    b.append(el('span','mrc-window-num',String(i+1)),' ',el('span','mrc-window-name '+(w.kind==='direct'?'mrc-dm':''),w.label));if(n)b.append(el('span','mrc-unread',String(n)));
@@ -135,8 +138,14 @@
   else{
    const rows=live.messages.filter(m=>m.conversation===win.id).slice(-MAX_ROWS);
    if(!rows.length){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(nowSeconds())),el('span','mrc-dim','-!- No messages in '+win.label+' yet.'));scroll.append(line);}
+   // Session banner, as an IRC client prints on join. Counts come from stored data only.
+   const banner=(text,cls)=>{const line=el('div','mrc-line mrc-banner');line.append(el('span','mrc-time',stamp(rows[0]?.timestamp??nowSeconds())),el('span','mrc-banner-star','*** '),el('span',cls||null,text));scroll.append(line);};
+   banner('Now talking in '+win.label,'mrc-banner-strong');
+   if(target.kind==='channel')banner('Topic: channel slot '+target.slot+(live.identity?.frequency?' · '+live.identity.frequency.toFixed(3)+' MHz':'')+' · 133-byte messages');
+   else banner('Direct messages with '+win.label.slice(1)+'');
+   banner(rows.length+' stored message'+(rows.length===1?'':'s')+' · '+live.contacts.length+' nodes known');
    let day='';
-   for(const m of rows){const d=new Date(m.timestamp*1000).toDateString();if(day&&d!==day){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-dim','-!- Day changed to '+d));scroll.append(line);}day=d;scroll.append(messageLine(m));}
+   for(const m of rows){const d=new Date(m.timestamp*1000).toDateString();if(day&&d!==day){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));scroll.append(line);}day=d;scroll.append(messageLine(m));}
   }
   for(const l of state.local.get(win.id)||[]){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(l.t)),el('span',l.cls,l.text));scroll.append(line);}
   body.append(side,scroll,nodes());root.append(body);

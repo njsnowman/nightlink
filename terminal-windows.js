@@ -54,7 +54,7 @@
 
  // ANSI path view. The diagram uses only stored evidence: resolved hops by name, unresolved hops by hash,
  // hop-count-only paths as a counted gap. Nothing is inferred from the current network.
- const CELLS_W=56,CELLS_H=12;
+ const CELLS_W=96,CELLS_H=14;
  function located(p){return p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&Math.abs(p.lat)<=85&&Math.abs(p.lon)<=180;}
  function pathModel(m){
   const stops=typeof routeStops==='function'?routeStops(m):[];
@@ -75,6 +75,19 @@
   arrow();node('RX '+model.receiver.name,'term-path-end');
   return line;
  }
+ // Map frame shared by the path view and the node map: box-drawing border, north marker, and a distance scale
+ // derived from the plotted bounds (great-circle width at the middle latitude). Decorative only; the pre is role=img.
+ function kmWidth(minLat,maxLat,minLon,maxLon){const r=Math.PI/180,lat=(minLat+maxLat)/2*r,d=(maxLon-minLon)*r*Math.cos(lat);return Math.abs(d)*6371;}
+ function lineChar(dx,dy){if(!dy)return '─';if(!dx)return '│';if(Math.abs(dx)>=2*Math.abs(dy))return '─';if(Math.abs(dy)>=2*Math.abs(dx))return '│';return dx*dy>0?'╲':'╱';}
+ function framed(grid,km){
+  const W=grid[0].length,pre=el('pre','term-path-grid');const put=(t,c)=>pre.append(el('span',c,t));
+  const north='─ N ▲ ';put('┌'+north,'term-path-frame');put('─'.repeat(W-north.length)+'┐\n','term-path-frame');
+  for(const row of grid){put('│','term-path-frame');for(const c of row)put(c.ch,c.cls);put('│\n','term-path-frame');}
+  put('└'+'─'.repeat(W)+'┘\n','term-path-frame');
+  if(Number.isFinite(km)&&km>0){const cells=Math.max(4,Math.round(W/4)),seg=km*cells/W,label=seg>=10?seg.toFixed(0):seg>=1?seg.toFixed(1):(seg*1000).toFixed(0);
+   put(' ├'+'─'.repeat(cells-2)+'┤ ','term-path-scale');put(label+(seg>=1?' km':' m'),'term-path-scale-label');}
+  return pre;
+ }
  function pathGrid(model){
   const points=[...model.stops.filter(s=>s.located).map(s=>({...s,label:String(s.index%10)})),...(model.receiver.located?[{...model.receiver,label:'R'}]:[])];
   if(!points.length)return null;
@@ -85,16 +98,15 @@
   // Connect only consecutive known hops, as the street map does; an unknown hop is never bridged.
   for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],ai=a.receiver?model.stops.length+1:a.index,bi=b.receiver?model.stops.length+1:b.index;if(bi!==ai+1)continue;
    const [x0,y0]=cell(a),[x1,y1]=cell(b),n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0));
-   for(let k=1;k<n;k++){const x=Math.round(x0+(x1-x0)*k/n),y=Math.round(y0+(y1-y0)*k/n);grid[y][x]={ch:'█',cls:'term-path-beam'};}}
+   let px=x0,py=y0;for(let k=1;k<n;k++){const x=Math.round(x0+(x1-x0)*k/n),y=Math.round(y0+(y1-y0)*k/n);grid[y][x]={ch:lineChar(x-px||0,y-py||0)||'·',cls:'term-path-beam'};px=x;py=y;}}
   for(const p of points){const [x,y]=cell(p);grid[y][x]={ch:p.label,cls:p.receiver?'term-path-rx':'term-path-hop'};}
-  const pre=el('pre','term-path-grid');pre.setAttribute('role','img');
+  const pre=framed(grid,kmWidth(minLat,maxLat,minLon,maxLon));pre.setAttribute('role','img');
   pre.setAttribute('aria-label','Text map of '+points.length+' located point'+(points.length===1?'':'s')+': '+points.map(p=>(p.receiver?'RX ':p.index+' ')+p.name).join(', '));
-  for(const row of grid){for(const c of row)pre.append(el('span',c.cls,c.ch));pre.append('\n');}
   return pre;
  }
  // ANSI node map (Network map page): saved contacts with advertised locations and your radio. Positions only;
  // no links are drawn because adverts do not report which nodes hear each other.
- const MAP_W=72,MAP_H=16;let nodeMapOpen=false;
+ const MAP_W=110,MAP_H=18;let nodeMapOpen=false;
  function nodeMap(){
   const content=doc.querySelector('main .content');doc.querySelector('#term-node-map')?.remove();
   if(!content||!on()||current!=='Network map')return;
@@ -111,10 +123,9 @@
    const grid=Array.from({length:MAP_H},()=>Array.from({length:MAP_W},()=>({ch:'·',cls:'term-path-ground',n:0})));
    for(const p of points){const x=Math.round((p.lon-minLon)/(maxLon-minLon)*(MAP_W-1)),y=Math.round((maxLat-p.lat)/(maxLat-minLat)*(MAP_H-1)),g=grid[y][x];
     if(g.ch==='@')continue;g.n++;Object.assign(g,p.ch==='@'?{ch:'@',cls:p.cls}:g.n>1?{ch:String(Math.min(g.n,9)),cls:'term-path-hop'}:{ch:p.ch,cls:p.cls});}
-   const pre=el('pre','term-path-grid');pre.setAttribute('role','img');
+   const pre=framed(grid,kmWidth(minLat,maxLat,minLon,maxLon));pre.setAttribute('role','img');
    pre.setAttribute('aria-label','Text map of '+points.length+' located node'+(points.length===1?'':'s')+': '+points.map(p=>p.name).join(', '));
-   for(const row of grid){for(const c of row)pre.append(el('span',c.cls,c.ch));pre.append('\n');}
-   box.append(pre,el('p','term-path-legend','@ = your radio · r = repeater · c = companion · m = room server · digit = nodes sharing a cell · north up'));
+   box.append(pre,el('p','term-path-legend','@ = your radio · r = repeater · c = companion · m = room server · digit = nodes sharing a cell'));
   }
   const title=doc.querySelector('#term-page-title');if(title)title.after(box);else content.prepend(box);
  }
@@ -126,7 +137,7 @@
   const model=pathModel(m),box=el('section','term-frame term-path');box.setAttribute('aria-label','ANSI path view');
   box.append(el('h3','term-frame-title','path · sender → receiver'),pathLine(model));
   const grid=pathGrid(model);
-  if(grid)box.append(grid,el('p','term-path-legend','digits = located repeaters in order · R = your radio · █ = known segment'));
+  if(grid)box.append(grid,el('p','term-path-legend','digits = located repeaters in order · R = your radio · ─│╱╲ = known segment'));
   else box.append(el('p','term-dim term-path-legend','No located points for this message. The text map needs advertised locations.'));
   host.prepend(box);
  }

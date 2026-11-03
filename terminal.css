@@ -224,3 +224,44 @@ html:root:root:root:root:root[data-interface=terminal] body :focus-visible{trans
 html:root:root:root:root:root[data-interface=terminal] body :is(input,select,textarea):not(#mrc-input):is(:focus,:focus-within){outline:2px solid var(--t-bright-cyan) !important;outline-offset:1px;transition:none !important}
 html:root:root:root:root:root[data-interface=terminal] body iframe.term-frame-focused{outline:2px solid var(--t-bright-cyan) !important;outline-offset:-2px !important}
 html:root:root:root:root:root[data-interface=terminal].term-boot body main .content>:not(#bbs){visibility:hidden !important}
+/* MRC detail (BBS pass): per-nick colors (each 4.5:1 or better on black), banner, pane headers, active window marker. */
+html:root:root:root:root:root[data-interface=terminal] body .mrc-nc-0{color:var(--t-bright-cyan)}html:root:root:root:root:root[data-interface=terminal] body .mrc-nc-1{color:var(--t-bright-green)}html:root:root:root:root:root[data-interface=terminal] body .mrc-nc-2{color:var(--t-bright-magenta)}html:root:root:root:root:root[data-interface=terminal] body .mrc-nc-3{color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-nc-4{color:var(--t-bright-red)}html:root:root:root:root:root[data-interface=terminal] body .mrc-nc-5{color:#00aaaa}html:root:root:root:root:root[data-interface=terminal] body .mrc-nc-6{color:#00aa00}html:root:root:root:root:root[data-interface=terminal] body .mrc-nc-7{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-bracket{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-banner-star{color:var(--t-bright-green);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-banner{color:var(--t-grey)}html:root:root:root:root:root[data-interface=terminal] body .mrc-banner-strong{color:var(--t-white);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-daychange{color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pane-title{border-bottom:3px double var(--t-bright-blue) !important;text-transform:uppercase;letter-spacing:.12em}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pane-title::before{content:'[ ';color:var(--t-bright-blue)}html:root:root:root:root:root[data-interface=terminal] body .mrc-pane-title::after{content:' ]';color:var(--t-bright-blue)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-window::before{content:' ';white-space:pre;width:1ch;display:inline-block}html:root:root:root:root:root[data-interface=terminal] body .mrc-window.active::before{content:'►';color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-windows{border-right:3px double var(--t-blue) !important}html:root:root:root:root:root[data-interface=terminal] body .mrc-nodes{border-left:3px double var(--t-blue) !important}
+/* Dialog windows (BBS pass): Turbo Vision-style double frame with the title set into a blue bar, a solid dark-grey
+   drop shadow, a dithered blue backdrop, and the close control shown as [■] on the left. */
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window{box-shadow:14px 12px 0 0 #555555 !important;overflow:visible}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window::backdrop{background-color:#000;background-image:radial-gradient(#0000aa 1px,transparent 1.4px);background-size:4px 4px;opacity:.9}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window .dialog-heading{display:flex !important;align-items:center;flex-direction:row-reverse;justify-content:flex-end;gap:10px}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window .dialog-heading h2{flex:1;margin:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window #close-dialog{font-size:0 !important;width:auto !important;min-width:0 !important;height:auto !important;padding:0 2px !important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window #close-dialog>*{display:none}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window #close-dialog::before{content:'[■]';font-size:14px;line-height:var(--t-bar);color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window #close-dialog:hover::before{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window #dialog-body :is(h3,.panel-heading h2){color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .term-window-title{background:var(--t-blue);box-shadow:0 2px 0 0 var(--t-bright-blue)}
+html:root:root:root:root:root[data-interface=terminal] body .term-window-title .term-window-name::before{content:'═╡ ';color:var(--t-bright-cyan)}html:root:root:root:root:root[data-interface=terminal] body .term-window-title .term-window-name::after{content:' ╞═';color:var(--t-bright-cyan)}
+/* Buttons in dialog windows and page windows (BBS pass): Turbo Vision buttons. Secondary grey, primary cyan,
+   destructive red, solid dark-grey shadow that disappears while pressed. Black on #aaaaaa 9.0:1, on #00aaaa 7.3:1. */
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window .dialog-heading .nl-submenu-mark{display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not(.term-window-key *):not([role=tab]):not(.leaflet-control *):not(.mrc *):not(.bbs *):not(:has(div,strong,small,time,p,.avatar)){background:#aaaaaa !important;color:#000 !important;border:0 !important;border-radius:0 !important;box-shadow:3px 3px 0 0 #555555 !important;font-weight:700;text-shadow:none !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) :is(button.primary,.primary):not(.mrc *){background:#00aaaa !important;color:#000 !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) :is(button.danger,button.destructive):not(.mrc *){background:var(--t-red) !important;color:var(--t-white) !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not(:disabled):hover:not(.mrc *){background:var(--t-white) !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not(:disabled):active:not(.mrc *){transform:translate(3px,3px);box-shadow:none !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:disabled:not(.mrc *){background:#555555 !important;color:#aaaaaa !important;box-shadow:none !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not([role=tab]):not(.leaflet-control *):not(.mrc *):not(.bbs *):not(:has(div,strong,small,time,p,.avatar)) *:not(svg):not(path){color:inherit !important}
+/* ANSI maps (BBS pass): frame, scale, line segments; ground dots dark grey are decorative inside role=img. */
+html:root:root:root:root:root[data-interface=terminal] body .term-path-grid{border:0 !important;padding:0 !important;background:#000 !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-path-frame{color:var(--t-bright-blue)}
+html:root:root:root:root:root[data-interface=terminal] body .term-path-scale{color:var(--t-grey)}html:root:root:root:root:root[data-interface=terminal] body .term-path-scale-label{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .term-path-beam{color:var(--t-bright-cyan);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .term-path-ground{color:#3a3a3a}
+html:root:root:root:root:root[data-interface=terminal] body .term-path-grid{line-height:1.05 !important;font-size:13px !important;max-width:100%;overflow-x:auto}
