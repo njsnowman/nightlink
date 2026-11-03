@@ -22,6 +22,8 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  if(shots)await page.screenshot({path:path.join(shots,'term-settings.png')});
  await page.evaluate(()=>NightlinkSettings.open('help'));assert.equal(await page.textContent('#term-page-title .term-window-name'),'HELP');
  assert.equal(await page.getAttribute('#term-menubar [data-term-view=Help]','aria-current'),'page');
+ const firstTopic=await page.$eval('.help-topics button[aria-current=true]',b=>b.textContent);await page.evaluate(()=>document.activeElement?.blur());await page.keyboard.press('PageDown');
+ assert.notEqual(await page.$eval('.help-topics button[aria-current=true]',b=>b.textContent),firstTopic,'PgDn moves to the next help topic');assert.match(await page.textContent('#term-page-keys'),/PgDn Next topic/);
  if(shots)await page.screenshot({path:path.join(shots,'term-help.png')});
  for(const [name,title] of [['Nodes','NODES'],['Network map','MAP'],['Activity','ACTIVITY'],['Direct Messages','DIRECT'],['Search','SEARCH']]){
   await page.evaluate(n=>view(n),name);assert.equal(await page.textContent('#term-page-title .term-window-name'),title,name);assert.ok(await page.isVisible('#term-page-keys'),name);

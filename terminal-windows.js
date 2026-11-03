@@ -22,7 +22,7 @@
  function pageWindow(){
   const content=doc.querySelector('main .content');if(!content)return;
   const help=current==='Settings'&&window.NightlinkSettings?.current?.()==='help';
-  const page=on()?(help?{title:'HELP',sub:'guide · shortcuts · about',keys:[['Tab','Next control'],['F9','Main menu'],['Esc','Back']]}:PAGES[current]):null;
+  const page=on()?(help?{title:'HELP',sub:'guide · shortcuts · about',keys:[['PgDn','Next topic'],['PgUp','Previous topic'],['Tab','Next control'],['Esc','Back']]}:PAGES[current]):null;
   doc.body.classList.toggle('term-window-page',!!page);
   // Help lives inside Settings; the menu bar marks the item the operator chose.
   if(!help){const h=doc.querySelector('#term-menubar [data-term-view=Help]');if(h){h.classList.remove('active');if(h.getAttribute('aria-current'))h.removeAttribute('aria-current');}}
@@ -159,6 +159,11 @@
  function settingsKeys(){if(!on()||current!=='Settings')return;const used=new Set();for(const b of doc.querySelectorAll('.switchboard-settings-nav button')){const label=(b.textContent||'').replace(/^\[.\]\s*/,'').trim();const k=[...label.toUpperCase()].find(c=>/[A-Z]/.test(c)&&!used.has(c));if(!k)continue;used.add(k);b.dataset.hotkey=k;b.setAttribute('aria-keyshortcuts',k);}}
  doc.addEventListener('keydown',e=>{if(!on()||current!=='Settings'||e.ctrlKey||e.altKey||e.metaKey||e.defaultPrevented||e.key.length!==1)return;if(e.target.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]')||doc.querySelector('dialog[open]'))return;
   const b=doc.querySelector(`.switchboard-settings-nav button[data-hotkey="${CSS.escape(e.key.toUpperCase())}"]`);if(b){e.preventDefault();b.click();b.focus();}});
+ // Help viewer: PgDn / PgUp move to the next or previous topic when no field has focus.
+ doc.addEventListener('keydown',e=>{if(!on()||current!=='Settings'||window.NightlinkSettings?.current?.()!=='help'||!['PageDown','PageUp'].includes(e.key)||e.defaultPrevented)return;
+  if(e.target.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]')||doc.querySelector('dialog[open]'))return;
+  const list=[...doc.querySelectorAll('.help-topics button')];if(!list.length)return;const i=list.findIndex(b=>b.getAttribute('aria-current')==='true');
+  const next=list[Math.max(0,Math.min(list.length-1,i+(e.key==='PageDown'?1:-1)))];if(next&&next!==list[i]){e.preventDefault();next.click();next.focus();}});
  // Settings categories (including Help) switch without a view change.
  doc.addEventListener('click',()=>{if(current==='Settings')setTimeout(()=>{pageWindow();settingsKeys();},0);});
  if(window.NightlinkSettings?.open){const open=NightlinkSettings.open;NightlinkSettings.open=function(){const r=open.apply(this,arguments);pageWindow();settingsKeys();return r;};}
