@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Play the approved original modem-to-laser WAV at startup by default and retain the loading screen until audio playback ends; keys and clicks cannot cut it short. Respect explicit sound-off and quiet hours, use a static screen under reduced motion, and handle autoplay denial, paused/failed/stalled playback. Tracks [#136](https://github.com/njsnowman/nightlink/issues/136); [candidate record](releases/0.8.28-rc.17.md).
 - Preserve the active page when startup or manual radio synchronization completes; keep terminal Chat draft and input focus without rebuilding the page. Add a skippable BBS dial-up introduction with simulated typed modem commands, ANSI handshake graphics, separate actual radio status and opt-in modem tones respecting quiet hours. Tracks [#134](https://github.com/njsnowman/nightlink/issues/134).
 - Terminal chat: open the compact CoreScope map at regional zoom 7 so the local view includes Cincinnati. Other map views retain their zoom. Tracks [#131](https://github.com/njsnowman/nightlink/issues/131); [candidate record](releases/0.8.28-rc.15.md).
 - Terminal chat: replace the node sidebar with a compact, collapsible OKI Mesh CoreScope live map in an ANSI-style frame, without CoreScope menus or packet lists. Retain map attribution and provider visibility/offline behavior. Tracks [#131](https://github.com/njsnowman/nightlink/issues/131); [validation and limitations](docs/chat-corescope.md).

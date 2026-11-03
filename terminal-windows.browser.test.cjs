@@ -111,7 +111,7 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
   const r=await p.evaluate(async()=>{const before=window.__osc;await new Audio('sent.wav').play();return window.__osc-before;});assert.ok(r>=2,'square-wave steps played');
   await p.selectOption('#sound-pack','standard');assert.equal(await p.evaluate(()=>localStorage.getItem('nightlink.soundPack')),'standard');await p.close();}
  // Start-up screen: shown once per session outside automation, skippable, honest about the radio, off by preference.
- {const ctx=await browser.newContext({viewport:{width:1320,height:860}});await ctx.addInitScript(()=>Object.defineProperty(navigator,'webdriver',{get:()=>false}));await serve(ctx);
+ {const ctx=await browser.newContext({viewport:{width:1320,height:860}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('nightlink.bootSound','off');}catch{}});await serve(ctx);
   const p=await ctx.newPage();p.on('pageerror',e=>errors.push('boot: '+e.message));await p.goto('http://127.0.0.1:4173');
   await p.waitForSelector('#term-boot-screen');await p.waitForFunction(()=>/not connected/.test(document.querySelector('#term-boot-screen')?.textContent||''));
   assert.match(await p.textContent('#term-boot-screen'),/Radio link \.+ not connected/);assert.doesNotMatch(await p.textContent('#term-boot-screen'),/CONNECT \d|carrier detected/i);

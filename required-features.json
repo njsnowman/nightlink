@@ -48,6 +48,7 @@
     "terminal-mrc.js",
     "terminal-windows.js",
     "terminal-boot.js",
+    "startup-modem-laser.wav",
     "terminal-sound.js",
     "corescope-chat-desktop.cjs"
   ]
