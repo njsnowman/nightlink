@@ -46,6 +46,7 @@
     "terminal-logo.js",
     "terminal-menu.js",
     "terminal-mrc.js",
-    "terminal-windows.js"
+    "terminal-windows.js",
+    "terminal-boot.js"
   ]
 }

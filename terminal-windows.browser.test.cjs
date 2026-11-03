@@ -77,5 +77,18 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
   await boot.evaluate(()=>NightlinkInterface.set('cards'));await boot.reload();await boot.waitForFunction(()=>window.NightlinkBBS);
   assert.equal(await boot.evaluate(()=>document.documentElement.classList.contains('term-boot')),false,'cards mode never hides content');assert.ok(await boot.isVisible('#overview'));
   await ctx.close();}
+ // Start-up screen: shown once per session outside automation, skippable, honest about the radio, off by preference.
+ {const ctx=await browser.newContext({viewport:{width:1320,height:860}});await ctx.addInitScript(()=>Object.defineProperty(navigator,'webdriver',{get:()=>false}));await serve(ctx);
+  const p=await ctx.newPage();p.on('pageerror',e=>errors.push('boot: '+e.message));await p.goto('http://127.0.0.1:4173');
+  await p.waitForSelector('#term-boot-screen');await p.waitForFunction(()=>/not connected/.test(document.querySelector('#term-boot-screen')?.textContent||''));
+  assert.match(await p.textContent('#term-boot-screen'),/Radio link \.+ not connected/);assert.doesNotMatch(await p.textContent('#term-boot-screen'),/CONNECT \d|carrier detected/i);
+  await p.waitForSelector('#term-boot-screen .term-logo-svg');if(shots)await p.screenshot({path:path.join(shots,'term-boot.png')});
+  await p.waitForFunction(()=>window.NightlinkBBS);await p.keyboard.press('c');await p.waitForSelector('#term-boot-screen',{state:'detached'});
+  assert.equal(await p.evaluate(()=>current),'Overview','the skip key is consumed');
+  await p.reload();await p.waitForFunction(()=>window.NightlinkBBS);await p.waitForTimeout(300);assert.equal(await p.$('#term-boot-screen'),null,'once per session');
+  await p.evaluate(()=>view('Settings'));assert.equal(await p.isChecked('#boot-screen'),true);await p.uncheck('#boot-screen');assert.equal(await p.evaluate(()=>localStorage.getItem('nightlink.bootScreen')),'off');
+  const q=await ctx.newPage();await q.emulateMedia({reducedMotion:'reduce'});await q.evaluate?.(()=>0);await q.goto('http://127.0.0.1:4173');await q.waitForFunction(()=>window.NightlinkBBS);await q.waitForTimeout(300);assert.equal(await q.$('#term-boot-screen'),null,'reduced motion or preference skips it');
+  await ctx.close();}
+ {const p=await context.newPage();await p.goto('http://127.0.0.1:4173');await p.waitForFunction(()=>window.NightlinkBBS);assert.equal(await p.$('#term-boot-screen'),null,'skipped under automation');await p.close();}
  assert.deepEqual(errors,[]);console.log('terminal windows browser checks passed');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1);});

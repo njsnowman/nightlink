@@ -358,3 +358,12 @@ html:root:root:root:root:root[data-interface=terminal] body main>header .connect
 html:root:root:root:root:root[data-interface=terminal] body main>header .connection-confidence-evidence::after{content:' ·';color:var(--t-grey)}
 html:root:root:root:root:root[data-interface=terminal] body main>header :is(#connection,#connection .header-control-label,#connection .header-control-label *){max-width:none !important;width:auto !important;overflow:visible !important;text-overflow:clip !important;flex:0 0 auto !important}html:root:root:root:root:root[data-interface=terminal] body main>header #connection{flex:0 0 auto !important}
 html:root:root:root:root:root[data-interface=terminal] body main>header .header-control-label,html:root:root:root:root:root[data-interface=terminal] body main>header .header-control-label *{padding:0 !important;min-width:0 !important}html:root:root:root:root:root[data-interface=terminal] body main>header #propagation-indicator{opacity:1 !important}html:root:root:root:root:root[data-interface=terminal] body main>header #propagation-indicator .header-control-label{color:var(--t-grey) !important}
+/* Start-up screen (terminal-boot.js). */
+html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen{position:fixed;inset:0;z-index:1000;background:#000;display:flex;flex-direction:column;padding:28px 36px;gap:18px;transition:opacity .18s linear}
+html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen.boot-out{opacity:0}
+html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-log{margin:0;color:var(--t-grey);font-size:14px;line-height:20px;white-space:pre-wrap}
+html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-title{color:var(--t-white);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-ok{color:var(--t-bright-green)}html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-warn{color:var(--t-yellow)}html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-info{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-logo .term-logo-svg{width:min(100%,960px);height:auto}
+html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-skip{margin:auto 0 0;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-line:last-of-type::after{content:'▌';color:var(--t-grey)}

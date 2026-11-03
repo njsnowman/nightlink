@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.28-rc.9",
+  "version": "0.8.28-rc.10",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -242,7 +242,8 @@
       "terminal-logo.js",
       "terminal-menu.js",
       "terminal-mrc.js",
-      "terminal-windows.js"
+      "terminal-windows.js",
+      "terminal-boot.js"
     ],
     "win": {
       "target": [
