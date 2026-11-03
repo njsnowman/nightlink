@@ -282,3 +282,28 @@ html:root:root:root:root:root[data-interface=terminal] body.term-window-page .co
 html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content .activity-row{border:0 !important;border-bottom:1px dotted var(--t-dark-grey) !important;padding:2px 8px !important;background:#000 !important;color:var(--t-grey)}
 html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content .activity-row::before{content:'» ';color:var(--t-yellow)}
 @media (min-height:800px) and (min-width:700px){html:root:root:root:root:root[data-interface=terminal] body .term-lock-logo+.security-lock-card .security-lock-brand{display:none !important}}
+/* Message path dialog (BBS pass): near full screen, compact summary, the street map takes the remaining height,
+   night-tinted tiles so the cyan route stands out. */
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"]{width:calc(100vw - 32px) !important;height:calc(100dvh - 32px) !important;max-width:none !important;max-height:none !important;display:flex !important;flex-direction:column}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] #dialog-body{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:8px 12px}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-workspace{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .term-path{margin:6px 0 0;padding:10px 12px 6px}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .term-path-more>summary{cursor:pointer;color:var(--t-yellow);margin-top:4px;list-style:none}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .term-path-more>summary::before{content:'[+] '}html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .term-path-more[open]>summary::before{content:'[-] '}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-summary{display:flex !important;flex-wrap:wrap;gap:4px 24px}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-summary>div{border:0 !important;padding:0 !important;background:none !important;display:flex;gap:8px;align-items:baseline}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-summary span{color:#00aaaa}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-summary strong{font-size:14px !important;color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .route-map-grid{flex:1;min-height:0;grid-template-columns:minmax(0,1fr) 320px !important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-map-pane{display:flex;flex-direction:column;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] #message-route-map{flex:1;min-height:320px;border:3px double var(--t-bright-blue) !important;border-radius:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-itinerary{min-height:0;overflow-y:auto}
+html:root:root:root:root:root[data-interface=terminal] body #message-route-map .leaflet-tile-pane{filter:invert(1) hue-rotate(195deg) saturate(.7) brightness(.75) contrast(1.1)}
+@media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .route-map-grid{grid-template-columns:1fr !important}}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .term-path-more{border:0 !important;padding:0 !important;margin:0 !important;background:none !important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] #message-path-signal{padding:2px 10px !important;min-height:0 !important;margin:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] #route-map-status{font-size:12px;margin:2px 0 0 !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-workspace>details,html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-workspace details:not(.term-path-more){padding:2px 10px !important;margin:0 !important;min-height:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-workspace>details>summary{padding:2px 0 !important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-section-heading{margin:0 0 4px !important;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-section-heading h3{margin:0 !important}

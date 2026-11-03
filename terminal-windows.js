@@ -131,16 +131,27 @@
  }
  if(typeof radioSession==='object')for(const type of ['contacts','identity'])radioSession.addEventListener(type,()=>{if(current==='Network map')nodeMap();});
 
+ // The path line stays visible; the character map is collapsed by default so the street map gets the space.
+ let replayTimer=null;
  function pathView(m){
   const host=doc.querySelector('.message-path-workspace');if(!host||!on())return;
   host.querySelector('.term-path')?.remove();
   const model=pathModel(m),box=el('section','term-frame term-path');box.setAttribute('aria-label','ANSI path view');
   box.append(el('h3','term-frame-title','path · sender → receiver'),pathLine(model));
   const grid=pathGrid(model);
-  if(grid)box.append(grid,el('p','term-path-legend','digits = located repeaters in order · R = your radio · ─│╱╲ = known segment'));
-  else box.append(el('p','term-dim term-path-legend','No located points for this message. The text map needs advertised locations.'));
+  if(grid){const more=el('details','term-path-more'),sum=el('summary',null,'text map');more.append(sum,grid,el('p','term-path-legend','digits = located repeaters in order · R = your radio · ─│╱╲ = known segment'));box.append(more);}
   host.prepend(box);
+  // The terminal layout enlarges the map after Leaflet measured it; re-measure so tiles and bounds fill it.
+  setTimeout(()=>{try{if(typeof messageMap==='object'&&messageMap){messageMap.invalidateSize();}}catch{}},60);
+  autoReplay();
  }
+ // Replays the known route segments every 6 s while the dialog is open, unless the operator prefers reduced motion.
+ function autoReplay(){
+  clearInterval(replayTimer);replayTimer=null;
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  replayTimer=setInterval(()=>{const d=doc.querySelector('#dialog'),b=doc.querySelector('#replay-route');if(!d?.open||!b||!on()){clearInterval(replayTimer);replayTimer=null;return;}if(!b.disabled)b.click();},6000);
+ }
+
  if(typeof showMessageRoute==='function'){const previous=showMessageRoute;showMessageRoute=function(m){const r=previous.apply(this,arguments);try{pathView(m);}catch{}return r;};}
 
  const previousView=view;view=function(){previousView.apply(this,arguments);pageWindow();nodeMap();};
