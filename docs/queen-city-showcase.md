@@ -17,3 +17,5 @@ The executable has a separate application identity (`local.nightlink.queencityco
 ## Evidence and limitations
 
 Automated tests use synthetic messages and blocked radio commands. They check pinned-channel privacy, disabled public display for DMs, automatic following, exit behavior and fit at 1920x1080, 1280x720 and 760x560. No physical-radio or venue-projector validation has been performed. The installer is an unsigned local candidate; it has not been installed during development. Inspect the source commit and SHA-256 values in the matching release record before sharing.
+
+QCC.2: Startup displays the full event logo immediately, above the loading log, throughout audio playback. The main menu offers `[F] Start big-screen display` as well as the Chat button. Choose the intended public channel first; otherwise the menu action opens Chat with selection instructions.

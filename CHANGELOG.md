@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- QCC.2: show the full event ANSI logo immediately at startup and add a main-menu big-screen action. Tracks [#138](https://github.com/njsnowman/nightlink/issues/138); [candidate record](releases/0.8.28-qcc.2.md).
 - Add a separate Queen City Con showcase candidate with VGA16 ANSI branding, right-aligned Nightlink/sysop credit and a pinned public-channel big-screen display. Use a distinct application identity/profile and disable production update checks. Tracks [#138](https://github.com/njsnowman/nightlink/issues/138); [candidate record](releases/0.8.28-qcc.1.md).
 - Play the approved original modem-to-laser WAV at startup by default and retain the loading screen until audio playback ends; keys and clicks cannot cut it short. Respect explicit sound-off and quiet hours, use a static screen under reduced motion, and handle autoplay denial, paused/failed/stalled playback. Tracks [#136](https://github.com/njsnowman/nightlink/issues/136); [candidate record](releases/0.8.28-rc.17.md).
 - Preserve the active page when startup or manual radio synchronization completes; keep terminal Chat draft and input focus without rebuilding the page. Add a skippable BBS dial-up introduction with simulated typed modem commands, ANSI handshake graphics, separate actual radio status and opt-in modem tones respecting quiet hours. Tracks [#134](https://github.com/njsnowman/nightlink/issues/134).

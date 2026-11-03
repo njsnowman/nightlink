@@ -46,6 +46,7 @@
   doc.addEventListener('keydown',e=>{if(!presenting)return;e.preventDefault();e.stopImmediatePropagation();if(e.key==='Escape')stop();},true);
   doc.addEventListener('fullscreenchange',()=>{if(presenting&&!doc.fullscreenElement)stop();});
   root.addEventListener('nightlink-interface',()=>{if(!root.NightlinkInterface?.isTerminal())stop();decorate();});
-  Object.assign(api,{start,stop,decorate});decorate();
+  function launch(){if(!root.NightlinkInterface.isTerminal())root.NightlinkInterface.set?.('terminal');view('Messages');if(live.selected?.kind==='channel')start();else if(typeof toast==='function')toast('Select a public channel in WINDOWS, then choose Start big-screen display.');}
+  Object.assign(api,{start,stop,decorate,launch});decorate();
  });
 })(typeof window==='object'?window:globalThis);
