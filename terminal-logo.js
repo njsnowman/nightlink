@@ -64,6 +64,12 @@
  let serial=0;
  function logo(doc=root.document,label='Nightlink'){const art=root.NightlinkLogoArt;if(art&&Array.isArray(art.rows))return pixelArt(doc,art,label);const c=chrome();return svg(doc,c.list,c.columns,c.rows,label,'tl'+(++serial)+'-',8,8);}
  function strip(doc=root.document,count=150){return svg(doc,band(count),count,1,'','tb'+(++serial)+'-');}
+ // Startup lock (terminal interface): the logo sits above the unlock card. Presentation only.
+ if(root.document&&!(typeof module==='object'&&module.exports))root.document.addEventListener('DOMContentLoaded',()=>{
+  const d=root.document,card=d.querySelector('.security-lock-card');
+  if(!card||d.documentElement.dataset.interface!=='terminal'||d.querySelector('.term-lock-logo'))return;
+  const wrap=d.createElement('div');wrap.className='term-lock-logo';wrap.append(logo(d,'Nightlink'));card.before(wrap);
+ });
  const api={FONT,RAMP,cells,CHROME_FONT,CHROME,chrome,VGA,runs,pixelArt,band,logo,strip};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.NightlinkTerminalLogo=api;
 })(typeof window==='object'?window:globalThis);

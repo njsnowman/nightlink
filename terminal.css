@@ -267,3 +267,18 @@ html:root:root:root:root:root[data-interface=terminal] body .term-path-ground{co
 html:root:root:root:root:root[data-interface=terminal] body .term-path-grid{line-height:1.05 !important;font-size:13px !important;max-width:100%;overflow-x:auto}
 html:root:root:root:root:root[data-interface=terminal] body .bbs-brand .term-logo-svg{width:min(100%,960px) !important}
 html:root:root:root:root:root[data-interface=terminal] body .bbs-brand .term-logo-art{width:min(100%,960px) !important;height:auto;image-rendering:pixelated}
+/* Startup lock logo. */
+html:root:root:root:root:root[data-interface=terminal] body .term-lock-logo{display:flex;justify-content:center;margin:1.5vh auto 0;max-width:96vw}
+html:root:root:root:root:root[data-interface=terminal] body .term-lock-logo .term-logo-svg{width:auto;max-width:100%;height:min(12vh,150px)}
+@media (max-height:799px),(max-width:699px){html:root:root:root:root:root[data-interface=terminal] body .term-lock-logo{display:none}}
+/* Page windows, BBS pass: tables as text-mode listings, activity as a log, section headings in brackets. */
+html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content :is(.panel-heading h2,.dialog-heading h2){color:var(--t-yellow) !important}
+html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content .panel-heading h2::before{content:'[ ';color:var(--t-bright-blue)}html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content .panel-heading h2::after{content:' ]';color:var(--t-bright-blue)}
+html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content table{border-collapse:collapse !important;width:100%}
+html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content thead th{background:#00aaaa !important;color:#000 !important;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px !important;border:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content tbody td{padding:3px 8px !important;border:0 !important;border-bottom:1px dotted var(--t-dark-grey) !important;background:#000 !important}
+html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content tbody tr:hover td,html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content tbody tr:focus-within td{background:var(--t-blue) !important}
+html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content tbody .avatar{display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content .activity-row{border:0 !important;border-bottom:1px dotted var(--t-dark-grey) !important;padding:2px 8px !important;background:#000 !important;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content .activity-row::before{content:'» ';color:var(--t-yellow)}
+@media (min-height:800px) and (min-width:700px){html:root:root:root:root:root[data-interface=terminal] body .term-lock-logo+.security-lock-card .security-lock-brand{display:none !important}}

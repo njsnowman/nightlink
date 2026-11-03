@@ -50,7 +50,7 @@
   const batt=live.battery?(live.battery.millivolts/1000).toFixed(2)+' V':'—';
   kv(dl,[['call',id?.name||'—','term-strong'],['radio',radio],['freq',id?.frequency?id.frequency.toFixed(3)+' MHz'+(id.sf?' SF'+id.sf:''):'—'],['rf',rfv],['batt',batt],['time',new Date().toLocaleString([],{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',hour12:false})]]);
   node.append(dl);top.append(brand,node);root.append(top);
-  if(window.NightlinkTerminalLogo){const band=el('div','bbs-band');band.append(NightlinkTerminalLogo.strip(doc,150));root.append(band);}
+  // The logo carries its own speed lines; no separate band under it.
   // Main menu
   const menu=frame('MAIN MENU','bbs-menu term-frame-double'),grid=el('div','bbs-menu-grid');
   for(const [key,label,desc,action] of ITEMS){const b=el('button','bbs-item');b.type='button';b.dataset.bbsKey=key;b.setAttribute('aria-keyshortcuts',key==='?'?'Shift+Slash':key);
