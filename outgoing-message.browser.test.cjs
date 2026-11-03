@@ -1,5 +1,5 @@
 /* Real message DOM, synthetic messages only. No radio or production-profile access. */
-const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'));
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 function rgb(value){const values=value.match(/[\d.]+/g).map(Number);if(value.startsWith('color(srgb'))return values.slice(0,3).map(v=>v*255);return values.slice(0,3);}
 function luminance(v){return rgb(v).map(n=>n/255).map(n=>n<=.04045?n/12.92:((n+.055)/1.055)**2.4).reduce((sum,n,i)=>sum+n*[.2126,.7152,.0722][i],0);}

@@ -77,6 +77,14 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
   await boot.evaluate(()=>NightlinkInterface.set('cards'));await boot.reload();await boot.waitForFunction(()=>window.NightlinkBBS);
   assert.equal(await boot.evaluate(()=>document.documentElement.classList.contains('term-boot')),false,'cards mode never hides content');assert.ok(await boot.isVisible('#overview'));
   await ctx.close();}
+ // Detached DM in terminal mode: MRC-style lines, avatars hidden, outgoing marked >>>, contrast kept.
+ {const dm=await context.newPage();await dm.addInitScript(()=>{window.dmWindow={onUpdate:fn=>window.__dmUpdate=fn,contact(){},reply(){},action(){},read(){},draft(){},onFocus(){}};});await dm.goto('http://127.0.0.1:4173/dm.html');await dm.waitForFunction(()=>window.__dmUpdate);
+  await dm.evaluate(()=>__dmUpdate({key:'peer',name:'KD9XYZ',connected:true,messages:[{id:'a',text:'net check',timestamp:1700000000,own:false,status:'Received',hopLabel:'2 hops'},{id:'b',text:'copy',timestamp:1700000060,own:true,status:'Acknowledged by recipient',direct:true}]}));
+  await dm.waitForSelector('.dm-bubble.own');
+  assert.equal(await dm.$eval('.dm-bubble .signal-message-avatar',e=>getComputedStyle(e).display),'none');
+  assert.equal(await dm.$eval('.dm-bubble.own .sender>span',e=>getComputedStyle(e,'::before').content),'">>> <"');
+  const c=await dm.$eval('.dm-bubble .message-reply-target',e=>[getComputedStyle(e).color,getComputedStyle(e).backgroundColor]);assert.ok(contrast(c[0],'rgb(0, 0, 0)')>=4.5);
+  if(shots)await dm.screenshot({path:path.join(shots,'term-dm-lines.png')});await dm.close();}
  // Start-up screen: shown once per session outside automation, skippable, honest about the radio, off by preference.
  {const ctx=await browser.newContext({viewport:{width:1320,height:860}});await ctx.addInitScript(()=>Object.defineProperty(navigator,'webdriver',{get:()=>false}));await serve(ctx);
   const p=await ctx.newPage();p.on('pageerror',e=>errors.push('boot: '+e.message));await p.goto('http://127.0.0.1:4173');
