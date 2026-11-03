@@ -15,6 +15,7 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  await page.evaluate(()=>view('Messages'));await page.waitForSelector('.mrc-map-holder.ready');
  assert.equal(await page.locator('.mrc-nodes').count(),0,'chat has no duplicate node listing');
  assert.equal(await page.locator('.mrc-map iframe').count(),1);
+ assert.equal(new URLSearchParams((await page.locator('.mrc-map iframe').getAttribute('src')).split('?')[1]).get('zoom'),'7','chat opens at regional zoom');
  const map=page.frameLocator('.mrc-map iframe');assert.equal(await map.locator('nav').isVisible(),false);assert.equal(await map.locator('#liveFeed').isVisible(),false);assert.equal(await map.locator('.leaflet-control:not(.leaflet-control-attribution)').isVisible(),false);assert.ok(await map.locator('.leaflet-control-attribution').isVisible());
  const initialLoads=loads;await page.evaluate(()=>{renderMessages();renderMessages();});await page.waitForTimeout(100);assert.equal(loads,initialLoads,'incoming chat renders do not reload the map');
  const box=await page.locator('.mrc-map-holder').boundingBox();assert.ok(box.width<=300&&box.height<=192);

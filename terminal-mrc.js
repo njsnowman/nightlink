@@ -28,7 +28,9 @@
   else if(!navigator.onLine)reason='Offline · external map unavailable';
   else if(!window.nightlinkCoreScope?.chatMapSupported)reason='Map-only view requires the desktop app';
   if(reason){stopMap();state.mapStatus.textContent=reason;return;}
-  const url=NightlinkCoreScopeLocation.url()+'&nightlinkChatMap=1';
+  const viewport=NightlinkCoreScopeLocation.viewport();
+  const params=new URLSearchParams({lat:viewport.lat.toFixed(6),lon:viewport.lon.toFixed(6),zoom:'7',nightlinkChatMap:'1'});
+  const url='https://map.okimesh.org/#/live?'+params;
   if(state.mapFrame&&state.mapURL===url)return;
   stopMap();const frame=el('iframe');frame.title='OKI Mesh CoreScope live map';frame.setAttribute('sandbox','allow-scripts allow-same-origin');frame.referrerPolicy='no-referrer';
   frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;
