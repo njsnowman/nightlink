@@ -9,6 +9,40 @@
  const state={window:null,local:new Map(),sendError:''};
  const terminal=()=>NightlinkInterface.isTerminal();
  const el=(tag,cls,text)=>{const n=doc.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
+ // This panel stays connected during message renders so incoming chat cannot reload the live map.
+ function mapPanel(){
+  if(state.mapPanel)return state.mapPanel;
+  const panel=el('details','mrc-map');panel.open=!matchMedia('(max-width:1100px)').matches;
+  const title=el('summary','mrc-map-title','OKI MESH · CORESCOPE'),holder=el('div','mrc-map-holder'),status=el('p','mrc-map-status','External map');
+  const accent=el('span',null,'░▒▓ ');accent.setAttribute('aria-hidden','true');title.prepend(accent);
+  status.setAttribute('role','status');panel.append(title,holder,status);
+  Object.assign(state,{mapPanel:panel,mapHolder:holder,mapStatus:status});panel.addEventListener('toggle',syncMap);
+  return panel;
+ }
+ function stopMap(){clearTimeout(state.mapTimer);state.mapTimer=null;state.mapFrame?.remove();state.mapFrame=null;state.mapURL='';state.mapHolder?.classList.remove('ready');}
+ function syncMap(){
+  if(!state.mapPanel?.isConnected||!terminal()||current!=='Messages'){stopMap();return;}
+  let reason='';
+  if(!state.mapPanel.open)reason='Map collapsed';
+  else if(window.NightlinkMapProviders?.enabled('corescope')===false)reason='CoreScope hidden in Settings';
+  else if(!navigator.onLine)reason='Offline · external map unavailable';
+  else if(!window.nightlinkCoreScope?.chatMapSupported)reason='Map-only view requires the desktop app';
+  if(reason){stopMap();state.mapStatus.textContent=reason;return;}
+  const url=NightlinkCoreScopeLocation.url()+'&nightlinkChatMap=1';
+  if(state.mapFrame&&state.mapURL===url)return;
+  stopMap();const frame=el('iframe');frame.title='OKI Mesh CoreScope live map';frame.setAttribute('sandbox','allow-scripts allow-same-origin');frame.referrerPolicy='no-referrer';
+  frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;
+  state.mapStatus.textContent='Opening external live map…';state.mapURL=url;state.mapFrame=frame;
+  frame.onerror=()=>{if(state.mapFrame===frame){stopMap();state.mapStatus.textContent='CoreScope unavailable · collapse and reopen to retry';}};
+  frame.src=url;state.mapHolder.append(frame);
+  state.mapTimer=setTimeout(()=>{if(state.mapFrame===frame){stopMap();state.mapStatus.textContent='CoreScope unavailable · collapse and reopen to retry';}},120000);
+ }
+ window.addEventListener('message',event=>{
+  if(event.origin!=='https://map.okimesh.org'||event.source!==state.mapFrame?.contentWindow||event.data?.type!=='nightlink-corescope-map-ready')return;
+  clearTimeout(state.mapTimer);state.mapHolder.classList.add('ready');state.mapFrame.removeAttribute('aria-hidden');state.mapFrame.tabIndex=0;
+  state.mapStatus.textContent='External feed · page loaded';
+ });
+ for(const name of ['online','offline','nightlink-map-providers-changed'])window.addEventListener(name,syncMap);
  const hhmm=t=>{const d=new Date((t||0)*1000);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
  const stamp=t=>hhmm(t)+' ';
  const nowSeconds=()=>Math.floor(Date.now()/1000);
@@ -119,11 +153,12 @@
   host.classList.toggle('mrc-active',on);
   doc.body.classList.toggle('term-mrc',on);
   let root=doc.querySelector('#mrc');
-  if(!on){root?.remove();return;}
+  if(!on){stopMap();root?.remove();return;}
   const focused=doc.activeElement===state.form?.querySelector('#mrc-input'),log=doc.querySelector('#mrc-log'),atEnd=!log||log.scrollHeight-log.scrollTop-log.clientHeight<24,keepTop=log?.scrollTop;
   const list=windows(),win=activeWindow(list),index=list.indexOf(win)+1;
   if(!root){root=el('section');root.id='mrc';root.className='mrc';root.setAttribute('aria-label','Mesh Relay Chat');}
-  root.replaceChildren();
+  for(const child of [...root.children])if(child!==state.mapPanel)child.remove();
+  if(!state.mapPanel?.isConnected)root.append(mapPanel());
   // Topic bar
   const topic=el('div','mrc-topic');topic.append(el('strong',null,'MRC'),el('span','mrc-topic-dim',' Mesh Relay Chat'),' │ ');
   const target=win.target;
@@ -164,7 +199,7 @@
    for(const m of rows){const d=new Date(m.timestamp*1000).toDateString();if(day&&d!==day){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));scroll.append(line);}day=d;scroll.append(messageLine(m));}
   }
   for(const l of state.local.get(win.id)||[]){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(l.t)),el('span',l.cls,l.text));scroll.append(line);}
-  body.append(side,scroll,nodes());root.append(body);
+  body.append(side,scroll);root.append(body);
   // Status bar
   const status=el('div','mrc-statusbar');status.setAttribute('role','status');
   const field=(...parts)=>{const s=el('span','mrc-field');s.append('[',...parts,']');status.append(s,' ');};
@@ -201,6 +236,7 @@
   state.count=count;updateCount();
   root.append(form);
   if(!root.isConnected)host.prepend(root);
+  syncMap();
   if(focused&&doc.activeElement!==field2)field2.focus();
   const sl=doc.querySelector('#mrc-log');if(atEnd)sl.scrollTop=sl.scrollHeight;else sl.scrollTop=keepTop;
   markRead(win,sl);

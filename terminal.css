@@ -113,7 +113,17 @@ html:root:root:root:root:root[data-interface=terminal] body.term-mrc :is(.page-h
 html:root:root:root:root:root[data-interface=terminal] body.term-mrc .content{padding:0 !important}
 html:root:root:root:root:root[data-interface=terminal] body #alternate.mrc-active{display:flex !important;flex-direction:column;flex:1;min-height:0;overflow:hidden;padding:0;margin:0}
 html:root:root:root:root:root[data-interface=terminal] body #alternate.mrc-active>:not(#mrc){display:none !important}
-html:root:root:root:root:root[data-interface=terminal] body .mrc{display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;flex:1;min-height:0;background:#000;color:var(--t-grey);font-size:14px;line-height:20px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc{display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;grid-template-columns:minmax(0,1fr) 300px;flex:1;min-height:0;background:#000;color:var(--t-grey);font-size:14px;line-height:20px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc>:not(.mrc-map){grid-column:1/-1}
+html:root:root:root:root:root[data-interface=terminal] body .mrc>.mrc-body{grid-column:1;grid-row:2}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-map{grid-column:2;grid-row:2;align-self:start;margin:8px;border:3px double var(--t-bright-blue);min-width:0;background:var(--t-black);padding:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-map-title{color:var(--t-bright-cyan);font-size:13px;font-weight:700;padding:2px 6px;cursor:pointer}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-map-title::marker{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-map-holder{height:190px;overflow:hidden;border-top:1px solid var(--t-blue);border-bottom:1px solid var(--t-blue);background:var(--t-black)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-map-holder iframe{width:100%;height:100%;border:0;visibility:hidden}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-map-holder.ready iframe{visibility:visible}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-map-status{color:var(--t-grey);font-size:12px;line-height:18px;margin:0;padding:2px 6px}
+@media(max-width:1100px){html:root:root:root:root:root[data-interface=terminal] body .mrc{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto}html:root:root:root:root:root[data-interface=terminal] body .mrc-map{grid-column:1;grid-row:2;margin:0 8px}html:root:root:root:root:root[data-interface=terminal] body .mrc>.mrc-body{grid-row:3}html:root:root:root:root:root[data-interface=terminal] body .mrc-map-holder{height:140px}}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-topic,html:root:root:root:root:root[data-interface=terminal] body .mrc-statusbar{background:var(--t-blue);color:var(--t-white);padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:22px}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-topic-dim{color:var(--t-grey)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-statusbar{color:var(--t-bright-cyan)}
@@ -122,7 +132,7 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-bar-ok{color:va
 html:root:root:root:root:root[data-interface=terminal] body .mrc-bar-pending{color:var(--t-yellow)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-bar-bad{color:var(--t-bright-red)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-bytes.mrc-over{color:var(--t-bright-red)}
-html:root:root:root:root:root[data-interface=terminal] body .mrc-body{display:grid;grid-template-columns:180px minmax(0,1fr) 200px;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-body{display:grid;grid-template-columns:180px minmax(0,1fr);min-height:0}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-windows{border-right:1px solid var(--t-blue);padding:6px 8px;overflow-y:auto;min-height:0}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-nodes{border-left:1px solid var(--t-dark-grey);padding:6px 8px;overflow-y:auto;min-height:0}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-pane-title{color:var(--t-white);font-weight:700;border-bottom:1px solid var(--t-dark-grey);padding-bottom:4px;margin-bottom:6px}

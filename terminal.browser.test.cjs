@@ -74,7 +74,8 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  assert.ok(lines.some(l=>/^\d\d:\d\d >>> <SNOMAN> copy, 5\/9$/.test(l)),lines.join('\n'));
  assert.match(await page.textContent('.mrc-topic'),/MRC Mesh Relay Chat │ #field-ops/);
  assert.deepEqual(await page.$$eval('.mrc-window',b=>b.map(x=>x.textContent.trim())),['1 (status)','2 #field-ops','3 #public']);
- assert.match(await page.textContent('.mrc-nodes'),/@SNOMAN[\s\S]*\+W9ABC-RPT[\s\S]*KD9XYZ/);
+ assert.equal(await page.locator('.mrc-nodes').count(),0,'compact map replaces the chat node listing');
+ assert.ok(await page.isVisible('.mrc-map summary'));
  assert.match(await page.textContent('.mrc-statusbar'),/\[\d\d:\d\d\] \[SNOMAN\] \[2:#field-ops\] \[Act: .*\] \[BLE ok\] .*\[bytes 0\/133\]/);
  assert.equal(await page.textContent('.mrc-prompt'),'[#field-ops] ');
  // Delivery line opens the existing message path map for that message.

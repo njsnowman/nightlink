@@ -33,7 +33,7 @@ if(process.isMainFrame)contextBridge.exposeInMainWorld("nightlinkOfflineMaps",{o
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkStartup',{info:()=>ipcRenderer.invoke('startup:info'),setEnabled:value=>ipcRenderer.invoke('startup:enabled',value),remember:kind=>ipcRenderer.invoke('startup:remember',kind),attempt:()=>ipcRenderer.invoke('startup:attempt'),cancel:()=>ipcRenderer.invoke('startup:cancel')});
 
-if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkCoreScope',{check:()=>ipcRenderer.invoke('corescope:health')});
+if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkCoreScope',{chatMapSupported:true,check:()=>ipcRenderer.invoke('corescope:health')});
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkMeshMapper',{location:()=>ipcRenderer.invoke('meshmapper:location'),check:region=>ipcRenderer.invoke('meshmapper:health',region),open:region=>ipcRenderer.invoke('meshmapper:open',region)});
 

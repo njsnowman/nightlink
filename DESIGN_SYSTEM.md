@@ -48,7 +48,10 @@ Pages not yet converted inherit terminal tokens, fonts and square frames through
 
 Terminal chat readability: message bodies start on a separate, consistently aligned line below the sender. The Chat text selector changes only message bodies (Small 14px, Medium 16px, Large 18px; Medium by default), persists locally and synchronizes with detached DM windows. Technical details stay at the base size with semantic delivery colors; received hop summaries remain bright cyan on a bordered blue field. Cards mode and the startup lock do not use the chat text size.
 
+Terminal chat map: the right side of MRC contains a compact OKI Mesh CoreScope live map instead of the node listing. Use a double blue ANSI-style frame, cyan border title and a quiet external-feed status line; no provider chooser, CoreScope navigation, packet list or settings appear there. The map is approximately 280 x 190px on desktop. At widths up to 1100px it sits above scrollback with a 140px map height and starts collapsed in a fresh compact window. Preserve the iframe across chat renders; unload it when collapsed, offline, hidden by provider preference, outside Messages or outside terminal mode. Map-only presentation is desktop-only and is applied only to the explicitly marked allowlisted CoreScope iframe. Keep map attribution. The remote page must signal readiness before the iframe is visible; external UI changes or timeouts must not expose the full CoreScope interface.
+
 ## Card interface (alternate)
+
 
 Owner-approved reference: the Radio Tools panel in rc.11. This design remains available as the Cards interface for every existing page, dialog, menu and detached window.
 
