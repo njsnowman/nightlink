@@ -87,6 +87,13 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
   assert.equal(await dm.$eval('.dm-bubble.own .sender>span',e=>getComputedStyle(e,'::before').content),'">>> <"');
   const c=await dm.$eval('.dm-bubble .message-reply-target',e=>[getComputedStyle(e).color,getComputedStyle(e).backgroundColor]);assert.ok(contrast(c[0],'rgb(0, 0, 0)')>=4.5);
   if(shots)await dm.screenshot({path:path.join(shots,'term-dm-lines.png')});await dm.close();}
+ // Retro sound pack: off by default; when on, notification files play as synthesized square waves instead.
+ {const p=await context.newPage();await p.addInitScript(()=>{localStorage.setItem('nightlink.interface','terminal');window.__osc=0;window.__wav=0;const A=window.AudioContext;window.AudioContext=class extends A{createOscillator(){window.__osc++;return super.createOscillator();}};const play=HTMLAudioElement.prototype.play;HTMLAudioElement.prototype.play=function(){window.__wav++;return Promise.resolve();};});
+  await p.goto('http://127.0.0.1:4173');await p.waitForFunction(()=>window.NightlinkSoundPack);
+  assert.equal(await p.evaluate(()=>NightlinkSoundPack.active()),false);
+  await p.evaluate(()=>{view('Settings');});await p.selectOption('#sound-pack','retro');
+  const r=await p.evaluate(async()=>{const before=window.__osc;await new Audio('sent.wav').play();return window.__osc-before;});assert.ok(r>=2,'square-wave steps played');
+  await p.selectOption('#sound-pack','standard');assert.equal(await p.evaluate(()=>localStorage.getItem('nightlink.soundPack')),'standard');await p.close();}
  // Start-up screen: shown once per session outside automation, skippable, honest about the radio, off by preference.
  {const ctx=await browser.newContext({viewport:{width:1320,height:860}});await ctx.addInitScript(()=>Object.defineProperty(navigator,'webdriver',{get:()=>false}));await serve(ctx);
   const p=await ctx.newPage();p.on('pageerror',e=>errors.push('boot: '+e.message));await p.goto('http://127.0.0.1:4173');

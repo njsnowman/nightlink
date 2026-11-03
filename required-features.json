@@ -47,6 +47,7 @@
     "terminal-menu.js",
     "terminal-mrc.js",
     "terminal-windows.js",
-    "terminal-boot.js"
+    "terminal-boot.js",
+    "terminal-sound.js"
   ]
 }

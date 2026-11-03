@@ -19,3 +19,7 @@ test('chrome logo uses VGA colors, solid letters, a one-step shadow and spells N
 test('owner logo art is 240 x 39 VGA pixels and renders as merged runs',()=>{const art=require('./terminal-logo-art.js');assert.equal(art.width,240);assert.equal(art.height,39);assert.equal(art.rows.length,39);
  for(const r of art.rows)assert.match(r,/^[0-9a-f]{240}$/);const runs=logo.runs(art);assert.ok(runs.length>100&&runs.length<6000,String(runs.length));
  for(const r of runs)assert.ok(logo.VGA.includes(r.color));assert.ok(!runs.some(r=>r.color==='#000000'),'black is transparent');});
+test('retro sound pack is off by default, maps the three notification files and keeps every sound short',()=>{const s=require('./terminal-sound.js');
+ const store=new Map(),storage={getItem:k=>store.has(k)?store.get(k):null,setItem:(k,v)=>store.set(k,String(v))};
+ assert.equal(s.read(storage),'standard');s.write(storage,'retro');assert.equal(s.read(storage),'retro');s.write(storage,'loud');assert.equal(s.read(storage),'standard');
+ assert.deepEqual(Object.keys(s.FILES).sort(),['dm.wav','mention.wav','sent.wav']);for(const name of Object.keys(s.PATTERNS))assert.ok(s.duration(name)<=0.6,name+' '+s.duration(name));});
