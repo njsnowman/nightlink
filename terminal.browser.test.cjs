@@ -44,6 +44,14 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  // MRC: scrollback with HH:MM timestamps and <nick>, own messages, delivery lines, windows and nodes.
  await page.evaluate(()=>view('Messages'));
  assert.ok(await page.isVisible('#mrc'));assert.ok(await page.isHidden('.conversation'));
+ const readability=await page.evaluate(()=>{
+  const body=document.querySelector('[data-message-id="t1"] .mrc-text'),hop=document.querySelector('.mrc-hop');
+  const textStyle=getComputedStyle(body),hopStyle=getComputedStyle(hop);
+  return {text:textStyle.color,weight:Number(textStyle.fontWeight),hop:hop.textContent,hopColor:hopStyle.color,hopBackground:hopStyle.backgroundColor,border:hopStyle.borderTopWidth};
+ });
+ assert.equal(readability.text,'rgb(255, 255, 255)');assert.ok(readability.weight>=600);
+ assert.equal(readability.hop,'2 hops');assert.equal(readability.border,'1px');
+ assert.ok(contrast(readability.hopColor,readability.hopBackground)>=4.5,'hop count remains readable on its blue field');
  const lines=await page.$$eval('#mrc-log .mrc-line',l=>l.map(x=>x.textContent));
  assert.ok(lines.some(l=>/^\d\d:\d\d <KD9XYZ> net check tonight$/.test(l)),lines.join('\n'));
  assert.ok(lines.some(l=>/^\d\d:\d\d >>> <SNOMAN> copy, 5\/9$/.test(l)),lines.join('\n'));

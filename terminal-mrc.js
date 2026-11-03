@@ -68,6 +68,10 @@
   if(detail){
    const row=el('div','mrc-line mrc-delivery-row');row.append(el('span','mrc-time',stamp(m.timestamp)));
    const b=el('button','mrc-delivery '+deliveryClass(m),'└─ '+(m.own&&m.phase!=='acknowledged'&&deliveryClass(m)==='mrc-pending'?'… ':deliveryClass(m)==='mrc-ok'&&m.own?'✓ ':'')+detail);
+   if(!m.own&&m.pathLength!=null&&window.MeshlineRoutes){
+    const hops=MeshlineRoutes.hopSummary(m.pathLength);
+    b.replaceChildren('└─ ',el('span','mrc-hop',hops),m.snr!=null?' · SNR '+m.snr:'');
+   }
    b.type='button';b.setAttribute('aria-label','View message path on map: '+detail);b.title='View message path on map';
    b.onclick=()=>{if(typeof showMessageRoute==='function')showMessageRoute(m);};
    row.append(b);frag.append(row);
