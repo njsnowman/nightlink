@@ -11,6 +11,11 @@ Original text-mode logo and banner art for Nightlink. These files are not loaded
 | `nightlink-logo.png` | Preview of `nightlink-logo.ans` produced by `render-ansi.cjs`. | PNG |
 | `make-art.py` | Generates the `.ans`, `.txt`, `.irc.txt` and banner files, and with `--app-data` the in-app logo data module `ansi-logo-data.js`. Python 3 standard library only. | Python |
 | `render-ansi.cjs` | Renders a CP437 ANSI file to PNG. | JavaScript |
+| `nightlink-chrome.ans` | Chrome NIGHTLINK logo used in the terminal main menu (0.8.28), CP437 half blocks, classic SGR (bold for bright, backgrounds 40-47). | ANSI |
+| `nightlink-chrome.utf8.ans` | The same logo with UTF-8 block characters for modern terminals. | ANSI |
+| `nightlink-chrome.txt` | Characters only, no color. | Text |
+| `nightlink-chrome.png` | Preview of `nightlink-chrome.ans` from `render-ansi.cjs`. | PNG |
+| `make-chrome.cjs` | Regenerates the chrome files from `terminal-logo.js` (`node art/ansi/make-chrome.cjs`). | JavaScript |
 
 ## Colors
 

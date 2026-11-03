@@ -19,18 +19,40 @@
  // Deterministic band (seeded LCG) so the page renders identically every time.
  function band(count=150,seed=3){let s=seed>>>0;const next=()=>(s=(Math.imul(s,1664525)+1013904223)>>>0)/4294967296;const kinds='LMDF',colors=['#0000aa','#5555ff','#00aaaa','#555555','#55ffff'];return Array.from({length:count},(_,i)=>({row:0,col:i,kind:kinds[Math.floor(next()*4)],color:colors[Math.floor(next()*5)]}));}
  const dot={L:(x,y)=>x%2===0&&y%2===0,M:(x,y)=>(x+y)%2===0,D:(x,y)=>!(x%2===1&&y%2===1)};
- function svg(doc,list,columns,rows,label,idPrefix){
+ function svg(doc,list,columns,rows,label,idPrefix,cw=8,ch=16){
   const el=(name,attrs)=>{const n=doc.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));return n;};
-  const out=el('svg',{viewBox:`0 0 ${columns*8} ${rows*16}`,width:columns*8,height:rows*16,'shape-rendering':'crispEdges',class:'term-logo-svg'});
+  const out=el('svg',{viewBox:`0 0 ${columns*cw} ${rows*ch}`,width:columns*cw,height:rows*ch,'shape-rendering':'crispEdges',class:'term-logo-svg'});
   if(label){out.setAttribute('role','img');out.setAttribute('aria-label',label);}else out.setAttribute('aria-hidden','true');
   const defs=el('defs',{}),made=new Set();out.append(defs);
-  const pattern=(kind,color)=>{const id=idPrefix+kind+color.slice(1);if(made.has(id))return id;made.add(id);const p=el('pattern',{id,width:8,height:16,patternUnits:'userSpaceOnUse'}),g=el('g',{fill:color});for(let y=0;y<16;y++)for(let x=0;x<8;x++)if(dot[kind](x,y))g.append(el('rect',{x,y,width:1,height:1}));p.append(g);defs.append(p);return id;};
-  for(const c of list)out.append(el('rect',{x:c.col*8,y:c.row*16,width:8,height:16,fill:c.kind==='F'?c.color:`url(#${pattern(c.kind,c.color)})`}));
+  const pattern=(kind,color)=>{const id=idPrefix+kind+color.slice(1);if(made.has(id))return id;made.add(id);const p=el('pattern',{id,width:cw,height:ch,patternUnits:'userSpaceOnUse'}),g=el('g',{fill:color});for(let y=0;y<ch;y++)for(let x=0;x<cw;x++)if(dot[kind](x,y))g.append(el('rect',{x,y,width:1,height:1}));p.append(g);defs.append(p);return id;};
+  for(const c of list)out.append(el('rect',{x:c.col*cw,y:c.row*ch,width:cw,height:ch,fill:c.kind==='F'?c.color:`url(#${pattern(c.kind,c.color)})`}));
   return out;
  }
+ // Chrome logo (BBS pass): 12-pixel letterforms with 3-pixel strokes, each pixel a half cell (8x8), a forward
+ // italic lean, a chrome ramp with a sharp horizon through the middle and a dithered dark-grey drop shadow. Same SVG builder; colors stay in the VGA 16-color set.
+ const H=12;
+ function glyphN(){const g=[];for(let r=0;r<H;r++){const row=[...'...........'];for(const c of [0,1,2,8,9,10])row[c]='#';const d=2+Math.round(r*4.6/(H-1));for(let c=d;c<Math.min(d+3,8);c++)row[c]='#';g.push(row.join(''));}return g;}
+ function glyphK(){const g=[];for(let r=0;r<H;r++){const row=[...'...........'];for(const c of [0,1,2])row[c]='#';const x=3+Math.round(Math.abs(r-5.5)*1.1);for(let c=x;c<Math.min(x+3,11);c++)row[c]='#';g.push(row.join(''));}return g;}
+ const CHROME_FONT={N:glyphN(),I:Array(H).fill('###'),
+  G:['.#########.','###########','###......##','###........','###........','###........','###...#####','###...#####','###.....###','###.....###','###########','.#########.'],
+  H:[...Array(5).fill('###.....###'),...Array(2).fill('###########'),...Array(5).fill('###.....###')],
+  T:[...Array(2).fill('###########'),...Array(10).fill('....###....')],
+  L:[...Array(10).fill('###........'),...Array(2).fill('##########.')],K:glyphK()};
+ // Per pixel row: [kind,color]. Sky half white to dark cyan, then a sharp horizon to bright cyan and a blue ground half.
+ const CHROME=[['F','#ffffff'],['F','#ffffff'],['F','#55ffff'],['F','#55ffff'],['F','#00aaaa'],['F','#00aaaa'],['F','#55ffff'],['F','#5555ff'],['F','#5555ff'],['F','#5555ff'],['F','#0000aa'],['F','#0000aa']];
+ function chrome(word='NIGHTLINK'){
+  const rows=Array.from({length:H},()=>'');
+  for(const ch of word){const g=CHROME_FONT[ch];if(!g)continue;for(let r=0;r<H;r++)rows[r]+=g[r]+'...';}
+  const lean=r=>Math.floor((H-1-r)/6),width=rows[0].length+lean(0)+3,map=new Map(),key=(r,c)=>r+','+c,on=new Set();
+  for(let r=0;r<H;r++)for(let c=0;c<rows[r].length;c++)if(rows[r][c]==='#')on.add(key(r,c+lean(r)));
+  for(const k of on){const [r,c]=k.split(',').map(Number);
+   if(!on.has(key(r+1,c+1)))map.set(key(r+1,c+1),['M','#555555']);}
+  for(const k of on){const [r]=k.split(',').map(Number);map.set(k,CHROME[r]);}
+  return {columns:width,rows:H+1,list:[...map].map(([k,[kind,color]])=>{const [row,col]=k.split(',').map(Number);return {row,col,kind,color};})};
+ }
  let serial=0;
- function logo(doc=root.document,label='Nightlink'){const c=cells();return svg(doc,c.list,c.columns,c.rows,label,'tl'+(++serial)+'-');}
+ function logo(doc=root.document,label='Nightlink'){const c=chrome();return svg(doc,c.list,c.columns,c.rows,label,'tl'+(++serial)+'-',8,8);}
  function strip(doc=root.document,count=150){return svg(doc,band(count),count,1,'','tb'+(++serial)+'-');}
- const api={FONT,RAMP,cells,band,logo,strip};
+ const api={FONT,RAMP,cells,CHROME_FONT,CHROME,chrome,band,logo,strip};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.NightlinkTerminalLogo=api;
 })(typeof window==='object'?window:globalThis);
