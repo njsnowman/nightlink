@@ -1,25 +1,36 @@
-/* BBS intro uses synthetic radio events and a fake AudioContext; no radio or audible test tones. */
+/* Synthetic media events verify the gate; native WAV playback is a separate check. */
 const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
- async function fixture({sound=false,quiet=false,reduced=false,cards=false,width=1320,height=860}={}){
-  const context=await browser.newContext({viewport:{width,height},reducedMotion:reduced?'reduce':'no-preference'});
-  await context.addInitScript(({sound,quiet,cards})=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});if(sound)localStorage.setItem('nightlink.bootSound','on');if(quiet)localStorage.setItem('nightlink.desktop',JSON.stringify({quietEnabled:true,start:'00:00',end:'00:00'}));if(cards)localStorage.setItem('nightlink.interface','cards');
-   window.__audio={made:0,closed:0};window.AudioContext=class{constructor(){window.__audio.made++;this.currentTime=0;}createGain(){return {gain:{value:0},connect(){}};}createOscillator(){return {frequency:{value:0},connect(){},start(){},stop(){}};}resume(){return Promise.resolve();}close(){window.__audio.closed++;return Promise.resolve();}};
-  },{sound,quiet,cards});
-  await context.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();const f=u.pathname==='/'?'index.html':u.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,f)),contentType:f.endsWith('.js')?'text/javascript':f.endsWith('.css')?'text/css':'text/html'});}catch{await route.fulfill({status:404,body:''});}});
+ async function fixture(options={}){
+  const context=await browser.newContext({viewport:{width:options.width||1320,height:options.height||860},reducedMotion:options.reduced?'reduce':'no-preference'});
+  await context.addInitScript(options=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});if(options.off)localStorage.setItem('nightlink.bootSound','off');if(options.quiet)localStorage.setItem('nightlink.desktop',JSON.stringify({quietEnabled:true,start:'00:00',end:'00:00'}));if(options.cards)localStorage.setItem('nightlink.interface','cards');
+   window.__startupAudio=null;window.Audio=class extends EventTarget{
+    constructor(src){super();this.src=src;this.currentTime=0;this.duration=6.1;this.paused=true;this.ended=false;this.calls=0;if(src==='startup-modem-laser.wav')window.__startupAudio=this;}
+    play(){this.calls++;if(this.src==='startup-modem-laser.wav'){if(options.block&&this.calls===1)return Promise.reject(new DOMException('Gesture required','NotAllowedError'));if(options.fault)return Promise.reject(new Error('Decode failed'));}this.paused=false;this.dispatchEvent(new Event('playing'));return Promise.resolve();}
+    pause(){this.paused=true;this.dispatchEvent(new Event('pause'));}
+    end(){this.currentTime=6.1;this.paused=true;this.ended=true;this.dispatchEvent(new Event('ended'));}
+   };
+  },options);
+  await context.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();const f=u.pathname==='/'?'index.html':u.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,f)),contentType:f.endsWith('.js')?'text/javascript':f.endsWith('.css')?'text/css':f.endsWith('.wav')?'audio/wav':'text/html'});}catch{await route.fulfill({status:404,body:''});}});
   const page=await context.newPage();await page.goto('http://127.0.0.1:4173');await page.waitForFunction(()=>window.NightlinkBBS);return {context,page};
  }
- {const {context,page}=await fixture();await page.waitForSelector('#term-boot-screen');assert.match(await page.textContent('.boot-note'),/Simulated/);assert.equal(await page.evaluate(()=>window.__audio.made),0);
-  await page.waitForFunction(()=>document.querySelector('.boot-log')?.textContent.includes('ATDT NIGHTLINK'));await page.waitForFunction(()=>document.querySelector('.boot-log')?.textContent.includes('DIALING'));
+ {const {context,page}=await fixture();await page.waitForFunction(()=>window.__startupAudio?.calls===1);assert.match(await page.textContent('.boot-note'),/Simulated/);
   await page.evaluate(()=>{radioSession.request=async()=>{throw Error('radio blocked');};live.identity={key:'fa'.repeat(32),name:'Test companion'};radioSession.dispatchEvent(new CustomEvent('sync',{detail:{state:'syncing'}}));});assert.match(await page.textContent('.boot-radio'),/synchronizing/);
   await page.evaluate(()=>radioSession.dispatchEvent(new CustomEvent('sync',{detail:{state:'ready'}})));assert.match(await page.textContent('.boot-radio'),/synchronized/);
-  await page.evaluate(()=>view('Messages'));await page.waitForSelector('.boot-logo svg');if(process.env.NIGHTLINK_SCREENSHOTS)await page.screenshot({path:path.join(process.env.NIGHTLINK_SCREENSHOTS,'bbs-dialup-startup.png')});
-  await page.waitForSelector('#term-boot-screen',{state:'detached'});assert.equal(await page.evaluate(()=>current),'Messages','intro completion does not navigate');assert.equal(await page.evaluate(()=>window.__audio.made),0);
+  await page.waitForTimeout(4300);assert.ok(await page.isVisible('#term-boot-screen'),'old visual timer must not dismiss active audio');
+  await page.keyboard.press('c');await page.click('.boot-note');assert.equal(await page.evaluate(()=>window.__startupAudio.paused),false,'input must not truncate playback');assert.ok(await page.isVisible('#term-boot-screen'));
+  await page.evaluate(()=>{window.__startupAudio.currentTime=3;view('Messages');});await page.waitForTimeout(2100);assert.ok(await page.isVisible('#term-boot-screen'),'estimated clip duration is not a completion signal');
+  await page.evaluate(()=>window.__startupAudio.end());await page.waitForSelector('#term-boot-screen',{state:'detached'});assert.equal(await page.evaluate(()=>current),'Messages');
   await page.reload();await page.waitForFunction(()=>window.NightlinkBBS);assert.equal(await page.locator('#term-boot-screen').count(),0);await context.close();}
- {const {context,page}=await fixture({sound:true,width:760,height:560});await page.waitForSelector('#term-boot-screen');assert.equal(await page.evaluate(()=>window.__audio.made),1);
+ {const {context,page}=await fixture({block:true,width:760,height:560});await page.waitForFunction(()=>document.querySelector('.boot-skip')?.textContent.includes('play startup sound'));
+  await page.keyboard.press('Enter');assert.equal(await page.evaluate(()=>window.__startupAudio.calls),2);assert.ok(await page.isVisible('#term-boot-screen'));
   const fit=await page.$eval('.boot-frame',e=>{const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right};});assert.ok(fit.top>=0&&fit.bottom<=560&&fit.left>=0&&fit.right<=760,JSON.stringify(fit));
-  await page.keyboard.press('c');await page.waitForSelector('#term-boot-screen',{state:'detached'});assert.equal(await page.evaluate(()=>current),'Overview','skip key is consumed');assert.equal(await page.evaluate(()=>window.__audio.closed),1);await context.close();}
- {const {context,page}=await fixture({sound:true,quiet:true});await page.waitForSelector('#term-boot-screen');assert.equal(await page.evaluate(()=>window.__audio.made),0,'quiet hours suppress intro audio');await page.click('.boot-skip');await page.waitForSelector('#term-boot-screen',{state:'detached'});await context.close();}
- for(const options of [{reduced:true},{cards:true}]){const {context,page}=await fixture(options);assert.equal(await page.locator('#term-boot-screen').count(),0);await context.close();}
- console.log('BBS intro, real-state display, skip, sound and compact checks passed');
+  await page.evaluate(()=>window.__startupAudio.end());await page.waitForSelector('#term-boot-screen',{state:'detached'});assert.equal(await page.evaluate(()=>current),'Overview');await context.close();}
+ {const {context,page}=await fixture({reduced:true});await page.waitForFunction(()=>window.__startupAudio?.calls===1);assert.ok(await page.isVisible('#term-boot-screen'));assert.equal(await page.locator('.boot-command').count(),0,'reduced motion keeps a static loading screen');await page.evaluate(()=>window.__startupAudio.end());await page.waitForSelector('#term-boot-screen',{state:'detached'});await context.close();}
+ for(const options of [{off:true},{quiet:true}]){const {context,page}=await fixture(options);assert.equal(await page.evaluate(()=>window.__startupAudio),null);await page.keyboard.press('c');await page.waitForSelector('#term-boot-screen',{state:'detached'});assert.equal(await page.evaluate(()=>current),'Overview');await context.close();}
+ {const {context,page}=await fixture({fault:true});await page.waitForFunction(()=>document.querySelector('.boot-skip')?.textContent.includes('unavailable'));await page.keyboard.press('Enter');await page.waitForSelector('#term-boot-screen',{state:'detached'});await context.close();}
+ {const {context,page}=await fixture({reduced:true});await page.waitForFunction(()=>window.__startupAudio?.calls===1);await page.evaluate(()=>window.__startupAudio.pause());assert.match(await page.textContent('.boot-skip'),/resume/);await page.keyboard.press('Enter');assert.equal(await page.evaluate(()=>window.__startupAudio.calls),2);await page.evaluate(()=>window.__startupAudio.end());await page.waitForSelector('#term-boot-screen',{state:'detached'});await context.close();}
+ {const {context,page}=await fixture();await page.waitForFunction(()=>window.__startupAudio?.calls===1);await page.waitForSelector('#term-boot-screen',{state:'detached',timeout:15000});assert.equal(await page.evaluate(()=>window.__startupAudio.ended),false,'failed progress uses the explicit stall fallback');assert.equal(await page.evaluate(()=>window.__startupAudio.paused),true);await context.close();}
+ {const {context,page}=await fixture({cards:true});assert.equal(await page.locator('#term-boot-screen').count(),0);assert.equal(await page.evaluate(()=>window.__startupAudio),null);await context.close();}
+ console.log('Startup audio completion gate, input, autoplay, error, quiet hours and reduced-motion checks passed');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1);});

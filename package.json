@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.28-rc.16",
+  "version": "0.8.28-rc.17",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -245,6 +245,7 @@
       "terminal-mrc.js",
       "terminal-windows.js",
       "terminal-boot.js",
+      "startup-modem-laser.wav",
       "terminal-sound.js"
     ],
     "win": {
