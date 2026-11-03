@@ -96,6 +96,12 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
   assert.equal(await dm.$eval('.dm-bubble .signal-message-avatar',e=>getComputedStyle(e).display),'none');
   assert.equal(await dm.$eval('.dm-bubble.own .sender>span',e=>getComputedStyle(e,'::before').content),'">>> <"');
   const c=await dm.$eval('.dm-bubble .message-reply-target',e=>[getComputedStyle(e).color,getComputedStyle(e).backgroundColor]);assert.ok(contrast(c[0],'rgb(0, 0, 0)')>=4.5);
+  await page.evaluate(()=>NightlinkInterface.setChatSize('large'));
+  await dm.waitForFunction(()=>document.documentElement.dataset.chatSize==='large');
+  assert.equal(await dm.$eval('.message-reply-target',e=>getComputedStyle(e).fontSize),'18px');
+  assert.equal(await dm.$eval('.signal-hop',e=>getComputedStyle(e).fontSize),'14px');
+  const dmLayout=await dm.$eval('.message-reply-target',e=>({body:e.getBoundingClientRect().top,nick:e.closest('.signal-message-content').querySelector('.sender time').getBoundingClientRect().bottom}));
+  assert.ok(dmLayout.body>=dmLayout.nick,'detached message body starts below sender');
   if(shots)await dm.screenshot({path:path.join(shots,'term-dm-lines.png')});await dm.close();}
  // Retro sound pack: off by default; when on, notification files play as synthesized square waves instead.
  {const p=await context.newPage();await p.addInitScript(()=>{localStorage.setItem('nightlink.interface','terminal');window.__osc=0;window.__wav=0;const A=window.AudioContext;window.AudioContext=class extends A{createOscillator(){window.__osc++;return super.createOscillator();}};const play=HTMLAudioElement.prototype.play;HTMLAudioElement.prototype.play=function(){window.__wav++;return Promise.resolve();};});

@@ -46,6 +46,8 @@ The Network map page adds an ANSI node map above the street map, collapsed by de
 
 Pages not yet converted inherit terminal tokens, fonts and square frames through terminal.css and must remain usable at 760 x 560 and 1320 x 860.
 
+Terminal chat readability: message bodies start on a separate, consistently aligned line below the sender. The Chat text selector changes only message bodies (Small 14px, Medium 16px, Large 18px; Medium by default), persists locally and synchronizes with detached DM windows. Technical details stay at the base size with semantic delivery colors; received hop summaries remain bright cyan on a bordered blue field. Cards mode and the startup lock do not use the chat text size.
+
 ## Card interface (alternate)
 
 Owner-approved reference: the Radio Tools panel in rc.11. This design remains available as the Cards interface for every existing page, dialog, menu and detached window.

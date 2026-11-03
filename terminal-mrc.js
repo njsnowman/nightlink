@@ -129,7 +129,13 @@
   const target=win.target;
   if(win.kind==='status')topic.append(el('strong',null,'(status)'),': '+(live.identity?live.identity.name+' · '+live.channels.length+' channels · '+live.contacts.length+' contacts':'connect a radio to load channels'));
   else{topic.append(el('strong',null,win.label),': '+(target.kind==='channel'?'channel slot '+target.slot:'direct message'));if(live.identity?.frequency)topic.append(' │ '+live.identity.frequency.toFixed(3)+' MHz');}
-  root.append(topic);
+  const sizeLabel=el('label','mrc-text-size','Chat text '),sizeSelect=el('select');
+  sizeSelect.id='mrc-text-size';sizeSelect.dataset.chatTextSize='';sizeSelect.setAttribute('aria-label','Chat text size');
+  for(const value of NightlinkInterface.CHAT_SIZES){const option=el('option',null,value[0].toUpperCase()+value.slice(1));option.value=value;sizeSelect.append(option);}
+  sizeSelect.value=NightlinkInterface.chatSize();
+  sizeSelect.onchange=()=>NightlinkInterface.setChatSize(sizeSelect.value);
+  sizeLabel.append(sizeSelect);
+  const heading=el('div','mrc-heading');heading.append(topic,sizeLabel);root.append(heading);
   // Window list
   const body=el('div','mrc-body'),side=el('div','mrc-windows');side.setAttribute('role','navigation');side.setAttribute('aria-label','Windows');
   side.append(el('div','mrc-pane-title','windows'));side.lastChild.setAttribute('data-box','');

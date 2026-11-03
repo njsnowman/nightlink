@@ -148,8 +148,15 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-peer,html:
 html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-own{color:var(--t-white);font-weight:700}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-repeater{color:var(--t-bright-cyan)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-own-mark{color:var(--t-white);font-weight:700}
-html:root:root:root:root:root[data-interface=terminal] body .mrc-text{color:var(--t-white);font-weight:600;line-height:1.6}
-html:root:root:root:root:root[data-interface=terminal] body .mrc-line[data-message-id]{margin-top:8px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-text{color:var(--t-white);font-weight:600;line-height:1.6;font-size:var(--chat-text-size,16px);display:block;text-indent:0;min-width:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-line[data-message-id]{margin-top:12px}
+html:root:root:root:root:root[data-interface=terminal][data-chat-size=small]{--chat-text-size:14px}
+html:root:root:root:root:root[data-interface=terminal][data-chat-size=medium]{--chat-text-size:16px}
+html:root:root:root:root:root[data-interface=terminal][data-chat-size=large]{--chat-text-size:18px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-heading{display:flex;flex-wrap:wrap;background:var(--t-blue);align-items:center;gap:0 12px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-heading .mrc-topic{flex:1 1 260px;min-width:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-text-size{display:flex;align-items:center;gap:8px;margin:0;padding:2px 8px;color:var(--t-white);font-size:14px;white-space:nowrap}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-text-size select{background:var(--t-black);color:var(--t-white);border:1px solid var(--t-bright-cyan);padding:2px 4px;min-height:26px;font-size:14px}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-hop{display:inline-block;color:var(--t-bright-cyan);background:var(--t-blue);border:1px solid var(--t-bright-cyan);padding:0 6px;font-weight:700;text-indent:0;line-height:1.4}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-own .mrc-text{color:var(--t-white)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-action{color:var(--t-bright-magenta)}
@@ -161,8 +168,9 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-dim{color:var(-
 html:root:root:root:root:root[data-interface=terminal] body .mrc-ok{color:var(--t-bright-green)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-pending{color:var(--t-yellow)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-bad{color:var(--t-bright-red)}
-html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery-row{padding-left:6ch}
-html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery{background:transparent;border:0;padding:0 0 0 7ch;font-size:14px;line-height:20px;text-align:left;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;text-indent:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery-row{padding-left:6ch;text-indent:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery-row>.mrc-time{display:none}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery{background:transparent;border:0;padding:0;font-size:14px;font-weight:400;line-height:20px;text-align:left;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;text-indent:0}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery:hover{background:var(--t-blue)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery.mrc-recv{color:var(--t-grey)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-delivery.mrc-ok{color:var(--t-bright-green)}
@@ -382,9 +390,9 @@ html:root:root:root:root:root[data-interface=terminal] body .dm-thread .own .sen
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .sender :is(.dm-message-person,span)::before{content:'<';color:var(--t-grey);font-weight:400}
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .sender :is(.dm-message-person,span)::after{content:'>';color:var(--t-grey);font-weight:400}
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .own .sender>span::before{content:'>>> <'}
-html:root:root:root:root:root[data-interface=terminal] body .dm-thread .message-reply-target{order:2;flex:1 1 300px;margin:0 !important;padding:0 !important;border:0 !important;background:none !important;box-shadow:none !important;color:var(--t-white) !important;font-size:14px !important;font-weight:600;line-height:1.6}
+html:root:root:root:root:root[data-interface=terminal] body .dm-thread .message-reply-target{order:2;flex:1 1 100%;min-width:0;margin:0 !important;padding:0 !important;border:0 !important;background:none !important;box-shadow:none !important;color:var(--t-white) !important;font-size:var(--chat-text-size,16px) !important;font-weight:600;line-height:1.6}
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .own .message-reply-target{color:var(--t-white) !important}
-html:root:root:root:root:root[data-interface=terminal] body .dm-thread .signal-hop{order:3;padding:0 6px !important;border:1px solid var(--t-bright-cyan) !important;background:var(--t-blue) !important;box-shadow:none !important;color:var(--t-bright-cyan) !important;font-size:14px !important;font-weight:700;text-transform:none !important;min-height:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body .dm-thread .signal-hop{order:3;margin:0 auto 0 0 !important;padding:0 6px !important;border:1px solid var(--t-bright-cyan) !important;background:var(--t-blue) !important;box-shadow:none !important;color:var(--t-bright-cyan) !important;font-size:14px !important;font-weight:700;text-transform:none !important;min-height:0 !important}
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .signal-hop::before{content:'['}html:root:root:root:root:root[data-interface=terminal] body .dm-thread .signal-hop::after{content:']'}
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .signal-message-content>small{order:4;flex-basis:100%;padding-left:7ch;color:var(--t-grey) !important;font-size:12px !important}
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .signal-message-content>small::before{content:'└─ ';color:var(--t-dark-grey)}

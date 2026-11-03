@@ -6,7 +6,10 @@
  const valid=value=>VALUES.includes(value)?value:DEFAULT;
  function read(storage){try{return valid(storage?.getItem(KEY));}catch{return DEFAULT;}}
  function write(storage,value){value=valid(value);try{storage?.setItem(KEY,value);}catch{}return value;}
- const core={KEY,DEFAULT,VALUES,valid,read,write};
+ const CHAT_KEY='nightlink.chat-text-size',CHAT_SIZES=['small','medium','large'];
+ const validChatSize=value=>CHAT_SIZES.includes(value)?value:'medium';
+ function readChatSize(storage){try{return validChatSize(storage?.getItem(CHAT_KEY));}catch{return 'medium';}}
+ const core={KEY,DEFAULT,VALUES,valid,read,write,CHAT_KEY,CHAT_SIZES,validChatSize,readChatSize};
  if(typeof module==='object'&&module.exports){module.exports=core;return;}
  const doc=root.document;
  function apply(value){value=valid(value);doc.documentElement.dataset.interface=value;return value;}
@@ -14,6 +17,11 @@
  const active=()=>valid(doc.documentElement.dataset.interface);
  root.NightlinkInterface={...core,apply,set,current:active,isTerminal:()=>active()==='terminal'};
  apply(read(root.localStorage));
+ function applyChatSize(value){value=validChatSize(value);doc.documentElement.dataset.chatSize=value;for(const select of doc.querySelectorAll('[data-chat-text-size]'))select.value=value;return value;}
+ function setChatSize(value){value=applyChatSize(value);try{root.localStorage.setItem(CHAT_KEY,value);}catch{}return value;}
+ applyChatSize(readChatSize(root.localStorage));
+ Object.assign(root.NightlinkInterface,{setChatSize,chatSize:()=>validChatSize(doc.documentElement.dataset.chatSize)});
+ root.addEventListener('storage',e=>{if(e.key===CHAT_KEY||e.key===null)applyChatSize(readChatSize(root.localStorage));});
  // Hide the card Overview until the main menu renders (terminal-menu.js runs at the end of <body>), so the
  // card layout does not flash on start. Fallbacks: window load, then 4 s, so content can never stay hidden.
  const boot=()=>doc.documentElement.classList.remove('term-boot');

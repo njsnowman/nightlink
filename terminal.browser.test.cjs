@@ -52,6 +52,23 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  assert.equal(readability.text,'rgb(255, 255, 255)');assert.ok(readability.weight>=600);
  assert.equal(readability.hop,'2 hops');assert.equal(readability.border,'1px');
  assert.ok(contrast(readability.hopColor,readability.hopBackground)>=4.5,'hop count remains readable on its blue field');
+ // Body columns align regardless of nick length or outgoing markers; only chat text scales.
+ const layout=await page.evaluate(()=>{
+  const a=document.querySelector('[data-message-id="t1"] .mrc-text'),b=document.querySelector('[data-message-id="t2"] .mrc-text');
+  return {x:a.getBoundingClientRect().x,ownX:b.getBoundingClientRect().x,bodyY:a.getBoundingClientRect().top,nickY:document.querySelector('[data-message-id="t1"] .mrc-nick').getBoundingClientRect().bottom,size:getComputedStyle(a).fontSize};
+ });
+ assert.ok(Math.abs(layout.x-layout.ownX)<1);assert.ok(layout.bodyY>=layout.nickY);assert.equal(layout.size,'16px');
+ await page.selectOption('#mrc-text-size','large');
+ assert.equal(await page.$eval('.mrc-text',e=>getComputedStyle(e).fontSize),'18px');
+ assert.equal(await page.$eval('.mrc-time',e=>getComputedStyle(e).fontSize),'14px');
+ assert.equal(await page.evaluate(()=>localStorage.getItem('nightlink.chat-text-size')),'large');
+ const sizePage=await context.newPage();await sizePage.goto('http://127.0.0.1:4173');
+ assert.equal(await sizePage.evaluate(()=>document.documentElement.dataset.chatSize),'large','chat size is restored in a new window');
+ await sizePage.evaluate(()=>NightlinkInterface.setChatSize('small'));
+ await page.waitForFunction(()=>document.documentElement.dataset.chatSize==='small');
+ assert.equal(await page.inputValue('#mrc-text-size'),'small','visible control follows changes from another window');
+ assert.equal(await page.$eval('.mrc-text',e=>getComputedStyle(e).fontSize),'14px');
+ await sizePage.close();await page.selectOption('#mrc-text-size','large');
  const lines=await page.$$eval('#mrc-log .mrc-line',l=>l.map(x=>x.textContent));
  assert.ok(lines.some(l=>/^\d\d:\d\d <KD9XYZ> net check tonight$/.test(l)),lines.join('\n'));
  assert.ok(lines.some(l=>/^\d\d:\d\d >>> <SNOMAN> copy, 5\/9$/.test(l)),lines.join('\n'));
