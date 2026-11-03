@@ -154,7 +154,21 @@
 
  if(typeof showMessageRoute==='function'){const previous=showMessageRoute;showMessageRoute=function(m){const r=previous.apply(this,arguments);try{pathView(m);}catch{}return r;};}
 
- const previousView=view;view=function(){previousView.apply(this,arguments);pageWindow();nodeMap();settingsKeys();setTimeout(settingsKeys,0);};
+ const previousView=view;view=function(){previousView.apply(this,arguments);pageWindow();nodeMap();emptyArt();settingsKeys();setTimeout(settingsKeys,0);};
+ // Decorative ANSI art on empty pages (aria-hidden; each page already states that it is empty in text).
+ const EMPTY_ART={
+  Nodes:{when:()=>!live.contacts.length,lines:[['   .         .          .','term-art-dim'],['     \\       |        /','term-art-dim'],['  .---( o )---( o )---( o )---.','term-art-cyan'],['        \\_______|_______/','term-art-dim'],['           ( @ ) your radio','term-art-white'],['','',],['  no saved nodes yet · adverts appear here as they are heard','term-art-dim']]},
+  'Direct Messages':{when:()=>!live.messages.some(m=>m.target?.kind==='direct'||m.kind==='direct'),lines:[['   ╔══════════════════╗','term-art-cyan'],['   ║ \\              / ║','term-art-cyan'],['   ║   \\  ·──·   /   ║','term-art-cyan'],['   ║     \\______/     ║','term-art-cyan'],['   ╚══════════════════╝','term-art-cyan'],['',''],['   no direct messages yet','term-art-dim']]}
+ };
+ function emptyArt(){
+  doc.querySelector('#term-empty-art')?.remove();
+  const spec=on()&&EMPTY_ART[current];if(!spec)return;let empty=false;try{empty=spec.when();}catch{}if(!empty)return;
+  const pre=el('pre','term-empty-art');pre.id='term-empty-art';pre.setAttribute('aria-hidden','true');
+  for(const [t,c] of spec.lines)pre.append(el('span',c||null,t+'\n'));
+  const title=doc.querySelector('#term-page-title');if(title)title.after(pre);
+ }
+ if(typeof radioSession==='object')for(const type of ['contacts','sync'])radioSession.addEventListener(type,()=>{if(current in EMPTY_ART)emptyArt();});
+
  // Settings as a DOS menu: hotkey letters on the category buttons; a letter opens its category when no field has focus.
  function settingsKeys(){if(!on()||current!=='Settings')return;const used=new Set();for(const b of doc.querySelectorAll('.switchboard-settings-nav button')){const label=(b.textContent||'').replace(/^\[.\]\s*/,'').trim();const k=[...label.toUpperCase()].find(c=>/[A-Z]/.test(c)&&!used.has(c));if(!k)continue;used.add(k);b.dataset.hotkey=k;b.setAttribute('aria-keyshortcuts',k);}}
  doc.addEventListener('keydown',e=>{if(!on()||current!=='Settings'||e.ctrlKey||e.altKey||e.metaKey||e.defaultPrevented||e.key.length!==1)return;if(e.target.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]')||doc.querySelector('dialog[open]'))return;

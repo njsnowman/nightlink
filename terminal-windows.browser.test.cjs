@@ -28,6 +28,10 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  for(const [name,title] of [['Nodes','NODES'],['Network map','MAP'],['Activity','ACTIVITY'],['Direct Messages','DIRECT'],['Search','SEARCH']]){
   await page.evaluate(n=>view(n),name);assert.equal(await page.textContent('#term-page-title .term-window-name'),title,name);assert.ok(await page.isVisible('#term-page-keys'),name);
   assert.ok(await page.isHidden('.page-heading'),name);assert.ok(await page.$$eval('#term-menubar .active',b=>b.length<=1&&!b.some(x=>x.dataset.termView==='Help')),name+': Help is not marked');if(shots)await page.screenshot({path:path.join(shots,'term-page-'+title.toLowerCase()+'.png')});}
+ // Empty-page art: shown on Nodes with no contacts, hidden once contacts exist; decorative only.
+ await page.evaluate(()=>{live.contacts=[];view('Nodes');});assert.ok(await page.isVisible('#term-empty-art'));assert.equal(await page.getAttribute('#term-empty-art','aria-hidden'),'true');
+ if(shots)await page.screenshot({path:path.join(shots,'term-nodes-empty.png')});
+ await fixture(page);await page.evaluate(()=>view('Nodes'));assert.equal(await page.$('#term-empty-art'),null);
  // ANSI node map: located contacts and your radio, labelled for screen readers; updates when contacts change.
  await page.evaluate(()=>view('Network map'));
  assert.equal(await page.evaluate(()=>document.querySelector('#term-node-map').open),false,'collapsed by default so the street map keeps its height');
