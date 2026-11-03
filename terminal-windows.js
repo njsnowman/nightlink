@@ -169,6 +169,21 @@
  }
  if(typeof radioSession==='object')for(const type of ['contacts','sync'])radioSession.addEventListener(type,()=>{if(current in EMPTY_ART)emptyArt();});
 
+ // Keyboard: "/" opens search (or the MRC command line on Messages); arrow keys move through the main menu and
+ // through table rows on page windows. Inactive while a text field, select or dialog has focus.
+ const typing=t=>t?.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]');
+ doc.addEventListener('keydown',e=>{
+  if(!on()||e.defaultPrevented||e.ctrlKey||e.altKey||e.metaKey||typing(e.target)||doc.querySelector('dialog[open]'))return;
+  if(e.key==='/'){e.preventDefault();if(current==='Messages'){const i=doc.querySelector('#mrc-input');if(i){i.focus();i.value='/';i.dispatchEvent(new Event('input'));}return;}doc.querySelector('#open-message-search')?.click();return;}
+  if(!['ArrowDown','ArrowUp','ArrowLeft','ArrowRight'].includes(e.key))return;
+  if(current==='Overview'){const items=[...doc.querySelectorAll('#bbs .bbs-item')];if(!items.length)return;const rows=Math.ceil(items.length/2);let i=items.indexOf(doc.activeElement);
+   if(i<0)i=0;else if(e.key==='ArrowDown')i=Math.min(items.length-1,i+1);else if(e.key==='ArrowUp')i=Math.max(0,i-1);else if(e.key==='ArrowRight')i=Math.min(items.length-1,i+rows);else i=Math.max(0,i-rows);
+   e.preventDefault();items[i].focus();return;}
+  if((e.key==='ArrowDown'||e.key==='ArrowUp')&&doc.body.classList.contains('term-window-page')){
+   const rows=[...doc.querySelectorAll('main .content tbody tr')].map(r=>r.querySelector('button,a[href],[tabindex]:not([tabindex="-1"])')).filter(Boolean);if(!rows.length)return;
+   const at=rows.findIndex(b=>b.closest('tr')?.contains(doc.activeElement));const i=at<0?0:Math.max(0,Math.min(rows.length-1,at+(e.key==='ArrowDown'?1:-1)));e.preventDefault();rows[i].focus();}
+ });
+
  // Settings as a DOS menu: hotkey letters on the category buttons; a letter opens its category when no field has focus.
  function settingsKeys(){if(!on()||current!=='Settings')return;const used=new Set();for(const b of doc.querySelectorAll('.switchboard-settings-nav button')){const label=(b.textContent||'').replace(/^\[.\]\s*/,'').trim();const k=[...label.toUpperCase()].find(c=>/[A-Z]/.test(c)&&!used.has(c));if(!k)continue;used.add(k);b.dataset.hotkey=k;b.setAttribute('aria-keyshortcuts',k);}}
  doc.addEventListener('keydown',e=>{if(!on()||current!=='Settings'||e.ctrlKey||e.altKey||e.metaKey||e.defaultPrevented||e.key.length!==1)return;if(e.target.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]')||doc.querySelector('dialog[open]'))return;
