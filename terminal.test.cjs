@@ -16,3 +16,6 @@ test('chrome logo uses VGA colors, solid letters, a one-step shadow and spells N
  const letters=c.list.filter(p=>p.color!=='#555555');assert.ok(letters.every(p=>p.kind==='F'),'letter pixels are solid');
  assert.ok(c.list.some(p=>p.color==='#555555'&&p.kind==='M'),'dithered shadow');assert.equal(new Set(letters.map(p=>p.row)).size,12);
  assert.deepEqual(Object.keys(logo.CHROME_FONT).sort(),['G','H','I','K','L','N','T']);for(const g of Object.values(logo.CHROME_FONT))assert.equal(g.length,12);});
+test('owner logo art is 240 x 39 VGA pixels and renders as merged runs',()=>{const art=require('./terminal-logo-art.js');assert.equal(art.width,240);assert.equal(art.height,39);assert.equal(art.rows.length,39);
+ for(const r of art.rows)assert.match(r,/^[0-9a-f]{240}$/);const runs=logo.runs(art);assert.ok(runs.length>100&&runs.length<6000,String(runs.length));
+ for(const r of runs)assert.ok(logo.VGA.includes(r.color));assert.ok(!runs.some(r=>r.color==='#000000'),'black is transparent');});

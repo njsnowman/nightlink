@@ -1,6 +1,6 @@
 {
   "name": "meshline",
-  "version": "0.8.28-rc.5",
+  "version": "0.8.28-rc.6",
   "private": true,
   "main": "desktop.cjs",
   "scripts": {
@@ -238,6 +238,7 @@
       "ansi-logo.css",
       "terminal.css",
       "terminal.js",
+      "terminal-logo-art.js",
       "terminal-logo.js",
       "terminal-menu.js",
       "terminal-mrc.js",

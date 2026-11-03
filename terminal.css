@@ -266,3 +266,4 @@ html:root:root:root:root:root[data-interface=terminal] body .term-path-beam{colo
 html:root:root:root:root:root[data-interface=terminal] body .term-path-ground{color:#3a3a3a}
 html:root:root:root:root:root[data-interface=terminal] body .term-path-grid{line-height:1.05 !important;font-size:13px !important;max-width:100%;overflow-x:auto}
 html:root:root:root:root:root[data-interface=terminal] body .bbs-brand .term-logo-svg{width:min(100%,960px) !important}
+html:root:root:root:root:root[data-interface=terminal] body .bbs-brand .term-logo-art{width:min(100%,960px) !important;height:auto;image-rendering:pixelated}

@@ -15,6 +15,11 @@ Original text-mode logo and banner art for Nightlink. These files are not loaded
 | `nightlink-chrome.utf8.ans` | The same logo with UTF-8 block characters for modern terminals. | ANSI |
 | `nightlink-chrome.txt` | Characters only, no color. | Text |
 | `nightlink-chrome.png` | Preview of `nightlink-chrome.ans` from `render-ansi.cjs`. | PNG |
+| `source/nightlink-logo-owner.webp` | Owner-supplied NIGHTLINK logo artwork (2026-11-03); source for the v2 files. | WebP |
+| `make-logo-art.py` | Converts the owner artwork to 240 x 39 VGA pixels (box filter, nearest VGA color, no dithering) and writes `terminal-logo-art.js` and the v2 ANSI files. Requires Pillow. | Python |
+| `nightlink-logo-v2.ans` | Owner logo as CP437 half-block ANSI, 240 columns, classic SGR. | ANSI |
+| `nightlink-logo-v2-80.ans` | The same reduced to 80 columns; detail is lost at this width. | ANSI |
+| `nightlink-logo-v2.png` / `nightlink-logo-v2-ans.png` | Pixel-grid preview and the `render-ansi.cjs` render of `nightlink-logo-v2.ans`. | PNG |
 | `make-chrome.cjs` | Regenerates the chrome files from `terminal-logo.js` (`node art/ansi/make-chrome.cjs`). | JavaScript |
 
 ## Colors

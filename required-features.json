@@ -42,6 +42,7 @@
     "ansi-logo.css",
     "terminal.css",
     "terminal.js",
+    "terminal-logo-art.js",
     "terminal-logo.js",
     "terminal-menu.js",
     "terminal-mrc.js",
