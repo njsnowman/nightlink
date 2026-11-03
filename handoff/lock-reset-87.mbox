@@ -1,0 +1,315 @@
+From 277dc1f63299b2067d6fabad05cad7dc7266b029 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 1 Nov 2026 11:22:41 +0000
+Subject: [PATCH] Offer a confirmed reset when startup lock settings are
+ unreadable (#87)
+
+security-store.cjs now classifies read failures: SECURITY_UNAVAILABLE
+when Windows credential protection is unavailable, SECURITY_UNREADABLE
+when the file cannot be decrypted, is oversized or is not valid JSON.
+Security.load records the reason; invalid settings structure also
+counts as unreadable, other file-system errors do not.
+
+When protection is available but the settings are unreadable, the lock
+screen offers "Reset lock settings..." with the consequences stated and
+a typed RESET confirmation. Reset renames the file to
+security-settings.bin.<time>.unreadable (never deleted), starts with the
+lock off and logs the backup name in the main process. Reset is never
+offered for readable settings, a wrong password, unavailable protection
+or other I/O errors, and there is no plaintext fallback.
+
+Adds unit tests for classification, quarantine and refusal cases and
+security-lock.browser.test.cjs (stubbed bridge) to test:browser.
+Physical Windows DPAPI behaviour is not verified.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019jwdUNLdgFDTkdkrPTAK1B
+---
+ CHANGELOG.md                   |  2 ++
+ SECURITY.md                    |  4 ++++
+ USER_GUIDE.md                  |  8 ++++++++
+ package.json                   |  2 +-
+ preload.cjs                    |  2 +-
+ security-core.cjs              | 15 ++++++++++++---
+ security-core.test.cjs         | 14 ++++++++++++++
+ security-desktop.cjs           |  5 +++--
+ security-lock.browser.test.cjs | 25 +++++++++++++++++++++++++
+ security-lock.html             |  2 +-
+ security-lock.js               | 14 +++++++++++++-
+ security-store.cjs             | 17 ++++++++++++-----
+ security-store.test.cjs        | 11 +++++++++++
+ security.css                   |  2 ++
+ 14 files changed, 109 insertions(+), 14 deletions(-)
+ create mode 100644 security-lock.browser.test.cjs
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index bdfcc40..f9fb6db 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,8 @@
+ 
+ ## Unreleased
+ 
++- When the startup lock's protected settings cannot be decrypted or are invalid, offer a typed-confirmation reset that turns the lock off and keeps the unreadable file as a timestamped .unreadable copy. Reset is never offered for readable settings, a wrong password, or unavailable Windows credential protection; there is no plaintext fallback. [#87](https://github.com/njsnowman/nightlink/issues/87).
++
+ - Keep the RF monitor indicator visible as Monitor off when monitoring is disabled, unless its indicator preference is off; preserve collapsed Conversations across immediate rerenders. Fixes found during [rc.3 validation](https://github.com/njsnowman/nightlink/pull/120).
+ 
+ - Show radio-reported counters in Radio Health: packets sent and received since radio start, raw TX/RX airtime and uptime values, and when they were read; firmware without radio statistics shows Unavailable. No additional radio commands. Synthetic tests only.
+diff --git a/SECURITY.md b/SECURITY.md
+index 8a942de..539aa65 100644
+--- a/SECURITY.md
++++ b/SECURITY.md
+@@ -39,3 +39,7 @@ Get-FileHash .\Nightlink-Setup-<version>.exe -Algorithm SHA256
+ ```
+ 
+ The hash must match the `SHA256SUMS.txt` line and the SHA-256 listed in the release notes. Do not run a file whose hash differs.
++
++## Unreadable lock settings
++
++If `security-settings.bin` exists but Windows protection cannot decrypt it, or its contents are not valid, the startup lock stays locked and offers **Reset lock settings…**. Reset requires typing `RESET`. It turns the lock off and removes the password, authenticator setup and recovery codes. Messages, contacts, channels and backups are not affected because the lock never encrypted them. The unreadable file is renamed to `security-settings.bin.<time>.unreadable` and kept; nothing is deleted. Reset is never offered when the settings are readable (including after a wrong password) or when Windows credential protection is unavailable; in that case restart Windows or sign in again and reopen Nightlink. There is no plaintext fallback. Each reset is logged by the main process with the backup file name. Tracked in [#87](https://github.com/njsnowman/nightlink/issues/87).
+diff --git a/USER_GUIDE.md b/USER_GUIDE.md
+index ac6909f..d2a4751 100644
+--- a/USER_GUIDE.md
++++ b/USER_GUIDE.md
+@@ -645,6 +645,14 @@ Set up a password and authenticator without mistaking it for history encryption.
+ 
+ Use your password plus a fresh authenticator code, or a permitted one-time recovery code. Previously used authenticator codes can be rejected. Keep the PC clock accurate. Recovery codes do not remove the need for the password.
+ 
++### If the startup lock cannot open its settings
++
++1. The lock screen shows that protected security settings could not be opened.
++2. If **Reset lock settings…** is shown, select it, read the consequences, type RESET and select **Reset lock settings**.
++3. Nightlink opens with the lock off. Set up the lock again in Settings > Security if you want it.
++
++Messages, contacts, channels and backups are not changed. The unreadable file is kept beside the new settings. If the screen says Windows credential protection is unavailable, restart Windows or sign in again instead; reset is not offered.
++
+ ### What the lock protects
+ 
+ The startup lock controls entry to Nightlink. It is not full-disk encryption and does not make message databases or exported backups encrypted. MeshCore radio encryption and shared/private identities are separate from this local startup feature.
+diff --git a/package.json b/package.json
+index 560ab93..5b5a1e4 100644
+--- a/package.json
++++ b/package.json
+@@ -8,7 +8,7 @@
+     "preview": "node server.cjs",
+     "dist": "electron-builder --win nsis portable",
+     "test": "node --test echo-layout.test.cjs feature-retention.test.cjs send-feedback.test.cjs performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs security-store.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs radio-workbench.test.cjs reactions.test.cjs chat-signals.test.cjs workspace-confidence.test.cjs outbox.test.cjs compact-workspace.test.cjs support-report.test.cjs contact-deletion.test.cjs desktop-window.test.cjs bulk-contact-removal.test.cjs bulk-contact-removal-radio.test.cjs propagation.test.cjs device-management.test.cjs device-serial.test.cjs",
+-    "test:browser": "node combined-ui.browser.test.cjs && node device-management.browser.test.cjs && node radio-tools-design.browser.test.cjs && node shared-design.browser.test.cjs && node submenus-design.browser.test.cjs && node radio-page.browser.test.cjs && node map-provider-settings.browser.test.cjs && node delivery-details.browser.test.cjs && node contact-deletion.browser.test.cjs && node bulk-contact-removal.browser.test.cjs && node radio-tools.browser.test.cjs && node radio-cli.browser.test.cjs && node propagation.browser.test.cjs && node attention-dm-memory.browser.test.cjs && node attention-memory.browser.test.cjs && node attention.browser.test.cjs && node compact-workspace.browser.test.cjs && node connection-simple.browser.test.cjs && node contact-flow.browser.test.cjs && node corescope-fallback.browser.test.cjs && node corescope-lifecycle.browser.test.cjs && node corescope-recovery.browser.test.cjs && node corescope-slow-start.browser.test.cjs && node corescope-startup.browser.test.cjs && node corescope.browser.test.cjs && node diagnostics.browser.test.cjs && node dm-performance.browser.test.cjs && node echo-command-shortcuts.browser.test.cjs && node header-controls.browser.test.cjs && node help.browser.test.cjs && node identity-verification.browser.test.cjs && node link-preview.browser.test.cjs && node login-vault.browser.test.cjs && node map-annotations.browser.test.cjs && node mention-highlight.browser.test.cjs && node meshmapper-region.browser.test.cjs && node meshmapper.browser.test.cjs && node message-actions.browser.test.cjs && node message-media.browser.test.cjs && node message-path.browser.test.cjs && node messages-navigation.browser.test.cjs && node navigation.browser.test.cjs && node node-discovery.browser.test.cjs && node outbox.browser.test.cjs && node outgoing-message.browser.test.cjs && node performance.browser.test.cjs && node radio-workbench.browser.test.cjs && node reactions.browser.test.cjs && node rf-trends.browser.test.cjs && node search.browser.test.cjs && node support-report.browser.test.cjs && node switchboard-flows.browser.test.cjs && node switchboard-settings.browser.test.cjs && node switchboard.browser.test.cjs && node voice.browser.test.cjs && node radio-counters.browser.test.cjs",
++    "test:browser": "node combined-ui.browser.test.cjs && node device-management.browser.test.cjs && node radio-tools-design.browser.test.cjs && node shared-design.browser.test.cjs && node submenus-design.browser.test.cjs && node radio-page.browser.test.cjs && node map-provider-settings.browser.test.cjs && node delivery-details.browser.test.cjs && node contact-deletion.browser.test.cjs && node bulk-contact-removal.browser.test.cjs && node radio-tools.browser.test.cjs && node radio-cli.browser.test.cjs && node propagation.browser.test.cjs && node attention-dm-memory.browser.test.cjs && node attention-memory.browser.test.cjs && node attention.browser.test.cjs && node compact-workspace.browser.test.cjs && node connection-simple.browser.test.cjs && node contact-flow.browser.test.cjs && node corescope-fallback.browser.test.cjs && node corescope-lifecycle.browser.test.cjs && node corescope-recovery.browser.test.cjs && node corescope-slow-start.browser.test.cjs && node corescope-startup.browser.test.cjs && node corescope.browser.test.cjs && node diagnostics.browser.test.cjs && node dm-performance.browser.test.cjs && node echo-command-shortcuts.browser.test.cjs && node header-controls.browser.test.cjs && node help.browser.test.cjs && node identity-verification.browser.test.cjs && node link-preview.browser.test.cjs && node login-vault.browser.test.cjs && node map-annotations.browser.test.cjs && node mention-highlight.browser.test.cjs && node meshmapper-region.browser.test.cjs && node meshmapper.browser.test.cjs && node message-actions.browser.test.cjs && node message-media.browser.test.cjs && node message-path.browser.test.cjs && node messages-navigation.browser.test.cjs && node navigation.browser.test.cjs && node node-discovery.browser.test.cjs && node outbox.browser.test.cjs && node outgoing-message.browser.test.cjs && node performance.browser.test.cjs && node radio-workbench.browser.test.cjs && node reactions.browser.test.cjs && node rf-trends.browser.test.cjs && node search.browser.test.cjs && node support-report.browser.test.cjs && node switchboard-flows.browser.test.cjs && node switchboard-settings.browser.test.cjs && node switchboard.browser.test.cjs && node voice.browser.test.cjs && node radio-counters.browser.test.cjs && node security-lock.browser.test.cjs",
+     "verify:package": "node verify-package.cjs"
+   },
+   "devDependencies": {
+diff --git a/preload.cjs b/preload.cjs
+index 656d4c6..2a7c9b1 100644
+--- a/preload.cjs
++++ b/preload.cjs
+@@ -1,6 +1,6 @@
+ const {contextBridge,ipcRenderer}=require('electron');
+ const lockedDocument=location.pathname.endsWith('/security-lock.html');
+-if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkSecurity',Object.fromEntries((lockedDocument?['info','unlock','enter','quit']:['info','begin','confirm','cancel','disable']).map(name=>[name,async(...args)=>{const result=await ipcRenderer.invoke('security:'+name,...args);if(result?.error)throw Error(result.error);return result?.value;}])));
++if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkSecurity',Object.fromEntries((lockedDocument?['info','unlock','enter','quit','resetUnreadable']:['info','begin','confirm','cancel','disable']).map(name=>[name,async(...args)=>{const result=await ipcRenderer.invoke('security:'+name,...args);if(result?.error)throw Error(result.error);return result?.value;}])));
+ if(!lockedDocument){
+ if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkLinks',{preview:url=>ipcRenderer.invoke('links:preview',url),open:url=>ipcRenderer.invoke('links:open',url)});
+ const subscribe=(channel,listener)=>{const handler=(_event,value)=>listener(value);ipcRenderer.on(channel,handler);return()=>ipcRenderer.removeListener(channel,handler);};
+diff --git a/security-core.cjs b/security-core.cjs
+index d693d71..09d55c3 100644
+--- a/security-core.cjs
++++ b/security-core.cjs
+@@ -11,9 +11,18 @@ function seal(payload,key){const iv=crypto.randomBytes(12),cipher=crypto.createC
+ function unseal(box,key){const decipher=crypto.createDecipheriv('aes-256-gcm',key,Buffer.from(box.iv,'hex'));decipher.setAuthTag(Buffer.from(box.tag,'hex'));return JSON.parse(Buffer.concat([decipher.update(Buffer.from(box.data,'base64')),decipher.final()]).toString('utf8'));}
+ function factor(payload,value,now){const code=String(value||'').trim();if(/^\d{6}$/.test(code)){const step=Math.floor(now/30000);for(const delta of [-1,0,1]){const n=step+delta;if(n>=0&&n>payload.lastStep&&same(totp(payload.secret,n*30000),code)){payload.lastStep=n;return true;}}return false;}const normalized=code.replace(/[\s-]/g,'').toLowerCase();if(!/^[a-f0-9]{32}$/.test(normalized))return false;const h=hash(normalized),index=payload.recovery.findIndex(x=>same(x,h));if(index<0)return false;payload.recovery.splice(index,1);return true;}
+ class Security{
+- constructor({read,write,available,now=()=>Date.now()}){this.read=read;this.write=write;this.available=available;this.now=now;this.config={version:1,enabled:false,attempts:0,nextAt:0};this.unlocked=true;this.busy=false;this.pending=null;this.broken=false;}
+- async load(){try{const data=await this.read();if(data!==null){if(data.version!==1||typeof data.enabled!=='boolean'||!Number.isInteger(data.attempts)||data.attempts<0||!Number.isFinite(data.nextAt))throw Error('Invalid security settings');if(data.enabled&&(!/^[a-f0-9]{32}$/.test(data.salt)||!data.box||!/^([a-f0-9]{2}){12}$/.test(data.box.iv)||!/^([a-f0-9]{2}){16}$/.test(data.box.tag)||typeof data.box.data!=='string'))throw Error('Invalid security settings');this.config=data;}this.unlocked=!this.config.enabled;}catch{this.broken=true;this.unlocked=false;}return this.info();}
+- info(){return{enabled:this.broken||this.config.enabled,locked:!this.unlocked,available:this.available(),broken:this.broken,retryAfter:Math.max(0,Math.ceil((this.config.nextAt-this.now())/1000))};}
++ constructor({read,write,available,quarantine=null,now=()=>Date.now()}){this.read=read;this.write=write;this.available=available;this.quarantine=quarantine;this.now=now;this.brokenReason=null;this.config={version:1,enabled:false,attempts:0,nextAt:0};this.unlocked=true;this.busy=false;this.pending=null;this.broken=false;}
++ async load(){try{const data=await this.read();if(data!==null){if(data.version!==1||typeof data.enabled!=='boolean'||!Number.isInteger(data.attempts)||data.attempts<0||!Number.isFinite(data.nextAt))throw Error('Invalid security settings');if(data.enabled&&(!/^[a-f0-9]{32}$/.test(data.salt)||!data.box||!/^([a-f0-9]{2}){12}$/.test(data.box.iv)||!/^([a-f0-9]{2}){16}$/.test(data.box.tag)||typeof data.box.data!=='string'))throw Error('Invalid security settings');this.config=data;}this.unlocked=!this.config.enabled;}catch(error){this.broken=true;this.unlocked=false;this.brokenReason=error?.code==='SECURITY_UNAVAILABLE'?'unavailable':error?.code==='SECURITY_UNREADABLE'||!error?.code?'unreadable':'io';}return this.info();}
++ info(){return{enabled:this.broken||this.config.enabled,locked:!this.unlocked,available:this.available(),broken:this.broken,brokenReason:this.brokenReason,resettable:this.resettable(),retryAfter:Math.max(0,Math.ceil((this.config.nextAt-this.now())/1000))};}
++ // Reset is offered only when protection works but the stored file cannot be read; a readable file or wrong password never qualifies.
++ resettable(){return this.broken&&this.brokenReason==='unreadable'&&this.available()&&typeof this.quarantine==='function';}
++ async resetUnreadable(confirmation){return this.exclusive(async()=>{
++  if(!this.resettable())throw Error('Lock settings reset is not available.');
++  if(confirmation!=='RESET')throw Error('Type RESET to confirm.');
++  const backup=await this.quarantine();
++  this.config={version:1,enabled:false,attempts:0,nextAt:0};this.broken=false;this.brokenReason=null;this.unlocked=true;this.clearPending();
++  return{backup};
++ });}
+  async exclusive(work){if(this.busy)throw Error('Security verification is already in progress.');this.busy=true;try{return await work();}finally{this.busy=false;}}
+  requireOpen(){if(this.broken||!this.unlocked)throw Error('Unlock Nightlink first.');if(!this.available())throw Error('Windows credential encryption is unavailable. Security setup cannot continue.');}
+  clearPending(){if(this.pending){this.pending.key.fill(0);clearTimeout(this.pending.timer);this.pending=null;}}
+diff --git a/security-core.test.cjs b/security-core.test.cjs
+index a2c1dcc..1be8e20 100644
+--- a/security-core.test.cjs
++++ b/security-core.test.cjs
+@@ -8,3 +8,17 @@ test('restart requires both factors; replay and recovery reuse are rejected',asy
+ test('failed authentication is rate limited across restarts',async()=>{const f=fixture();await enrolled(f);let s=f.create();await s.load();for(let i=0;i<5;i++)await assert.rejects(s.authenticate('wrong','000000'),/incorrect/);s=f.create();await s.load();assert.equal(s.info().retryAfter,30);await assert.rejects(s.authenticate(pass,'000000'),/Wait 30/);f.tick(30001);await assert.rejects(s.authenticate('wrong','000000'),/incorrect/);assert.equal(s.info().retryAfter,60);});
+ test('unreadable/corrupt store fails closed; unavailable encryption cannot enroll',async()=>{const s=new Security({available:()=>false,read:async()=>{throw Error('corrupt');},write:async()=>{}});assert.equal((await s.load()).broken,true);assert.equal(s.unlocked,false);await assert.rejects(s.authenticate(pass,'000000'),/remains locked/);const empty=new Security({available:()=>false,read:async()=>null,write:async()=>{}});await empty.load();await assert.rejects(empty.begin(pass),/encryption is unavailable/);});
+ test('expired enrollment, concurrent authentication and persistence failure stay closed',async()=>{const f=fixture(),s=f.create();await s.load();const setup=await s.begin(pass);f.tick(300001);await assert.rejects(s.confirm(totp(setup.secret,f.now),true),/expired/);await enrolled(f);const locked=f.create();await locked.load();const attempt=locked.authenticate(pass,'bad');await assert.rejects(locked.authenticate(pass,'bad'),/in progress/);await assert.rejects(attempt,/incorrect/);f.fail(true);await assert.rejects(locked.authenticate(pass,'bad'),/disk/);assert.equal(locked.unlocked,false);});
++test('unreadable settings offer a confirmed reset that quarantines the file; readable or unavailable never do',async()=>{
++ let moved=0;const quarantine=async()=>{moved++;return 'security-settings.bin.test.unreadable';};
++ const unreadable=new Security({available:()=>true,quarantine,read:async()=>{throw Object.assign(Error('x'),{code:'SECURITY_UNREADABLE'});},write:async()=>{}});
++ let info=await unreadable.load();assert.equal(info.broken,true);assert.equal(info.brokenReason,'unreadable');assert.equal(info.resettable,true);
++ await assert.rejects(unreadable.resetUnreadable('reset'),/Type RESET/);assert.equal(moved,0);
++ assert.deepEqual(await unreadable.resetUnreadable('RESET'),{backup:'security-settings.bin.test.unreadable'});assert.equal(moved,1);info=unreadable.info();assert.equal(info.locked,false);assert.equal(info.enabled,false);assert.equal(info.broken,false);
++ const invalid=new Security({available:()=>true,quarantine,read:async()=>({version:9}),write:async()=>{}});assert.equal((await invalid.load()).resettable,true);
++ const unavailable=new Security({available:()=>false,quarantine,read:async()=>{throw Object.assign(Error('x'),{code:'SECURITY_UNAVAILABLE'});},write:async()=>{}});
++ info=await unavailable.load();assert.equal(info.brokenReason,'unavailable');assert.equal(info.resettable,false);await assert.rejects(unavailable.resetUnreadable('RESET'),/not available/);
++ const io=new Security({available:()=>true,quarantine,read:async()=>{throw Object.assign(Error('x'),{code:'EACCES'});},write:async()=>{}});assert.equal((await io.load()).resettable,false);
++ const f=fixture();await enrolled(f);const locked=f.create();Object.assign(locked,{quarantine});info=await locked.load();assert.equal(info.broken,false);assert.equal(info.resettable,false);
++ await assert.rejects(locked.authenticate('wrong password value!',  '000000'));assert.equal(locked.info().resettable,false);await assert.rejects(locked.resetUnreadable('RESET'),/not available/);assert.equal(moved,1);
++});
++
+diff --git a/security-desktop.cjs b/security-desktop.cjs
+index 356c8e0..7dabbf0 100644
+--- a/security-desktop.cjs
++++ b/security-desktop.cjs
+@@ -1,8 +1,8 @@
+ const path=require('node:path'),{Security}=require('./security-core.cjs');
+ async function install({app,win,ipcMain,safeStorage}){
+  const file=path.join(app.getPath('userData'),'security-settings.bin');
+- const {read,write,available}=await require('./security-store.cjs').createStore({file,safeStorage});
+- const security=new Security({read,write,available});await security.load();
++ const {read,write,available,quarantine}=await require('./security-store.cjs').createStore({file,safeStorage});
++ const security=new Security({read,write,available,quarantine});await security.load();
+  const trusted=e=>e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
+  const handle=(name,fn)=>ipcMain.handle('security:'+name,async(e,...args)=>{if(!trusted(e))return{error:'Access denied.'};try{return{value:await fn(...args)};}catch(error){return{error:error.message};}});
+  handle('info',()=>security.info());handle('begin',value=>security.begin(value));handle('cancel',()=>{security.requireOpen();security.clearPending();return true;});handle('confirm',(code,saved)=>security.confirm(code,saved));
+@@ -10,6 +10,7 @@ async function install({app,win,ipcMain,safeStorage}){
+  let enterTimer=null,entryPending=false;const enter=()=>{if(!entryPending||!security.unlocked)return false;entryPending=false;clearTimeout(enterTimer);if(!win.isDestroyed())win.loadFile('index.html');return true;};
+  handle('enter',()=>enter());
+  handle('unlock',async(value,code)=>{if(security.unlocked)throw Error('Nightlink is already unlocked.');const result=await security.authenticate(value,code);entryPending=true;enterTimer=setTimeout(enter,4000);return result;});
++ handle('resetUnreadable',async confirmation=>{const result=await security.resetUnreadable(confirmation);console.warn('[security] Unreadable lock settings reset at '+new Date().toISOString()+'; original kept as '+result.backup);entryPending=true;return result;});
+  handle('quit',()=>{app.quit();return true;});app.on('will-quit',()=>{clearTimeout(enterTimer);security.clearPending();});
+  return security;
+ }
+diff --git a/security-lock.browser.test.cjs b/security-lock.browser.test.cjs
+new file mode 100644
+index 0000000..73973b7
+--- /dev/null
++++ b/security-lock.browser.test.cjs
+@@ -0,0 +1,25 @@
++// Startup lock page states for unreadable, unavailable and wrong-password cases. Stubbed bridge; no Electron or radio.
++const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
++(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
++ const open=async info=>{const page=await browser.newPage({viewport:{width:760,height:700}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
++  await page.addInitScript(info=>{window.calls=[];window.nightlinkSecurity={info:async()=>info,unlock:async()=>{throw Error('Incorrect password or code.');},enter:async()=>{calls.push('enter');},quit:()=>{},resetUnreadable:async c=>{calls.push('reset:'+c);if(c!=='RESET')throw Error('Type RESET to confirm.');return{backup:'security-settings.bin.x.unreadable'};}};},info);
++  await page.route('http://127.0.0.1:4173/**',async r=>{const file=new URL(r.request().url()).pathname.slice(1);try{await r.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':file.endsWith('.svg')?'image/svg+xml':'text/html'});}catch{await r.abort();}});
++  await page.goto('http://127.0.0.1:4173/security-lock.html');return{page,errors};};
++ let {page,errors}=await open({broken:true,brokenReason:'unreadable',resettable:true,available:true});
++ await page.locator('#security-lock-error').filter({hasText:'Access remains locked'}).waitFor();
++ assert.equal(await page.locator('#security-unlock-button').isDisabled(),true);assert.equal(await page.locator('#security-reset').isVisible(),false);
++ await page.locator('#security-reset-open').click();await page.locator('#security-reset').waitFor();
++ assert.match(await page.locator('#security-reset').textContent(),/Messages, contacts, channels and backups are not affected/);
++ assert.equal(await page.locator('#security-reset-apply').isDisabled(),true);await page.fill('#security-reset-confirm','reset');assert.equal(await page.locator('#security-reset-apply').isDisabled(),true);
++ await page.fill('#security-reset-confirm','RESET');await page.locator('#security-reset-apply').click();
++ await page.locator('#security-lock-error').filter({hasText:'Original kept as security-settings.bin.x.unreadable'}).waitFor();
++ assert.deepEqual(await page.evaluate(()=>calls),['reset:RESET','enter']);assert.deepEqual(errors,[]);await page.close();
++ ({page,errors}=await open({broken:true,brokenReason:'unavailable',resettable:false,available:false}));
++ await page.locator('#security-lock-error').filter({hasText:'Windows credential protection is unavailable'}).waitFor();
++ assert.equal(await page.locator('#security-reset-open').count(),0);assert.deepEqual(errors,[]);await page.close();
++ ({page,errors}=await open({broken:false,resettable:false,available:true,locked:true}));
++ await page.fill('#unlock-password','wrong password value');await page.fill('#unlock-code','000000');await page.locator('#security-unlock-button').click();
++ await page.locator('#security-lock-error').filter({hasText:'Incorrect password or code.'}).waitFor();
++ assert.equal(await page.locator('#security-reset-open').count(),0);assert.deepEqual(await page.evaluate(()=>calls),[]);assert.deepEqual(errors,[]);await page.close();
++ console.log('PASS startup lock: unreadable settings offer typed-RESET reset with consequences; unavailable protection and wrong password never offer reset. Stubbed bridge only.');
++}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+diff --git a/security-lock.html b/security-lock.html
+index d15819f..3295b28 100644
+--- a/security-lock.html
++++ b/security-lock.html
+@@ -1,4 +1,4 @@
+-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; form-action 'none'; base-uri 'none'"><title>Unlock Nightlink</title><link rel="icon" href="icon.svg"><link rel="stylesheet" href="security.css"><link rel="stylesheet" href="login-vault.css"><link rel="stylesheet" href="nightlink-design.css"></head><body class="security-lock"><main class="security-lock-card"><div class="security-lock-brand"><img src="icon.svg" alt="">Nightlink</div><h1>Unlock your workspace</h1><p class="security-note">Enter your password and a fresh authenticator code. A saved recovery code can replace the authenticator code.</p><form class="security-form" id="security-unlock"><label for="unlock-password">Password</label><input id="unlock-password" type="password" autocomplete="off" required maxlength="512" autofocus><label for="unlock-code">Authenticator or recovery code</label><input id="unlock-code" type="text" autocomplete="off" spellcheck="false" required maxlength="128"><div id="security-lock-error" class="security-error" role="status"></div><div class="security-actions"><button id="security-unlock-button">Unlock</button><button id="security-quit" type="button">Quit</button></div></form><p><small>Offline verification · Your phone and computer clocks must agree. Recovery codes still require your password.</small></p></main><div id="login-vault" hidden>
++<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; form-action 'none'; base-uri 'none'"><title>Unlock Nightlink</title><link rel="icon" href="icon.svg"><link rel="stylesheet" href="security.css"><link rel="stylesheet" href="login-vault.css"><link rel="stylesheet" href="nightlink-design.css"></head><body class="security-lock"><main class="security-lock-card"><div class="security-lock-brand"><img src="icon.svg" alt="">Nightlink</div><h1>Unlock your workspace</h1><p class="security-note">Enter your password and a fresh authenticator code. A saved recovery code can replace the authenticator code.</p><form class="security-form" id="security-unlock"><label for="unlock-password">Password</label><input id="unlock-password" type="password" autocomplete="off" required maxlength="512" autofocus><label for="unlock-code">Authenticator or recovery code</label><input id="unlock-code" type="text" autocomplete="off" spellcheck="false" required maxlength="128"><div id="security-lock-error" class="security-error" role="status"></div><div class="security-actions"><button id="security-unlock-button">Unlock</button><button id="security-quit" type="button">Quit</button></div></form><section id="security-reset" class="security-reset" hidden><h2>Reset lock settings</h2><p>Nightlink cannot read its protected lock settings on this computer. Resetting turns the startup lock off and removes the password, authenticator setup and recovery codes. Messages, contacts, channels and backups are not affected; the lock never encrypted them. The unreadable file is kept beside the new settings as a .unreadable copy.</p><label for="security-reset-confirm">Type RESET to confirm</label><input id="security-reset-confirm" type="text" autocomplete="off" spellcheck="false" maxlength="16"><div class="security-actions"><button id="security-reset-apply" type="button" disabled>Reset lock settings</button><button id="security-reset-cancel" type="button">Cancel</button></div></section><p><small>Offline verification · Your phone and computer clocks must agree. Recovery codes still require your password.</small></p></main><div id="login-vault" hidden>
+   <section class="nlv-window" aria-label="Nightlink workspace opening">
+     <header class="nlv-header"><span class="nlv-wordmark">nightlink<span class="nlv-dot">.</span></span><span class="nlv-caption">ACCESS GRANTED</span></header>
+     <div class="nlv-stage">
+diff --git a/security-lock.js b/security-lock.js
+index 68e2dd9..03bbdf1 100644
+--- a/security-lock.js
++++ b/security-lock.js
+@@ -1,4 +1,16 @@
+ const form=document.querySelector('#security-unlock'),error=document.querySelector('#security-lock-error'),button=document.querySelector('#security-unlock-button');
+-window.nightlinkSecurity.info().then(info=>{if(info.broken){error.textContent='Protected security settings could not be opened. Access remains locked.';button.disabled=true;}else if(info.retryAfter)error.textContent='Wait '+info.retryAfter+' seconds before trying again.';}).catch(()=>{error.textContent='Security verification is unavailable. Access remains locked.';button.disabled=true;});
++const reset=document.querySelector('#security-reset'),resetInput=document.querySelector('#security-reset-confirm'),resetApply=document.querySelector('#security-reset-apply');
++let resetOpen=null;
++function offerReset(){resetOpen=document.createElement('button');resetOpen.type='button';resetOpen.id='security-reset-open';resetOpen.textContent='Reset lock settings…';document.querySelector('#security-unlock .security-actions').prepend(resetOpen);resetOpen.onclick=()=>{reset.hidden=false;resetInput.focus();};}
++window.nightlinkSecurity.info().then(info=>{
++ if(info.broken){button.disabled=true;
++  if(info.brokenReason==='unavailable')error.textContent='Windows credential protection is unavailable right now. Access remains locked. Restart Windows or sign in again, then reopen Nightlink. Reset is not offered because the settings may become readable again.';
++  else if(info.resettable){error.textContent='Protected security settings could not be opened on this computer. Access remains locked.';offerReset();}
++  else error.textContent='Protected security settings could not be opened. Access remains locked.';
++ }else if(info.retryAfter)error.textContent='Wait '+info.retryAfter+' seconds before trying again.';
++}).catch(()=>{error.textContent='Security verification is unavailable. Access remains locked.';button.disabled=true;});
++resetInput.oninput=()=>{resetApply.disabled=resetInput.value!=='RESET';};
++document.querySelector('#security-reset-cancel').onclick=()=>{resetInput.value='';resetApply.disabled=true;reset.hidden=true;resetOpen?.focus();};
++resetApply.onclick=async()=>{resetApply.disabled=true;try{const result=await window.nightlinkSecurity.resetUnreadable(resetInput.value);error.textContent='Lock settings reset. Original kept as '+result.backup+'.';await window.nightlinkSecurity.enter();}catch(reason){error.textContent=reason.message;resetApply.disabled=resetInput.value!=='RESET';}};
+ form.onsubmit=async e=>{e.preventDefault();button.disabled=true;const password=document.querySelector('#unlock-password'),code=document.querySelector('#unlock-code'),value=password.value,token=code.value;password.value='';code.value='';error.textContent='Verifying…';try{await window.nightlinkSecurity.unlock(value,token);error.textContent='Authentication successful';await window.playLoginVault();await window.nightlinkSecurity.enter();}catch(reason){error.textContent=reason.message;button.disabled=false;password.focus();}};
+ document.querySelector('#security-quit').onclick=()=>window.nightlinkSecurity.quit();
+diff --git a/security-store.cjs b/security-store.cjs
+index f51352d..23882a5 100644
+--- a/security-store.cjs
++++ b/security-store.cjs
+@@ -5,12 +5,15 @@ async function createStore({file,safeStorage,platform=process.platform,io=fs}){
+  let ready=false;
+  try{ready=platform==='win32'?asyncAPI&&await safeStorage.isAsyncEncryptionAvailable():asyncAPI?await safeStorage.isAsyncEncryptionAvailable():safeStorage.isEncryptionAvailable();}catch{}
+  const available=()=>ready===true;
++ // Failure kinds let the lock screen offer reset only for a file this provider cannot read, never when protection itself is unavailable.
++ const fail=(code,message)=>Object.assign(Error(message),{code});
+  async function read(){
+   let bytes;try{bytes=await io.readFile(file);}catch(error){if(error.code==='ENOENT')return null;throw error;}
+-  if(bytes.length>65536||!available())throw Error('Protected security storage is unavailable.');
+-  const plaintext=asyncAPI?(await safeStorage.decryptStringAsync(bytes))?.result:safeStorage.decryptString(bytes);
+-  if(typeof plaintext!=='string')throw Error('Invalid protected security response.');
+-  return JSON.parse(plaintext);
++  if(!available())throw fail('SECURITY_UNAVAILABLE','Protected security storage is unavailable.');
++  if(bytes.length>65536)throw fail('SECURITY_UNREADABLE','Protected security settings are too large to be valid.');
++  let plaintext;try{plaintext=asyncAPI?(await safeStorage.decryptStringAsync(bytes))?.result:safeStorage.decryptString(bytes);}catch{throw fail('SECURITY_UNREADABLE','Protected security settings could not be decrypted.');}
++  if(typeof plaintext!=='string')throw fail('SECURITY_UNREADABLE','Invalid protected security response.');
++  try{return JSON.parse(plaintext);}catch{throw fail('SECURITY_UNREADABLE','Protected security settings are not valid.');}
+  }
+  async function write(config){
+   if(!available())throw Error('Protected security storage is unavailable.');
+@@ -19,6 +22,10 @@ async function createStore({file,safeStorage,platform=process.platform,io=fs}){
+   const temp=file+'.'+crypto.randomUUID()+'.tmp';await io.mkdir(path.dirname(file),{recursive:true});
+   try{await io.writeFile(temp,bytes,{flag:'wx',mode:0o600});await io.rename(temp,file);}finally{await io.unlink(temp).catch(()=>{});}
+  }
+- return{read,write,available};
++ // Keep the unreadable file for possible later recovery; never delete it.
++ async function quarantine(stamp=new Date().toISOString().replace(/[:.]/g,'-')){
++  const target=file+'.'+stamp+'.unreadable';await io.rename(file,target);return path.basename(target);
++ }
++ return{read,write,available,quarantine};
+ }
+ module.exports={createStore};
+diff --git a/security-store.test.cjs b/security-store.test.cjs
+index 7f5220f..9588bfb 100644
+--- a/security-store.test.cjs
++++ b/security-store.test.cjs
+@@ -16,3 +16,14 @@ test('unreadable ciphertext stays byte-identical and startup fails closed',async
+ test('failed protected write retains the original settings file',async()=>{
+  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-store-write-')),file=path.join(dir,'security.bin');await fs.writeFile(file,'previous');const store=await createStore({file,platform:'win32',safeStorage:{isAsyncEncryptionAvailable:async()=>true,encryptStringAsync:async()=>{throw Error('provider failed');},decryptStringAsync:async()=>({result:'{}'})}});await assert.rejects(store.write({}),/provider failed/);assert.equal(await fs.readFile(file,'utf8'),'previous');
+ });
++test('store classifies unreadable and unavailable reads and quarantines without deleting',async()=>{
++ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-store-')),file=path.join(dir,'security-settings.bin');
++ await fs.writeFile(file,Buffer.from('corrupt'));
++ const broken={isAsyncEncryptionAvailable:async()=>true,encryptStringAsync:async t=>Buffer.from(t),decryptStringAsync:async()=>{throw Error('DPAPI failure');}};
++ const store=await createStore({file,safeStorage:broken,platform:'win32'});await assert.rejects(store.read(),e=>e.code==='SECURITY_UNREADABLE');
++ const garbled={...broken,decryptStringAsync:async()=>({result:'not json'})};await assert.rejects((await createStore({file,safeStorage:garbled,platform:'win32'})).read(),e=>e.code==='SECURITY_UNREADABLE');
++ const off={...broken,isAsyncEncryptionAvailable:async()=>false};await assert.rejects((await createStore({file,safeStorage:off,platform:'win32'})).read(),e=>e.code==='SECURITY_UNAVAILABLE');
++ const name=await store.quarantine('2026-11-01T00-00-00-000Z');assert.equal(name,'security-settings.bin.2026-11-01T00-00-00-000Z.unreadable');
++ assert.deepEqual(await fs.readFile(path.join(dir,name)),Buffer.from('corrupt'));await assert.rejects(fs.access(file));
++});
++
+diff --git a/security.css b/security.css
+index d3ceca8..2004b40 100644
+--- a/security.css
++++ b/security.css
+@@ -1,3 +1,5 @@
+ .security-panel{padding:14px;border:1px solid var(--accent-line,#345463);border-radius:5px;min-width:0}.security-panel h3{margin:0 0 8px}.security-panel p,.security-panel small{color:var(--muted,#b1c2ce);line-height:1.5}.security-panel button{margin-top:8px}.security-form{display:flex;flex-direction:column;gap:10px;max-width:100%}.security-form label{font-size:13px}.security-form input{margin:0;width:100%;padding:10px;box-sizing:border-box}.security-form textarea{width:100%;box-sizing:border-box;background:#050b10;color:#dbe8f0;border:1px solid #345463;padding:10px;resize:none;font:12px/1.5 Consolas,monospace}.security-form .security-confirm{display:flex;gap:10px;align-items:flex-start}.security-confirm input{width:auto;margin-top:3px}.security-form canvas{width:180px;height:180px;max-width:100%;background:white;border:8px solid white}.security-error{color:#ffbaaa;min-height:20px;font-size:13px;white-space:pre-wrap}.security-note{font-size:12px;line-height:1.5;color:#b1c2ce}.security-lock{margin:0;min-height:100dvh;display:grid;place-items:center;background:#03080c;color:#e9f4fa;font-family:Segoe UI,sans-serif}.security-lock-card{box-sizing:border-box;width:min(480px,calc(100vw - 32px));padding:28px;border:1px solid #315563;border-radius:8px;background:#08121a}.security-lock-brand{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:650}.security-lock-brand img{width:42px;height:42px}.security-lock h1{font-size:24px;margin:26px 0 8px}.security-lock .security-form input{background:#03090e;border:1px solid #456879;border-radius:4px;color:#edf8ff;font-size:16px}.security-lock button{cursor:pointer;border:1px solid #4f8498;border-radius:4px;background:#87e3f8;color:#051219;padding:11px 15px;font-weight:600}.security-lock button:disabled{opacity:.5;cursor:default}.security-lock #security-quit{background:transparent;color:#b5c9d5}.security-lock .security-actions{display:flex;gap:10px}.security-lock small{color:#99b4c1;line-height:1.5}.security-setup-grid{display:grid;grid-template-columns:200px minmax(0,1fr);gap:14px}.security-setup-grid>div{min-width:0}@media(max-width:620px){.security-setup-grid{grid-template-columns:1fr}.security-form canvas{width:140px;height:140px}}
+ 
+ @media(max-height:650px){.security-lock-card{padding:18px}.security-lock h1{margin:16px 0 8px;font-size:22px}.security-lock .security-form{gap:7px}.security-lock p{margin:10px 0}.security-lock .security-note,.security-lock small{font-size:11px}.security-lock .security-form input{padding:8px}.security-lock button{padding:9px 13px}}
++
++.security-reset{margin-top:16px;padding:16px;border:1px solid var(--line,#2c3a40);border-radius:14px;gap:8px}.security-reset:not([hidden]){display:grid}.security-reset h2{margin:0;font-size:1rem}.security-reset p{margin:0;color:var(--muted,#b1bec4);font-size:.9rem;line-height:1.45}
+-- 
+2.43.0
+

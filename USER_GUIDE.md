@@ -533,6 +533,14 @@ Open Radio to see connection/synchronization activity, last successful full sync
 3. Compare queue frames fetched with locally saved messages. Counts can include duplicates or command responses.
 4. Use Refresh radio data when connected and idle, or Reconnect radio when disconnected.
 
+### Read radio counters
+
+1. Open Radio > Radio Health and find **Radio counters**.
+2. Read **Packets sent Â· radio total** and **Packets received Â· radio total**. These are totals since the radio last started, not since Nightlink connected. Packets sent includes the radio's own adverts and forwarded packets.
+3. The airtime and uptime rows show raw values from the radio; their units are not documented here.
+4. **Counters read** shows when Nightlink last read them. They update during synchronization and when you select Refresh radio data, not live.
+5. Older firmware without radio statistics shows **Unavailable on this firmware**.
+
 ### Export a diagnostic log
 
 Use Export diagnostic log in the Radio controls. Include your Nightlink version, radio model/firmware, Bluetooth or USB, the time the problem occurred and exact error text in a support report. Check any exported file before posting it publicly; do not include message backups, passwords or keys.
@@ -547,6 +555,53 @@ Use Export diagnostic log in the Radio controls. Include your Nightlink version,
 ### Performance and evidence
 
 Session timing records distinguish connection, queue recovery, contacts and telemetry. Map timings measure page load, not a live feed. Replay/diagnostic observations describe data Nightlink actually recorded; they do not prove unseen radio traffic or hardware behavior.
+
+## RF Propagation Monitor
+
+Nightlink can watch the packets your radio already receives and point out reception that is unusual for that radio. It is passive: it never transmits, probes, changes radio settings or turns on RX logging, and it works without internet.
+
+An alert means reception differs from this radio's recorded history. It does not confirm an atmospheric propagation event. Antenna changes, a busy local network or a new repeater can cause similar evidence.
+
+### Open the monitor
+
+1. Open Radio and select Propagation Monitor in Observe & diagnose, or select the RF indicator beside the connection control.
+2. Read Current status: Normal, Learning baseline, Possible RF opening, Strong RF anomaly or Monitoring unavailable.
+3. Review Evidence, Reception trend, Recent observations and Event history. Values Nightlink cannot measure show as Unknown.
+
+### What the indicator shows
+
+- A subdued RF icon: normal reception, learning a baseline, or no radio connected.
+- Amber "Possible RF Opening": several receptions are unusual. The icon pulses gently.
+- Red "Strong RF Anomaly": strong, sustained unusual reception. The indicator flashes briefly, then stays steady.
+
+Animations stop when Reduced motion is on in Settings > Appearance, or when Windows requests reduced motion.
+
+### How detection works
+
+- Nightlink learns a per-radio baseline over 30 days by default. Hours when Nightlink was closed or disconnected count as no coverage, not as silence.
+- Evidence includes newly heard or rarely heard stations, SNR compared with earlier receptions of the same station and packet type, and sustained activity. A direct-distance reading is used only when both locations are known and the packet was heard without repeaters.
+- Repeated copies of one packet count once. Path prefixes are not treated as identities.
+- For signal strength and distance evidence, RX logging must already be enabled in the radio firmware. Without it the panel shows "RX logging off: monitoring limited".
+
+### Settings
+
+Open Settings > Notifications > RF propagation monitor.
+
+1. Enable monitoring: on by default.
+2. Alert sensitivity: Low, Medium (recommended) or High.
+3. Baseline period: 14, 30 (recommended) or 60 days.
+4. Show status indicator and Alert animations: on by default.
+5. Alert sound and Windows notification: off by default. They apply to strong anomalies only and respect quiet hours.
+6. View recent alerts opens the event history. Clear alert history removes recorded alert windows.
+7. Reset baseline asks for confirmation, then discards the learned baseline for the connected radio.
+
+After changing the antenna or radio parameters, the monitor warns that the baseline may no longer be comparable. Reset the baseline to start learning again.
+
+### Limits
+
+- Thresholds are initial estimates and have not been validated against physical propagation events.
+- Advert locations are self-reported by each node.
+- Monitoring data stays on this computer and is not included in backups.
 
 ## Back up & restore
 
@@ -627,7 +682,10 @@ Download the matching Windows build and understand candidates.
 1. Open Settings > Data & updates > Nightlink updates.
 2. Select Check for updates. Enable the optional checks-while-open toggle for a check after about thirty seconds and every six hours.
 3. When a newer stable version is offered, choose Open download. Setup installations select Setup; portable clients select Portable when available.
-4. Export a backup, quit Nightlink cleanly and run the downloaded installer. Reopen and confirm the version in Help & About.
+4. Before running the download, compare its SHA-256 with the Expected SHA-256 shown under the update status. Select Copy command, paste it into PowerShell and compare the Hash line. If they differ, do not run the file.
+5. Export a backup, quit Nightlink cleanly and run the downloaded installer. Reopen and confirm the version in Help & About.
+
+If Nightlink reports that the published checksums disagree, it hides Open download. Do not run that release's file; open GitHub releases and report it. If it cannot confirm the checksums, compare the download with SHA256SUMS.txt on the release page yourself.
 
 ### Downloads are not automatic installation
 

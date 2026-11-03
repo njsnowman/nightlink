@@ -1,8 +1,8 @@
 
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'));
 const assert=require('node:assert/strict');
 (async()=>{
- const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+ const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});
  try{
  const page=await browser.newPage({viewport:{width:1500,height:1000}}),errors=[];page.setDefaultTimeout(6000);
  page.on('pageerror',e=>{errors.push(e.stack);console.log(e.stack);});
@@ -66,8 +66,8 @@ const assert=require('node:assert/strict');
  await page.locator('.dm-floating input').click();await page.waitForFunction(()=>attention.unread(live.messages,'direct:'+'ab'.repeat(32)).length===0);
  await page.locator('.dm-floating .dm-close').click();
  await page.locator('nav > [data-view="Messages"]').click();await page.locator('.conversation-tools').getByRole('button',{name:'Direct messages',exact:true}).click();
- await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-attention-inbox.png'});
- await notifications();await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-attention-settings.png'});
+ await page.screenshot({path:require('node:path').join(process.env.NIGHTLINK_ARTIFACTS||require('node:os').tmpdir(),'nightlink-attention-inbox.png')});
+ await notifications();await page.screenshot({path:require('node:path').join(process.env.NIGHTLINK_ARTIFACTS||require('node:os').tmpdir(),'nightlink-attention-settings.png')});
  assert.equal(errors.length,0,errors.join('\n'));
  console.log('PASS: unread persistence, latest-message following, mute persistence, independent sounds, mention navigation, silent catchup and focused DM reading');
  }finally{await browser.close();}

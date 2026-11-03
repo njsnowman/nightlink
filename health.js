@@ -6,4 +6,14 @@
  sync(state,message){if(state==='syncing'){this.syncing=true;this.syncFetched=0;this.error=null;this.stage='Synchronizing radio';}if(state==='ready'){this.syncing=false;this.lastSyncAt=this.now();this.lastSyncFetched=this.syncFetched;this.stage='Ready';this.error=null;}if(state==='error'){this.syncing=false;this.stage='Synchronization stopped';this.error=message||'Synchronization failed';}if(state==='disconnected'){this.syncing=false;this.stage=this.connected?'Waiting for synchronization':'Disconnected';}}
  catchup(detail){if(detail.complete&&Number.isSafeInteger(detail.count)&&detail.count>=0){this.fetched+=detail.count;if(this.syncing)this.syncFetched+=detail.count;}}
  snapshot(){return{connected:this.connected,uptimeMs:this.connectedAt===null?0:Math.max(0,this.now()-this.connectedAt),reconnects:Math.max(0,this.connections-1),stage:this.stage,lastSyncAt:this.lastSyncAt,lastSyncFetched:this.lastSyncFetched,fetched:this.fetched,syncing:this.syncing,error:this.error};}
-}root.NightlinkHealth=NightlinkHealth;if(typeof module!=='undefined')module.exports={NightlinkHealth};})(globalThis);
+}
+// Radio-reported counters (CMD_GET_STATS subtypes 0-2). They count from radio start, not from this app session.
+// packetsSent/packetsReceived were physically observed incrementing per transmission (releases/0.8.22-rc.43.md);
+// airtime and uptime units are not documented in this repository, so those values are shown raw.
+const counterFields=[['sent','Packets sent · radio total','packetsSent'],['received','Packets received · radio total','packetsReceived'],['txair','TX airtime counter · raw radio value','txAir'],['rxair','RX airtime counter · raw radio value','rxAir'],['radiouptime','Radio uptime counter · raw radio value','uptime']];
+function counterRows(stats,{available=true,readAt=null}={}){
+ if(!available)return counterFields.map(([key,label])=>({key,label,value:'Unavailable on this firmware'})).concat([{key:'read',label:'Counters read',value:'Unavailable on this firmware'}]);
+ const read=readAt!==null&&Number.isFinite(stats?.packetsSent)&&stats.packetsSent>=0;
+ return counterFields.map(([key,label,field])=>{const v=stats?.[field];return{key,label,value:Number.isFinite(v)&&v>=0?String(v):'—'};}).concat([{key:'read',label:'Counters read',value:read?new Date(readAt).toLocaleString():'Not read yet · refresh radio data'}]);
+}
+root.NightlinkHealth=NightlinkHealth;root.NightlinkRadioCounters={rows:counterRows,fields:counterFields.map(f=>f[0])};if(typeof module!=='undefined')module.exports={NightlinkHealth,counterRows};})(globalThis);

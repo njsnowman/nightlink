@@ -1,7 +1,7 @@
 
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'));
 const assert=require('node:assert/strict');
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const page=await browser.newPage({viewport:{width:1500,height:1000}});page.setDefaultTimeout(6000);const errors=[];page.on('pageerror',e=>errors.push(e.stack));
  await page.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();const file=u.pathname==='/'?'index.html':decodeURIComponent(u.pathname.slice(1));try{await route.fulfill({body:await require('node:fs/promises').readFile(require('node:path').join(__dirname,file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':'text/html'});}catch{await route.fulfill({status:404,body:''});}});
  await page.addInitScript(()=>{if(location.origin!=='http://127.0.0.1:4173')return;if(!localStorage.getItem('meshline.profile')){const identity={key:'cd'.repeat(32),name:'Snow Man',model:'Test',frequency:906.875,txPower:22},channels=[{slot:0,id:'01'.repeat(12),name:'general'},{slot:1,id:'02'.repeat(12),name:'field-ops'}],contacts=[{key:'ab'.repeat(32),name:'Jordan',type:1}];localStorage.setItem('meshline.profile',JSON.stringify({identity,channels,contacts}));}});
@@ -21,9 +21,9 @@ const assert=require('node:assert/strict');
  await page.reload();await page.context().setOffline(true);await page.locator('#open-message-search').click();await page.locator('#history-query').fill('Private radio');assert.equal(await page.locator('.history-result').count(),1);
  await page.locator('#history-from').fill('2026-10-17');await page.locator('#history-to').fill('2026-10-15');assert.equal(await page.locator('#history-result-count').textContent(),'Invalid date range');
  await page.locator('#history-clear').click();await page.locator('#history-query').fill('not in archive');assert.ok((await page.locator('.search-empty').textContent()).includes('No messages match'));
- await page.locator('#history-query').fill('radio');await page.evaluate(()=>{live.messages.find(m=>m.id==='saved-2').text='Radio check complete · north trailhead @[Snow Man]';renderSearchResults();});await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-search.png'});
+ await page.locator('#history-query').fill('radio');await page.evaluate(()=>{live.messages.find(m=>m.id==='saved-2').text='Radio check complete · north trailhead @[Snow Man]';renderSearchResults();});await page.screenshot({path:require('node:path').join(process.env.NIGHTLINK_ARTIFACTS||require('node:os').tmpdir(),'nightlink-search.png')});
  for(const width of [920,760]){await page.setViewportSize({width,height:740});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);}
- await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-search-compact.png'});assert.equal(errors.length,0,errors.join('\n'));
+ await page.screenshot({path:require('node:path').join(process.env.NIGHTLINK_ARTIFACTS||require('node:os').tmpdir(),'nightlink-search-compact.png')});assert.equal(errors.length,0,errors.join('\n'));
  console.log('PASS: search pagination, literal highlighting, combined filters, date errors, channel/DM result navigation, retained reading position, offline search and compact layout');
  }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
 

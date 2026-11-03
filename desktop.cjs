@@ -16,7 +16,9 @@ else app.whenReady().then(async()=>{
  require('./serial-desktop.cjs').installSerial(win,ipcMain,startup);
  let select=null,pair=null,devices=new Set(),deviceDetails=new Map(),scanTimer,pairTimer;
  const trusted=e=>windowLifecycle.available(win)&&security.unlocked&&e.sender===win.webContents&&e.senderFrame===win.webContents.mainFrame;
+ require('./codex-bridge-desktop.cjs').install({app,ipcMain,trusted});
 
+ require('./internet-status.cjs').install({ipcMain,net:require('electron').net,trusted});
  require('./pc-location.cjs').install({ipcMain,trusted});
  ipcMain.handle('meshmapper:open',async(e,region='CVG')=>{if(!trusted(e))return false;try{const url=require('./meshmapper-region.js').base(region);await shell.openExternal(url);return true;}catch{return false;}});
  require('./voice-desktop.cjs').install({app,win,ipcMain,dialog,trusted});
@@ -31,7 +33,7 @@ else app.whenReady().then(async()=>{
  });
  ipcMain.handle('updates:open',async(e,download)=>{
   if(!trusted(e))return false;
-  const url=download===true&&updateResult?.status==='available'?(updateResult.download||updateResult.url):nightlinkUpdates.RELEASES;
+  const url=download===true&&updateResult?.status==='available'?(updateResult.verification!=='mismatch'&&updateResult.download||updateResult.url):nightlinkUpdates.RELEASES;
   await shell.openExternal(url);return true;
  });
  ipcMain.on('layout:focus',e=>{if(!trusted(e))return;if(win.isMinimized())win.restore();win.show();win.focus();});
