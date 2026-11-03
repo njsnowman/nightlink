@@ -35,3 +35,110 @@
  let pageUI=null;const previous=view;view=function(page){const result=previous(page);alternate.classList.toggle('nl-radio-page',page==='Radio');if(page==='Radio'){if(!pageUI)pageUI=build();pageUI?.mount();}return result;};
  if(current==='Radio'){pageUI=build();pageUI?.mount();alternate.classList.add('nl-radio-page');}
 })();
+/* BBS / IRC workspace is an opt-in presentation of existing Messages and RF state. */
+(()=>{
+ const alternate=document.getElementById('alternate'),conversation=document.querySelector('.conversation');if(!alternate||!conversation)return;
+ const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!=null)node.textContent=text;return node;};
+ const shell=make('section','bbs-irc-shell');shell.setAttribute('aria-label','BBS and IRC workspace');
+ const masthead=make('div','bbs-masthead'),mastArt=make('div','bbs-ansi-art');mastArt.setAttribute('role','img');mastArt.setAttribute('aria-label','Original ANSI BBS artwork: signal tower and NIGHTLINK block-letter wordmark');
+ const towerArt=document.createElement('pre'),wordArt=document.createElement('pre');towerArt.className='bbs-ansi-tower';wordArt.className='bbs-ansi-wordmark';towerArt.setAttribute('aria-hidden','true');wordArt.setAttribute('aria-hidden','true');
+ const ansi=(sgr,text)=>`\x1b[${sgr}m${text}\x1b[0m`;
+ function renderAnsi(target,source){target.replaceChildren();const sgr=/\x1b\[([\d;]*)m/g;let cursor=0,fg='default',bold=false,match;
+  const appendText=text=>{if(!text)return;const span=make('span','ansi-fg-'+fg+(bold?' ansi-bold':''),text);target.append(span);};
+  while((match=sgr.exec(source))){appendText(source.slice(cursor,match.index));for(const code of (match[1]||'0').split(';').map(Number)){if(code===0){fg='default';bold=false;}else if(code===1)bold=true;else if(code===22)bold=false;else if(code===39)fg='default';else if(code>=30&&code<=37)fg=['black','red','green','amber','blue','magenta','cyan','white'][code-30];else if(code>=90&&code<=97)fg=['dim','red-bright','green-bright','amber-bright','blue-bright','magenta-bright','cyan-bright','white-bright'][code-90];}cursor=sgr.lastIndex;}
+  appendText(source.slice(cursor));}
+ const towerSource=[
+  ansi('90','          .          '),
+  ansi('1;96','       .  |  .       '),
+  ansi('36','     .   \\|/   .     '),
+  ansi('1;96','  .----\\ | /----.   '),
+  ansi('1;93','  ======\\* /======  '),
+  ansi('92','         \\|/        '),
+  ansi('1;92','      .--[+]--.      '),
+  ansi('32','      |  /|\\  |      '),
+  ansi('33','      | / | \\ |      '),
+  ansi('32','      |/  |  \\|      '),
+  ansi('1;93','    --+---+---+--    '),
+  ansi('32','       /  |  \\       '),
+  ansi('33','      /   |   \\      '),
+  ansi('32','     /____|____\\     '),
+  ansi('1;93','     |____|____|     '),
+  ansi('90','        /___\\        ')
+ ].join('\n');
+ const glyphs={N:['█   █','██  █','█ █ █','█  ██','█   █','█   █','█   █'],I:['█████','  █  ','  █  ','  █  ','  █  ','  █  ','█████'],G:[' ████','█    ','█    ','█ ███','█   █','█   █',' ████'],H:['█   █','█   █','█   █','█████','█   █','█   █','█   █'],T:['█████','  █  ','  █  ','  █  ','  █  ','  █  ','  █  '],L:['█    ','█    ','█    ','█    ','█    ','█    ','█████'],K:['█  █ ','█ █  ','██   ','██   ','█ █  ','█  █ ','█   █']};
+ const word='NIGHTLINK',logoWidth=word.length*5+word.length-1;let wordRows=[];
+ for(let row=0;row<7;row++){let line='';const ink=row===0?'1;93':row===6?'32':'1;92';for(let i=0;i<word.length;i++)line+=ansi(ink,glyphs[word[i]][row])+(i<word.length-1?' ':'');wordRows.push(line);}
+ // Compose a true 80-column ANSI-style BBS banner: inset armor frame, hard upper-left
+ // highlights, a one-cell offset extrusion and a compact field-system caption.
+ const bannerWidth=80,frame='╔'+'═'.repeat(bannerWidth-2)+'╗',lastFrame='╚'+'═'.repeat(bannerWidth-2)+'╝';
+ const centerText=(text,width)=>{const spare=Math.max(0,width-text.length);return ' '.repeat(Math.floor(spare/2))+text+' '.repeat(Math.ceil(spare/2));};
+ function logoArtRows(){
+  const width=bannerWidth-4,height=9,canvas=Array.from({length:height},()=>Array(width).fill(' ')),start=Math.floor((width-logoWidth)/2);
+  for(let row=0;row<7;row++){
+   const visible=wordRows[row].replace(/\x1b\[[\d;]*m/g,'');
+   for(let col=0;col<logoWidth;col++){
+    const ch=visible[col]||' ';if(ch!==' '){canvas[row+1][start+col+1]='▓';canvas[row][start+col]=ch;}
+   }
+  }
+  return canvas.map((cells,row)=>{
+   let out='',last='',run='';const flush=()=>{if(run)out+=ansi(last,run);};for(const ch of cells){const color=ch===' '?'90':ch==='▓'?'32':row===0?'1;93':row===7?'92':'1;92';if(color!==last){flush();last=color;run=ch;}else run+=ch;}flush();return '║ '+out+' ║';
+  });
+ }
+ const tagline='SIGNAL LINK  //  LOCAL MESH  //  FIELD BBS';
+ const wordSource=[ansi('1;96',frame),...logoArtRows(),ansi('36','║'+centerText(tagline,bannerWidth-2)+'║'),ansi('32',lastFrame)].join('\n');
+ const camoLayer=make('div','bbs-ansi-camo-layer');camoLayer.setAttribute('aria-hidden','true');const camoArt=document.createElement('pre');camoArt.className='bbs-ansi-camo-art';camoLayer.append(camoArt);
+ function buildCamoSource(){const cols=210,rows=88,patches=[
+  [20,13,27,10,'32'],[57,30,34,12,'90'],[94,15,27,10,'33'],[132,34,38,13,'32'],[181,18,27,10,'92'],
+  [14,61,31,13,'33'],[53,75,38,13,'92'],[101,58,32,14,'90'],[146,77,40,12,'33'],[194,58,28,15,'32'],
+  [35,43,22,9,'92'],[118,43,24,9,'36'],[174,42,21,9,'90']
+ ];let output='';
+  for(let y=0;y<rows;y++){let last='',run='';const flush=()=>{if(run)output+=ansi(last,run);};
+   for(let x=0;x<cols;x++){let hash=(x+1)*374761393+(y+1)*668265263;hash=Math.imul(hash^(hash>>>13),1274126177)>>>0;let picked=['90','░'];let best=1.08;
+    for(const [cx,cy,rx,ry,sgr]of patches){const dx=(x-cx)/rx,dy=(y-cy)/ry,edge=((hash%101)/100-.5)*.04,d=Math.pow(Math.abs(dx),2.4)+Math.pow(Math.abs(dy),2.4);if(d<1+edge&&d<best){best=d;picked=[sgr,d>.86?'▒':'█'];}}
+    const key=picked[0]+'/'+picked[1];if(key!==last){flush();last=key;run=picked[1];}else run+=picked[1];
+   }flush();if(y<rows-1)output+='\n';
+  }return output;
+ }
+ let camoRendered=false;function ensureCamo(){if(camoRendered)return;renderAnsi(camoArt,buildCamoSource());camoRendered=true;}
+ renderAnsi(towerArt,towerSource);renderAnsi(wordArt,wordSource);mastArt.append(towerArt,wordArt);const mastCopy=make('div','bbs-masthead-copy');mastCopy.append(make('span','bbs-kicker','RADIO MESSAGING'),make('strong','bbs-title','BBS / IRC'));
+ masthead.append(mastArt,mastCopy);
+ const mastState=make('span','bbs-masthead-state','RADIO LINK · OFFLINE');mastState.setAttribute('role','status');masthead.append(mastState);
+ const grid=make('div','bbs-workspace-grid'),channels=make('nav','bbs-channel-rail');channels.setAttribute('aria-label','Radio channels');
+ const channelHeader=make('div','bbs-rail-heading');channelHeader.append(make('span',null,'CHANNEL DIRECTORY'),make('span','bbs-rail-count','0'));channels.append(channelHeader);
+ const channelList=make('div','bbs-channel-list'),channelNote=make('p','bbs-rail-note','Connect a radio to load its configured channels.');channels.append(channelList,channelNote);
+ const status=make('section','bbs-status-rail');status.setAttribute('aria-label','Radio and RF monitor status');
+ const linkCard=make('section','bbs-rail-card bbs-link-card');linkCard.append(make('span','bbs-kicker','RADIO LINK'));
+ const linkValue=make('strong','bbs-link-value','Offline');linkCard.append(linkValue,make('p','bbs-card-detail','Saved messages stay on this computer.'));status.append(linkCard);
+ const countCard=make('section','bbs-rail-card bbs-count-card');countCard.append(make('span','bbs-kicker','LOCAL DIRECTORY'));
+ const counts=make('div','bbs-count-grid'),channelCount=make('strong',null,'0'),contactCount=make('strong',null,'0');
+ for(const [label,value]of [['CHANNELS',channelCount],['CONTACTS',contactCount]]){const item=make('div','bbs-count-item');item.append(make('span',null,label),value);counts.append(item);}countCard.append(counts);status.append(countCard);
+ const rfCard=make('section','bbs-rail-card bbs-rf-card');rfCard.append(make('span','bbs-kicker','RF MONITOR'));
+ const rfState=make('strong','bbs-rf-state','Monitoring unavailable');rfCard.append(rfState);
+ const rfChart=document.createElementNS('http://www.w3.org/2000/svg','svg');rfChart.classList.add('bbs-rf-chart');rfChart.setAttribute('viewBox','0 0 280 88');rfChart.setAttribute('role','img');rfChart.setAttribute('aria-label','Received packets per monitored hour');rfCard.append(rfChart);
+ const rfEmpty=make('p','bbs-rf-empty','No monitored hours yet.');rfCard.append(rfEmpty,make('p','bbs-card-detail','Received packets per covered hour. Gaps mean no coverage.'));
+ const openMonitor=make('button','bbs-open-monitor','Open full RF monitor');openMonitor.type='button';openMonitor.onclick=()=>window.showPropagationMonitor?.();rfCard.append(openMonitor);status.append(rfCard);
+ grid.append(channels,conversation,status);shell.append(camoLayer,masthead,grid);
+ const setState=(node,value)=>{node.dataset.state=value;};
+ function paintChannels(){const list=Array.isArray(live?.channels)?live.channels:[],selected=live?.selected;channelHeader.lastElementChild.textContent=String(list.length);channelList.replaceChildren();
+  if(!list.length){channelNote.hidden=false;return;}channelNote.hidden=true;
+  for(const channel of list){const button=make('button','bbs-channel-button');button.type='button';const name=String(channel.name||'').replace(/^#\s*/,'');button.append(make('span','bbs-channel-hash','#'),make('span','bbs-channel-name',name||'Channel '+channel.slot));
+   button.setAttribute('aria-pressed',String(selected?.kind==='channel'&&selected.slot===channel.slot&&selected.id===channel.id));button.onclick=()=>selectConversation({kind:'channel',...channel});channelList.append(button);}}
+ function paintMonitor(){const monitor=window.NightlinkPropagationUI?.monitor;let snapshot=null;try{snapshot=monitor?.summary?.(Date.now())||null;}catch{}
+  const stateName=snapshot?.state||'unavailable',label=window.NightlinkPropagation?.labels?.[stateName]||'Monitoring unavailable';rfState.textContent=label;setState(rfCard,stateName);rfChart.replaceChildren();
+  const trend=Array.isArray(snapshot?.trend)?snapshot.trend.slice(-24):[],covered=trend.some(point=>Number.isFinite(point.packets));rfChart.setAttribute('aria-label','Received packets per monitored hour, last '+trend.length+' hours. Gaps mark hours without monitoring coverage.');
+  if(covered){const max=Math.max(1,...trend.map(point=>Number.isFinite(point.packets)?point.packets:0)),width=280/Math.max(1,trend.length);
+   trend.forEach((point,index)=>{const rect=document.createElementNS(rfChart.namespaceURI,'rect');rect.setAttribute('x',String(index*width+1));rect.setAttribute('width',String(Math.max(1,width-2)));rect.setAttribute('rx','2');
+    if(Number.isFinite(point.packets)){const height=Math.max(2,point.packets/max*68);rect.setAttribute('y',String(78-height));rect.setAttribute('height',String(height));rect.setAttribute('class','bbs-rf-bar');}
+    else{rect.setAttribute('y','76');rect.setAttribute('height','4');rect.setAttribute('class','bbs-rf-gap');}rfChart.append(rect);});}
+  rfChart.hidden=!covered;rfEmpty.hidden=covered;}
+ function paint(){if(document.documentElement.dataset.theme!=='bbs-camo'||current!=='Messages')return;const ready=live?.sync==='ready';mastState.textContent=ready?'RADIO LINK · READY':'RADIO LINK · OFFLINE';setState(shell,ready?'ready':'offline');
+  linkValue.textContent=ready?'Ready · Bluetooth':'Offline';setState(linkCard,ready?'ready':'offline');linkCard.querySelector('.bbs-card-detail').textContent=ready?'Radio synchronized.':'Saved messages stay on this computer.';
+  channelCount.textContent=String(live?.channels?.length||0);contactCount.textContent=String(live?.contacts?.length||0);paintChannels();paintMonitor();}
+ function layout(name=current){const enabled=document.documentElement.dataset.theme==='bbs-camo'&&name==='Messages';alternate.classList.toggle('bbs-irc-active',enabled);
+  if(enabled){ensureCamo();grid.replaceChildren(channels,conversation,status);alternate.replaceChildren(shell);paint();}
+  else if(shell.parentElement===alternate)alternate.replaceChildren(conversation);}
+ const oldView=view;view=function(name){const result=oldView(name);layout(name);return result;};
+ const oldRender=renderMessages;renderMessages=function(...args){const result=oldRender.apply(this,args);paint();return result;};
+ window.addEventListener('nightlink-theme',()=>{if(current==='Messages')view('Messages');});
+ for(const eventName of ['sync','channels','contacts','identity','message','disconnected'])radioSession.addEventListener(eventName,paint);ble.addEventListener('state',paint);document.addEventListener('visibilitychange',paint);setInterval(paint,5000);layout();
+})();
