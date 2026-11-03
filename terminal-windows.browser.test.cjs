@@ -17,6 +17,9 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  const bar=await page.evaluate(()=>{const s=getComputedStyle(document.querySelector('#term-page-title .term-window-sub'));const b=getComputedStyle(document.querySelector('#term-page-title'));return [s.color,b.backgroundColor];});
  assert.ok(contrast(...bar)>=4.5,'title bar subtitle contrast '+contrast(...bar));
  await page.evaluate(()=>view('Settings'));assert.equal(await page.textContent('#term-page-title .term-window-name'),'SETTINGS');
+ assert.deepEqual(await page.$$eval('.switchboard-settings-nav button',b=>b.map(x=>x.dataset.hotkey)),['A','C','N','S','D','H']);
+ await page.evaluate(()=>document.activeElement?.blur());await page.keyboard.press('s');assert.equal(await page.evaluate(()=>NightlinkSettings.current()),'security','S opens Security');
+ if(shots)await page.screenshot({path:path.join(shots,'term-settings.png')});
  await page.evaluate(()=>NightlinkSettings.open('help'));assert.equal(await page.textContent('#term-page-title .term-window-name'),'HELP');
  assert.equal(await page.getAttribute('#term-menubar [data-term-view=Help]','aria-current'),'page');
  if(shots)await page.screenshot({path:path.join(shots,'term-help.png')});

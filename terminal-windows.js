@@ -154,10 +154,14 @@
 
  if(typeof showMessageRoute==='function'){const previous=showMessageRoute;showMessageRoute=function(m){const r=previous.apply(this,arguments);try{pathView(m);}catch{}return r;};}
 
- const previousView=view;view=function(){previousView.apply(this,arguments);pageWindow();nodeMap();};
+ const previousView=view;view=function(){previousView.apply(this,arguments);pageWindow();nodeMap();settingsKeys();setTimeout(settingsKeys,0);};
+ // Settings as a DOS menu: hotkey letters on the category buttons; a letter opens its category when no field has focus.
+ function settingsKeys(){if(!on()||current!=='Settings')return;const used=new Set();for(const b of doc.querySelectorAll('.switchboard-settings-nav button')){const label=(b.textContent||'').replace(/^\[.\]\s*/,'').trim();const k=[...label.toUpperCase()].find(c=>/[A-Z]/.test(c)&&!used.has(c));if(!k)continue;used.add(k);b.dataset.hotkey=k;b.setAttribute('aria-keyshortcuts',k);}}
+ doc.addEventListener('keydown',e=>{if(!on()||current!=='Settings'||e.ctrlKey||e.altKey||e.metaKey||e.defaultPrevented||e.key.length!==1)return;if(e.target.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]')||doc.querySelector('dialog[open]'))return;
+  const b=doc.querySelector(`.switchboard-settings-nav button[data-hotkey="${CSS.escape(e.key.toUpperCase())}"]`);if(b){e.preventDefault();b.click();b.focus();}});
  // Settings categories (including Help) switch without a view change.
- doc.addEventListener('click',()=>{if(current==='Settings')setTimeout(pageWindow,0);});
- if(window.NightlinkSettings?.open){const open=NightlinkSettings.open;NightlinkSettings.open=function(){const r=open.apply(this,arguments);pageWindow();return r;};}
+ doc.addEventListener('click',()=>{if(current==='Settings')setTimeout(()=>{pageWindow();settingsKeys();},0);});
+ if(window.NightlinkSettings?.open){const open=NightlinkSettings.open;NightlinkSettings.open=function(){const r=open.apply(this,arguments);pageWindow();settingsKeys();return r;};}
  window.addEventListener('nightlink-interface',()=>{pageWindow();dialogWindow();nodeMap();});
  window.NightlinkTerminalWindows={pageWindow,dialogWindow,pathModel,pathLine,pathGrid,nodeMap,pages:Object.keys(PAGES)};
  pageWindow();

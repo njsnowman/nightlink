@@ -307,3 +307,28 @@ html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[d
 html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-workspace>details>summary{padding:2px 0 !important}
 html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-section-heading{margin:0 0 4px !important;min-height:0}
 html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-section-heading h3{margin:0 !important}
+/* Radio page (BBS pass): plain status frame, tool tiles as menu rows. */
+html:root:root:root:root:root[data-interface=terminal] body #radio-page-hub #radio-status-panel{background:#000 !important;background-image:none !important;border:3px double var(--t-bright-blue) !important;box-shadow:none !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-eyebrow{color:#00aaaa !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-name{color:var(--t-white) !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-facts span,html:root:root:root:root:root[data-interface=terminal] body .nl-radio-facts dt{color:#00aaaa !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-group>h2,html:root:root:root:root:root[data-interface=terminal] body .nl-radio-group>h3,html:root:root:root:root:root[data-interface=terminal] body .nl-radio-group>header :is(h2,h3){color:var(--t-yellow) !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-group>h2::before,html:root:root:root:root:root[data-interface=terminal] body .nl-radio-group>h3::before,html:root:root:root:root:root[data-interface=terminal] body .nl-radio-group>header :is(h2,h3)::before{content:'══ ';color:var(--t-bright-blue)}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action-list{gap:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action{min-height:0 !important;padding:5px 8px !important;border:0 !important;border-bottom:1px dotted var(--t-dark-grey) !important;background:#000 !important;box-shadow:none !important;border-radius:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action:hover,html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action:focus-visible{background:var(--t-blue) !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action>svg,html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action .nl-menu-icon,html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action>span:first-child:has(svg){display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action-copy strong{color:var(--t-bright-cyan) !important}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action-copy strong::before{content:'» ';color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .nl-radio-action-arrow{color:var(--t-yellow) !important}
+/* Settings (BBS pass): DOS menu with hotkeys set by terminal-windows.js (data-hotkey). */
+html:root:root:root:root:root[data-interface=terminal] body .switchboard-settings-nav{gap:0 !important;border-right:3px double var(--t-blue) !important;padding:4px 0 !important}
+html:root:root:root:root:root[data-interface=terminal] body .switchboard-settings-nav button{border:0 !important;border-radius:0 !important;background:#000 !important;color:var(--t-grey) !important;box-shadow:none !important;text-align:left;padding:3px 10px !important;min-height:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body .switchboard-settings-nav button[data-hotkey]::before{content:'[' attr(data-hotkey) '] ';color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .switchboard-settings-nav button:hover{background:var(--t-blue) !important;color:var(--t-white) !important}
+html:root:root:root:root:root[data-interface=terminal] body .switchboard-settings-nav button:is(.active,[aria-selected=true],[aria-current]){background:#00aaaa !important;color:#000 !important}
+html:root:root:root:root:root[data-interface=terminal] body .switchboard-settings-nav button:is(.active,[aria-selected=true],[aria-current])::before{color:#000}
+/* MRC empty window art. */
+html:root:root:root:root:root[data-interface=terminal] body .mrc-empty-art{margin:10px 0 4px 6ch;color:var(--t-bright-blue);line-height:1.15;font-size:13px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-empty-art .mrc-empty-wave{color:var(--t-bright-cyan)}html:root:root:root:root:root[data-interface=terminal] body .mrc-empty-art .mrc-empty-ground{color:#00aaaa}
+html:root:root:root:root:root[data-interface=terminal] body :is(.switchboard-settings-nav button,.nl-radio-action,.mrc-window,.bbs-item){transition:none !important}

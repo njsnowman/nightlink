@@ -137,7 +137,11 @@
   if(win.kind==='status')statusLines(scroll);
   else{
    const rows=live.messages.filter(m=>m.conversation===win.id).slice(-MAX_ROWS);
-   if(!rows.length){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(nowSeconds())),el('span','mrc-dim','-!- No messages in '+win.label+' yet.'));scroll.append(line);}
+   if(!rows.length){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(nowSeconds())),el('span','mrc-dim','-!- No messages in '+win.label+' yet.'));scroll.append(line);
+    // Decorative antenna for an empty window; the line above carries the meaning.
+    const art=el('pre','mrc-empty-art');art.setAttribute('aria-hidden','true');
+    for(const [t,c] of [['      ((( · )))\n','mrc-empty-wave'],['     ((   |   ))\n','mrc-empty-wave'],['          |\n',null],['         /|\\\n',null],['        / | \\\n',null],['       /  |  \\\n',null],['  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  listening on '+win.label+'\n','mrc-empty-ground']])art.append(el('span',c,t));
+    scroll.append(art);}
    // Session banner, as an IRC client prints on join. Counts come from stored data only.
    const banner=(text,cls)=>{const line=el('div','mrc-line mrc-banner');line.append(el('span','mrc-time',stamp(rows[0]?.timestamp??nowSeconds())),el('span','mrc-banner-star','*** '),el('span',cls||null,text));scroll.append(line);};
    banner('Now talking in '+win.label,'mrc-banner-strong');
