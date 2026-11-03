@@ -237,7 +237,7 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-window::before{
 html:root:root:root:root:root[data-interface=terminal] body .mrc-windows{border-right:3px double var(--t-blue) !important}html:root:root:root:root:root[data-interface=terminal] body .mrc-nodes{border-left:3px double var(--t-blue) !important}
 /* Dialog windows (BBS pass): Turbo Vision-style double frame with the title set into a blue bar, a solid dark-grey
    drop shadow, a dithered blue backdrop, and the close control shown as [■] on the left. */
-html:root:root:root:root:root[data-interface=terminal] body dialog.term-window{box-shadow:14px 12px 0 0 #555555 !important;overflow:visible}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window{box-shadow:14px 12px 0 0 #555555 !important}
 html:root:root:root:root:root[data-interface=terminal] body dialog.term-window::backdrop{background-color:#000;background-image:radial-gradient(#0000aa 1px,transparent 1.4px);background-size:4px 4px;opacity:.9}
 html:root:root:root:root:root[data-interface=terminal] body dialog.term-window .dialog-heading{display:flex !important;align-items:center;flex-direction:row-reverse;justify-content:flex-end;gap:10px}
 html:root:root:root:root:root[data-interface=terminal] body dialog.term-window .dialog-heading h2{flex:1;margin:0 !important}
