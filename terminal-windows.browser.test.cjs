@@ -31,7 +31,7 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  // Keyboard: arrows in the main menu, "/" opens the MRC command line on Messages and search elsewhere.
  await page.evaluate(()=>view('Overview'));await page.evaluate(()=>document.activeElement?.blur());await page.keyboard.press('ArrowDown');
  assert.equal(await page.evaluate(()=>document.activeElement?.dataset.bbsKey),'C');await page.keyboard.press('ArrowDown');assert.equal(await page.evaluate(()=>document.activeElement?.dataset.bbsKey),'N');
- await page.keyboard.press('ArrowRight');assert.equal(await page.evaluate(()=>document.activeElement?.dataset.bbsKey),'D');
+ await page.keyboard.press('ArrowRight');assert.equal(await page.evaluate(()=>document.activeElement?.dataset.bbsKey),'R','right column follows the expanded Contact Book menu');
  await page.evaluate(()=>{view('Messages');document.activeElement?.blur();});await page.keyboard.press('/');assert.equal(await page.evaluate(()=>[document.activeElement?.id,document.activeElement?.value].join()),'mrc-input,/');
  await page.evaluate(()=>{const i=document.querySelector('#mrc-input');i.value='';i.blur();view('Nodes');});await page.keyboard.press('/');assert.equal(await page.evaluate(()=>current),'Search','/ opens search');
  // Empty-page art: shown on Nodes with no contacts, hidden once contacts exist; decorative only.
