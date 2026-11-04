@@ -9,6 +9,10 @@
  const state={window:null,local:new Map(),sendError:'',replyWindow:null,readingOwner:null,readingWin:null,readSessions:new Map(),restoring:false};
  const terminal=()=>NightlinkInterface.isTerminal();
  const el=(tag,cls,text)=>{const n=doc.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
+ const draftStore=()=>typeof drafts!=='undefined'?drafts:(state.drafts||(state.drafts=new NightlinkDrafts(localStorage,()=>toast('Draft storage unavailable. Keep this window open or copy your text.'))));
+ function syncCardDraft(value){if(typeof composerDraftOwner!=='undefined'&&composerDraftOwner===state.draftOwner&&composerDraftId===state.draftId){const input=doc.querySelector('#message-input');if(input){input.value=value;if(typeof updateByteCount==='function')updateByteCount();}}}
+ function saveTerminalDraft(){const input=state.form?.querySelector('#mrc-input');if(!input||!state.draftId||input.value===state.lastSavedDraft)return;draftStore().set(state.draftOwner,state.draftId,input.value);state.lastSavedDraft=input.value;syncCardDraft(input.value);}
+ function restoreTerminalDraft(win){const owner=live.identity?.key,id=win.kind==='status'?null:win.id,input=state.form.querySelector('#mrc-input');if(state.draftOwner!==owner||state.draftId!==id){saveTerminalDraft();state.draftOwner=owner;state.draftId=id;state.lastSavedDraft=id?draftStore().get(owner,id):'';input.value=state.lastSavedDraft;}else if(id){const saved=draftStore().get(owner,id);if(saved!==state.lastSavedDraft&&input.value===state.lastSavedDraft){input.value=saved;state.lastSavedDraft=saved;}}}
  function readingSession(id){
   const owner=live.identity?.key||'local';if(state.readingOwner!==owner){state.readSessions.clear();state.readingOwner=owner;state.readingWin=null;}
   if(!state.readSessions.has(id)){let position;try{position=ensureAttention().position(id);}catch{}state.readSessions.set(id,{position:position||{bottom:true,manual:false},boundary:position?.boundary||null,focus:null});}
@@ -190,6 +194,7 @@
   const host=doc.querySelector('#alternate');
   if(!host)return;
   const on=terminal()&&current==='Messages';
+  saveTerminalDraft();
   if(!state.restoring)captureReading();
   host.classList.toggle('mrc-active',on);
   doc.body.classList.toggle('term-mrc',on);
@@ -261,7 +266,7 @@
    const form=el('form','mrc-input-line');form.id='mrc-form';form.autocomplete='off';
    const prompt=el('label','mrc-prompt');prompt.htmlFor='mrc-input';
    const input=el('input');input.id='mrc-input';input.type='text';input.spellcheck=false;
-   input.addEventListener('input',()=>updateCount());
+   input.addEventListener('input',()=>{updateCount();saveTerminalDraft();});
    // Tab completes the word before the cursor against saved contact names, then channel names (#), cycling on repeat.
    let cycle=null;input.addEventListener('input',()=>{cycle=null;});
    input.addEventListener('keydown',e=>{if(e.key!=='Tab'||e.shiftKey||e.altKey||e.ctrlKey){if(e.key!=='Tab')cycle=null;return;}
@@ -269,13 +274,14 @@
     if(!cycle){if(!word)return;const lower=word.replace(/^[@#]/,'').toLowerCase(),names=word.startsWith('#')?live.channels.map(c=>'#'+c.name):[...new Set(live.contacts.map(c=>display(c.key,c.name)))];
      const options=names.filter(n=>n.replace(/^#/,'').toLowerCase().startsWith(lower)).sort((a,b)=>a.localeCompare(b));if(!options.length)return;cycle={start:pos-word.length,options,i:-1,atStart:pos-word.length===0&&!word.startsWith('#')};}
     e.preventDefault();cycle.i=(cycle.i+1)%cycle.options.length;const pick=cycle.options[cycle.i]+(cycle.atStart?': ':' ');
-    const after=input.value.slice(pos);input.value=input.value.slice(0,cycle.start)+pick+after;const caret=cycle.start+pick.length;input.setSelectionRange(caret,caret);updateCount();});
+    const after=input.value.slice(pos);input.value=input.value.slice(0,cycle.start)+pick+after;const caret=cycle.start+pick.length;input.setSelectionRange(caret,caret);updateCount();saveTerminalDraft();});
    form.append(prompt,input);
    form.onsubmit=e=>{e.preventDefault();const list=windows();submit(input.value,activeWindow(list),input);};
    if(window.NightlinkTextArtUI?.attach)NightlinkTextArtUI.attach(form,input,null);
    state.form=form;
   }
   const form=state.form,field2=form.querySelector('#mrc-input');
+  restoreTerminalDraft(win);
   if(state.replyWindow&&state.replyWindow!==win.id){form.querySelector('.message-reply-context')?.remove();state.replyWindow=null;state.replySource=null;}
   form.querySelector('.mrc-prompt').textContent='['+win.label+'] ';
   field2.setAttribute('aria-label','Message or command for '+win.label);
@@ -316,13 +322,14 @@
  const HELP=['Commands:','/join #channel   switch to a radio channel window','/msg <name> <text>   send a direct message to a saved contact','/query <name>   open a direct message window','/me <text>   send "* '+'<your name> <text>"','/whois <name>   show a saved contact: type, route, signal, last advert','Tab   complete a nick or #channel','/help   show this help','Keys: alt+1..9 switch window · F9 main menu · F1 help'];
  async function submit(value,win,input){
   const text=value.trim();if(!text)return;
-  const send=async(target,body)=>{if(bytes(body)>LIMIT){localLine(win.id,'-!- Message is '+bytes(body)+' bytes; the limit is '+LIMIT+'.','mrc-error');render();return;}const owner=live.identity?.key,reply=state.replyWindow===conversationId(target)?state.replySource:null,before=new Set(live.messages.map(m=>m.id));await sendUIMessage({...target},body,()=>{const i=doc.querySelector('#mrc-input');if(i)i.value='';state.form?.querySelector('.message-reply-context')?.remove();state.replyWindow=null;state.replySource=null;});if(reply&&owner===live.identity?.key){const sent=live.messages.find(m=>!before.has(m.id)&&m.own&&m.conversation===conversationId(target)&&m.text===body.trim());if(sent){sent.localReply={...reply};saveHistory();}}};
+  const send=async(target,body)=>{if(bytes(body)>LIMIT){localLine(win.id,'-!- Message is '+bytes(body)+' bytes; the limit is '+LIMIT+'.','mrc-error');render();return;}const owner=live.identity?.key,id=conversationId(target),reply=state.replyWindow===id?state.replySource:null,before=new Set(live.messages.map(m=>m.id));await sendUIMessage({...target},body,()=>{if(draftStore().get(owner,id).trim()===body.trim())draftStore().clearIf(owner,id,body);const i=state.form?.querySelector('#mrc-input');if(state.draftOwner===owner&&state.draftId===id&&i?.value.trim()===body.trim()){i.value='';state.lastSavedDraft='';syncCardDraft('');state.form.querySelector('.message-reply-context')?.remove();state.replyWindow=null;state.replySource=null;}});if(reply&&owner===live.identity?.key){const sent=live.messages.find(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim());if(sent){sent.localReply={...reply};saveHistory();}}};
   if(!text.startsWith('/')){
    if(win.kind==='status'){localLine(win.id,'-!- (status) is not a chat window. Use /join #channel or /msg <name> <text>.','mrc-error');input.value='';render();return;}
    await send(win.target,text);render();return;
   }
   const [,cmd,rest='']=/^\/(\w*)\s*(.*)$/s.exec(text)||[];
   input.value='';
+  saveTerminalDraft();
   if(cmd==='help'){for(const h of HELP)localLine(win.id,'-!- '+h,'mrc-info');render();return;}
   if(cmd==='join'){const name=rest.trim().replace(/^#/,'').toLowerCase(),c=live.channels.find(c=>c.name.toLowerCase()===name);if(!c){localLine(win.id,'-!- No channel #'+name+' on this radio. Channels are configured on the radio.','mrc-error');render();return;}state.window=null;selectConversation({kind:'channel',...c});return;}
   if(cmd==='msg'||cmd==='query'){const r=resolveContact(rest.trim());if(!r){localLine(win.id,'-!- No unique saved contact matches "'+rest.trim().split(/\s+/)[0]+'".','mrc-error');render();return;}
@@ -344,6 +351,6 @@
  radioSession.addEventListener('contacts',()=>{if(current==='Messages')render();});
  window.addEventListener('nightlink-interface',render);
  function resumeReading(){if(!terminal()||current!=='Messages'||doc.hidden||!doc.hasFocus()||doc.querySelector('dialog[open]'))return;const win=activeWindow(windows()),session=readingSession(win.id);if(win.kind!=='status'&&unread(win.id)&&!session.position.manual){try{session.boundary=session.boundary||ensureAttention().unread(live.messages,win.id)[0]?.id;}catch{}if(session.boundary){session.focus=session.boundary;session.position={anchor:session.boundary,offset:24,manual:true,bottom:false};state.restoring=true;render();state.restoring=false;return;}}const log=doc.querySelector('#mrc-log');if(log){markRead(win,log);updateJump(log,win);}}
- window.addEventListener('focus',resumeReading);window.addEventListener('blur',()=>captureReading());window.addEventListener('beforeunload',()=>captureReading());doc.addEventListener('visibilitychange',()=>{if(doc.hidden)captureReading();else resumeReading();});
+ window.addEventListener('focus',resumeReading);window.addEventListener('blur',()=>{saveTerminalDraft();captureReading();});window.addEventListener('beforeunload',()=>{saveTerminalDraft();captureReading();});doc.addEventListener('visibilitychange',()=>{if(doc.hidden){saveTerminalDraft();captureReading();}else resumeReading();});
  window.NightlinkMRC={render,windows,jumpTo:jumpMessage,submit:value=>{const list=windows();return submit(value,activeWindow(list),doc.querySelector('#mrc-input')||{value:''});},switchTo:n=>switchTo(windows()[n-1])};
 })();
