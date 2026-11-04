@@ -8,7 +8,7 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
   window.nightlinkStartup={info:async()=>config,attempt:()=>new Promise(resolve=>window.__startupResolve=resolve),remember:async()=>{window.__remembered=true;},cancel:async()=>{},setEnabled:async()=>config};
  });
  await page.goto('http://127.0.0.1:4173');await page.waitForFunction(()=>window.__startupResolve&&window.NightlinkMRC);
- await page.evaluate(()=>{radioSession.request=async()=>{throw Error('radio blocked');};ble.state='connected';radioSession.dispatchEvent(new CustomEvent('sync',{detail:{state:'syncing'}}));const ch={kind:'channel',slot:0,id:'a'.repeat(24),name:'public'};live.channels=[ch];live.selected=ch;view('Messages');});
+ await page.evaluate(()=>{radioSession.request=async()=>{throw Error('radio blocked');};live.identity={key:'11'.repeat(32),name:'Test companion',frequency:910.525,txPower:20};ble.state='connected';radioSession.dispatchEvent(new CustomEvent('sync',{detail:{state:'syncing'}}));const ch={kind:'channel',slot:0,id:'a'.repeat(24),name:'public'};live.channels=[ch];live.selected=ch;view('Messages');});
  await page.fill('#mrc-input','keep this draft');await page.focus('#mrc-input');
  await page.evaluate(()=>{window.__startupResolve(true);radioSession.dispatchEvent(new CustomEvent('sync',{detail:{state:'ready'}}));});await page.waitForFunction(()=>window.__remembered);await page.waitForTimeout(50);
  assert.equal(await page.evaluate(()=>current),'Messages','startup sync must not return the user to the main menu');assert.equal(await page.inputValue('#mrc-input'),'keep this draft');assert.equal(await page.evaluate(()=>document.activeElement.id),'mrc-input');

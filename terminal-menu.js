@@ -14,6 +14,7 @@
   ['N','Nodes',()=>'who is on the mesh · '+live.contacts.length,()=>view('Nodes')],
   ['M','Map',()=>'network map, message paths',()=>view('Network map')],
   ['A','Activity',()=>'local event log',()=>view('Activity')],
+  ['O','Contact Book',()=>'offline people, locations, activity',()=>view('Contact Book')],
   ['B','Backup',()=>'export / restore',openBackup],
   ['?','Help',()=>'guide, about',()=>doc.querySelector('#open-help')?.click()],
   ['R','Radio',()=>'status, tools, counters',()=>view('Radio')],
