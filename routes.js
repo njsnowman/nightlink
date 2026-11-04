@@ -14,5 +14,16 @@
  function hopSummary(encoded){if(encoded==null)return'Route unknown';if(encoded===255)return'Direct route · hop count not reported';const size=(encoded>>6)+1,count=encoded&63;if(size>3||count*size>64)return'Invalid route data';return count===0?'0 hops · direct reception':count+' hop'+(count===1?'':'s');}
  function resolvePath(path,contacts){return path.map(hash=>({hash,candidates:contacts.filter(c=>c.type===2&&c.key.startsWith(hash)).map(c=>({key:c.key,name:c.name}))}));}
  function contactRoute(pathLength){if(pathLength==null||pathLength===255)return'Flood / no known path';if(!Number.isInteger(pathLength)||pathLength<0||pathLength>255)return'Route unknown';const size=(pathLength>>6)+1,count=pathLength&63;if(size>3||count*size>64)return'Invalid route data';return count===0?'Direct · 0 hops':count+(count===1?' hop':' hops');}
- root.MeshlineRoutes={parseRaw,decodeRoute,hopSummary,resolvePath,contactRoute};if(typeof module!=='undefined')module.exports=root.MeshlineRoutes;
+ // Distances describe stored map positions, never measured RF travel or missing hops.
+ function pathDistances(stops,receiver=null){
+  const valid=p=>p?.located&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&Math.abs(p.lat)<=85&&Math.abs(p.lon)<=180;
+  const points=[...stops,...(receiver?[receiver]:[])],segments=[];
+  for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i];if(!valid(a)||!valid(b)||b.index!==a.index+1)continue;
+   const rad=x=>x*Math.PI/180,lat=rad(b.lat-a.lat),lon=rad(b.lon-a.lon),h=Math.sin(lat/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(lon/2)**2;
+   segments.push({from:a.index,to:b.index,km:6371.0088*2*Math.asin(Math.sqrt(Math.min(1,Math.max(0,h))))});
+  }
+  return{segments,totalKm:segments.reduce((sum,s)=>sum+s.km,0)};
+ }
+ function formatDistance(km,unit='mi'){if(!Number.isFinite(km)||km<0)return'Unavailable';const value=unit==='km'?km:km/1.609344;return value.toFixed(value>0&&value<.1?2:1)+' '+(unit==='km'?'km':'mi');}
+ root.MeshlineRoutes={parseRaw,decodeRoute,hopSummary,resolvePath,contactRoute,pathDistances,formatDistance};if(typeof module!=='undefined')module.exports=root.MeshlineRoutes;
 })(globalThis);

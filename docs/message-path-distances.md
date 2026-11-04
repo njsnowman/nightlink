@@ -1,0 +1,7 @@
+# Message-path distance enhancements
+
+Tracks [#142](https://github.com/njsnowman/nightlink/issues/142). Preserve the approved street map, tiles, numbered markers, route lines and replay. Add a compact mapped-distance summary, mi/km selection, automatically decluttered segment labels and distance/advertisement details using the existing hop selection.
+
+Distances use the mean-Earth-radius great-circle calculation on the latest stored advertised coordinates. Only consecutive uniquely resolved located stops count; missing or ambiguous hops are never crossed. The last repeater-to-receiver segment is included when both locations are usable. Sender location and actual RF travel are not inferred. An unavailable total is shown when no segment can be measured. The selected unit is local presentation state.
+
+Validation: geometry tests cover gaps, invalid coordinates, coincident points, antimeridian and unit conversion. Message-path browser checks pass in Cards and Terminal with synthetic message/radio state, offline tile fixture, unit changes, popup details, no gap bridges, label decluttering, unknown/direct/outgoing states, cleanup and 1440/920/760/560 layouts. Terminal accessibility audit passed 19 screens. Full unit suite: 384 passed, 1 skipped (existing Python wrapper). No physical-radio validation or radio commands issued. No downloadable candidate prepared yet.
