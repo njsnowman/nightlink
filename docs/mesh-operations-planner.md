@@ -4,6 +4,8 @@ Tracks [#153](https://github.com/njsnowman/nightlink/issues/153). Primary app, b
 
 Open **Mesh Planner [E]** from the terminal main menu or **Operations** in Cards navigation. The operation library supports search, lifecycle filters, blank/field-deployment/organized-net templates, complete-plan backups and validated imports. Templates seed editable preparation tasks and equipment requirements, without inventing operators or radio data.
 
+RF Planning adds a map-centered engineering workbench; see [RF methods, terrain input and compatibility](rf-planning.md).
+
 ## Workspace
 
 - Overview: scheduled period and time zone, planning completeness checks, manual check-in count, task and equipment progress, next actions, planned timeline and recent local changes.
