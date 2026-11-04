@@ -6,9 +6,23 @@
  'use strict';
  if(typeof view!=='function'||!window.NightlinkInterface)return;
  const doc=document,MAX_ROWS=300,LIMIT=133;
- const state={window:null,local:new Map(),sendError:'',replyWindow:null};
+ const state={window:null,local:new Map(),sendError:'',replyWindow:null,readingOwner:null,readingWin:null,readSessions:new Map(),restoring:false};
  const terminal=()=>NightlinkInterface.isTerminal();
  const el=(tag,cls,text)=>{const n=doc.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
+ function readingSession(id){
+  const owner=live.identity?.key||'local';if(state.readingOwner!==owner){state.readSessions.clear();state.readingOwner=owner;state.readingWin=null;}
+  if(!state.readSessions.has(id)){let position;try{position=ensureAttention().position(id);}catch{}state.readSessions.set(id,{position:position||{bottom:true,manual:false},boundary:position?.boundary||null,focus:null});}
+  return state.readSessions.get(id);
+ }
+ function latestVisible(log,id){const last=live.messages.filter(m=>m.conversation===id).at(-1);return log.scrollHeight-log.scrollTop-log.clientHeight<24&&(!last||log.querySelector('[data-message-id="'+CSS.escape(last.id)+'"]'));}
+ function captureReading(log=doc.querySelector('#mrc-log')){
+  if(!log?.isConnected||!log.clientHeight||state.restoring||!state.readingWin)return;
+  const session=readingSession(state.readingWin),rect=log.getBoundingClientRect(),anchor=[...log.querySelectorAll('[data-message-id]')].find(row=>row.getBoundingClientRect().bottom>rect.top+1),bottom=!!latestVisible(log,state.readingWin);
+  session.position={anchor:anchor?.dataset.messageId,offset:anchor?anchor.getBoundingClientRect().top-rect.top:0,bottom,manual:!bottom,boundary:session.boundary};
+  try{ensureAttention().position(state.readingWin,session.position);}catch{}
+ }
+ function updateJump(log,win){const button=log.parentElement?.querySelector('.mrc-jump-latest');if(!button)return;const count=unread(win.id);button.hidden=!!latestVisible(log,win.id);button.textContent='Jump to latest'+(count?' · '+count+' new':'')+' ↓';}
+ function jumpLatest(win){const session=readingSession(win.id);session.focus=null;session.boundary=null;session.position={bottom:true,manual:false};try{ensureAttention().position(win.id,session.position);}catch{}state.restoring=true;render();state.restoring=false;}
  // This panel stays connected during message renders so incoming chat cannot reload the live map.
  function mapPanel(){
   if(state.mapPanel)return state.mapPanel;
@@ -159,12 +173,15 @@
   const host=doc.querySelector('#alternate');
   if(!host)return;
   const on=terminal()&&current==='Messages';
+  if(!state.restoring)captureReading();
   host.classList.toggle('mrc-active',on);
   doc.body.classList.toggle('term-mrc',on);
   let root=doc.querySelector('#mrc');
   if(!on){stopMap();root?.remove();return;}
   const focused=doc.activeElement===state.form?.querySelector('#mrc-input'),log=doc.querySelector('#mrc-log'),atEnd=!log||log.scrollHeight-log.scrollTop-log.clientHeight<24,keepTop=log?.scrollTop;
-  const list=windows(),win=activeWindow(list),index=list.indexOf(win)+1;
+  const list=windows(),win=activeWindow(list),index=list.indexOf(win)+1,changed=state.readingWin!==win.id,session=readingSession(win.id);
+  state.readingWin=win.id;
+  if(!session.boundary&&(changed||session.position.manual||doc.hidden)){try{session.boundary=ensureAttention().unread(live.messages,win.id)[0]?.id||null;}catch{}}
   if(!root){root=el('section');root.id='mrc';root.className='mrc';root.setAttribute('aria-label','Mesh Relay Chat');}
   for(const child of [...root.children])if(child!==state.mapPanel)child.remove();
   if(!state.mapPanel?.isConnected)root.append(mapPanel());
@@ -192,7 +209,8 @@
   const scroll=el('div','mrc-log');scroll.id='mrc-log';scroll.setAttribute('role','log');scroll.setAttribute('aria-label','Scrollback '+win.label);scroll.tabIndex=0;
   if(win.kind==='status')statusLines(scroll);
   else{
-   const rows=live.messages.filter(m=>m.conversation===win.id).slice(-MAX_ROWS);
+   const all=live.messages.filter(m=>m.conversation===win.id),focus=session.focus||(session.position.manual?session.position.anchor:null);
+   const focusIndex=focus?all.findIndex(m=>m.id===focus):-1,start=focusIndex>=0?Math.max(0,Math.min(all.length-MAX_ROWS,focusIndex-30)):Math.max(0,all.length-MAX_ROWS),rows=all.slice(start,start+MAX_ROWS);
    if(!rows.length){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(nowSeconds())),el('span','mrc-dim','-!- No messages in '+win.label+' yet.'));scroll.append(line);
     // Decorative antenna for an empty window; the line above carries the meaning.
     const art=el('pre','mrc-empty-art');art.setAttribute('aria-hidden','true');
@@ -205,10 +223,11 @@
    else banner('Direct messages with '+win.label.slice(1)+'');
    banner(rows.length+' stored message'+(rows.length===1?'':'s')+' · '+live.contacts.length+' nodes known');
    let day='';
-   for(const m of rows){const d=new Date(m.timestamp*1000).toDateString();if(day&&d!==day){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));scroll.append(line);}day=d;scroll.append(messageLine(m));}
+   for(const m of rows){const d=new Date(m.timestamp*1000).toDateString();if(day&&d!==day){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));scroll.append(line);}day=d;if(m.id===session.boundary){const divider=el('div','mrc-new-messages','── New messages ──');divider.setAttribute('role','separator');divider.setAttribute('aria-label','New messages');scroll.append(divider);}scroll.append(messageLine(m));}
   }
   for(const l of state.local.get(win.id)||[]){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(l.t)),el('span',l.cls,l.text));scroll.append(line);}
   body.append(side,scroll);root.append(body);
+  if(win.kind!=='status'){const jump=el('button','mrc-jump-latest','Jump to latest ↓');jump.type='button';jump.hidden=true;jump.onclick=()=>jumpLatest(win);body.append(jump);scroll.addEventListener('scroll',()=>{if(state.restoring||!scroll.isConnected)return;captureReading(scroll);markRead(win,scroll);updateJump(scroll,win);},{passive:true});}
   // Status bar
   const status=el('div','mrc-statusbar');status.setAttribute('role','status');
   const field=(...parts)=>{const s=el('span','mrc-field');s.append('[',...parts,']');status.append(s,' ');};
@@ -248,18 +267,21 @@
   if(!root.isConnected)host.prepend(root);
   syncMap();
   if(focused&&doc.activeElement!==field2)field2.focus();
-  const sl=doc.querySelector('#mrc-log');if(atEnd)sl.scrollTop=sl.scrollHeight;else sl.scrollTop=keepTop;
+  const sl=doc.querySelector('#mrc-log');state.restoring=true;
+  const anchorId=session.position.manual?session.position.anchor:changed&&session.boundary?session.boundary:session.position.anchor,anchor=anchorId&&sl.querySelector('[data-message-id="'+CSS.escape(anchorId)+'"]');
+  if((session.position.manual||changed&&session.boundary)&&anchor){sl.scrollTop+=anchor.getBoundingClientRect().top-sl.getBoundingClientRect().top-(session.position.manual?session.position.offset||0:24);}
+  else if(session.position.bottom||atEnd)sl.scrollTop=sl.scrollHeight;else sl.scrollTop=keepTop||0;
+  state.restoring=false;captureReading(sl);updateJump(sl,win);
   markRead(win,sl);
  }
  function updateCount(){const input=state.form?.querySelector('#mrc-input'),count=state.count;if(!input||!count)return;const v=input.value,n=v.startsWith('/')?bytes(commandPayload(v)||''):bytes(v);count.textContent=String(n);count.classList.toggle('mrc-over',n>LIMIT);}
  function markRead(win,log){
-  if(win.kind==='status'||typeof ensureAttention!=='function'||doc.hidden)return;
-  if(log.scrollHeight-log.scrollTop-log.clientHeight>24)return;
-  const last=live.messages.filter(m=>m.conversation===win.id).at(-1);
+  if(win.kind==='status'||typeof ensureAttention!=='function'||doc.hidden||!doc.hasFocus()||doc.querySelector('dialog[open]'))return;
+  const rect=log.getBoundingClientRect(),last=[...log.querySelectorAll('[data-message-id]')].filter(row=>row.getBoundingClientRect().top<rect.bottom&&row.getBoundingClientRect().bottom<=rect.bottom+2).at(-1);
   if(!last||!unread(win.id))return;
-  try{ensureAttention().mark(live.messages,win.id,last.id);}catch{}
+  try{ensureAttention().mark(live.messages,win.id,last.dataset.messageId);}catch{}
   if(typeof refreshUnreadBadges==='function')refreshUnreadBadges();
-  queueMicrotask(render);
+  const badge=doc.querySelector('.mrc-window[aria-current="true"] .mrc-unread');if(badge){const count=unread(win.id);if(count)badge.textContent=count;else badge.remove();}
  }
  // Commands: payload text a command would send (for the byte counter), or null.
  function commandPayload(value){const m=/^\/(\w+)\s*(.*)$/s.exec(value);if(!m)return value;const [,cmd,rest]=m;if(cmd==='me')return '* '+own()+' '+rest;if(cmd==='msg'){const r=resolveContact(rest);return r?r.text:'';}return '';}

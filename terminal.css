@@ -464,3 +464,8 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-peer.mrc-n
 html:root:root:root:root:root[data-interface=terminal] body :is(.mrc-nick-own,.mrc-own-mark){color:var(--t-yellow)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-line.mrc-mention .mrc-text{color:var(--t-white)!important}
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .own .sender>span{color:var(--t-yellow)!important}
+/* Catch-up controls appear only while reading earlier messages; map geometry is unchanged. */
+html:root:root:root:root:root[data-interface=terminal] body .mrc-body{position:relative}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-new-messages{color:var(--t-yellow);border-top:1px solid var(--t-blue);padding:4px 0;margin:8px 0;font-size:13px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-jump-latest{position:absolute;right:20px;bottom:10px;background:var(--t-blue)!important;color:var(--t-white)!important;border:1px solid var(--t-bright-cyan)!important;border-radius:0;min-height:30px;padding:3px 9px;font-size:13px;z-index:5}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-jump-latest[hidden]{display:none!important}
