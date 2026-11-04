@@ -15,6 +15,7 @@
   ['M','Map',()=>'network map, message paths',()=>view('Network map')],
   ['A','Activity',()=>'local event log',()=>view('Activity')],
   ['O','Contact Book',()=>'offline people, locations, activity',()=>view('Contact Book')],
+  ['E','Mesh Planner',()=>'operations, operators, sites, preparation',()=>view('Operations')],
   ['B','Backup',()=>'export / restore',openBackup],
   ['?','Help',()=>'guide, about',()=>doc.querySelector('#open-help')?.click()],
   ['R','Radio',()=>'status, tools, counters',()=>view('Radio')],
@@ -53,7 +54,7 @@
   node.append(dl);top.append(brand,node);root.append(top);
   // The logo carries its own speed lines; no separate band under it.
   // Main menu
-  const menu=frame('MAIN MENU','bbs-menu term-frame-double'),grid=el('div','bbs-menu-grid');
+  const menu=frame('MAIN MENU','bbs-menu term-frame-double'),grid=el('div','bbs-menu-grid');grid.dataset.rows=String(Math.ceil(ITEMS.length/2));
   for(const [key,label,desc,action] of ITEMS){const b=el('button','bbs-item');b.type='button';b.dataset.bbsKey=key;b.setAttribute('aria-keyshortcuts',key==='?'?'Shift+Slash':key);
    const hk=el('span','term-hotkey');hk.append(el('span','term-hotkey-bracket','['),el('span','term-hotkey-key',key),el('span','term-hotkey-bracket',']'));
    b.append(hk,el('span','bbs-item-label',label),el('span','bbs-item-desc',desc()));b.onclick=()=>action();grid.append(b);}
