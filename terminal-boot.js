@@ -9,7 +9,7 @@
  const core={KEY,SOUND_KEY,SOUND_FILE,enabled,setEnabled,soundEnabled};
  if(typeof module==='object'&&module.exports){module.exports=core;return;}
  const doc=root.document;root.NightlinkBootScreen=core;
- if(typeof view==='function'){const previous=view;view=function(name){previous.apply(this,arguments);if(name!=='Settings')return;
+ function installSettings(){if(typeof view==='function'){const previous=view;view=function(name){previous.apply(this,arguments);if(name!=='Settings')return;
   const grid=doc.querySelector('.settings-grid');if(!grid||grid.querySelector('#boot-screen-setting'))return;
   const label=doc.createElement('label');label.className='accent-setting interface-setting';label.id='boot-screen-setting';
   const box=doc.createElement('input');box.type='checkbox';box.id='boot-screen';box.checked=enabled(root.localStorage);box.onchange=()=>setEnabled(root.localStorage,box.checked);
@@ -19,7 +19,8 @@
   audioBox.onchange=()=>{try{root.localStorage.setItem(SOUND_KEY,audioBox.checked?'on':'off');}catch{}};
   const audioHint=doc.createElement('small');audioHint.textContent='Modem connection transforms into a laser shot. On by default; explicit sound-off and quiet hours are respected.';
   audioLabel.append(audioBox,' Modem-to-laser startup sound',audioHint);label.after(audioLabel);
- };}
+ };}}
+ if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',installSettings,{once:true});else installSettings();
  let played=false;try{played=root.sessionStorage?.getItem(KEY+'.played')==='1';}catch{}
  const reduced=root.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
  if(played||root.navigator?.webdriver||!enabled(root.localStorage))return;
@@ -64,7 +65,7 @@
  function finish(){if(done||!audioDone||(!visualDone&&!requestedSkip))return;done=true;timers.forEach(clearTimeout);clearInterval(watchdog);audio?.pause();
   if(typeof radioSession==='object')radioSession.removeEventListener('sync',radioState);if(typeof ble==='object')ble.removeEventListener('state',radioState);
   doc.removeEventListener('keydown',input,true);doc.removeEventListener('pointerdown',input,true);screen.classList.add('boot-out');setTimeout(()=>screen.remove(),reduced?0:180);}
- function start(){doc.body.append(screen);radioState();if(typeof radioSession==='object')radioSession.addEventListener('sync',radioState);if(typeof ble==='object')ble.addEventListener('state',radioState);
+ function start(){radioState();if(typeof radioSession==='object')radioSession.addEventListener('sync',radioState);if(typeof ble==='object')ble.addEventListener('state',radioState);
   const title=line('NIGHTLINK · MeshCore companion terminal','boot-title');
   try{root.meshlineUpdates?.info?.().then(info=>{if(info?.version&&!done)title.textContent='NIGHTLINK v'+info.version+' · MeshCore companion terminal';}).catch(()=>{});}catch{}
   if(reduced){line('LOCAL TERMINAL · MODEM → LASER','boot-info');if(root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));progress.textContent='Local console ready';visualDone=true;}
@@ -74,5 +75,7 @@
   for(let i=1;i<=16;i++)later(150+i*170,()=>{progress.textContent='['+'▓'.repeat(i)+'░'.repeat(16-i)+'] '+(i<7?'Dial-up introduction':i<14?'Terminal handshake':'Local console ready');modem.textContent='┌─ LOCAL TERMINAL ─┐  '+(i%2?'░▒▓══════▓▒░':'▓▒░══════░▒▓')+'  ┌─ NIGHTLINK ─┐\n└──────────────────┘                 └─────────────┘';});
   later(2800,()=>{if(root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));});later(4100,()=>{visualDone=true;finish();});}
   doc.addEventListener('keydown',input,true);doc.addEventListener('pointerdown',input,true);playIntro();finish();}
- if(doc.body)start();else doc.addEventListener('DOMContentLoaded',start);
+ // Mount before app markup can paint; defer media/status until its settings and globals exist.
+ if(doc.body)doc.body.prepend(screen);
+ if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })(typeof window==='object'?window:globalThis);
