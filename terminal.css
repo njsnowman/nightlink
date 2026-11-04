@@ -487,3 +487,5 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-find input{flex
 html:root:root:root:root:root[data-interface=terminal] body .mrc-find-status{min-width:76px;text-align:right;font:13px/1.5 Consolas,monospace;color:var(--t-grey)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-find-current{outline:1px solid var(--t-bright-cyan);outline-offset:1px}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-find-match .mrc-text{ text-decoration:underline;text-decoration-color:var(--t-bright-blue);text-underline-offset:3px}
+
+html:root:root:root:root:root[data-interface=terminal] body .bbs-menu-grid[data-rows="7"]{grid-template-rows:repeat(7,auto)}

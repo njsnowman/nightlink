@@ -50,6 +50,12 @@
     "terminal-boot.js",
     "startup-modem-laser.wav",
     "terminal-sound.js",
-    "corescope-chat-desktop.cjs"
+    "corescope-chat-desktop.cjs",
+    "contact-book.js",
+    "contact-book-ui.js",
+    "contact-book.css",
+    "operations.js",
+    "operations-ui.js",
+    "operations.css"
   ]
 }
