@@ -9,8 +9,7 @@
  const core={KEY,SOUND_KEY,SOUND_FILE,enabled,setEnabled,soundEnabled};
  if(typeof module==='object'&&module.exports){module.exports=core;return;}
  const doc=root.document;root.NightlinkBootScreen=core;
- if(!root.NightlinkInterface?.isTerminal())return;
- if(typeof view==='function'){const previous=view;view=function(name){previous.apply(this,arguments);if(name!=='Settings'||!NightlinkInterface.isTerminal())return;
+ if(typeof view==='function'){const previous=view;view=function(name){previous.apply(this,arguments);if(name!=='Settings')return;
   const grid=doc.querySelector('.settings-grid');if(!grid||grid.querySelector('#boot-screen-setting'))return;
   const label=doc.createElement('label');label.className='accent-setting interface-setting';label.id='boot-screen-setting';
   const box=doc.createElement('input');box.type='checkbox';box.id='boot-screen';box.checked=enabled(root.localStorage);box.onchange=()=>setEnabled(root.localStorage,box.checked);

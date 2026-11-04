@@ -1,5 +1,5 @@
 /* Terminal interface (default, issue #131). VGA 16-color tokens and shared terminal components.
-   Every rule is scoped to html[data-interface=terminal]; cards mode is unaffected. System monospace fonts only. */
+   Page rules are scoped to html[data-interface=terminal]; the ANSI startup overlay is shared. System monospace fonts only. */
 html[data-interface=terminal]{color-scheme:dark;
  --t-black:#000000;--t-blue:#0000aa;--t-green:#00aa00;--t-cyan:#00aaaa;--t-red:#aa0000;--t-magenta:#aa00aa;--t-brown:#aa5500;--t-grey:#aaaaaa;
  --t-dark-grey:#555555;--t-bright-blue:#5555ff;--t-bright-green:#55ff55;--t-bright-cyan:#55ffff;--t-bright-red:#ff5555;--t-bright-magenta:#ff55ff;--t-yellow:#ffff55;--t-white:#ffffff;
@@ -378,26 +378,28 @@ html:root:root:root:root:root[data-interface=terminal] body main>header .connect
 html:root:root:root:root:root[data-interface=terminal] body main>header .connection-confidence-evidence::after{content:' ·';color:var(--t-grey)}
 html:root:root:root:root:root[data-interface=terminal] body main>header :is(#connection,#connection .header-control-label,#connection .header-control-label *){max-width:none !important;width:auto !important;overflow:visible !important;text-overflow:clip !important;flex:0 0 auto !important}html:root:root:root:root:root[data-interface=terminal] body main>header #connection{flex:0 0 auto !important}
 html:root:root:root:root:root[data-interface=terminal] body main>header .header-control-label,html:root:root:root:root:root[data-interface=terminal] body main>header .header-control-label *{padding:0 !important;min-width:0 !important}html:root:root:root:root:root[data-interface=terminal] body main>header #propagation-indicator{opacity:1 !important}html:root:root:root:root:root[data-interface=terminal] body main>header #propagation-indicator .header-control-label{color:var(--t-grey) !important}
-/* Start-up screen (terminal-boot.js). */
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen{position:fixed;inset:0;z-index:1000;background:#000;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto;transition:opacity .18s linear}
-html:root:root:root:root:root[data-interface=terminal] body .boot-frame{width:min(100%,960px);border:3px double var(--t-bright-blue);padding:0 20px 12px;box-sizing:border-box}
-html:root:root:root:root:root[data-interface=terminal] body .boot-bar{background:var(--t-blue);color:var(--t-white);font-weight:700;margin:0 -20px 12px;padding:4px 12px}
-html:root:root:root:root:root[data-interface=terminal] body .boot-note{color:var(--t-grey);font-size:13px;margin:0 0 12px}
-html:root:root:root:root:root[data-interface=terminal] body .boot-modem{color:var(--t-bright-cyan);font-size:14px;line-height:20px;white-space:pre-wrap;margin:0 0 12px}
-html:root:root:root:root:root[data-interface=terminal] body .boot-command{color:var(--t-white)}
-html:root:root:root:root:root[data-interface=terminal] body .boot-progress{color:var(--t-bright-cyan);font-size:14px;margin:10px 0 6px}
-html:root:root:root:root:root[data-interface=terminal] body .boot-radio{font-size:14px;margin:0 0 8px}
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-logo{min-height:0;height:92px;margin:8px 0 12px;overflow:hidden}
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-logo .term-logo-svg{max-height:92px}
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen.boot-out{opacity:0}
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-log{margin:0;min-height:160px;color:var(--t-grey);font-size:14px;line-height:20px;white-space:pre-wrap}
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-title{color:var(--t-white);font-weight:700}
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-ok{color:var(--t-bright-green)}html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-warn{color:var(--t-yellow)}html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-info{color:var(--t-bright-cyan)}
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-logo .term-logo-svg{width:min(100%,960px);height:auto}
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-skip{margin:auto 0 0;color:var(--t-grey)}
-html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-line:last-of-type::after{content:'▌';color:var(--t-grey)}
-@media(max-height:700px){html:root:root:root:root:root[data-interface=terminal] body .boot-frame{padding:0 12px 8px}html:root:root:root:root:root[data-interface=terminal] body .boot-bar{margin:0 -12px 6px}html:root:root:root:root:root[data-interface=terminal] body .boot-note{margin-bottom:6px;font-size:12px}html:root:root:root:root:root[data-interface=terminal] body .boot-modem{font-size:12px;line-height:16px;margin-bottom:6px}html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-log{min-height:144px;font-size:13px;line-height:18px}html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-logo{height:60px;margin:4px 0 6px}html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen .boot-logo .term-logo-svg{max-height:60px}}
+/* Shared ANSI startup presentation (terminal-boot.js), independent of selected interface. */
+html:root:root:root:root:root body #term-boot-screen{--t-bright-blue:#5555ff;--t-blue:#0000aa;--t-white:#ffffff;--t-grey:#aaaaaa;--t-bright-cyan:#55ffff;--t-bright-green:#55ff55;--t-yellow:#ffff55;font-family:'Cascadia Mono',Consolas,'Lucida Console',monospace;font-size:14px;line-height:20px;color:var(--t-grey);position:fixed;inset:0;z-index:1000;background:#000;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto;transition:opacity .18s linear}
+html:root:root:root:root:root body #term-boot-screen .boot-frame{width:min(100%,960px);border:3px double var(--t-bright-blue);padding:0 20px 12px;box-sizing:border-box}
+html:root:root:root:root:root body #term-boot-screen .boot-bar{background:var(--t-blue);color:var(--t-white);font-weight:700;margin:0 -20px 12px;padding:4px 12px}
+html:root:root:root:root:root body #term-boot-screen .boot-note{color:var(--t-grey);font-size:13px;margin:0 0 12px}
+html:root:root:root:root:root body #term-boot-screen .boot-modem{color:var(--t-bright-cyan);font-size:14px;line-height:20px;white-space:pre-wrap;margin:0 0 12px}
+html:root:root:root:root:root body #term-boot-screen .boot-command{color:var(--t-white)}
+html:root:root:root:root:root body #term-boot-screen .boot-progress{color:var(--t-bright-cyan);font-size:14px;margin:10px 0 6px}
+html:root:root:root:root:root body #term-boot-screen .boot-radio{font-size:14px;margin:0 0 8px}
+html:root:root:root:root:root body #term-boot-screen .boot-logo{min-height:0;height:92px;margin:8px 0 12px;overflow:hidden}
+html:root:root:root:root:root body #term-boot-screen .boot-logo .term-logo-svg{max-height:92px}
+html:root:root:root:root:root body #term-boot-screen.boot-out{opacity:0}
+html:root:root:root:root:root body #term-boot-screen .boot-log{margin:0;min-height:160px;color:var(--t-grey);font-size:14px;line-height:20px;white-space:pre-wrap}
+html:root:root:root:root:root body #term-boot-screen .boot-title{color:var(--t-white);font-weight:700}
+html:root:root:root:root:root body #term-boot-screen .boot-ok{color:var(--t-bright-green)}html:root:root:root:root:root body #term-boot-screen .boot-warn{color:var(--t-yellow)}html:root:root:root:root:root body #term-boot-screen .boot-info{color:var(--t-bright-cyan)}
+html:root:root:root:root:root body #term-boot-screen .boot-logo .term-logo-svg{width:min(100%,960px);height:auto}
+html:root:root:root:root:root body #term-boot-screen .boot-skip{margin:auto 0 0;color:var(--t-grey)}
+html:root:root:root:root:root body #term-boot-screen .boot-line:last-of-type::after{content:'▌';color:var(--t-grey)}
+@media(max-height:700px){html:root:root:root:root:root body #term-boot-screen .boot-frame{padding:0 12px 8px}html:root:root:root:root:root body #term-boot-screen .boot-bar{margin:0 -12px 6px}html:root:root:root:root:root body #term-boot-screen .boot-note{margin-bottom:6px;font-size:12px}html:root:root:root:root:root body #term-boot-screen .boot-modem{font-size:12px;line-height:16px;margin-bottom:6px}html:root:root:root:root:root body #term-boot-screen .boot-log{min-height:144px;font-size:13px;line-height:18px}html:root:root:root:root:root body #term-boot-screen .boot-logo{height:60px;margin:4px 0 6px}html:root:root:root:root:root body #term-boot-screen .boot-logo .term-logo-svg{max-height:60px}}
 html:root:root:root:root:root[data-interface=terminal] body main>header :is(.header-control,#internet-status)[hidden]{display:none !important}
+html:root:root:root:root:root body #term-boot-screen *{font-family:inherit!important;letter-spacing:0!important;border-radius:0!important;text-shadow:none!important;box-shadow:none!important}
+
 /* Detached DM (BBS pass): MRC-style lines — HH:MM <nick> text, hop and delivery as dim follow-ups. CSS only. */
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .dm-bubble{display:block !important;padding:2px 10px !important;margin:0 !important;border:0 !important;background:#000 !important;box-shadow:none !important}
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .dm-bubble:hover{background:#00002a !important}

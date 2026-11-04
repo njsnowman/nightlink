@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Restore the approved ANSI logo and modem-to-laser startup sequence in Cards as well as Terminal. Expose screen/sound settings in both interfaces and retain the audio-ended dismissal gate. Tracks [#159](https://github.com/njsnowman/nightlink/issues/159); [candidate record](releases/0.8.28-rc.26.md).
+
 - Add explicit cached terrain retrieval, shared-assumption repeater comparison, sampled Bullington coverage, antenna-height optimization, immutable field-model comparisons and site deployment packets. Preserve Operations during background synchronization. Upgrade planner storage/backups to version 3. Tracks [#157](https://github.com/njsnowman/nightlink/issues/157); [candidate record](releases/0.8.28-rc.25.md).
 
 
