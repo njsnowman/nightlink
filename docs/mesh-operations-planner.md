@@ -6,6 +6,18 @@ Open **Mesh Planner [E]** from the terminal main menu or **Operations** in Cards
 
 RF Planning adds a map-centered engineering workbench; see [RF methods, terrain input and compatibility](rf-planning.md).
 
+## Quick start (rc.28)
+
+An operation is a saved local plan. For a radio study, create a blank operation; you do not need a team, event schedule or packing list.
+
+1. In Overview, choose **Add first location**, or open **Sites & Map**. Save the two places where you may put radios.
+2. Choose **Plan a radio link**. RF Planning shows one next step: enter radio/antenna details for each endpoint, then create the path between them.
+3. Choose **Open terrain tools** when prompted. Review the provider/source information, then explicitly download terrain or use cached data. Opening the tools does not download automatically.
+4. Open path analysis to inspect the terrain, assumptions and sampled clearance. The additional coverage, comparison and height tools remain in their expandable sections. These are estimates, not measured coverage.
+5. For a team deployment, use **People & tasks** to add operators, channels/fallback instructions and checklists. Use **Records** for the journal and printable briefing. The Overview action rows take you directly to each section.
+
+Navigation groups are **Plan** (Overview, Sites & Map, RF Planning), **People & tasks** (Team, Communications, Tasks & Kit), and **Records** (Journal, Briefing). **Change status** replaces the former phase wording. Optional sections stay optional; empty progress ratios are hidden. Existing saved plans and RF inputs are retained.
+
 ## Workspace
 
 - Overview: scheduled period and time zone, planning completeness checks, manual check-in count, task and equipment progress, next actions, planned timeline and recent local changes.
