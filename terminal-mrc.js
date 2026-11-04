@@ -6,7 +6,7 @@
  'use strict';
  if(typeof view!=='function'||!window.NightlinkInterface)return;
  const doc=document,MAX_ROWS=300,LIMIT=133;
- const state={window:null,local:new Map(),sendError:''};
+ const state={window:null,local:new Map(),sendError:'',replyWindow:null};
  const terminal=()=>NightlinkInterface.isTerminal();
  const el=(tag,cls,text)=>{const n=doc.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
  // This panel stays connected during message renders so incoming chat cannot reload the live map.
@@ -96,6 +96,13 @@
    line.append(nick(name,m.own?'mrc-nick-own':'mrc-nick-peer'));
    if(window.NightlinkAnsiText?.hasCodes(text))NightlinkAnsiText.render(body,text);else body.textContent=text;
   }
+  if(window.NightlinkMessageActions)NightlinkMessageActions.bind(body,()=>{
+   const input=state.form?.querySelector('#mrc-input');if(!input)return;
+   const draft=input.value;if(state.form.querySelector('.message-reply-context')&&state.replyPrefix&&draft.startsWith(state.replyPrefix))input.value=draft.slice(state.replyPrefix.length);
+   const note=NightlinkMessageActions.reply(input,m,m.own?'You':name,live.selected?.kind==='channel');
+   if(note){state.form.querySelector('.message-reply-context')?.remove();note.setAttribute('role','status');state.form.prepend(note);state.replyWindow=m.conversation||conversationId(live.selected);state.replyPrefix=!m.own&&live.selected?.kind==='channel'?'@['+String(name).replace(/[\[\]\r\n]/g,'').trim()+'] ':null;}
+   else{input.value=draft;updateCount();}
+  });
   line.append(body);
   // Mentions of your own name (as @name, [name] or the plain word) highlight the line, as IRC clients do.
   if(!m.own&&live.identity?.name){const n=live.identity.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');if(new RegExp('(^|[^\\w])@?\\[?'+n+'\\]?($|[^\\w])','i').test(text))line.classList.add('mrc-mention');}
@@ -231,6 +238,7 @@
    state.form=form;
   }
   const form=state.form,field2=form.querySelector('#mrc-input');
+  if(state.replyWindow&&state.replyWindow!==win.id){form.querySelector('.message-reply-context')?.remove();state.replyWindow=null;}
   form.querySelector('.mrc-prompt').textContent='['+win.label+'] ';
   field2.setAttribute('aria-label','Message or command for '+win.label);
   const configured=win.kind!=='status'&&(target.kind==='channel'?live.channels.some(c=>c.slot===target.slot&&c.id===target.id):live.contacts.some(c=>c.key===target.key));
@@ -266,7 +274,7 @@
  const HELP=['Commands:','/join #channel   switch to a radio channel window','/msg <name> <text>   send a direct message to a saved contact','/query <name>   open a direct message window','/me <text>   send "* '+'<your name> <text>"','/whois <name>   show a saved contact: type, route, signal, last advert','Tab   complete a nick or #channel','/help   show this help','Keys: alt+1..9 switch window · F9 main menu · F1 help'];
  async function submit(value,win,input){
   const text=value.trim();if(!text)return;
-  const send=(target,body)=>{if(bytes(body)>LIMIT){localLine(win.id,'-!- Message is '+bytes(body)+' bytes; the limit is '+LIMIT+'.','mrc-error');render();return;}return sendUIMessage({...target},body,()=>{const i=doc.querySelector('#mrc-input');if(i)i.value='';});};
+  const send=(target,body)=>{if(bytes(body)>LIMIT){localLine(win.id,'-!- Message is '+bytes(body)+' bytes; the limit is '+LIMIT+'.','mrc-error');render();return;}return sendUIMessage({...target},body,()=>{const i=doc.querySelector('#mrc-input');if(i)i.value='';state.form?.querySelector('.message-reply-context')?.remove();state.replyWindow=null;});};
   if(!text.startsWith('/')){
    if(win.kind==='status'){localLine(win.id,'-!- (status) is not a chat window. Use /join #channel or /msg <name> <text>.','mrc-error');input.value='';render();return;}
    await send(win.target,text);render();return;

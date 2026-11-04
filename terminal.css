@@ -455,3 +455,7 @@ html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[d
 @media(max-width:699px){html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] #dialog-body{overflow-y:auto}html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-workspace{min-height:650px}}
 html:root:root:root:root:root[data-interface=terminal] body .route-map-dialog button.message-hop-card[aria-pressed=true]{background:var(--t-blue)!important;border-color:var(--t-bright-cyan)!important}
 html:root:root:root:root:root[data-interface=terminal] body .route-map-dialog button.message-hop-card[aria-pressed=true] :is(strong,.message-hop-state,small){color:var(--t-white)!important}
+/* Reply stays inside the persistent composer, separate from hop/map actions. */
+html:root:root:root:root:root[data-interface=terminal] body .mrc-input-line{flex-wrap:wrap}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-input-line>.message-reply-context{flex-basis:100%;min-width:0;background:var(--t-black);color:var(--t-bright-cyan);border-left:2px solid var(--t-blue);padding:2px 6px;margin:2px 0;font:13px/1.5 Consolas,monospace}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-text.message-reply-target:focus-visible{outline:2px solid var(--t-bright-cyan);outline-offset:2px}
