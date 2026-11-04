@@ -50,6 +50,9 @@
     "terminal-boot.js",
     "startup-modem-laser.wav",
     "terminal-sound.js",
-    "corescope-chat-desktop.cjs"
+    "corescope-chat-desktop.cjs",
+    "queen-city-logo-art.js",
+    "queen-city-showcase.js",
+    "queen-city-showcase.css"
   ]
 }

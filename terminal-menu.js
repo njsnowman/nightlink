@@ -22,6 +22,7 @@
   ['L','RX Log',()=>'raw receive log',openRxLog],
   ['S','Settings',()=>'interface, sounds, lock',()=>view('Settings')]
  ];
+ if(window.NightlinkEventBrand)ITEMS.unshift(['F','Start big-screen display',()=>'Queen City Con · public channel only',()=>window.NightlinkEventBrand.launch()]);
  const KEYS=ITEMS.map(i=>i[0]);
  function run(key){const item=ITEMS.find(i=>i[0]===String(key).toUpperCase());if(!item)return false;item[3]();return true;}
  function frame(title,cls){const f=el('section','term-frame '+(cls||''));const h=el('h2','term-frame-title',title);f.append(h);f.setAttribute('aria-label',title);return f;}

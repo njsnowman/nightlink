@@ -1,10 +1,12 @@
 const {app,BrowserWindow,ipcMain,screen,nativeTheme,shell,dialog}=require('electron');
 const path=require('node:path');
+const showcase=require('./showcase-config.cjs');
 const windowLifecycle=require('./desktop-window.cjs');
-if(process.platform==='win32')app.setAppUserModelId('local.meshline.desktop');
+app.setName(showcase.product);
+if(process.platform==='win32')app.setAppUserModelId(showcase.appId);
 const nightlinkUpdates=require('./updates.cjs');
 const fsBackup=require('node:fs/promises'),cryptoBackup=require('node:crypto');
-app.setPath('userData',path.join(app.getPath('appData'),'Meshline'));
+app.setPath('userData',path.join(app.getPath('appData'),showcase.profile));
 if(!app.requestSingleInstanceLock())app.quit();
 else app.whenReady().then(async()=>{
  nativeTheme.themeSource='dark';
@@ -26,15 +28,13 @@ else app.whenReady().then(async()=>{
  require('./offline-maps-desktop.cjs').install({win,ipcMain,dialog,trusted});
  let updateResult=null,updateCheck=null,updateCheckedAt=0;
  const updateMode=process.env.PORTABLE_EXECUTABLE_DIR?'portable':'installer';
- ipcMain.handle('updates:info',e=>{if(!trusted(e))return null;return{version:app.getVersion(),mode:updateMode,releases:nightlinkUpdates.RELEASES};});
+ ipcMain.handle('updates:info',e=>{if(!trusted(e))return null;return{version:app.getVersion(),mode:updateMode,releases:'https://github.com/njsnowman/nightlink/tree/codex/queen-city-con-showcase'};});
  ipcMain.handle('updates:check',async e=>{
-  if(!trusted(e))return null;if(updateCheck)return updateCheck;
-  if(updateResult&&Date.now()-updateCheckedAt<60000)return{...updateResult,checkedAt:updateCheckedAt,cached:true};
-  updateCheck=nightlinkUpdates.check(app.getVersion(),updateMode).then(result=>{updateResult=result;updateCheckedAt=Date.now();return{...result,checkedAt:updateCheckedAt};}).finally(()=>updateCheck=null);return updateCheck;
+  if(!trusted(e))return null;return {status:'showcase',installed:app.getVersion(),message:'Queen City Con showcase build. Use event-specific installers for updates.'};
  });
  ipcMain.handle('updates:open',async(e,download)=>{
   if(!trusted(e))return false;
-  const url=download===true&&updateResult?.status==='available'?(updateResult.verification!=='mismatch'&&updateResult.download||updateResult.url):nightlinkUpdates.RELEASES;
+  const url='https://github.com/njsnowman/nightlink/tree/codex/queen-city-con-showcase';
   await shell.openExternal(url);return true;
  });
  ipcMain.on('layout:focus',e=>{if(!trusted(e))return;if(win.isMinimized())win.restore();win.show();win.focus();});

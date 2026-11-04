@@ -1,0 +1,1 @@
+module.exports=Object.freeze({appId:'local.nightlink.queencitycon',profile:'Nightlink-QueenCityCon',product:'Nightlink Queen City Con Showcase',website:'https://queencitycon.org/',credit:'By: Nightlink / Sysop SN0WMAN'});

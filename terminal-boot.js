@@ -8,7 +8,7 @@
  const setEnabled=(s,on)=>{try{s?.setItem(KEY,on?'on':'off');}catch{}};
  const core={KEY,SOUND_KEY,SOUND_FILE,enabled,setEnabled,soundEnabled};
  if(typeof module==='object'&&module.exports){module.exports=core;return;}
- const doc=root.document;root.NightlinkBootScreen=core;
+ const doc=root.document,event=!!root.NightlinkEventBrand;root.NightlinkBootScreen=core;
  if(!root.NightlinkInterface?.isTerminal())return;
  if(typeof view==='function'){const previous=view;view=function(name){previous.apply(this,arguments);if(name!=='Settings'||!NightlinkInterface.isTerminal())return;
   const grid=doc.querySelector('.settings-grid');if(!grid||grid.querySelector('#boot-screen-setting'))return;
@@ -26,15 +26,15 @@
  if(played||root.navigator?.webdriver||!enabled(root.localStorage))return;
  try{root.sessionStorage?.setItem(KEY+'.played','1');}catch{}
  const make=(tag,cls,text)=>{const e=doc.createElement(tag);e.className=cls;if(text)e.textContent=text;return e;};
- const screen=make('div','');screen.id='term-boot-screen';screen.setAttribute('role','region');screen.setAttribute('aria-label','Nightlink dial-up introduction');
- const frame=make('section','boot-frame'),bar=make('div','boot-bar','[■] NIGHTLINK / DIAL-UP TERMINAL');
+ const screen=make('div','');screen.id='term-boot-screen';screen.setAttribute('role','region');screen.setAttribute('aria-label',event?'Queen City Con dial-up introduction':'Nightlink dial-up introduction');
+ const frame=make('section','boot-frame'),bar=make('div','boot-bar',event?'[■] QUEEN CITY CON / NIGHTLINK':'[■] NIGHTLINK / DIAL-UP TERMINAL');
  const note=make('p','boot-note','Simulated dial-up introduction · radio status shown separately');
  const log=make('pre','boot-log');log.setAttribute('aria-hidden','true');
  const modem=make('pre','boot-modem','┌─ LOCAL TERMINAL ─┐     ░ ░ ░     ┌─ NIGHTLINK ─┐\n└──────────────────┘               └─────────────┘');modem.setAttribute('aria-hidden','true');
  const progress=make('p','boot-progress','[░░░░░░░░░░░░░░░░] Initializing local terminal');progress.setAttribute('role','status');
  const radio=make('p','boot-radio boot-warn');radio.setAttribute('role','status');
  const logo=make('div','boot-logo'),skip=make('p','boot-skip','Loading startup sound…');
- frame.append(bar,note,modem,log,progress,radio,logo,skip);screen.append(frame);
+ if(event){screen.classList.add('qcc-boot');logo.append(root.NightlinkEventBrand.logo(doc));frame.append(bar,logo,note,modem,log,progress,radio,skip);}else frame.append(bar,note,modem,log,progress,radio,logo,skip);screen.append(frame);
  let done=false,audio=null,audioDone=true,visualDone=false,requestedSkip=false,awaitingGesture=false,watchdog=null;
  const timers=[];
  const later=(ms,fn)=>timers.push(setTimeout(()=>{if(!done)fn();},ms));
@@ -66,14 +66,14 @@
   if(typeof radioSession==='object')radioSession.removeEventListener('sync',radioState);if(typeof ble==='object')ble.removeEventListener('state',radioState);
   doc.removeEventListener('keydown',input,true);doc.removeEventListener('pointerdown',input,true);screen.classList.add('boot-out');setTimeout(()=>screen.remove(),reduced?0:180);}
  function start(){doc.body.append(screen);radioState();if(typeof radioSession==='object')radioSession.addEventListener('sync',radioState);if(typeof ble==='object')ble.addEventListener('state',radioState);
-  const title=line('NIGHTLINK · MeshCore companion terminal','boot-title');
-  try{root.meshlineUpdates?.info?.().then(info=>{if(info?.version&&!done)title.textContent='NIGHTLINK v'+info.version+' · MeshCore companion terminal';}).catch(()=>{});}catch{}
-  if(reduced){line('LOCAL TERMINAL · MODEM → LASER','boot-info');if(root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));progress.textContent='Local console ready';visualDone=true;}
+  const title=line(event?'QUEEN CITY CON · By: Nightlink / Sysop SN0WMAN':'NIGHTLINK · MeshCore companion terminal','boot-title');
+  try{root.meshlineUpdates?.info?.().then(info=>{if(info?.version&&!done)title.textContent=(event?'QUEEN CITY CON / NIGHTLINK v':'NIGHTLINK v')+info.version+' · MeshCore companion terminal';}).catch(()=>{});}catch{}
+  if(reduced){line('LOCAL TERMINAL · MODEM → LASER','boot-info');if(!event&&root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));progress.textContent='Local console ready';visualDone=true;}
   else{
-  later(150,()=>line('ATZ','boot-command',true));later(420,()=>line('OK','boot-ok'));later(650,()=>line('ATDT NIGHTLINK','boot-command',true));later(1150,()=>line('DIALING . . .','boot-info'));
+  later(150,()=>line('ATZ','boot-command',true));later(420,()=>line('OK','boot-ok'));later(650,()=>line(event?'ATDT QUEEN CITY CON':'ATDT NIGHTLINK','boot-command',true));later(1150,()=>line('DIALING . . .','boot-info'));
   later(1550,()=>line('~ ▂▄▆█▆▄▂ ~  negotiating terminal display','boot-info'));later(2200,()=>line('ANSI / VGA 16-COLOR','boot-info'));later(2750,()=>line('LOCAL TERMINAL READY','boot-ok'));
   for(let i=1;i<=16;i++)later(150+i*170,()=>{progress.textContent='['+'▓'.repeat(i)+'░'.repeat(16-i)+'] '+(i<7?'Dial-up introduction':i<14?'Terminal handshake':'Local console ready');modem.textContent='┌─ LOCAL TERMINAL ─┐  '+(i%2?'░▒▓══════▓▒░':'▓▒░══════░▒▓')+'  ┌─ NIGHTLINK ─┐\n└──────────────────┘                 └─────────────┘';});
-  later(2800,()=>{if(root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));});later(4100,()=>{visualDone=true;finish();});}
+  later(2800,()=>{if(!event&&root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));});later(4100,()=>{visualDone=true;finish();});}
   doc.addEventListener('keydown',input,true);doc.addEventListener('pointerdown',input,true);playIntro();finish();}
  if(doc.body)start();else doc.addEventListener('DOMContentLoaded',start);
 })(typeof window==='object'?window:globalThis);
