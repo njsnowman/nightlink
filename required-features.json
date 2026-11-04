@@ -56,6 +56,9 @@
     "contact-book.css",
     "operations.js",
     "operations-ui.js",
-    "operations.css"
+    "operations.css",
+    "rf-planning.js",
+    "rf-planning-ui.js",
+    "rf-planning.css"
   ]
 }
