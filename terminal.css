@@ -459,3 +459,8 @@ html:root:root:root:root:root[data-interface=terminal] body .route-map-dialog bu
 html:root:root:root:root:root[data-interface=terminal] body .mrc-input-line{flex-wrap:wrap}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-input-line>.message-reply-context{flex-basis:100%;min-width:0;background:var(--t-black);color:var(--t-bright-cyan);border-left:2px solid var(--t-blue);padding:2px 6px;margin:2px 0;font:13px/1.5 Consolas,monospace}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-text.message-reply-target:focus-visible{outline:2px solid var(--t-bright-cyan);outline-offset:2px}
+/* Owner-approved Clear Message treatment: sender identity stays separate from body text. */
+html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-peer.mrc-nick-peer{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body :is(.mrc-nick-own,.mrc-own-mark){color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-line.mrc-mention .mrc-text{color:var(--t-white)!important}
+html:root:root:root:root:root[data-interface=terminal] body .dm-thread .own .sender>span{color:var(--t-yellow)!important}

@@ -92,7 +92,7 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  // Detached DM in terminal mode: MRC-style lines, avatars hidden, outgoing marked >>>, contrast kept.
  {const dm=await context.newPage();await dm.addInitScript(()=>{localStorage.setItem('nightlink.interface','terminal');window.dmWindow={onUpdate:fn=>window.__dmUpdate=fn,contact(){},reply(){},action(){},read(){},draft(){},onFocus(){}};});await dm.goto('http://127.0.0.1:4173/dm.html');await dm.waitForFunction(()=>window.__dmUpdate);
   await dm.evaluate(()=>__dmUpdate({key:'peer',name:'KD9XYZ',connected:true,messages:[{id:'a',text:'net check',timestamp:1700000000,own:false,status:'Received',hopLabel:'2 hops'},{id:'b',text:'copy',timestamp:1700000060,own:true,status:'Acknowledged by recipient',direct:true}]}));
-  await dm.waitForSelector('.dm-bubble.own');
+  await dm.waitForSelector('.dm-bubble.own');assert.equal(await dm.$eval('.dm-bubble.own .sender>span',e=>getComputedStyle(e).color),'rgb(255, 255, 85)');assert.equal(await dm.$eval('.dm-bubble:not(.own) .dm-message-person',e=>getComputedStyle(e).color),'rgb(85, 255, 255)');
   assert.equal(await dm.$eval('.dm-bubble .signal-message-avatar',e=>getComputedStyle(e).display),'none');
   assert.equal(await dm.$eval('.dm-bubble.own .sender>span',e=>getComputedStyle(e,'::before').content),'">>> <"');
   const c=await dm.$eval('.dm-bubble .message-reply-target',e=>[getComputedStyle(e).color,getComputedStyle(e).backgroundColor]);assert.ok(contrast(c[0],'rgb(0, 0, 0)')>=4.5);

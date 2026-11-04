@@ -69,6 +69,7 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  assert.equal(await page.inputValue('#mrc-text-size'),'small','visible control follows changes from another window');
  assert.equal(await page.$eval('.mrc-text',e=>getComputedStyle(e).fontSize),'14px');
  await sizePage.close();await page.selectOption('#mrc-text-size','large');
+ const clearColors=await page.evaluate(()=>{const color=s=>getComputedStyle(document.querySelector(s)).color;return {peer:color('.mrc-nick-peer'),own:color('.mrc-nick-own'),body:color('.mrc-text'),ownBody:color('.mrc-own .mrc-text')};});assert.deepEqual(clearColors,{peer:'rgb(85, 255, 255)',own:'rgb(255, 255, 85)',body:'rgb(255, 255, 255)',ownBody:'rgb(255, 255, 255)'});
  const lines=await page.$$eval('#mrc-log .mrc-line',l=>l.map(x=>x.textContent));
  assert.ok(lines.some(l=>/^\d\d:\d\d <KD9XYZ> net check tonight$/.test(l)),lines.join('\n'));
  assert.ok(lines.some(l=>/^\d\d:\d\d >>> <SNOMAN> copy, 5\/9$/.test(l)),lines.join('\n'));
