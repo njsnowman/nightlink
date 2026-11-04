@@ -70,3 +70,5 @@ Submenus are included at every depth: contact options, message actions, sidebar 
 The main Radio landing page uses a live identity/status summary and three labeled groups of full-width action cards: device/setup, routes/discovery and observation/diagnostics. Keep export and hardware details in an expandable section. Reuse existing tool controls and preserve their state across navigation; opening this menu must not issue radio commands.
 
 Installer (rc.18). Windows setup follows the terminal interface: approved blue VGA block wordmark, black background, blue rules, cyan stage labels and Consolas text. Welcome and completion pages embed the wordmark using an nsDialogs bitmap; header and sidebar artwork share the VGA16 palette. Native setup navigation and per-user upgrade behavior remain intact. Generate artwork with generate-installer-art.py; inspect built native pages as well as design-reference PNGs.
+
+Owner approval, November 3, 2026: retain the rc.18 blue ANSI installer design as the standard for subsequent Nightlink installers. Reuse its approved wordmark, VGA16 artwork, monospace typography and setup hierarchy.
