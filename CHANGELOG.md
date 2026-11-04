@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- QCC.3: replace illustrated event branding with ConHam-style ASCII QUEEN CITY CON, explicitly restoring CON. Update shared UI logos, event icons and installer graphics while retaining sysop credit and isolated showcase profile. Tracks [#138](https://github.com/njsnowman/nightlink/issues/138); [candidate record](releases/0.8.28-qcc.3.md).
 - QCC.2: show the full event ANSI logo immediately at startup and add a main-menu big-screen action. Tracks [#138](https://github.com/njsnowman/nightlink/issues/138); [candidate record](releases/0.8.28-qcc.2.md).
 - Add a separate Queen City Con showcase candidate with VGA16 ANSI branding, right-aligned Nightlink/sysop credit and a pinned public-channel big-screen display. Use a distinct application identity/profile and disable production update checks. Tracks [#138](https://github.com/njsnowman/nightlink/issues/138); [candidate record](releases/0.8.28-qcc.1.md).
 - Play the approved original modem-to-laser WAV at startup by default and retain the loading screen until audio playback ends; keys and clicks cannot cut it short. Respect explicit sound-off and quiet hours, use a static screen under reduced motion, and handle autoplay denial, paused/failed/stalled playback. Tracks [#136](https://github.com/njsnowman/nightlink/issues/136); [candidate record](releases/0.8.28-rc.17.md).

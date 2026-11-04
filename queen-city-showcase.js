@@ -6,7 +6,7 @@
  const doc=root.document;
  const el=(tag,cls,text)=>{const n=doc.createElement(tag);n.className=cls;if(text)n.textContent=text;return n;};
  function logo(d=doc){const wrap=d.createElement('div');wrap.className='qcc-brand';
-  if(root.NightlinkTerminalLogo?.pixelArt&&root.QueenCityLogoArt)wrap.append(root.NightlinkTerminalLogo.pixelArt(d,root.QueenCityLogoArt,'Queen City Conference ANSI logo'));
+  if(root.NightlinkTerminalLogo?.pixelArt&&root.QueenCityLogoArt)wrap.append(root.NightlinkTerminalLogo.pixelArt(d,root.QueenCityLogoArt,'QUEEN CITY CON ASCII logo'));
   const credit=d.createElement('p');credit.className='qcc-credit';credit.textContent=CREDIT;
   const website=d.createElement('p');website.className='qcc-website';website.textContent='queencitycon.org';wrap.append(credit,website);return wrap;
  }

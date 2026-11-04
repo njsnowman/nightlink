@@ -39,3 +39,12 @@ html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen.qc
 html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen.qcc-boot .boot-log{min-height:0;height:72px;overflow:hidden}
 html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen.qcc-boot .boot-modem{display:none}
 @media(max-height:700px){html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen.qcc-boot .qcc-brand{max-width:360px}html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen.qcc-boot .boot-log{height:36px}}
+/* QCC.3: full QUEEN CITY CON ASCII wordmark, sized to keep all three words readable. */
+html:root:root:root:root:root[data-interface=terminal] body .qcc-brand{max-width:960px}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-masthead .qcc-brand{max-width:640px}
+html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .qcc-masthead .qcc-brand{max-width:1100px}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-display-label{display:none}
+html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen.qcc-boot .qcc-brand{max-width:960px}
+html:root:root:root:root:root[data-interface=terminal] body .qcc-masthead{container-type:inline-size}
+@media(max-width:1100px){html:root:root:root:root:root[data-interface=terminal] body .qcc-masthead .qcc-brand,html:root:root:root:root:root[data-interface=terminal] body.qcc-on-air .qcc-masthead .qcc-brand{max-width:100%}}
+@media(max-height:700px){html:root:root:root:root:root[data-interface=terminal] body #term-boot-screen.qcc-boot .qcc-brand{max-width:640px}}

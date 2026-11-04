@@ -1,21 +1,19 @@
-# Queen City Con ANSI showcase candidate
+# Queen City Con ASCII showcase
 
-Tracks [#138](https://github.com/njsnowman/nightlink/issues/138). This event variant is separate from the production release line.
+Tracks [#138](https://github.com/njsnowman/nightlink/issues/138). The event build has its own app identity and profile, separate from production Nightlink.
+
+## Branding
+
+The wordmark follows the five-line ASCII lettering at [ConHam Queen City Con](https://conham.radio/qcc). That reference reads QUEEN CITY; this build explicitly appends CON to read **QUEEN CITY CON**. Canonical text is `art/ansi/source/queen-city-con-wordmark.txt`. Run `art/ansi/make-qcc-art.py` with Python/Pillow to regenerate VGA16 row data, CP437/UTF-8 ANSI exports, installer bitmaps and event icons. `generate-installer-art.py` delegates to the same generator so installer art cannot drift back to the old brand. Prior illustrated source art is historical and unused.
+
+Shared event branding appears on startup, the main menu, Chat and the terminal lock logo. App/favicons and installer graphics use QCC/CON branding; alternate-interface brand labels also name Queen City Con. The right-aligned credit remains `By: Nightlink / Sysop SN0WMAN`, with queencitycon.org below. All three words remain in the wide wordmark, including fullscreen Chat.
 
 ## Operation
 
-Open Chat, select the public event radio channel, then choose **Start big-screen display**. The selected channel stays pinned; new messages follow at the bottom. The display hides the composer, conversation list and CoreScope map. Private DM popups and alerts are suppressed during presentation. Press Escape or choose **Exit big-screen display** to return to normal chat. Keep the operator desktop and unrelated applications off the projector.
+Open Chat, select the intended public event channel, then choose **Start big-screen display**. The main menu also offers **[F] Start big-screen display**. If no public channel is selected, it opens Chat with selection instructions. Presentation pins that channel, follows new messages, hides the composer/list/map and suppresses private DM popups/alerts. Escape exits. The startup logo appears immediately and remains while startup audio plays; explicit audio-off/quiet-hour preferences remain respected.
 
-The event logo uses 240 x 91 VGA16 block data rendered with the existing terminal pixel-art component. Credit below the logo is right aligned: `By: Nightlink / Sysop SN0WMAN`. The public display uses monospace text, blue bars and ANSI block graphics. Standalone CP437 and UTF-8 ANSI exports at 80 and 240 columns are in `art/ansi/`.
+Application ID: `local.nightlink.queencitycon`; profile: `%APPDATA%/Nightlink-QueenCityCon`. Production credentials/settings are not migrated and production update checks are disabled. The source link opens the event branch. Connect the intended radio in this separate profile.
 
-## Source and isolation
+## Validation limits
 
-The source artwork is the [official 2026 Queen City Conference image](https://queencitycon.org/images/0x4_assets/qcc_logo-white_text-2026_0x4.png), retained in `art/ansi/source/queen-city-con-2026.png` for reproducible conversion. Run `art/ansi/make-qcc-art.py` with Python and Pillow to regenerate the block data and ANSI exports. The source PNG and preview are not packaged as runtime branding.
-
-The executable has a separate application identity (`local.nightlink.queencitycon`), shortcut and data directory (`%APPDATA%/Nightlink-QueenCityCon`). It does not migrate production credentials or settings. Production update checks are disabled in this variant; its source link opens the showcase branch. Connect the intended radio in this separate profile. Do not assume the normal Nightlink profile is shared.
-
-## Evidence and limitations
-
-Automated tests use synthetic messages and blocked radio commands. They check pinned-channel privacy, disabled public display for DMs, automatic following, exit behavior and fit at 1920x1080, 1280x720 and 760x560. No physical-radio or venue-projector validation has been performed. The installer is an unsigned local candidate; it has not been installed during development. Inspect the source commit and SHA-256 values in the matching release record before sharing.
-
-QCC.2: Startup displays the full event logo immediately, above the loading log, throughout audio playback. The main menu offers `[F] Start big-screen display` as well as the Chat button. Choose the intended public channel first; otherwise the menu action opens Chat with selection instructions.
+Browser tests use synthetic messages and blocked radio commands. They check branding, pinned-channel privacy, display entry/exit, following and multiple screen sizes. Native frontend/installer evidence and exact source/artifact checksums are recorded per candidate under releases/. No physical radio or venue projector evidence is implied. Installers are unsigned local candidates unless a release record states otherwise.

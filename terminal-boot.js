@@ -70,7 +70,7 @@
   try{root.meshlineUpdates?.info?.().then(info=>{if(info?.version&&!done)title.textContent=(event?'QUEEN CITY CON / NIGHTLINK v':'NIGHTLINK v')+info.version+' · MeshCore companion terminal';}).catch(()=>{});}catch{}
   if(reduced){line('LOCAL TERMINAL · MODEM → LASER','boot-info');if(!event&&root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));progress.textContent='Local console ready';visualDone=true;}
   else{
-  later(150,()=>line('ATZ','boot-command',true));later(420,()=>line('OK','boot-ok'));later(650,()=>line('ATDT NIGHTLINK','boot-command',true));later(1150,()=>line('DIALING . . .','boot-info'));
+  later(150,()=>line('ATZ','boot-command',true));later(420,()=>line('OK','boot-ok'));later(650,()=>line(event?'ATDT QUEEN CITY CON':'ATDT NIGHTLINK','boot-command',true));later(1150,()=>line('DIALING . . .','boot-info'));
   later(1550,()=>line('~ ▂▄▆█▆▄▂ ~  negotiating terminal display','boot-info'));later(2200,()=>line('ANSI / VGA 16-COLOR','boot-info'));later(2750,()=>line('LOCAL TERMINAL READY','boot-ok'));
   for(let i=1;i<=16;i++)later(150+i*170,()=>{progress.textContent='['+'▓'.repeat(i)+'░'.repeat(16-i)+'] '+(i<7?'Dial-up introduction':i<14?'Terminal handshake':'Local console ready');modem.textContent='┌─ LOCAL TERMINAL ─┐  '+(i%2?'░▒▓══════▓▒░':'▓▒░══════░▒▓')+'  ┌─ NIGHTLINK ─┐\n└──────────────────┘                 └─────────────┘';});
   later(2800,()=>{if(!event&&root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));});later(4100,()=>{visualDone=true;finish();});}
