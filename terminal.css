@@ -479,3 +479,11 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-continuation>.m
 html:root:root:root:root:root[data-interface=terminal] body .mrc-continuation>.mrc-message-actions{grid-column:2}
 html:root:root:root:root:root[data-interface=terminal] body :is(.mrc-reply-quote,.mrc-reply-source){display:block;background:var(--t-black)!important;color:var(--t-bright-cyan)!important;border:0!important;border-left:2px solid var(--t-blue)!important;border-radius:0;padding:2px 6px;font:13px/1.5 Consolas,monospace;text-align:left;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-indent:0}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-reply-source{flex:1;min-width:0}
+/* Current-chat search is a single optional topic-row control. */
+html:root:root:root:root:root[data-interface=terminal] body .mrc-find-toggle,html:root:root:root:root:root[data-interface=terminal] body .mrc-find button{background:var(--t-black)!important;color:var(--t-bright-cyan)!important;border:1px solid var(--t-blue)!important;border-radius:0;min-height:26px;padding:1px 7px;font:13px/1.5 Consolas,monospace}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-find-toggle{margin:2px 8px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-find{display:flex;align-items:center;gap:6px;flex:1 1 100%;min-width:0;padding:4px 8px;background:var(--t-black);border-top:1px solid var(--t-bright-blue);color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-find input{flex:1;min-width:60px;background:var(--t-black);color:var(--t-white);border:1px solid var(--t-bright-cyan);border-radius:0;padding:3px 6px;font:14px/1.5 Consolas,monospace}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-find-status{min-width:76px;text-align:right;font:13px/1.5 Consolas,monospace;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-find-current{outline:1px solid var(--t-bright-cyan);outline-offset:1px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-find-match .mrc-text{ text-decoration:underline;text-decoration-color:var(--t-bright-blue);text-underline-offset:3px}

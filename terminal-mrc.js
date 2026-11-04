@@ -6,13 +6,21 @@
  'use strict';
  if(typeof view!=='function'||!window.NightlinkInterface)return;
  const doc=document,MAX_ROWS=300,LIMIT=133;
- const state={window:null,local:new Map(),sendError:'',replyWindow:null,readingOwner:null,readingWin:null,readSessions:new Map(),restoring:false};
+ const state={window:null,local:new Map(),sendError:'',replyWindow:null,readingOwner:null,readingWin:null,readSessions:new Map(),restoring:false,find:{open:false,query:'',activeId:null}};
  const terminal=()=>NightlinkInterface.isTerminal();
  const el=(tag,cls,text)=>{const n=doc.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
  const draftStore=()=>typeof drafts!=='undefined'?drafts:(state.drafts||(state.drafts=new NightlinkDrafts(localStorage,()=>toast('Draft storage unavailable. Keep this window open or copy your text.'))));
  function syncCardDraft(value){if(typeof composerDraftOwner!=='undefined'&&composerDraftOwner===state.draftOwner&&composerDraftId===state.draftId){const input=doc.querySelector('#message-input');if(input){input.value=value;if(typeof updateByteCount==='function')updateByteCount();}}}
  function saveTerminalDraft(){const input=state.form?.querySelector('#mrc-input');if(!input||!state.draftId||input.value===state.lastSavedDraft)return;draftStore().set(state.draftOwner,state.draftId,input.value);state.lastSavedDraft=input.value;syncCardDraft(input.value);}
  function restoreTerminalDraft(win){const owner=live.identity?.key,id=win.kind==='status'?null:win.id,input=state.form.querySelector('#mrc-input');if(state.draftOwner!==owner||state.draftId!==id){saveTerminalDraft();state.draftOwner=owner;state.draftId=id;state.lastSavedDraft=id?draftStore().get(owner,id):'';input.value=state.lastSavedDraft;}else if(id){const saved=draftStore().get(owner,id);if(saved!==state.lastSavedDraft&&input.value===state.lastSavedDraft){input.value=saved;state.lastSavedDraft=saved;}}}
+ const findScope=win=>(live.identity?.key||'local')+'|'+win.id;
+ function findText(m){const text=String(m.text||'');return window.NightlinkAnsiText?.strip?NightlinkAnsiText.strip(text):text;}
+ function findMatches(win){const query=state.find.query.trim().toLocaleLowerCase();return query?live.messages.filter(m=>m.conversation===win.id&&findText(m).toLocaleLowerCase().includes(query)):[];}
+ function refreshFind(win){if(!state.find.form)return;const matches=findMatches(win),index=matches.findIndex(m=>m.id===state.find.activeId);state.find.status.textContent=!state.find.query.trim()?'Find text':!matches.length?'No matches':index<0?matches.length+' matches':(index+1)+' / '+matches.length;state.find.previous.disabled=state.find.next.disabled=!matches.length;}
+ function navigateFind(direction=0){if(!state.find.open)return;const win=activeWindow(windows()),matches=findMatches(win);if(!matches.length){state.find.activeId=null;render();return;}const index=matches.findIndex(m=>m.id===state.find.activeId),next=direction===0?(index>=0?index:0):index<0?(direction>0?0:matches.length-1):(index+direction+matches.length)%matches.length;state.find.activeId=matches[next].id;jumpMessage(state.find.activeId,{select:false,focus:false});}
+ function closeFind(){clearTimeout(state.find.timer);state.find.open=false;state.find.query='';state.find.activeId=null;if(state.find.input)state.find.input.value='';render();const target=state.find.returnTo==='composer'?state.form?.querySelector('#mrc-input'):doc.querySelector('#mrc-log');target?.focus({preventScroll:true});}
+ function openFind(){const win=activeWindow(windows());if(state.find.scope!==findScope(win)){state.find.query='';state.find.activeId=null;if(state.find.input)state.find.input.value='';}state.find.scope=findScope(win);if(!state.find.open)state.find.returnTo=doc.activeElement?.id==='mrc-input'?'composer':'log';state.find.open=true;state.selectedMessage=null;render();state.find.input.focus();state.find.input.select();}
+ function findForm(){if(state.find.form)return state.find.form;const form=el('form','mrc-find'),label=el('label',null,'Find'),input=el('input'),status=el('span','mrc-find-status'),previous=el('button',null,'↑'),next=el('button',null,'↓'),close=el('button',null,'×');input.type='search';input.id='mrc-find-input';input.placeholder='Find in this chat';input.setAttribute('aria-label','Search current chat');label.htmlFor=input.id;status.setAttribute('role','status');status.setAttribute('aria-live','polite');for(const [button,name,action]of [[previous,'Previous chat match',()=>navigateFind(-1)],[next,'Next chat match',()=>navigateFind(1)],[close,'Close chat search',closeFind]]){button.type='button';button.setAttribute('aria-label',name);button.onclick=action;}input.oninput=()=>{state.find.query=input.value;state.find.activeId=null;clearTimeout(state.find.timer);state.find.timer=setTimeout(()=>navigateFind(0),120);};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();clearTimeout(state.find.timer);navigateFind(e.shiftKey?-1:1);}};form.onsubmit=e=>e.preventDefault();form.append(label,input,status,previous,next,close);Object.assign(state.find,{form,input,status,previous,next});return form;}
  function readingSession(id){
   const owner=live.identity?.key||'local';if(state.readingOwner!==owner){state.readSessions.clear();state.readingOwner=owner;state.readingWin=null;}
   if(!state.readSessions.has(id)){let position;try{position=ensureAttention().position(id);}catch{}state.readSessions.set(id,{position:position||{bottom:true,manual:false},boundary:position?.boundary||null,focus:null});}
@@ -105,10 +113,10 @@
  function nickColor(name){let h=0;for(const ch of String(name))h=(h*31+ch.codePointAt(0))>>>0;return 'mrc-nc-'+(h%NICK_COLORS);}
  function nick(name,cls){const s=el('span','mrc-nick-wrap');s.append(el('span','mrc-nick-bracket','<'),el('span','mrc-nick '+cls+(cls==='mrc-nick-peer'?' '+nickColor(name):''),name),el('span','mrc-nick-bracket','>'),' ');return s;}
  function isMention(m){if(m.own||!live.identity?.name)return false;const n=live.identity.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return new RegExp('(^|[^\\w])@?\\[?'+n+'\\]?($|[^\\w])','i').test(String(m.text||''));}
- function jumpMessage(id){
+ function jumpMessage(id,{select=true,focus=true}={}){
   const win=activeWindow(windows()),m=live.messages.find(m=>m.id===id&&m.conversation===win.id);if(!m){toast('Original message is no longer stored in this conversation.');return;}
-  const session=readingSession(win.id);session.focus=id;session.position={anchor:id,offset:8,bottom:false,manual:true};state.selectedMessage=id;state.restoring=true;render();state.restoring=false;
-  const log=doc.querySelector('#mrc-log'),row=log?.querySelector('[data-message-id="'+CSS.escape(id)+'"]');if(row){log.scrollTop+=row.getBoundingClientRect().top-log.getBoundingClientRect().top-8;row.querySelector('.mrc-text')?.focus({preventScroll:true});captureReading(log);updateJump(log,win);}
+  const session=readingSession(win.id);session.focus=id;session.position={anchor:id,offset:8,bottom:false,manual:true};if(select)state.selectedMessage=id;state.restoring=true;render();state.restoring=false;
+  const log=doc.querySelector('#mrc-log'),row=log?.querySelector('[data-message-id="'+CSS.escape(id)+'"]');if(row){log.scrollTop+=row.getBoundingClientRect().top-log.getBoundingClientRect().top-8;if(focus)row.querySelector('.mrc-text')?.focus({preventScroll:true});captureReading(log);updateJump(log,win);}
  }
  function actionsFor(m){const tools=el('div','mrc-message-actions');tools.setAttribute('role','toolbar');tools.setAttribute('aria-label','Selected message actions');
   const dismiss=()=>{state.selectedMessage=null;tools.remove();state.form?.querySelector('#mrc-input')?.focus();};
@@ -140,6 +148,7 @@
   line.append(body);
   // Mentions of your own name (as @name, [name] or the plain word) highlight the line, as IRC clients do.
   if(isMention(m))line.classList.add('mrc-mention');
+  if(state.find.open&&state.find.query.trim()&&findText(m).toLocaleLowerCase().includes(state.find.query.trim().toLocaleLowerCase()))line.classList.add(m.id===state.find.activeId?'mrc-find-current':'mrc-find-match');
   if(state.selectedMessage===m.id)line.append(actionsFor(m));
   const frag=doc.createDocumentFragment();frag.append(line);
   const detail=deliveryText(m);
@@ -199,10 +208,11 @@
   host.classList.toggle('mrc-active',on);
   doc.body.classList.toggle('term-mrc',on);
   let root=doc.querySelector('#mrc');
-  if(!on){stopMap();root?.remove();return;}
-  const focused=doc.activeElement===state.form?.querySelector('#mrc-input'),focusedAction=doc.activeElement?.closest('.mrc-message-actions')?doc.activeElement.textContent:null,log=doc.querySelector('#mrc-log'),atEnd=!log||log.scrollHeight-log.scrollTop-log.clientHeight<24,keepTop=log?.scrollTop;
+  if(!on){state.find.open=false;clearTimeout(state.find.timer);stopMap();root?.remove();return;}
+  const focused=doc.activeElement===state.form?.querySelector('#mrc-input'),findFocused=doc.activeElement===state.find.input,findSelection=findFocused?[state.find.input.selectionStart,state.find.input.selectionEnd]:null,focusedAction=doc.activeElement?.closest('.mrc-message-actions')?doc.activeElement.textContent:null,log=doc.querySelector('#mrc-log'),atEnd=!log||log.scrollHeight-log.scrollTop-log.clientHeight<24,keepTop=log?.scrollTop;
   const list=windows(),win=activeWindow(list),index=list.indexOf(win)+1,changed=state.readingWin!==win.id,session=readingSession(win.id);
   if(changed)state.selectedMessage=null;
+  if(state.find.scope&&state.find.scope!==findScope(win)){state.find.open=false;state.find.query='';state.find.activeId=null;clearTimeout(state.find.timer);if(state.find.input)state.find.input.value='';}
   state.readingWin=win.id;
   if(!session.boundary&&(changed||session.position.manual||doc.hidden||!doc.hasFocus())){try{session.boundary=ensureAttention().unread(live.messages,win.id)[0]?.id||null;}catch{}}
   if(!root){root=el('section');root.id='mrc';root.className='mrc';root.setAttribute('aria-label','Mesh Relay Chat');}
@@ -220,6 +230,7 @@
   sizeSelect.onchange=()=>NightlinkInterface.setChatSize(sizeSelect.value);
   sizeLabel.append(sizeSelect);
   const heading=el('div','mrc-heading');heading.append(topic,sizeLabel);root.append(heading);
+  const findButton=el('button','mrc-find-toggle','Find');findButton.type='button';findButton.title='Find in this chat (Ctrl+F)';findButton.setAttribute('aria-label','Find in current chat');findButton.onclick=openFind;heading.append(findButton);if(state.find.open){heading.append(findForm());refreshFind(win);}
   const mentions=live.messages.filter(m=>m.conversation===win.id&&isMention(m));if(mentions.length){const nav=el('div','mrc-mention-nav'),label=el('span',null,'Mentions '+mentions.length);nav.setAttribute('role','group');nav.setAttribute('aria-label','Mention navigation');nav.append(label);for(const [name,direction,glyph]of [['Previous mention',-1,'↑'],['Next mention',1,'↓']]){const b=el('button',null,glyph);b.type='button';b.setAttribute('aria-label',name);b.onclick=()=>{const index=mentions.findIndex(m=>m.id===session.mentionId),next=index<0?(direction>0?0:mentions.length-1):(index+direction+mentions.length)%mentions.length;session.mentionId=mentions[next].id;jumpMessage(session.mentionId);const current=doc.querySelector('.mrc-mention-nav span');if(current)current.textContent='Mentions '+(next+1)+'/'+mentions.length;};nav.append(b);}heading.append(nav);}
   // Window list
   const body=el('div','mrc-body'),side=el('div','mrc-windows');side.setAttribute('role','navigation');side.setAttribute('aria-label','Windows');
@@ -292,6 +303,7 @@
   if(!root.isConnected)host.prepend(root);
   syncMap();
   if(focused&&doc.activeElement!==field2)field2.focus();
+  if(findFocused&&state.find.open){state.find.input.focus({preventScroll:true});if(findSelection[0]!=null)try{state.find.input.setSelectionRange(...findSelection);}catch{}}
   if(focusedAction)[...root.querySelectorAll('.mrc-message-actions button')].find(b=>b.textContent===focusedAction)?.focus({preventScroll:true});
   const sl=doc.querySelector('#mrc-log');state.restoring=true;
   const anchorId=session.position.manual?session.position.anchor:changed&&session.boundary?session.boundary:session.position.anchor,anchor=anchorId&&sl.querySelector('[data-message-id="'+CSS.escape(anchorId)+'"]');
@@ -350,6 +362,7 @@
  const previousSelect=selectConversation;selectConversation=function(target){state.window=null;return previousSelect.apply(this,arguments);};
  radioSession.addEventListener('contacts',()=>{if(current==='Messages')render();});
  window.addEventListener('nightlink-interface',render);
+ doc.addEventListener('keydown',e=>{if(!terminal()||current!=='Messages'||doc.querySelector('dialog[open]'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='f'){e.preventDefault();e.stopPropagation();openFind();}else if(e.key==='Escape'&&state.find.open){e.preventDefault();e.stopPropagation();closeFind();}},true);
  function resumeReading(){if(!terminal()||current!=='Messages'||doc.hidden||!doc.hasFocus()||doc.querySelector('dialog[open]'))return;const win=activeWindow(windows()),session=readingSession(win.id);if(win.kind!=='status'&&unread(win.id)&&!session.position.manual){try{session.boundary=session.boundary||ensureAttention().unread(live.messages,win.id)[0]?.id;}catch{}if(session.boundary){session.focus=session.boundary;session.position={anchor:session.boundary,offset:24,manual:true,bottom:false};state.restoring=true;render();state.restoring=false;return;}}const log=doc.querySelector('#mrc-log');if(log){markRead(win,log);updateJump(log,win);}}
  window.addEventListener('focus',resumeReading);window.addEventListener('blur',()=>{saveTerminalDraft();captureReading();});window.addEventListener('beforeunload',()=>{saveTerminalDraft();captureReading();});doc.addEventListener('visibilitychange',()=>{if(doc.hidden){saveTerminalDraft();captureReading();}else resumeReading();});
  window.NightlinkMRC={render,windows,jumpTo:jumpMessage,submit:value=>{const list=windows();return submit(value,activeWindow(list),doc.querySelector('#mrc-input')||{value:''});},switchTo:n=>switchTo(windows()[n-1])};
