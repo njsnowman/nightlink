@@ -18,7 +18,7 @@ The workspace keeps the map central, with a compact collapsible site directory, 
 
 ## Terrain input
 
-Terrain comes from an explicit local CSV import; this candidate does not download a DEM, geocode elevations or fill gaps with invented ground levels. Export blank sample grid produces 101 distance positions with empty elevation cells, which must be filled with sourced data before import.
+Terrain may come from an explicit local CSV import or the separately described RF suite download/cache action. Missing data is never filled with invented ground levels. Export blank sample grid produces 101 distance positions with empty elevation cells, which must be filled with sourced data before import.
 
 CSV header must be `distance_m,elevation_m` or `distance_m,elevation_m,obstruction_m`. Supply 3–1,001 numeric samples, increasing in distance, starting at zero and ending at the selected path distance within 0.5% or 5 m. Source and vertical datum are required. Input must use metres and a consistent declared datum for terrain and entered endpoint ground elevations. Blank obstruction heights remain explicitly unknown; they are treated as zero only for the displayed sampled calculation. Maximum CSV size 2 MB.
 
