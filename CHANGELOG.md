@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add explicit cached terrain retrieval, shared-assumption repeater comparison, sampled Bullington coverage, antenna-height optimization, immutable field-model comparisons and site deployment packets. Preserve Operations during background synchronization. Upgrade planner storage/backups to version 3. Tracks [#157](https://github.com/njsnowman/nightlink/issues/157); [candidate record](releases/0.8.28-rc.25.md).
+
+
 - Add map-centered RF Planning in Operations: site RF assumptions/photos, bidirectional free-space budgets, sourced terrain CSV, sampled ray/Fresnel profiles, height scenarios, illustrative budget-radius overlays, manual field observations and printable RF reports. Upgrade planner storage/backups to preserve RF data. Tracks [#155](https://github.com/njsnowman/nightlink/issues/155); [candidate record](releases/0.8.28-rc.24.md).
 
 - Add Mesh Operations Planner: operation library/templates, team assignments and manual check-ins, channel/location snapshots, site maps, tasks/equipment, journal, planning checks/timeline and printable briefing. Include independent transactional storage, revision conflicts and validated JSON backup/merge import. Tracks [#153](https://github.com/njsnowman/nightlink/issues/153); [candidate record](releases/0.8.28-rc.23.md).

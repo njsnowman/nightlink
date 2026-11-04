@@ -59,6 +59,11 @@
     "operations.css",
     "rf-planning.js",
     "rf-planning-ui.js",
-    "rf-planning.css"
+    "rf-planning.css",
+    "rf-terrain.js",
+    "rf-suite.js",
+    "rf-suite-reports.js",
+    "rf-suite-ui.js",
+    "rf-suite.css"
   ]
 }
