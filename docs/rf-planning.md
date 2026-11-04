@@ -2,6 +2,8 @@
 
 Tracks [#155](https://github.com/njsnowman/nightlink/issues/155). Open Operations → an operation → RF Planning. Primary app only; Queen City Con is unchanged. The previously stopped live-operations-console work is not included.
 
+Current terrain retrieval, diffraction coverage, candidate ranking, height optimization, field comparison and site packets are documented in [RF suite](rf-suite.md).
+
 ## Layout and workflow
 
 The workspace keeps the map central, with a compact collapsible site directory, one path/scenario selector and a collapsed path-analysis panel. Detailed site equipment and path assumptions open in shared editor dialogs. At compact widths the directory stacks above the map and the result summary uses two columns. Terminal uses the approved VGA palette/frames; Cards uses the shared quiet surfaces and bordered controls.
@@ -26,7 +28,7 @@ Clearance statements apply only at supplied samples, including endpoints. Maximu
 
 ## Methods and limits
 
-Free-space attenuation uses `20 log10(4πdf/c)`, with distance in metres, frequency in Hz and c = 299,792,458 m/s. This is the wavelength form in [ITU-R P.525-5](https://www.itu.int/rec/R-REC-P.525-5-202411-I/en). Both directions include each end's entered power, gains/losses and the opposite receiver's sensitivity. Reserve is margin above sensitivity minus the entered required margin. Additional loss is a manual assumption; the calculation does not derive diffraction/clutter loss from the terrain.
+Free-space attenuation uses `20 log10(4πdf/c)`, with distance in metres, frequency in Hz and c = 299,792,458 m/s. This is the wavelength form in [ITU-R P.525-5](https://www.itu.int/rec/R-REC-P.525-5-202411-I/en). Both directions include each end's entered power, gains/losses and the opposite receiver's sensitivity. Reserve is margin above sensitivity minus the entered required margin. Additional loss is a manual assumption; this base free-space view does not derive diffraction/clutter loss. The RF suite adds its separately labeled Bullington diffraction estimate.
 
 First Fresnel radius uses `sqrt(λ d1 d2 / (d1+d2))`, following the geometric approximation in [ITU-R P.526-16, Annex 1 §2.1](https://www.itu.int/dms_pubrec/itu-r/rec/p/R-REC-P.526-16-202511-I!!PDF-E.pdf). Sample elevation is adjusted by the parabolic effective-Earth bulge `d1*d2/(2*k*R)`, R = 6,371,008.8 m. The selected fraction (default 0.6) is subtracted below the antenna ray when checking sampled clearance. Default k = 4/3 is an editable planning assumption, not measured atmospheric refraction. These are geometry/free-space estimates, not an implementation of the full diffraction models in P.526 or a Longley–Rice coverage model.
 
@@ -36,7 +38,7 @@ Workspace analysis is bounded to paths 1 m–200 km. Paths shorter than ten wave
 
 RF records are part of their operation and share revision checks, atomic validation and separate planner backups. Per operation: up to 100 RF profiles, 50 path/scenario records and 500 field tests. Site JPEG data URLs are limited to 250,000 characters. Existing planner limits (100 operations, 40 MB total; 50 MB backup) still apply. Storage failures and stale editor saves remain errors with entered text retained.
 
-Planner IndexedDB upgrades from version 1 to version 2 while retaining existing operations. Old planner builds cannot open that newer database, preventing them from silently discarding RF fields. New planner exports use backup format version 2; this build accepts old version-1 plans and new version-2 files. Older builds reject new backups. Keep a pre-upgrade export when an older app must remain usable.
+Planner IndexedDB upgrades from versions 1/2 to version 3 while retaining existing operations. Old planner builds cannot open that newer database, preventing them from silently discarding RF fields. New planner exports use backup format version 3; this build accepts versions 1–3. Older builds reject new backups. Keep a pre-upgrade export when an older app must remain usable.
 
 Removing an operation site removes its RF profile and dependent path scenarios; recorded tests remain with detached path IDs and their historical path names. Removing a path likewise retains tests. Duplicating an operation remaps RF site/path IDs and retains planning inputs but resets field-test execution records. No results are automatically promoted to measured evidence. Planning records/exports are unencrypted local data.
 
