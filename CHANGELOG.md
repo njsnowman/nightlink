@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Add terminal chat catch-up first (unread boundary, reading anchor and Jump to latest count), then local reply navigation, contextual message actions, consecutive sender grouping and conditional mention navigation. Preserve Clear Message colors and the connected map. Tracks [#146](https://github.com/njsnowman/nightlink/issues/146); [candidate record](releases/0.8.28-rc.20.md).
 - Apply the owner-selected Clear Message treatment: cyan incoming usernames, white message bodies and yellow own name; align detached DM colors. Includes terminal reply and mapped hop-distance enhancements. Tracks [#143](https://github.com/njsnowman/nightlink/issues/143) and [#142](https://github.com/njsnowman/nightlink/issues/142); [candidate record](releases/0.8.28-rc.19.md).
 - Enable click/keyboard reply on terminal chat message bodies using shared reply actions; preserve drafts and reply context across live renders, retain separate hop-map clicks. Tracks [#143](https://github.com/njsnowman/nightlink/issues/143); [validation](docs/terminal-click-reply.md).
 - Add consecutive known-hop distances, a compact mapped-distance summary, mi/km units and hop popup details while retaining the approved path map. Missing locations are never bridged. Tracks [#142](https://github.com/njsnowman/nightlink/issues/142); [validation](docs/message-path-distances.md).

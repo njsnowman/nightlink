@@ -464,3 +464,18 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-nick-peer.mrc-n
 html:root:root:root:root:root[data-interface=terminal] body :is(.mrc-nick-own,.mrc-own-mark){color:var(--t-yellow)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-line.mrc-mention .mrc-text{color:var(--t-white)!important}
 html:root:root:root:root:root[data-interface=terminal] body .dm-thread .own .sender>span{color:var(--t-yellow)!important}
+/* Catch-up controls appear only while reading earlier messages; map geometry is unchanged. */
+html:root:root:root:root:root[data-interface=terminal] body .mrc-body{position:relative}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-new-messages{color:var(--t-yellow);border-top:1px solid var(--t-blue);padding:4px 0;margin:8px 0;font-size:13px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-jump-latest{position:absolute;right:20px;bottom:10px;background:var(--t-blue)!important;color:var(--t-white)!important;border:1px solid var(--t-bright-cyan)!important;border-radius:0;min-height:30px;padding:3px 9px;font-size:13px;z-index:5}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-jump-latest[hidden]{display:none!important}
+/* Contextual controls reuse terminal frames and do not add permanent panels. */
+html:root:root:root:root:root[data-interface=terminal] body .mrc-message-actions{display:flex;gap:6px;padding:3px 0;margin:2px 0;text-indent:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-message-actions button,html:root:root:root:root:root[data-interface=terminal] body .mrc-mention-nav button{background:var(--t-black)!important;color:var(--t-bright-cyan)!important;border:1px solid var(--t-blue)!important;border-radius:0;min-height:26px;padding:1px 7px;font:13px/1.5 Consolas,monospace}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-mention-nav{display:flex;align-items:center;gap:5px;padding:2px 8px;color:var(--t-white);font-size:13px;white-space:nowrap}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-line.mrc-continuation{display:grid;grid-template-columns:6ch minmax(0,1fr);padding-left:0;text-indent:0;margin-top:4px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-continuation :is(.mrc-nick-wrap,.mrc-own-mark){display:none}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-continuation>.mrc-text{grid-column:2;display:block;margin:0!important;padding:0;text-indent:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-continuation>.mrc-message-actions{grid-column:2}
+html:root:root:root:root:root[data-interface=terminal] body :is(.mrc-reply-quote,.mrc-reply-source){display:block;background:var(--t-black)!important;color:var(--t-bright-cyan)!important;border:0!important;border-left:2px solid var(--t-blue)!important;border-radius:0;padding:2px 6px;font:13px/1.5 Consolas,monospace;text-align:left;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-indent:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-reply-source{flex:1;min-width:0}
