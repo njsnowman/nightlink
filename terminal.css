@@ -439,3 +439,19 @@ html:root:root:root:root:root[data-interface=terminal] body .help-article :is(ol
 html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content :is(.help-figure,.help-screenshot) button,html:root:root:root:root:root[data-interface=terminal] body.term-window-page .content button.help-screenshot{background:#000 !important;box-shadow:none !important;padding:0 !important}
 html:root:root:root:root:root[data-interface=terminal] body .term-empty-art{margin:6px 0 10px;font-size:14px;line-height:1.25;color:var(--t-grey)}html:root:root:root:root:root[data-interface=terminal] body .term-art-cyan{color:var(--t-bright-cyan)}html:root:root:root:root:root[data-interface=terminal] body .term-art-white{color:var(--t-white);font-weight:700}html:root:root:root:root:root[data-interface=terminal] body .term-art-dim{color:var(--t-grey)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-line.mrc-mention{background:#00002a;box-shadow:inset 3px 0 0 var(--t-yellow)}html:root:root:root:root:root[data-interface=terminal] body .mrc-line.mrc-mention .mrc-text{color:var(--t-yellow) !important}
+/* Hop distance annotations reuse the existing terminal map and palette. */
+html:root:root:root:root:root[data-interface=terminal] body .route-map-dialog .message-path-distance{color:var(--t-white);background:var(--t-black);border:1px solid var(--t-blue);border-radius:0;font:12px/1.3 Consolas,monospace;padding:2px 5px}
+html:root:root:root:root:root[data-interface=terminal] body .route-map-dialog .message-hop-distance{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body #route-distance-unit{color:var(--t-white);background:var(--t-black);border:1px solid var(--t-blue);border-radius:0;min-height:26px}
+html:root:root:root:root:root[data-interface=terminal] body .route-map-dialog :is(.leaflet-popup-content-wrapper,.leaflet-popup-tip){background:var(--t-black);color:var(--t-white);border:1px solid var(--t-blue)}
+@media(max-width:900px){
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .route-map-grid{grid-template-rows:minmax(168px,1.7fr) minmax(108px,1fr);gap:8px}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] #message-route-map{min-height:120px!important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .term-path-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .term-path{padding:4px 8px!important;margin:0!important}
+html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-summary{gap:2px 12px}
+}
+@media(min-width:700px) and (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .route-map-grid{grid-template-columns:minmax(0,1fr) 240px!important;grid-template-rows:minmax(0,1fr)}}
+@media(max-width:699px){html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] #dialog-body{overflow-y:auto}html:root:root:root:root:root[data-interface=terminal] body dialog.term-window[data-term-window="Message path"] .message-path-workspace{min-height:650px}}
+html:root:root:root:root:root[data-interface=terminal] body .route-map-dialog button.message-hop-card[aria-pressed=true]{background:var(--t-blue)!important;border-color:var(--t-bright-cyan)!important}
+html:root:root:root:root:root[data-interface=terminal] body .route-map-dialog button.message-hop-card[aria-pressed=true] :is(strong,.message-hop-state,small){color:var(--t-white)!important}
