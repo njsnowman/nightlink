@@ -1,14 +1,37 @@
 # Nightlink full help handbook
 
-Offline app help and Operations guide, rc.40. Maps: miles. Heights: feet. Predictions and observations remain separate.
+Offline app help and Operations guide, rc.41. Maps: miles. Heights: feet. Predictions and observations remain separate.
 
-## Start here: plan a mesh project
+## Start here: try a location
 
-Operations separates a proposed source design from observations, approved baselines and recorded installations.
+For occasional volunteer work: compare a hill or rooftop with an existing site and keep the idea when it is useful.
 
 ### What to do
 
-1. Open Operations and create a project. Describe the people or places you want served. Open the project to resume its first unfinished step.
+1. Open Operations and choose Try a location. Choose a saved or cached contact location, enter coordinates, or use Place existing site on the map.
+2. Use Place proposed pin for the possible repeater. Enter both antenna heights in feet, the frequency and the local preview radius in miles. Optional radio details let you change power, gain, losses and ground assumptions.
+3. Choose Run preview when ready. This explicitly requests terrain coordinates, or uses cached terrain only if selected. Cancel stops the preview without saving an idea.
+4. Read the direct-path explanation and local predicted area results. Unknown coverage is unresolved, not a confirmed gap; predictions are not measured radio service.
+5. Keep this idea saves an independent project without changing the source project. Export a simple site note to share. Neither action requires a team, dates, assignments or an installation record.
+6. Return whenever you have time. A field test is optional. Use Detailed planner only for a larger study, multiple sites, repeater-gap searches or formal installation records.
+
+
+
+### What the result means
+
+
+
+- Inputs are drafted locally; Keep explicitly saves a restorable project. Back up saved plans for transfer to another computer. Drafts are not included in project backups.
+- Saved and radio contact locations are snapshots, not live tracking. Opening or keeping an idea never configures or transmits to a radio.
+- The heatmap shows the proposed site alone around its pin. Existing-site and combined results remain unresolved when a required source model is outside the supported radius.
+
+## Optional: detailed mesh project
+
+For a larger study, Operations separates a proposed source design from observations, approved baselines and recorded installations.
+
+### What to do
+
+1. Choose New project for the optional detailed planner, or open Detailed planner from a location idea. Describe the people or places you want served. Open the project to resume its first unfinished step.
 2. Follow Project, Sites, Radio, Terrain & LOS, Coverage, Repeater gaps, then Review & export. A saved requirement unlocks the next step; clicking a checkbox does not manufacture completion.
 3. Save inline forms explicitly. Use the required-work card to see what is missing, and Back to correct earlier inputs. The summary reflects saved inputs, not pending draft values.
 4. After source planning, use Engineering studio for network alternatives and save a scenario. Deployment workspace freezes an explicitly approved scenario for installation and acceptance.

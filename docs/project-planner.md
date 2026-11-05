@@ -1,10 +1,16 @@
 # RF project planner
 
-Tracks [#165](https://github.com/njsnowman/nightlink/issues/165). Operations opens RF projects. A project keeps the study area, sites, radio assumptions, terrain, coverage and candidate decisions together. The primary interface is a seven-stage map workspace; Team & advanced tools retains earlier team, channel, checklist, field-record and individual RF tools.
+Tracks [#165](https://github.com/njsnowman/nightlink/issues/165) and [#189](https://github.com/njsnowman/nightlink/issues/189). Operations centers on occasional volunteer site ideas. The optional detailed planner keeps the study area, sites, radio assumptions, terrain, coverage and candidate decisions together in a seven-stage workspace. Team & advanced tools retains earlier team, channel, checklist, field-record and individual RF tools.
 
-## Start to finish
+## Occasional volunteer site ideas
 
-1. **Project.** Create a named project and describe the intended service. Set a study center/radius (1640.4–82021.0 ft) and coverage goal. You can choose the center on the map, then confirm it. The goal refers to modeled area-grid samples, not measured service.
+Operations starts with Try a location: choose an existing site, plot a proposed repeater, enter antenna heights in feet and a local radius in miles, then run a terrain preview. Keep saves an independent idea; exporting a simple site note requires no schedule, staffing or work assignment. A later field visit is optional. Tracks [#189](https://github.com/njsnowman/nightlink/issues/189).
+
+Known locations are copied from saved sites, cached radio contacts or Contact Book. Previewing does not save or change the source project. The map shows proposed-site-only predictions. Reference and combined area results remain unresolved if a required source grid is unavailable. Unknown data is not a confirmed gap. Detailed planner retains the seven-stage tools below for larger studies and optional installation records.
+
+## Optional detailed planning
+
+1. **Project.** Create a named project and describe the intended service. Set a study center/radius (0.31–15.53 mi) and coverage goal. You can choose the center on the map, then confirm it. The goal refers to modeled area-grid samples, not measured service.
 2. **Sites.** Add coordinates, plot on the map, or copy a selected known mesh location. Mark existing transmitters (up to three), service targets and proposed candidates. A service target is a place you want served. Site locations retain their source/time. Roles are explicitly selected; a proposed repeater is not silently treated as an existing transmitter.
 3. **Radio.** Confirm common frequency, power, gains/losses, sensitivity, mobile receiver height and margin. Defaults can be applied to selected sites. Existing profiles are unchecked until you explicitly choose to replace them. Review each site's actual mast height/equipment separately. Propagation k and required Fresnel fraction remain editable advanced assumptions.
 4. **Terrain & LOS.** Select two to eight sites and calculate every unique pair (maximum 28 per job). Coordinates are retrieved through the shared terrain cache/service, and results save atomically. Select a path to inspect its terrain profile, ray/Fresnel clearance and reciprocal diffraction-aware reserve. Positive modeled budget does not prove LOS or field delivery. Up to 50 paths/scenarios are retained per project; unrelated saved height scenarios are preserved.
