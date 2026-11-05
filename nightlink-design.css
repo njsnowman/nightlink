@@ -209,3 +209,6 @@ html:root:root:root:root body .map-provider-settings input{flex:0 0 auto;accent-
 /* Center the successful sync message within the connection console's text column. */
 .link-console .link-heading{flex:1;min-width:0}
 .link-console .link-heading p{margin:0 auto;max-width:350px;text-align:center}
+
+/* Feet scales share readable map surfaces in both interfaces. */
+.leaflet-container .leaflet-control-scale-line{color:var(--nl-copy);background:var(--nl-surface);border-color:var(--nl-edge);text-shadow:none}

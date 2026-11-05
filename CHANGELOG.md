@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use feet for planner and RF input/output, terrain plots/CSV, map scales, hop distances and offline reports while retaining canonical model/backup units. Preserve unchanged saved assumptions when forms are reopened. Tracks [#171](https://github.com/njsnowman/nightlink/issues/171); [candidate record](releases/0.8.28-rc.32.md).
+
 - Add ordered right-panel project guidance, selective terrain/model reuse, baseline/candidate comparisons, transmitter-outage simulations, nearby terrain screening and current matched field-test calibration previews. Tracks [#167](https://github.com/njsnowman/nightlink/issues/167); [candidate record](releases/0.8.28-rc.31.md).
 
 - Restore live chat scrolling when incoming messages arrive before rendering. Sending from history resumes the latest messages in Terminal, Cards and detached direct messages; deliberate history scrolling retains its position. Tracks [#168](https://github.com/njsnowman/nightlink/issues/168); [candidate record](releases/0.8.28-rc.30.md).

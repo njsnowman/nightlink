@@ -24,6 +24,6 @@
   }
   return{segments,totalKm:segments.reduce((sum,s)=>sum+s.km,0)};
  }
- function formatDistance(km,unit='mi'){if(!Number.isFinite(km)||km<0)return'Unavailable';const value=unit==='km'?km:km/1.609344;return value.toFixed(value>0&&value<.1?2:1)+' '+(unit==='km'?'km':'mi');}
+ function formatDistance(km,unit='mi'){if(!Number.isFinite(km)||km<0)return'Unavailable';if(unit==='ft')return (km*1000/.3048).toFixed(0)+' ft';const value=unit==='km'?km:km/1.609344;return value.toFixed(value>0&&value<.1?2:1)+' '+(unit==='km'?'km':'mi');}
  root.MeshlineRoutes={parseRaw,decodeRoute,hopSummary,resolvePath,contactRoute,pathDistances,formatDistance};if(typeof module!=='undefined')module.exports=root.MeshlineRoutes;
 })(globalThis);
