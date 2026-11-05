@@ -36,7 +36,7 @@ Limits: 100 sites, three selected existing transmitters, eight stored candidates
 
 ## Compatibility and evidence
 
-Planner IndexedDB upgrades from version 3 to 4 while retaining records; older builds cannot write the newer planner database. Backup format 4 retains project fields, area keys and full terrain grids; imports 1–4 are accepted. Export before upgrading if an older build must remain usable. Planner/exports are unencrypted local data. JSON is the full backup; GeoJSON, CSV and reports are derived outputs.
+Planner IndexedDB upgrades earlier versions to version 5 while retaining records; older builds cannot write the newer planner database. Backup format 5 retains project fields, survey observations, area keys and full terrain grids; imports 1–5 are accepted. Export before upgrading if an older build must remain usable. Planner/exports are unencrypted local data. JSON is the full backup; GeoJSON, CSV and reports are derived outputs.
 
 Automated geometry/coverage/measurement fixtures are synthetic. Native retrieval proves only that provider data can be fetched and saved, not terrain accuracy or physical radio performance. Candidate-specific validation and artifact/source checksums are recorded in the release record. Queen City Con is unchanged.
 
@@ -62,7 +62,7 @@ Comparison modes, outage selections, terrain-screening results and calibration p
 
 All app-owned linear measurements in the project workflow and advanced RF tools use feet: editable heights/ground elevations, study/coverage/search radii, path lengths, clearance, sample/source spacing, charts, scales and reports. Gap areas use square feet. Frequency, power, gain, reserve, coordinates and angles retain their RF/geographic units. The offline Radio line-of-sight calculator, hop-distance annotations, ANSI map scales and propagation distance column also use feet. External embedded feeds retain their provider-controlled presentation.
 
-Numeric fields convert feet to canonical SI at save time; existing schema-4 plans and JSON backups retain their original typed SI fields for compatibility. Unchanged rounded form values preserve the original canonical number exactly. Fields display up to three decimals; RF forms convert their bounds as well as their values, with boundary tolerance limited to half the displayed precision. No database migration or automatic RF-setting change is performed. User-entered notes and source/datum strings are retained verbatim.
+Numeric fields convert feet to canonical SI at save time; existing schema-4 plans and JSON backups retain their original typed SI fields for compatibility. Unchanged rounded form values preserve the original canonical number exactly. Fields display up to three decimals; RF forms convert their bounds as well as their values, with boundary tolerance limited to half the displayed precision. Feet conversion does not rewrite stored measurements or automatically change RF settings; Field Survey adds the database-version protection described below. User-entered notes and source/datum strings are retained verbatim.
 
 The blank terrain CSV uses distance_ft,elevation_ft,obstruction_ft; importing those headers converts numeric values to canonical SI before the normal terrain validation. Existing SI CSV headers remain accepted. GeoJSON derived length properties use radiusFt, heightFt, receiverHeightFt and resolutionFt, with lengthUnit set to ft. JSON project backups retain their existing canonical schema; they are not presentation exports. Printed project/RF/site reports and terrain plot tick values use feet.
 
