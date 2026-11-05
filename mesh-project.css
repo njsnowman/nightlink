@@ -10,7 +10,7 @@ html[data-interface=cards] :is(.project-stage-panel,.project-result-row,.project
 
 .project-stages{flex-direction:row;flex-wrap:nowrap;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}.project-stages>button{width:auto;min-width:0;flex:0 0 auto;white-space:nowrap}@media(max-width:700px){.project-stages>button{flex:0 0 auto}}
 /* Keep the project identity and workflow compact above the map. */
-.project-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;padding:8px 0 12px}.project-heading>h2{grid-column:1;grid-row:1;margin:0;overflow-wrap:anywhere}.project-heading>.ops-actions{grid-column:2;grid-row:1 / span 2;justify-content:flex-end}.project-heading>.ops-meta{grid-column:1;grid-row:2;margin:0}html:root:root:root:root:root[data-interface=terminal] body .project-stages>button[aria-current=step]{background:var(--t-blue)!important;color:var(--t-white)!important}@media(max-width:900px){.project-heading{grid-template-columns:minmax(0,1fr)}.project-heading>.ops-actions{grid-column:1;grid-row:3;justify-content:flex-start}}
+.project-heading{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;gap:4px 12px;padding:8px 0 12px}.project-heading>h2{grid-column:1;grid-row:1;margin:0;overflow-wrap:anywhere}.project-heading>.ops-actions{grid-column:1;grid-row:3;justify-content:flex-start;min-width:0;flex-wrap:wrap}.project-heading>.ops-meta{grid-column:1;grid-row:2;margin:0}html:root:root:root:root:root[data-interface=terminal] body .project-stages>button[aria-current=step]{background:var(--t-blue)!important;color:var(--t-white)!important}@media(max-width:900px){.project-heading{grid-template-columns:minmax(0,1fr)}.project-heading>.ops-actions{grid-column:1;grid-row:3;justify-content:flex-start}}
 
 html:root:root:root:root:root[data-interface=terminal] body #operations-planner #project-workflow>button[aria-current=step]{background:var(--t-blue)!important;color:var(--t-white)!important}
 
@@ -48,3 +48,10 @@ html[data-interface="terminal"] .deployment-steps button[aria-pressed=true]{back
 #dialog:has(.deployment-editor){width:min(1000px,calc(100vw - 32px));max-width:calc(100vw - 32px)}
 .deployment-editor .ops-form-grid>fieldset,.deployment-editor .ops-form-grid>details,.deployment-editor .ops-form-grid>p{grid-column:1/-1}
 @media(max-width:700px){.deployment-editor .ops-form-grid{grid-template-columns:minmax(0,1fr)}}
+
+.project-stages[hidden]{display:none!important}.command-tabs{gap:8px;margin:12px 0}.command-tabs button[aria-pressed=true]{background:var(--nl-hover);border-color:var(--nl-accent);color:var(--nl-accent)}.command-next>button{margin-top:8px}.command-lifecycle button{flex:1;min-width:145px;white-space:normal}
+html[data-interface="terminal"] .command-tabs button[aria-pressed=true]{background:var(--t-blue)!important;color:var(--t-white)!important}
+
+.command-lifecycle{border-top:1px solid var(--nl-edge);border-bottom:1px solid var(--nl-edge);padding:12px 0;gap:8px}
+
+.command-map-controls{margin:0 0 12px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.command-map-controls .ops-field{min-width:0}@media(max-width:600px){.command-map-controls{grid-template-columns:minmax(0,1fr)}}

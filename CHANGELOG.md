@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add Project Command Center as the project home with Plan / Deploy / Verify / Handover, scoped next actions, source / approved / installed site comparisons, change impact and explicit selective source recalculation. Preserve the map across site/tab changes, frozen histories and format-8 backups. Maps use miles; AGL/heights remain feet. Tracks [#181](https://github.com/njsnowman/nightlink/issues/181); [candidate record](releases/0.8.28-rc.37.md).
+
 - Add Deployment workspace: freeze current engineering scenarios, assign site work/gear/tasks, define and record field acceptance tests, derive a punch list and retain as-built revisions/handover records. Planner database/backup format 8 preserves deployments independently of later source-plan changes. Maps use miles; AGL/heights remain feet. Tracks [#179](https://github.com/njsnowman/nightlink/issues/179); [candidate record](releases/0.8.28-rc.36.md).
 
 - Add Verify & refine with an ordered field-test queue, measured-versus-modeled point map, explicit mast what-if explanations, per-site deployment reviews and immutable project checkpoint/change reports. Include verification sections in full-study reports. Use miles for map scales/radii/horizontal distances and feet for heights/elevations. Planner database/backup format 7 retains reviews and checkpoints. Tracks [#177](https://github.com/njsnowman/nightlink/issues/177); [candidate record](releases/0.8.28-rc.35.md).
