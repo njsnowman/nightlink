@@ -396,12 +396,6 @@ Use saved requirements and error details to locate the actual missing work.
 
 Use the terms to interpret inputs and results without changing their meaning.
 
-### What to do
-
-
-
-
-
 ### What the result means
 
 

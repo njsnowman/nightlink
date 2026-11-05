@@ -1,6 +1,6 @@
 /* Offline Operations handbook. Shared data powers the menu and full-document exports. */
 (function(root){
-'use strict';const topic=(id,title,summary,steps,items=[],stage=null)=>({id,title,group:'Operations',summary,sections:[{title:'What to do',steps},{title:'What the result means',items}],stage}),topics=[
+'use strict';const topic=(id,title,summary,steps,items=[],stage=null)=>({id,title,group:'Operations',summary,sections:[{title:'What to do',steps},{title:'What the result means',items}].filter(s=>s.steps?.length||s.items?.length||s.text),stage}),topics=[
 topic('ops-start','Start here: plan a mesh project','Operations separates a proposed source design from observations, approved baselines and recorded installations.',[
 'Open Operations and create a project. Describe the people or places you want served. Open the project to resume its first unfinished step.',
 'Follow Project, Sites, Radio, Terrain & LOS, Coverage, Repeater gaps, then Review & export. A saved requirement unlocks the next step; clicking a checkbox does not manufacture completion.',
