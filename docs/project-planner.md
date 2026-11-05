@@ -39,3 +39,5 @@ Limits: 100 sites, three selected existing transmitters, eight stored candidates
 Planner IndexedDB upgrades from version 3 to 4 while retaining records; older builds cannot write the newer planner database. Backup format 4 retains project fields, area keys and full terrain grids; imports 1–4 are accepted. Export before upgrading if an older build must remain usable. Planner/exports are unencrypted local data. JSON is the full backup; GeoJSON, CSV and reports are derived outputs.
 
 Automated geometry/coverage/measurement fixtures are synthetic. Native retrieval proves only that provider data can be fetched and saved, not terrain accuracy or physical radio performance. Candidate-specific validation and artifact/source checksums are recorded in the release record. Queen City Con is unchanged.
+
+Legacy paths below the project model's 30 MHz floor remain intact in advanced RF tools. Their imported project frequency defaults to 915 MHz for review rather than rejecting the stored plan. No legacy path frequency is rewritten.
