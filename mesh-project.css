@@ -24,3 +24,17 @@ html[data-interface=terminal] .project-guidance .project-step-label{color:var(--
 html[data-interface=cards] .survey-steps>button[aria-pressed=true]{border-color:var(--nl-accent);background:var(--nl-hover);color:var(--nl-accent)}html:root:root:root:root:root[data-interface=terminal] body #operations-planner #survey-workflow>button[aria-pressed=true]{background:var(--t-blue)!important;color:var(--t-white)!important}
 
 html[data-interface=cards] #operations-planner #survey-workflow>button[aria-pressed=true]{border-color:var(--nl-accent)!important;background:var(--nl-hover)!important;color:var(--nl-accent)!important}
+
+/* Engineering uses the same map/panel hierarchy and optional deeper tools. */
+.engineering-steps{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.engineering-steps>button{min-height:34px;white-space:normal}.engineering-job[hidden]{display:none!important}.mesh-project[data-stage=engineering] .project-stage-panel>.ops-field{margin:12px 0}.engineering-3d canvas{display:block;width:100%;height:auto;max-width:100%;border:1px solid var(--nl-edge);background:#000;border-radius:var(--nl-radius-control);touch-action:none}.engineering-3d-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.engineering-3d-controls label{display:flex;flex-direction:column;gap:6px;min-width:0}.engineering-3d-controls input{width:100%}.engineering-3d-controls output{color:var(--nl-copy)}.engineering-3d canvas:focus-visible{outline:2px solid var(--nl-accent);outline-offset:2px}.engineering-3d p{line-height:1.5;color:var(--nl-copy)}
+html[data-interface=cards] #operations-planner #engineering-workflow>button[aria-pressed=true]{border-color:var(--nl-accent)!important;background:var(--nl-hover)!important;color:var(--nl-accent)!important}html:root:root:root:root:root[data-interface=terminal] body #operations-planner #engineering-workflow>button[aria-pressed=true]{background:var(--t-blue)!important;color:var(--t-white)!important}@media(max-width:700px){.engineering-3d-controls{grid-template-columns:minmax(0,1fr)}}
+
+html[data-interface=terminal] .engineering-3d canvas:focus-visible{outline-color:var(--t-bright-cyan)}
+
+/* One-shot study uses the shared editor with readable full-width guidance. */
+#dialog:has(.engineering-full-form){width:min(1000px,calc(100vw - 32px));max-width:calc(100vw - 32px)}
+.engineering-full-form .ops-form-grid>p,.engineering-full-form .ops-form-grid>details{grid-column:1/-1}
+.engineering-full-form .ops-form-grid>p{margin:0;max-width:90ch}
+.engineering-full-form details[open]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.engineering-full-form details>summary{grid-column:1/-1}
+@media(max-width:700px){.engineering-full-form .ops-form-grid,.engineering-full-form details[open]{grid-template-columns:minmax(0,1fr)}}
