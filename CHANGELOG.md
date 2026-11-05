@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Refine guided Operations with plain task headings, inline project/site/radio inputs, linked completion counts, a fixed task navigation bar, map-linked site selection and a compact saved-project summary. Retain local drafts across site switches/restarts and reject stale/conflicting saves. Tracks [#185](https://github.com/njsnowman/nightlink/issues/185); [candidate record](releases/0.8.28-rc.39.md).
+
 - Make guided planning the Operations project home. Lock later steps until saved prerequisite inputs and current models are complete, show required checklists and resume at the first unfinished step. Relock stale dependent calculations without deleting history; move optional tools under a disclosure. Tracks [#183](https://github.com/njsnowman/nightlink/issues/183); [candidate record](releases/0.8.28-rc.38.md).
 
 - Add Project Command Center as the project home with Plan / Deploy / Verify / Handover, scoped next actions, source / approved / installed site comparisons, change impact and explicit selective source recalculation. Preserve the map across site/tab changes, frozen histories and format-8 backups. Maps use miles; AGL/heights remain feet. Tracks [#181](https://github.com/njsnowman/nightlink/issues/181); [candidate record](releases/0.8.28-rc.37.md).
