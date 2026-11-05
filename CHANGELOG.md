@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Align the Cards Operations main page with rounded shared panels, consistent primary actions, a separate backup/import row, balanced totals and saved-project rows with aligned name/status/date/count/Open positions. Preserve Terminal, actions and saved data. Tracks [#193](https://github.com/njsnowman/nightlink/issues/193); [candidate record](releases/0.8.28-rc.43.md).
+
 - Align the Terminal Operations library with a three-step introduction, consistent main actions, separate backup/import utilities, compact totals and saved-project rows with aligned status/date/count/Open fields. Preserve search, filters, data and Cards behavior. Tracks [#191](https://github.com/njsnowman/nightlink/issues/191); [candidate record](releases/0.8.28-rc.42.md).
 
 - Operations now starts with an occasional volunteer site idea: select a reference, plot a proposal, explicitly preview terrain and local coverage, then optionally keep an independent plan or export a site note. Detailed guided/engineering/installation records remain optional; source histories and acceptance validation are retained. Library, menu and 45-topic offline help use this workflow. Miles for maps and feet for heights. Tracks [#189](https://github.com/njsnowman/nightlink/issues/189); [candidate record](releases/0.8.28-rc.41.md).

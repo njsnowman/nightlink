@@ -13,3 +13,42 @@ html[data-interface=cards] :is(.ops-actions,.ops-row-actions,.rf-site-row,.rf-pa
 html[data-interface=cards] :is(.ops-guided-step,.ops-card)>button:not(.danger):not(.primary){border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control);padding:8px 12px;min-height:34px;background:var(--nl-surface);color:var(--nl-copy)}html[data-interface=cards] :is(.ops-guided-step,.ops-card)>button:not(.danger):not(.primary):hover{border-color:var(--nl-accent);background:var(--nl-hover)}
 /* The library adds structure for Terminal; Cards retains its existing surfaces. */
 .ops-library-guide,.ops-library-heading,.ops-library-tools>h3{display:none}.ops-library-tools{display:contents}
+/* Cards Operations library: shared Radio Tools surfaces with predictable columns. */
+html[data-interface=cards] .ops-library{max-width:1440px;margin-inline:auto;min-width:0}
+html[data-interface=cards] .ops-library>.ops-top{border:1px solid var(--nl-edge);border-radius:var(--nl-radius-card);background:var(--nl-surface);padding:22px;margin:8px 0 16px}
+html[data-interface=cards] .ops-library .ops-eyebrow{letter-spacing:.04em;margin-bottom:6px}
+html[data-interface=cards] .ops-library .ops-top h2{font-size:24px;margin:0 0 8px;line-height:1.3}
+html[data-interface=cards] .ops-library .ops-top>p{margin:0 0 18px;max-width:85ch;color:var(--nl-muted);line-height:1.6}
+html[data-interface=cards] .ops-library-guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;list-style:none;counter-reset:idea-step;padding:0;margin:0 0 20px}
+html[data-interface=cards] .ops-library-guide li{counter-increment:idea-step;display:flex;gap:10px;align-items:baseline;min-width:0;font-size:14px;color:var(--nl-copy);line-height:1.5}
+html[data-interface=cards] .ops-library-guide li::before{content:'0' counter(idea-step);font-size:12px;font-weight:650;color:var(--nl-accent)}
+html[data-interface=cards] .ops-library-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
+html[data-interface=cards] .ops-library-actions>button{min-height:44px;margin:0;padding:10px 16px}
+html[data-interface=cards] .ops-library-tools{grid-column:1/-1;display:grid;grid-template-columns:160px 190px minmax(0,1fr);gap:16px;align-items:end;border-top:1px solid var(--nl-edge);padding-top:16px;margin-top:6px}
+html[data-interface=cards] .ops-library-tools>h3{display:block;align-self:center;font-size:14px;font-weight:600;color:var(--nl-muted);margin:0;line-height:1.5}
+html[data-interface=cards] .ops-library-tools>button{min-height:40px;margin:0}
+html[data-interface=cards] .ops-library-tools .ops-import{min-width:0;gap:6px;color:var(--nl-muted)}
+html[data-interface=cards] .ops-library-tools input{width:100%;min-width:0;max-width:none;font:inherit;box-sizing:border-box;min-height:40px}
+html[data-interface=cards] .ops-library-tools input::file-selector-button{font:inherit;background:var(--nl-hover);color:var(--nl-copy);border:0;border-right:1px solid var(--nl-edge);padding:8px 10px;margin-right:10px;cursor:pointer}
+html[data-interface=cards] .ops-library>.ops-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 26px}
+html[data-interface=cards] .ops-library .ops-metric{display:flex;gap:14px;align-items:baseline;padding:14px 18px}
+html[data-interface=cards] .ops-library .ops-metric strong{font-size:24px;font-weight:650;font-variant-numeric:tabular-nums}
+html[data-interface=cards] .ops-library .ops-metric span{font-size:13px}
+html[data-interface=cards] .ops-library-heading{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px;margin-bottom:14px}
+html[data-interface=cards] .ops-library-heading h3{font-size:18px;font-weight:650;color:var(--nl-copy);margin:0}
+html[data-interface=cards] .ops-library>.ops-library-filter{grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:12px;margin:0 0 16px;align-items:end}
+html[data-interface=cards] .ops-library>.ops-plan-grid{grid-template-columns:minmax(0,1fr);gap:10px}
+html[data-interface=cards] .ops-library .ops-plan-card{display:grid;grid-template-columns:minmax(0,1fr) 100px 210px 140px;grid-template-rows:auto auto;gap:6px 18px;align-items:center;padding:18px!important}
+html[data-interface=cards] .ops-library .ops-plan-card h3{grid-column:1;grid-row:1;font-size:16px;font-weight:650;line-height:1.5;margin:0;min-width:0}
+html[data-interface=cards] .ops-library .ops-plan-card .ops-status{grid-column:2;grid-row:1;justify-self:start;align-self:center;margin:0}
+html[data-interface=cards] .ops-library .ops-plan-card .ops-meta{grid-column:3;grid-row:1;font-size:13px;line-height:1.5;margin:0;color:var(--nl-muted)}
+html[data-interface=cards] .ops-library .ops-plan-notes{grid-column:1/3;grid-row:2;font-size:13px;line-height:1.6;margin:0;white-space:normal;color:var(--nl-muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html[data-interface=cards] .ops-library .ops-plan-counts{grid-column:3;grid-row:2;font-size:13px;line-height:1.5;margin:0;color:var(--nl-muted)}
+html[data-interface=cards] .ops-library .ops-plan-card>button{grid-column:4;grid-row:1/3;align-self:center;margin:0;width:100%;min-height:40px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control);background:var(--nl-surface);color:var(--nl-copy);padding:8px 12px}
+html[data-interface=cards] .ops-library .ops-plan-card>button:hover{border-color:var(--nl-accent);background:var(--nl-hover)}
+html[data-interface=cards] .ops-library .ops-empty{border:1px dashed var(--nl-edge);border-radius:var(--nl-radius-card);padding:24px;line-height:1.6;background:var(--nl-surface)}
+html[data-interface=cards] .ops-library .project-legacy-templates{margin:22px 0 0;border-top:1px solid var(--nl-edge);padding-top:16px}
+html[data-interface=cards] .ops-library .project-legacy-templates>summary{cursor:pointer;color:var(--nl-muted);line-height:1.5}
+html[data-interface=cards] .ops-library .ops-template-grid{margin-top:16px}
+@media(max-width:1100px){html[data-interface=cards] .ops-library .ops-plan-card{grid-template-columns:minmax(0,1fr) 100px 140px}html[data-interface=cards] .ops-library .ops-plan-counts{grid-column:1/3;grid-row:2}html[data-interface=cards] .ops-library .ops-plan-card .ops-meta{grid-column:1/3;grid-row:3}html[data-interface=cards] .ops-library .ops-plan-notes{grid-column:1/3;grid-row:4}html[data-interface=cards] .ops-library .ops-plan-card>button{grid-column:3;grid-row:1/4}html[data-interface=cards] .ops-library-tools{grid-template-columns:190px minmax(0,1fr)}html[data-interface=cards] .ops-library-tools>h3{grid-column:1/-1}html[data-interface=cards] .ops-library .ops-metric{flex-direction:column;gap:2px}}
+@media(max-width:850px){html[data-interface=cards] .ops-library>.ops-top{padding:16px}html[data-interface=cards] .ops-library-guide{grid-template-columns:1fr;gap:6px}html[data-interface=cards] .ops-library-tools{grid-template-columns:1fr;gap:10px}html[data-interface=cards] .ops-library>.ops-library-filter{grid-template-columns:1fr}html[data-interface=cards] .ops-library .ops-plan-card{grid-template-columns:minmax(0,1fr) 100px;gap:8px 12px}html[data-interface=cards] .ops-library .ops-plan-card .ops-meta,html[data-interface=cards] .ops-library .ops-plan-counts,html[data-interface=cards] .ops-library .ops-plan-notes{grid-column:1/-1}html[data-interface=cards] .ops-library .ops-plan-card>button{grid-column:1/-1;grid-row:5;justify-self:start;width:auto}html[data-interface=cards] .ops-library-actions{grid-template-columns:repeat(2,minmax(0,1fr))}html[data-interface=cards] .ops-library-actions>.primary{grid-column:1/-1}}
