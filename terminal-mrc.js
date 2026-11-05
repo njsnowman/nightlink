@@ -27,9 +27,9 @@
   return state.readSessions.get(id);
  }
  function latestVisible(log,id){const last=live.messages.filter(m=>m.conversation===id).at(-1);return log.scrollHeight-log.scrollTop-log.clientHeight<24&&(!last||log.querySelector('[data-message-id="'+CSS.escape(last.id)+'"]'));}
- function captureReading(log=doc.querySelector('#mrc-log'),persist=true){
+ function captureReading(log=doc.querySelector('#mrc-log'),persist=true,beforeRender=false){
   if(!log?.isConnected||!log.clientHeight||state.restoring||!state.readingWin||state.readingOwner!==(live.identity?.key||'local'))return;
-  const session=readingSession(state.readingWin),rect=log.getBoundingClientRect(),anchor=[...log.querySelectorAll('[data-message-id]')].find(row=>row.getBoundingClientRect().bottom>rect.top+1),bottom=!!latestVisible(log,state.readingWin);
+  const session=readingSession(state.readingWin),rect=log.getBoundingClientRect(),anchor=[...log.querySelectorAll('[data-message-id]')].find(row=>row.getBoundingClientRect().bottom>rect.top+1),bottom=beforeRender?log.scrollHeight-log.scrollTop-log.clientHeight<24&&log.dataset.tailWindow==='true'&&((!doc.hidden&&doc.hasFocus())||!!latestVisible(log,state.readingWin)):!!latestVisible(log,state.readingWin);
   session.position={anchor:anchor?.dataset.messageId,offset:anchor?anchor.getBoundingClientRect().top-rect.top:0,bottom,manual:!bottom,boundary:session.boundary};
   if(persist)try{ensureAttention().position(state.readingWin,session.position);}catch{}
  }
@@ -204,7 +204,7 @@
   if(!host)return;
   const on=terminal()&&current==='Messages';
   saveTerminalDraft();
-  if(!state.restoring)captureReading();
+  if(!state.restoring)captureReading(doc.querySelector('#mrc-log'),true,true);
   host.classList.toggle('mrc-active',on);
   doc.body.classList.toggle('term-mrc',on);
   let root=doc.querySelector('#mrc');
@@ -245,7 +245,7 @@
   if(win.kind==='status')statusLines(scroll);
   else{
    const all=live.messages.filter(m=>m.conversation===win.id),focus=session.focus||(session.position.manual?session.position.anchor:changed?session.boundary:null);
-   const focusIndex=focus?all.findIndex(m=>m.id===focus):-1,start=focusIndex>=0?Math.max(0,Math.min(all.length-MAX_ROWS,focusIndex-30)):Math.max(0,all.length-MAX_ROWS),rows=all.slice(start,start+MAX_ROWS);
+   const focusIndex=focus?all.findIndex(m=>m.id===focus):-1,start=focusIndex>=0?Math.max(0,Math.min(all.length-MAX_ROWS,focusIndex-30)):Math.max(0,all.length-MAX_ROWS),rows=all.slice(start,start+MAX_ROWS);scroll.dataset.tailWindow=String(!all.length||rows.at(-1)?.id===all.at(-1)?.id);
    if(!rows.length){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(nowSeconds())),el('span','mrc-dim','-!- No messages in '+win.label+' yet.'));scroll.append(line);
     // Decorative antenna for an empty window; the line above carries the meaning.
     const art=el('pre','mrc-empty-art');art.setAttribute('aria-hidden','true');
@@ -334,7 +334,7 @@
  const HELP=['Commands:','/join #channel   switch to a radio channel window','/msg <name> <text>   send a direct message to a saved contact','/query <name>   open a direct message window','/me <text>   send "* '+'<your name> <text>"','/whois <name>   show a saved contact: type, route, signal, last advert','Tab   complete a nick or #channel','/help   show this help','Keys: alt+1..9 switch window · F9 main menu · F1 help'];
  async function submit(value,win,input){
   const text=value.trim();if(!text)return;
-  const send=async(target,body)=>{if(bytes(body)>LIMIT){localLine(win.id,'-!- Message is '+bytes(body)+' bytes; the limit is '+LIMIT+'.','mrc-error');render();return;}const owner=live.identity?.key,id=conversationId(target),reply=state.replyWindow===id?state.replySource:null,before=new Set(live.messages.map(m=>m.id));await sendUIMessage({...target},body,()=>{if(draftStore().get(owner,id).trim()===body.trim())draftStore().clearIf(owner,id,body);const i=state.form?.querySelector('#mrc-input');if(state.draftOwner===owner&&state.draftId===id&&i?.value.trim()===body.trim()){i.value='';state.lastSavedDraft='';syncCardDraft('');state.form.querySelector('.message-reply-context')?.remove();state.replyWindow=null;state.replySource=null;}});if(reply&&owner===live.identity?.key){const sent=live.messages.find(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim());if(sent){sent.localReply={...reply};saveHistory();}}};
+  const send=async(target,body)=>{if(bytes(body)>LIMIT){localLine(win.id,'-!- Message is '+bytes(body)+' bytes; the limit is '+LIMIT+'.','mrc-error');render();return;}const owner=live.identity?.key,id=conversationId(target),reply=state.replyWindow===id?state.replySource:null,before=new Set(live.messages.map(m=>m.id));await sendUIMessage({...target},body,()=>{if(draftStore().get(owner,id).trim()===body.trim())draftStore().clearIf(owner,id,body);const i=state.form?.querySelector('#mrc-input');if(state.draftOwner===owner&&state.draftId===id&&i?.value.trim()===body.trim()){i.value='';state.lastSavedDraft='';syncCardDraft('');state.form.querySelector('.message-reply-context')?.remove();state.replyWindow=null;state.replySource=null;}});if(reply&&owner===live.identity?.key){const sent=live.messages.find(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim());if(sent){sent.localReply={...reply};saveHistory();}}if(owner===live.identity?.key&&state.readingWin===id&&live.messages.some(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim())){const session=readingSession(id);session.focus=null;session.boundary=null;session.position={bottom:true,manual:false};state.restoring=true;try{render();}finally{state.restoring=false;}}};
   if(!text.startsWith('/')){
    if(win.kind==='status'){localLine(win.id,'-!- (status) is not a chat window. Use /join #channel or /msg <name> <text>.','mrc-error');input.value='';render();return;}
    await send(win.target,text);render();return;

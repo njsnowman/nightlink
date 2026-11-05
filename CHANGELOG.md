@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Restore live chat scrolling when incoming messages arrive before rendering. Sending from history resumes the latest messages in Terminal, Cards and detached direct messages; deliberate history scrolling retains its position. Tracks [#168](https://github.com/njsnowman/nightlink/issues/168); [candidate record](releases/0.8.28-rc.30.md).
+
 - Replace the primary Operations workflow with a seven-stage RF project planner: study area, site roles, common radio assumptions, batch terrain/LOS, combined sampled coverage, gap-cluster candidates with incremental coverage/backhaul assessment, and deployment exports. Preserve legacy planning tools and migrate planner database/backups to version 4. Tracks [#165](https://github.com/njsnowman/nightlink/issues/165); [candidate record](releases/0.8.28-rc.29.md).
 
 - Clarify Operations with purpose-grouped navigation, actionable setup checks, optional planning sections and contextual RF guidance from locations through terrain. Replace phase wording with status and omit empty progress ratios. Tracks [#163](https://github.com/njsnowman/nightlink/issues/163); [candidate record](releases/0.8.28-rc.28.md).
