@@ -16,7 +16,7 @@ Choose non-overlapping candidate and destination sets. Prepare comparison terrai
 
 ## Terrain-aware coverage
 
-Build terrain coverage snapshots an origin, reference receiver equipment, antenna heights, frequency and loss assumptions. Choose coarse, balanced or detailed radial sampling, radius 0.5–50 km. Each radial uses intermediate terrain samples, with a maximum of 4,097 source positions and five saved estimates/operation. The layer colors represent predictions at cell outer-center positions, interpolated across each wedge: at least 10 dB reserve, 0–10 dB reserve, below budget or unresolved. An accessible sample table provides the numeric results. Radial/angular spacing and source resolution remain visible. Moving the origin invalidates its layer; later equipment edits do not silently change saved coverage assumptions.
+Build terrain coverage snapshots an origin, reference receiver equipment, antenna heights, frequency and loss assumptions. Choose coarse, balanced or detailed radial sampling, radius 0.5–50 km. Each radial uses intermediate terrain samples, with a maximum of 4,097 source positions and 12 saved estimates/operation. The layer colors represent predictions at cell outer-center positions, interpolated across each wedge: at least 10 dB reserve, 0–10 dB reserve, below budget or unresolved. An accessible sample table provides the numeric results. Radial/angular spacing and source resolution remain visible. Moving the origin invalidates its layer; later equipment edits do not silently change saved coverage assumptions.
 
 The implemented model adds the Bullington diffraction component from ITU-R P.526-16 Annex 1 §4.5.1 (equations 49–57) to free-space attenuation. This is not full delta-Bullington, Longley–Rice/ITM or a complete P.1812 implementation. Effective-Earth curvature uses the entered k. Predictions cover 30–6,000 MHz and base-path distance guards. Both directions include entered transmitter power, antenna gains, feedline loss, receiver sensitivity, required margin and additional assumed loss. Detailed antenna patterns, weather, fading, multipath and independent clutter/foliage attenuation are not modeled. Colored polygons do not establish service throughout the filled area.
 
@@ -30,7 +30,7 @@ Record endpoint field test can capture a model snapshot only when the operator c
 
 Export a site or all sites as self-contained printable HTML: saved coordinates/location provenance, true initial bearings, RF equipment, site photos, modeled paths/profiles, manual tests, access/power notes, assigned operators, planned/fallback channels, assigned tasks and equipment. Save edits first. Reports escape user text, have no script or remote image dependency, and include terrain attribution. JSON backups retain the full grids and snapshots; printed HTML is not a replacement for a backup.
 
-Planner database version 3 retains earlier operations and prevents older builds from writing an incompatible schema. Export format 3 accepts import versions 1–3; older builds reject new backups. Export before upgrading if an older app must remain usable. Removing sites drops their coverage/path inputs but retains historical tests and prediction snapshots. Duplicating operations resets execution tests/predictions and remaps planned coverage IDs. Queen City Con remains unchanged.
+Planner database version 4 retains earlier operations and prevents older builds from writing an incompatible schema. Export format 4 accepts import versions 1–4; older builds reject new backups. Export before upgrading if an older app must remain usable. Removing sites drops their coverage/path inputs but retains historical tests and prediction snapshots. Duplicating operations resets execution tests/predictions and remaps planned coverage IDs. Queen City Con remains unchanged.
 
 ## References and evidence
 
@@ -39,3 +39,5 @@ Planner database version 3 retains earlier operations and prevents older builds 
 - [ITU-R P.526](https://www.itu.int/rec/R-REC-P.526) and [ITU-R P.525](https://www.itu.int/rec/R-REC-P.525).
 
 Automated model/UI fixtures use synthetic terrain and measurements. A successful elevation API response verifies retrieval only, not terrain accuracy or RF coverage. No physical-radio or surveyed-path evidence is claimed by these tests.
+
+The primary [project workflow](project-planner.md) shares these models/cache and adds an area snapshot to project-generated estimates. Individual tools remain available under Team & advanced tools.

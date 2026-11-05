@@ -38,7 +38,7 @@ Workspace analysis is bounded to paths 1 m–200 km. Paths shorter than ten wave
 
 RF records are part of their operation and share revision checks, atomic validation and separate planner backups. Per operation: up to 100 RF profiles, 50 path/scenario records and 500 field tests. Site JPEG data URLs are limited to 250,000 characters. Existing planner limits (100 operations, 40 MB total; 50 MB backup) still apply. Storage failures and stale editor saves remain errors with entered text retained.
 
-Planner IndexedDB upgrades from versions 1/2 to version 3 while retaining existing operations. Old planner builds cannot open that newer database, preventing them from silently discarding RF fields. New planner exports use backup format version 3; this build accepts versions 1–3. Older builds reject new backups. Keep a pre-upgrade export when an older app must remain usable.
+Planner IndexedDB upgrades from versions 1/2/3 to version 4 while retaining existing operations. Old planner builds cannot open that newer database, preventing them from silently discarding RF fields. New planner exports use backup format version 4; this build accepts versions 1–4. Older builds reject new backups. Keep a pre-upgrade export when an older app must remain usable.
 
 Removing an operation site removes its RF profile and dependent path scenarios; recorded tests remain with detached path IDs and their historical path names. Removing a path likewise retains tests. Duplicating an operation remaps RF site/path IDs and retains planning inputs but resets field-test execution records. No results are automatically promoted to measured evidence. Planning records/exports are unencrypted local data.
 

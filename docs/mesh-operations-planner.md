@@ -1,5 +1,7 @@
 # Mesh Operations Planner
 
+Current primary workflow: [RF project planner](project-planner.md). The sections below document retained team/advanced tools; the rc.28 guide is no longer the primary Operations interface.
+
 Tracks [#153](https://github.com/njsnowman/nightlink/issues/153). Primary app, based on rc.22. Queen City Con is unchanged.
 
 Open **Mesh Planner [E]** from the terminal main menu or **Operations** in Cards navigation. The operation library supports search, lifecycle filters, blank/field-deployment/organized-net templates, complete-plan backups and validated imports. Templates seed editable preparation tasks and equipment requirements, without inventing operators or radio data.

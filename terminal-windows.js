@@ -12,7 +12,7 @@
  const PAGES={
   Radio:{title:'RADIO',sub:'status · tools · counters',keys:[['Tab','Next control'],['F9','Main menu'],['Esc','Back']]},
   Settings:{title:'SETTINGS',sub:'interface · sounds · lock · data',keys:[['Tab','Next control'],['F1','Help'],['Esc','Back']]},
-  Operations:{title:'MESH OPERATIONS PLANNER',sub:'plans · team · sites · preparation',keys:[['Tab','Next control'],['F9','Main menu'],['Esc','Back']]},
+  Operations:{title:'MESH OPERATIONS PLANNER',sub:'projects · terrain · coverage · repeater gaps',keys:[['Tab','Next control'],['F9','Main menu'],['Esc','Back']]},
   'Contact Book':{title:'CONTACT BOOK',sub:'offline contacts · locations · activity',keys:[['Tab','Next control'],['F9','Main menu'],['Esc','Back']]},
   Nodes:{title:'NODES',sub:'who is on the mesh · saved contacts',keys:[['Tab','Next control'],['F2','Chat'],['Esc','Back']]},
   'Network map':{title:'MAP',sub:'ANSI node map · street map',keys:[['Tab','Next control'],['F2','Chat'],['Esc','Back']]},

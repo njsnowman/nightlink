@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Replace the primary Operations workflow with a seven-stage RF project planner: study area, site roles, common radio assumptions, batch terrain/LOS, combined sampled coverage, gap-cluster candidates with incremental coverage/backhaul assessment, and deployment exports. Preserve legacy planning tools and migrate planner database/backups to version 4. Tracks [#165](https://github.com/njsnowman/nightlink/issues/165); [candidate record](releases/0.8.28-rc.29.md).
+
 - Clarify Operations with purpose-grouped navigation, actionable setup checks, optional planning sections and contextual RF guidance from locations through terrain. Replace phase wording with status and omit empty progress ratios. Tracks [#163](https://github.com/njsnowman/nightlink/issues/163); [candidate record](releases/0.8.28-rc.28.md).
 
 - Mount the startup frame before application markup can paint, then initialize sound and radio observers after settings are ready. Prevent chat flashing ahead of the intro in both interfaces. Tracks [#161](https://github.com/njsnowman/nightlink/issues/161); [candidate record](releases/0.8.28-rc.27.md).
