@@ -101,3 +101,6 @@ Deployment workspace (rc.36, issue #179). Use the existing map with five ordered
 
 
 Project Command Center (rc.37, issue #181). Reuse the project map and shared project panels. Put the compact Plan / Deploy / Verify / Handover strip above the workspace, map-layer/site controls above the map and three detail tabs in the existing right panel. Give the next action precedence over secondary attention items. Preserve the Leaflet element and viewport for tab/site changes. Distinguish current source planning, frozen deployment prediction, recorded installation and operator-entered point evidence in labels and legends. Extend shared tokens for both Terminal and Cards; retain keyboard focus, compact/enlarged layouts, miles map distances and feet heights.
+
+
+Guided Operations (rc.38, issue #183). Default to the first unfinished numbered planning step. Keep the existing map, a compact required-work checklist and a single primary Continue control at the top of the right panel. Label ready/locked steps, explain disabled progression in text and retain backward edits. Collapse detailed instructions and optional tool navigation. Derive status from saved inputs/current models, not user-toggled completion flags. Keep semantic states, keyboard focus, compact/enlarged Terminal/Cards, miles distances and feet heights.
