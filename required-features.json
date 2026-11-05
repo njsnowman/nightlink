@@ -64,6 +64,9 @@
     "rf-suite.js",
     "rf-suite-reports.js",
     "rf-suite-ui.js",
-    "rf-suite.css"
+    "rf-suite.css",
+    "mesh-project.js",
+    "mesh-project-ui.js",
+    "mesh-project.css"
   ]
 }
