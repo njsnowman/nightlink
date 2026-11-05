@@ -48,3 +48,10 @@ html[data-interface="terminal"] .deployment-steps button[aria-pressed=true]{back
 #dialog:has(.deployment-editor){width:min(1000px,calc(100vw - 32px));max-width:calc(100vw - 32px)}
 .deployment-editor .ops-form-grid>fieldset,.deployment-editor .ops-form-grid>details,.deployment-editor .ops-form-grid>p{grid-column:1/-1}
 @media(max-width:700px){.deployment-editor .ops-form-grid{grid-template-columns:minmax(0,1fr)}}
+
+.project-stages[hidden]{display:none!important}.command-tabs{gap:8px;margin:12px 0}.command-tabs button[aria-pressed=true]{background:var(--nl-hover);border-color:var(--nl-accent);color:var(--nl-accent)}.command-next>button{margin-top:8px}.command-lifecycle button{flex:1;min-width:145px;white-space:normal}
+html[data-interface="terminal"] .command-tabs button[aria-pressed=true]{background:var(--t-blue)!important;color:var(--t-white)!important}
+
+.command-lifecycle{border-top:1px solid var(--nl-edge);border-bottom:1px solid var(--nl-edge);padding:12px 0;gap:8px}
+
+.command-map-controls{margin:0 0 12px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.command-map-controls .ops-field{min-width:0}@media(max-width:600px){.command-map-controls{grid-template-columns:minmax(0,1fr)}}
