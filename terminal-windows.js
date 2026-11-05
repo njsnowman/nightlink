@@ -86,8 +86,8 @@
   const north='─ N ▲ ';put('┌'+north,'term-path-frame');put('─'.repeat(W-north.length)+'┐\n','term-path-frame');
   for(const row of grid){put('│','term-path-frame');for(const c of row)put(c.ch,c.cls);put('│\n','term-path-frame');}
   put('└'+'─'.repeat(W)+'┘\n','term-path-frame');
-  if(Number.isFinite(km)&&km>0){const cells=Math.max(4,Math.round(W/4)),seg=km*cells/W,label=seg>=10?seg.toFixed(0):seg>=1?seg.toFixed(1):(seg*1000).toFixed(0);
-   put(' ├'+'─'.repeat(cells-2)+'┤ ','term-path-scale');put(label+(seg>=1?' km':' m'),'term-path-scale-label');}
+  if(Number.isFinite(km)&&km>0){const cells=Math.max(4,Math.round(W/4)),seg=km*cells/W,label=NightlinkUnits.feet(seg*1000,0);
+   put(' ├'+'─'.repeat(cells-2)+'┤ ','term-path-scale');put(label+' ft','term-path-scale-label');}
   return pre;
  }
  function pathGrid(model){
