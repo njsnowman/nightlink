@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Make guided planning the Operations project home. Lock later steps until saved prerequisite inputs and current models are complete, show required checklists and resume at the first unfinished step. Relock stale dependent calculations without deleting history; move optional tools under a disclosure. Tracks [#183](https://github.com/njsnowman/nightlink/issues/183); [candidate record](releases/0.8.28-rc.38.md).
+
 - Add Project Command Center as the project home with Plan / Deploy / Verify / Handover, scoped next actions, source / approved / installed site comparisons, change impact and explicit selective source recalculation. Preserve the map across site/tab changes, frozen histories and format-8 backups. Maps use miles; AGL/heights remain feet. Tracks [#181](https://github.com/njsnowman/nightlink/issues/181); [candidate record](releases/0.8.28-rc.37.md).
 
 - Add Deployment workspace: freeze current engineering scenarios, assign site work/gear/tasks, define and record field acceptance tests, derive a punch list and retain as-built revisions/handover records. Planner database/backup format 8 preserves deployments independently of later source-plan changes. Maps use miles; AGL/heights remain feet. Tracks [#179](https://github.com/njsnowman/nightlink/issues/179); [candidate record](releases/0.8.28-rc.36.md).
