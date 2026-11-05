@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Align the Terminal Operations library with a three-step introduction, consistent main actions, separate backup/import utilities, compact totals and saved-project rows with aligned status/date/count/Open fields. Preserve search, filters, data and Cards behavior. Tracks [#191](https://github.com/njsnowman/nightlink/issues/191); [candidate record](releases/0.8.28-rc.42.md).
+
 - Operations now starts with an occasional volunteer site idea: select a reference, plot a proposal, explicitly preview terrain and local coverage, then optionally keep an independent plan or export a site note. Detailed guided/engineering/installation records remain optional; source histories and acceptance validation are retained. Library, menu and 45-topic offline help use this workflow. Miles for maps and feet for heights. Tracks [#189](https://github.com/njsnowman/nightlink/issues/189); [candidate record](releases/0.8.28-rc.41.md).
 
 - Explain saved LOS/coverage results, add view-only coverage filters, compare two source sites and summarize assumptions/unresolved review items. Add searchable Operations help, contextual task links and a reproducible 44-topic offline handbook covering the bundled app guide and Operations. Preserve unknown evidence, source gates and drafts. Tracks [#187](https://github.com/njsnowman/nightlink/issues/187); [candidate record](releases/0.8.28-rc.40.md).

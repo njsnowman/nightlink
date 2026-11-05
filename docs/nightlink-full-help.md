@@ -1,6 +1,6 @@
 # Nightlink full help handbook
 
-Offline app help and Operations guide, rc.41. Maps: miles. Heights: feet. Predictions and observations remain separate.
+Offline app help and Operations guide, rc.42. Maps: miles. Heights: feet. Predictions and observations remain separate.
 
 ## Start here: try a location
 
