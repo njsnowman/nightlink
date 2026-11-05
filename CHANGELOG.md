@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add guided offline Field Survey with explicit device/map/manual location, direct-test observations, immutable model comparisons, follow-up priorities and feet-based exports. Preserve observations in planner database/backup version 5. Tracks [#173](https://github.com/njsnowman/nightlink/issues/173); [candidate record](releases/0.8.28-rc.33.md).
+
 - Use feet for planner and RF input/output, terrain plots/CSV, map scales, hop distances and offline reports while retaining canonical model/backup units. Preserve unchanged saved assumptions when forms are reopened. Tracks [#171](https://github.com/njsnowman/nightlink/issues/171); [candidate record](releases/0.8.28-rc.32.md).
 
 - Add ordered right-panel project guidance, selective terrain/model reuse, baseline/candidate comparisons, transmitter-outage simulations, nearby terrain screening and current matched field-test calibration previews. Tracks [#167](https://github.com/njsnowman/nightlink/issues/167); [candidate record](releases/0.8.28-rc.31.md).
