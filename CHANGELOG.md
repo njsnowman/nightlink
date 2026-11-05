@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add ordered right-panel project guidance, selective terrain/model reuse, baseline/candidate comparisons, transmitter-outage simulations, nearby terrain screening and current matched field-test calibration previews. Tracks [#167](https://github.com/njsnowman/nightlink/issues/167); [candidate record](releases/0.8.28-rc.31.md).
+
 - Restore live chat scrolling when incoming messages arrive before rendering. Sending from history resumes the latest messages in Terminal, Cards and detached direct messages; deliberate history scrolling retains its position. Tracks [#168](https://github.com/njsnowman/nightlink/issues/168); [candidate record](releases/0.8.28-rc.30.md).
 
 - Replace the primary Operations workflow with a seven-stage RF project planner: study area, site roles, common radio assumptions, batch terrain/LOS, combined sampled coverage, gap-cluster candidates with incremental coverage/backhaul assessment, and deployment exports. Preserve legacy planning tools and migrate planner database/backups to version 4. Tracks [#165](https://github.com/njsnowman/nightlink/issues/165); [candidate record](releases/0.8.28-rc.29.md).
