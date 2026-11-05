@@ -14,7 +14,7 @@
   const center=el('section','help-center');center.setAttribute('aria-label','Nightlink Help and About');
   const head=el('div','help-heading');head.append(el('span','eyebrow','NIGHTLINK / FIELD GUIDE'),el('h3','','Help & About'),el('p','','Practical instructions, illustrated with the current interface. Available offline.'));
   const tabs=el('div','help-mode');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Help section');
-  const guide=button('How to',()=>{mode='guide';draw();}),about=button('About Nightlink',()=>{mode='about';draw();});guide.id='help-guide-tab';about.id='help-about-tab';tabs.append(guide,about);head.append(tabs);
+  const guide=button('How to',()=>{mode='guide';draw();}),about=button('About Nightlink',()=>{mode='about';draw();});guide.id='help-guide-tab';about.id='help-about-tab';tabs.append(guide,about);head.append(tabs,button('Operations help & full guide',()=>NightlinkOperationsHelp.open()));
   const body=el('div','help-body');center.append(head,body);grid.append(center);
   function draw(){
    guide.setAttribute('aria-pressed',String(mode==='guide'));about.setAttribute('aria-pressed',String(mode==='about'));body.replaceChildren();
