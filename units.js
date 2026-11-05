@@ -1,7 +1,7 @@
 /* Presentation boundary only. Models and existing backups retain canonical SI. */
 (function(root){
 'use strict';
-const METRES_PER_FOOT=.3048,fields={accuracyM:1,heightM:1,groundM:1,receiverHeightM:1,txHeightM:1,rxHeightM:1,heightA:1,heightB:1,resolutionM:1,radiusKm:1000};
+const METRES_PER_FOOT=.3048,fields={mastLimitM:1,accuracyM:1,heightM:1,groundM:1,receiverHeightM:1,txHeightM:1,rxHeightM:1,heightA:1,heightB:1,resolutionM:1,radiusKm:1000};
 const toFeet=m=>m/METRES_PER_FOOT,fromFeet=ft=>ft*METRES_PER_FOOT;
 function feet(m,d=1){return Number.isFinite(m)?toFeet(m).toFixed(d):'Unresolved';}
 function area(km2,d=0){return Number.isFinite(km2)?(km2*1e6/METRES_PER_FOOT**2).toFixed(d):'Unresolved';}
