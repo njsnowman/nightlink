@@ -38,3 +38,6 @@ html[data-interface=terminal] .engineering-3d canvas:focus-visible{outline-color
 .engineering-full-form details[open]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
 .engineering-full-form details>summary{grid-column:1/-1}
 @media(max-width:700px){.engineering-full-form .ops-form-grid,.engineering-full-form details[open]{grid-template-columns:minmax(0,1fr)}}
+
+.verification-steps{margin:12px 0;gap:8px}.verification-steps button[aria-pressed=true]{border-color:var(--nl-accent);color:var(--nl-accent);background:var(--nl-hover)}
+html[data-interface="terminal"] .verification-steps button[aria-pressed=true]{background:var(--t-blue)!important;color:var(--t-white)!important}
