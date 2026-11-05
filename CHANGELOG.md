@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add Deployment workspace: freeze current engineering scenarios, assign site work/gear/tasks, define and record field acceptance tests, derive a punch list and retain as-built revisions/handover records. Planner database/backup format 8 preserves deployments independently of later source-plan changes. Maps use miles; AGL/heights remain feet. Tracks [#179](https://github.com/njsnowman/nightlink/issues/179); [candidate record](releases/0.8.28-rc.36.md).
+
 - Add Verify & refine with an ordered field-test queue, measured-versus-modeled point map, explicit mast what-if explanations, per-site deployment reviews and immutable project checkpoint/change reports. Include verification sections in full-study reports. Use miles for map scales/radii/horizontal distances and feet for heights/elevations. Planner database/backup format 7 retains reviews and checkpoints. Tracks [#177](https://github.com/njsnowman/nightlink/issues/177); [candidate record](releases/0.8.28-rc.35.md).
 
 - Add Network Engineering Studio: bounded multi-repeater mast/equipment/cost comparison, explicit gateway connectivity, site/link/shared-power failures, sourced 3D LOS/Fresnel geometry, RF sensitivity, immutable deployment scenarios and installation packets. Optional Run full study collects inputs once and prepares all analyses plus a combined offline report. Planner database/backup version 6 retains engineering records. Tracks [#175](https://github.com/njsnowman/nightlink/issues/175); [candidate record](releases/0.8.28-rc.34.md).

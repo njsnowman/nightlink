@@ -41,3 +41,10 @@ html[data-interface=terminal] .engineering-3d canvas:focus-visible{outline-color
 
 .verification-steps{margin:12px 0;gap:8px}.verification-steps button[aria-pressed=true]{border-color:var(--nl-accent);color:var(--nl-accent);background:var(--nl-hover)}
 html[data-interface="terminal"] .verification-steps button[aria-pressed=true]{background:var(--t-blue)!important;color:var(--t-white)!important}
+
+.deployment-steps{margin:12px 0;gap:8px}.deployment-steps button[aria-pressed=true]{border-color:var(--nl-accent);color:var(--nl-accent);background:var(--nl-hover)}
+html[data-interface="terminal"] .deployment-steps button[aria-pressed=true]{background:var(--t-blue)!important;color:var(--t-white)!important}
+
+#dialog:has(.deployment-editor){width:min(1000px,calc(100vw - 32px));max-width:calc(100vw - 32px)}
+.deployment-editor .ops-form-grid>fieldset,.deployment-editor .ops-form-grid>details,.deployment-editor .ops-form-grid>p{grid-column:1/-1}
+@media(max-width:700px){.deployment-editor .ops-form-grid{grid-template-columns:minmax(0,1fr)}}
