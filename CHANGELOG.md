@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Explain location results with separate modeled link, coverage-gain and next-action sections. Distinguish unknowns, terrain/Fresnel constraints and budget shortfalls; display complete common-grid gain as percentage points. Reveal results after a run, keep assumptions expandable, link height/pin actions and require reruns after input changes. Tracks [#195](https://github.com/njsnowman/nightlink/issues/195); [candidate record](releases/0.8.28-rc.44.md).
+
 - Align the Cards Operations main page with rounded shared panels, consistent primary actions, a separate backup/import row, balanced totals and saved-project rows with aligned name/status/date/count/Open positions. Preserve Terminal, actions and saved data. Tracks [#193](https://github.com/njsnowman/nightlink/issues/193); [candidate record](releases/0.8.28-rc.43.md).
 
 - Align the Terminal Operations library with a three-step introduction, consistent main actions, separate backup/import utilities, compact totals and saved-project rows with aligned status/date/count/Open fields. Preserve search, filters, data and Cards behavior. Tracks [#191](https://github.com/njsnowman/nightlink/issues/191); [candidate record](releases/0.8.28-rc.42.md).
