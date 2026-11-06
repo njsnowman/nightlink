@@ -124,3 +124,7 @@ Planning map selection (rc.45, issue #197): Operations reuses the same Leaflet m
 ## Optional local planning tools (rc.46)
 
 Saved ideas/projects can open a separate study workspace. Six named tools share one map and a scrollable right panel; smaller windows stack the map above the controls. Source snapshots and experimental inputs remain separate from source projects and field records. Terminal uses shared frame/control tokens; Cards uses existing Operations components. Map distances are miles and entered antenna/obstacle/terrain heights are feet. Explicit previews use stored geometry. Area screening retains separate cached-only/online consent and requires a separate Keep candidate action.
+
+## Site and height comparison (rc.47)
+
+The optional local workspace uses Choose locations → Compare → Pick an option → Prepare a field visit. Results use a full-width comparison frame above the map/right panel, with at most two location frames across and one below 1100px. Each location compares the same tested heights in feet with common-grid potential, added percentage points and reciprocal backhaul. Shared table components retain keyboard/readability behavior. Terminal frame titles sit on the borders; Cards retains rounded shared panels. Complete and unknown inputs remain textual. Theme changes preserve current comparison results; actual input changes invalidate them.
