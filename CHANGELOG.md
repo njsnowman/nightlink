@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.28-rc.46 - local candidate
+
+- Add optional local planning tools using independent project snapshots: point budget inspection, bounded boundary/exclusion terrain screening, sampled obstacle/path terrain imports and connected 3D, GPX/GeoJSON route classification, parametric antenna/profile experiments, local presets, and confirmed direct-measurement residuals. Study bundles include their source snapshot and observations; normal project backups remain unchanged. No CloudRF integration. See [#199](https://github.com/njsnowman/nightlink/issues/199) and [validation record](releases/0.8.28-rc.46.md).
+
+
 ## Unreleased
 
 - Add Operations Map & layers with Streets, USGS aerial/topo/imagery-contour/relief and explicit offline pack choices, source-layer visibility and heatmap opacity. Preserve viewport, source data and calculation elevations; retain attribution and show U.S./zoom/imagery limitations. Tracks [#197](https://github.com/njsnowman/nightlink/issues/197); [candidate record](releases/0.8.28-rc.45.md).
