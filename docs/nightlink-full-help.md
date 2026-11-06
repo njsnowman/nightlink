@@ -14,7 +14,8 @@ For occasional volunteer work: compare a hill or rooftop with an existing site a
 4. Choose Run preview when ready. This explicitly requests terrain coordinates, or uses cached terrain only if selected. Cancel stops the preview without saving an idea.
 5. The completed preview opens its result summary. Read Will this link likely work, What might this location add and What should I do next. Technical source details stay expandable. Use Adjust antenna height or Try another pin, then run again; editing inputs does not perform a calculation. Read the direct-path explanation and local predicted area results. Unknown coverage is unresolved, not a confirmed gap; predictions are not measured radio service.
 6. Keep this idea saves an independent project without changing the source project. Export a simple site note to share. Neither action requires a team, dates, assignments or an installation record.
-7. Return whenever you have time. A field test is optional. Use Detailed planner only for a larger study, multiple sites, repeater-gap searches or formal installation records.
+7. Open Local planning tools from a saved idea/project for optional point inspection, bounded area/exclusion screening, sampled obstacle and 3D work, GPX routes, parametric antennas, presets and direct-measurement residuals. Work uses a source snapshot. Save local study keeps an independent local version; Export study bundle includes its source and observations. These studies and presets are separate from normal project backups. Screening results are transient; use Keep candidate explicitly to copy a proposed location into the current project. No CloudRF account or integration is used.
+8. Return whenever you have time. A field test is optional. Use Detailed planner only for a larger study, multiple sites, repeater-gap searches or formal installation records.
 
 
 
