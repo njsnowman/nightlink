@@ -1,6 +1,6 @@
 # Nightlink full help handbook
 
-Offline app help and Operations guide, rc.44. Maps: miles. Heights: feet. Predictions and observations remain separate.
+Offline app help and Operations guide, rc.45. Maps: miles. Heights: feet. Predictions and observations remain separate.
 
 ## Start here: try a location
 
@@ -9,11 +9,12 @@ For occasional volunteer work: compare a hill or rooftop with an existing site a
 ### What to do
 
 1. Open Operations and choose Try a location. Choose a saved or cached contact location, enter coordinates, or use Place existing site on the map.
-2. Use Place proposed pin for the possible repeater. Enter both antenna heights in feet, the frequency and the local preview radius in miles. Optional radio details let you change power, gain, losses and ground assumptions.
-3. Choose Run preview when ready. This explicitly requests terrain coordinates, or uses cached terrain only if selected. Cancel stops the preview without saving an idea.
-4. The completed preview opens its result summary. Read Will this link likely work, What might this location add and What should I do next. Technical source details stay expandable. Use Adjust antenna height or Try another pin, then run again; editing inputs does not perform a calculation. Read the direct-path explanation and local predicted area results. Unknown coverage is unresolved, not a confirmed gap; predictions are not measured radio service.
-5. Keep this idea saves an independent project without changing the source project. Export a simple site note to share. Neither action requires a team, dates, assignments or an installation record.
-6. Return whenever you have time. A field test is optional. Use Detailed planner only for a larger study, multiple sites, repeater-gap searches or formal installation records.
+2. Open Map & layers for Streets, U.S. aerial imagery, topographic, imagery with contours, shaded relief or an imported offline pack. Source heatmap/path/site/candidate controls and opacity change display only. Provider attribution and coverage/zoom limits remain visible. This does not change the elevation source used for RF calculations.
+3. Use Place proposed pin for the possible repeater. Enter both antenna heights in feet, the frequency and the local preview radius in miles. Optional radio details let you change power, gain, losses and ground assumptions.
+4. Choose Run preview when ready. This explicitly requests terrain coordinates, or uses cached terrain only if selected. Cancel stops the preview without saving an idea.
+5. The completed preview opens its result summary. Read Will this link likely work, What might this location add and What should I do next. Technical source details stay expandable. Use Adjust antenna height or Try another pin, then run again; editing inputs does not perform a calculation. Read the direct-path explanation and local predicted area results. Unknown coverage is unresolved, not a confirmed gap; predictions are not measured radio service.
+6. Keep this idea saves an independent project without changing the source project. Export a simple site note to share. Neither action requires a team, dates, assignments or an installation record.
+7. Return whenever you have time. A field test is optional. Use Detailed planner only for a larger study, multiple sites, repeater-gap searches or formal installation records.
 
 
 

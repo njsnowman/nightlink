@@ -2,7 +2,8 @@
 const MeshlineStreetMaps={
  radioView(){const r=live.identity;return r?.located===true&&Number.isFinite(r.lat)&&Number.isFinite(r.lon)&&Math.abs(r.lat)<=85&&Math.abs(r.lon)<=180&&(r.lat!==0||r.lon!==0)?{center:[r.lat,r.lon],zoom:9}:null;},
  defaultView(){const radio=this.radioView();if(radio)return radio;try{const saved=JSON.parse(localStorage.getItem('meshline.map-view'));if(saved&&Array.isArray(saved.center)&&saved.center.length===2&&saved.center.every(Number.isFinite)&&Math.abs(saved.center[0])<=85&&Math.abs(saved.center[1])<=180&&Number.isFinite(saved.zoom)&&saved.zoom>=0&&saved.zoom<=19)return saved;}catch{}return{center:[39.44,-85.35],zoom:9};},
- attach(map,{status=null}={}){
+ attach(map,{status=null,planning=false}={}){
+  if(planning)return NightlinkPlanningMaps.attach(map,{status});
   if(!map._nightlinkFeetScale)map._nightlinkFeetScale=NightlinkUnits.scale(map);
   const panel=document.createElement('div');panel.className='street-map-state';panel.setAttribute('role','status');panel.innerHTML='<strong></strong><span></span><button type="button">Retry street map</button>';map.getContainer().append(panel);L.DomEvent.disableClickPropagation(panel);L.DomEvent.disableScrollPropagation(panel);
   const layer=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',referrerPolicy:'strict-origin-when-cross-origin'});let succeeded=0,failed=0;
