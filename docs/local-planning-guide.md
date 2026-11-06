@@ -7,6 +7,18 @@ Open a saved idea or project in Operations, then choose **Local planning tools**
 3. Choose **Run local preview**. This uses stored data; it does not request new terrain or send radio commands. Grey/unknown means unresolved.
 4. Choose **Save local study** to create an independent local version. **Export study bundle** includes its source snapshot, settings and imported measurements. Keep that JSON file with your backups. These studies and local presets are separate from normal project backups.
 
+## Compare locations and mast heights
+
+1. Choose **Compare sites**. Select one to four proposed project locations. Add proposed locations using the normal project tools first if necessary.
+2. Enter one to eight antenna AGL heights in feet (5–300 ft) and the combined area goal. Defaults test 20, 30, 40 and 60 ft. Enter your practical mounting options.
+3. Choose **Compare locations and heights**. This recomputes from stored radial terrain and saved endpoint paths using current study radio/pattern/obstacle assumptions. It makes no terrain HTTP or radio commands. Both ends of backhaul paths use the study site profiles rather than per-path height overrides. Cancel stops between bounded jobs without changing source records.
+4. Read the side-by-side cards. Potential area uses the same grid for every option and is shown separately from backhaul. Added percentage points count previously known gap samples now meeting budget. Unknown inputs remain unresolved. A larger footprint does not establish a usable connection.
+5. A location gets a **lowest tested height meeting goal** only when baseline and candidate area samples are resolved, reciprocal backhaul meets budget, additional known gap samples are served, the area goal is reached and every selected destination meets budget. This is the lowest among your tested heights, not an exhaustive minimum. The initial model shortlist orders qualifying locations by tested height, then additional samples served and backhaul reserve. It does not infer cost, access or power.
+6. Pick a tested option on the right to inspect its potential map and explanation. **Export field-visit sheet** creates printable HTML with coordinates, tested height, equipment/assumptions, a sampled path profile when available, height tradeoffs and visit/test checks. Export the study bundle alongside it for complete source assumptions.
+
+Comparison/export does not change source designs, installed sites or field observations. Options save in the separate study bundle. Current results survive theme changes but clear after input changes. Reopening a study requires a fresh comparison. Explicitly choosing the latest source snapshot removes deleted source sites from the study selection and retains historical observations separately.
+
+
 ## Inspect
 
 Click a position on the map to inspect the existing transmitters. The weaker-direction reserve includes the required margin. Terrain mode uses the nearest stored radial bearing and outer-range trace, not a measured signal at the clicked point. Missing terrain remains unknown. Select a saved path and choose **Explain selected path** for its local budget.

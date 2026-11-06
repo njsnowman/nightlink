@@ -7,6 +7,9 @@
 
 ## Unreleased
 
+- Add local Compare sites with side-by-side common-grid coverage/backhaul cards, bounded tested mast heights, explicit coverage goal, lowest tested qualifying shortlist, unknown/stale/cancel guards and printable field-visit sheets with sampled path geometry. Source designs and physical evidence stay unchanged. Tracks [#201](https://github.com/njsnowman/nightlink/issues/201); [candidate record](releases/0.8.28-rc.47.md).
+
+
 - Add Operations Map & layers with Streets, USGS aerial/topo/imagery-contour/relief and explicit offline pack choices, source-layer visibility and heatmap opacity. Preserve viewport, source data and calculation elevations; retain attribution and show U.S./zoom/imagery limitations. Tracks [#197](https://github.com/njsnowman/nightlink/issues/197); [candidate record](releases/0.8.28-rc.45.md).
 
 - Explain location results with separate modeled link, coverage-gain and next-action sections. Distinguish unknowns, terrain/Fresnel constraints and budget shortfalls; display complete common-grid gain as percentage points. Reveal results after a run, keep assumptions expandable, link height/pin actions and require reruns after input changes. Tracks [#195](https://github.com/njsnowman/nightlink/issues/195); [candidate record](releases/0.8.28-rc.44.md).
