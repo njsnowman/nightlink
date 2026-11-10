@@ -535,3 +535,10 @@ html:root:root:root:root:root[data-interface=terminal] body #operations-planner 
 
 html[data-interface=terminal] .mrc-nick-wrap>button.mrc-nick{padding:0;border:0;background:transparent;font:inherit;color:inherit;cursor:pointer}
 html[data-interface=terminal] .mrc-nick-wrap>button.mrc-nick:hover{text-decoration:underline}
+
+/* Reactions share the Cards matcher, aligned below the Terminal message body. */
+html:root:root:root:root:root[data-interface=terminal] body .mrc-line[hidden]{display:none!important}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-line>.message-reactions{grid-column:2;display:flex;text-indent:0;gap:6px;margin:4px 0;white-space:normal}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-line .message-reaction-chip{background:var(--t-black);color:var(--t-white);border:1px solid var(--t-bright-cyan);border-radius:0;box-shadow:none;padding:2px 8px;min-height:24px;text-indent:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-line .reaction-unmatched,
+html:root:root:root:root:root[data-interface=terminal] body .mrc-line .reaction-wire-details{color:var(--t-grey);text-indent:0}

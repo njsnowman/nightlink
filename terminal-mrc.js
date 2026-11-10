@@ -163,7 +163,7 @@
   const frag=doc.createDocumentFragment();frag.append(line);
   const detail=deliveryText(m);
   if(detail){
-   const row=el('div','mrc-line mrc-delivery-row');row.append(el('span','mrc-time',stamp(m.timestamp)));
+   const row=el('div','mrc-line mrc-delivery-row');row.dataset.reactionDeliveryFor=m.id;row.append(el('span','mrc-time',stamp(m.timestamp)));
    const b=el('button','mrc-delivery '+deliveryClass(m),'└─ '+(m.own&&m.phase!=='acknowledged'&&deliveryClass(m)==='mrc-pending'?'… ':deliveryClass(m)==='mrc-ok'&&m.own?'✓ ':'')+detail);
    if(!m.own&&m.pathLength!=null&&window.MeshlineRoutes){
     const hops=MeshlineRoutes.hopSummary(m.pathLength);
@@ -252,10 +252,12 @@
   side.append(ol,el('p','mrc-dim mrc-legend','alt+1..9 switch'),el('p','mrc-dim mrc-legend','/help for commands'));
   // Scrollback
   const scroll=el('div','mrc-log');scroll.id='mrc-log';scroll.setAttribute('role','log');scroll.setAttribute('aria-label','Scrollback '+win.label);scroll.tabIndex=0;
+  let reactionRows=[];
   if(win.kind==='status')statusLines(scroll);
   else{
    const all=live.messages.filter(m=>m.conversation===win.id),focus=session.focus||(session.position.manual?session.position.anchor:changed?session.boundary:null);
    const focusIndex=focus?all.findIndex(m=>m.id===focus):-1,start=focusIndex>=0?Math.max(0,Math.min(all.length-MAX_ROWS,focusIndex-30)):Math.max(0,all.length-MAX_ROWS),rows=all.slice(start,start+MAX_ROWS);scroll.dataset.tailWindow=String(!all.length||rows.at(-1)?.id===all.at(-1)?.id);
+   reactionRows=rows;
    if(!rows.length){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(nowSeconds())),el('span','mrc-dim','-!- No messages in '+win.label+' yet.'));scroll.append(line);
     // Decorative antenna for an empty window; the line above carries the meaning.
     const art=el('pre','mrc-empty-art');art.setAttribute('aria-hidden','true');
@@ -321,6 +323,7 @@
   else if(session.position.bottom||atEnd)sl.scrollTop=sl.scrollHeight;else sl.scrollTop=keepTop||0;
   state.restoring=false;captureReading(sl);updateJump(sl,win);
   markRead(win,sl);
+  if(reactionRows.length)window.NightlinkReactionUI?.decorate(sl,reactionRows,live.messages,{selfName:live.identity?.name||'',terminal:true});
  }
  function updateCount(){const input=state.form?.querySelector('#mrc-input'),count=state.count;if(!input||!count)return;const v=input.value,n=v.startsWith('/')?bytes(commandPayload(v)||''):bytes(v);count.textContent=String(n);count.classList.toggle('mrc-over',n>LIMIT);}
  function markRead(win,log){
