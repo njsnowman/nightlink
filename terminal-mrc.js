@@ -111,7 +111,17 @@
  // Per-nick colors, as in IRC clients: a stable hash of the name picks one of eight VGA colors that meet 4.5:1 on black.
  const NICK_COLORS=8;
  function nickColor(name){let h=0;for(const ch of String(name))h=(h*31+ch.codePointAt(0))>>>0;return 'mrc-nc-'+(h%NICK_COLORS);}
- function nick(name,cls){const s=el('span','mrc-nick-wrap');s.append(el('span','mrc-nick-bracket','<'),el('span','mrc-nick '+cls+(cls==='mrc-nick-peer'?' '+nickColor(name):''),name),el('span','mrc-nick-bracket','>'),' ');return s;}
+ function nick(name,cls,message){
+  const wrap=el('span','mrc-nick-wrap');
+  const label=el(message?'button':'span','mrc-nick '+cls+(cls==='mrc-nick-peer'?' '+nickColor(name):''),name);
+  if(message){
+   label.type='button';
+   label.setAttribute('aria-label','Open contact card for '+name);
+   label.onclick=event=>{event.stopPropagation();openContactCard(messageContact(message));};
+  }
+  wrap.append(el('span','mrc-nick-bracket','<'),label,el('span','mrc-nick-bracket','>'),' ');
+  return wrap;
+ }
  function isMention(m){if(m.own||!live.identity?.name)return false;const n=live.identity.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return new RegExp('(^|[^\\w])@?\\[?'+n+'\\]?($|[^\\w])','i').test(String(m.text||''));}
  function jumpMessage(id,{select=true,focus=true}={}){
   const win=activeWindow(windows()),m=live.messages.find(m=>m.id===id&&m.conversation===win.id);if(!m){toast('Original message is no longer stored in this conversation.');return;}
@@ -136,10 +146,10 @@
   const line=el('div','mrc-line'+(m.own?' mrc-own':''));line.dataset.messageId=m.id;
   line.append(el('span','mrc-time',stamp(m.timestamp)));
   const body=el('span','mrc-text'),name=m.own?own():(m.sender||m.target?.name||'Mesh'),text=String(m.text??'');
-  if(text.startsWith('* '+name+' ')){body.classList.add('mrc-action');body.textContent=' '+text;}
+  if(text.startsWith('* '+name+' ')){body.classList.add('mrc-action');body.textContent=' '+text;if(!m.own)line.append(nick(name,'mrc-nick-peer',m));}
   else{
    if(m.own)line.append(el('span','mrc-own-mark','>>> '));
-   line.append(nick(name,m.own?'mrc-nick-own':'mrc-nick-peer'));
+   line.append(nick(name,m.own?'mrc-nick-own':'mrc-nick-peer',m.own?null:m));
    if(window.NightlinkAnsiText?.hasCodes(text))NightlinkAnsiText.render(body,text);else body.textContent=text;
   }
   if(window.NightlinkMessageActions)NightlinkMessageActions.bind(body,()=>beginReply(m,name),'Reply to '+name);

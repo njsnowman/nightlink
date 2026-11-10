@@ -21,7 +21,7 @@
   if(tab==='Map'){drawMap(e,root);return;}if(tab==='Activity'){drawHistory(e,root);return;}
   const actions=el('div','book-actions');action('Edit contact',()=>edit(e),actions);action('Link radio identity',()=>pick(e.id),actions);action('Delete saved entry',()=>confirmDelete(e),actions);root.append(actions);
   const dl=el('dl','book-fields');for(const [field,label]of [['name','Name'],['callSign','Call sign'],['email','Email'],['phone','Phone'],['address','Address'],['tags','Tags'],['equipment','Equipment'],['notes','Notes']])if(e[field]){const item=el('div');item.append(el('dt',null,label),el('dd',null,e[field]));dl.append(item);}root.append(dl,el('h4',null,'Saved mesh identities'));
-  if(!e.identities.length)root.append(el('p',null,'No mesh identity linked.'));for(const i of e.identities){const box=el('div','book-identity');box.append(el('strong',null,i.name||'Unnamed radio'),el('p','public-key',i.key),el('p',null,(live.contacts.some(c=>c.key===i.key)?'On current radio':'Saved locally · absent from current radio')+' · Last advert reported: '+time(i.lastAdvert*1000)));if(!live.contacts.some(c=>c.key===i.key))action('Add identity to current radio',()=>{modal('Add saved identity to radio','<p>This writes the saved public key, radio name and type to the currently connected companion. Personal details, photo, notes and activity stay local. Routes and locations are not restored.</p><label>Radio name<input id="book-radio-name" maxlength="64"></label><p id="book-radio-error" role="alert"></p><button id="book-radio-add" class="primary">Add to current radio</button>');$('#book-radio-name').value=i.name;$('#book-radio-add').onclick=async()=>{const button=$('#book-radio-add');button.disabled=true;try{await radioSession.addContact({key:i.key,name:$('#book-radio-name').value,type:i.type});$('#dialog').close();await reload();}catch(error){$('#book-radio-error').textContent=error.message;button.disabled=false;}};},box);const unlink=action('Unlink identity',()=>{modal('Unlink saved identity','<p>Remove this identity from the saved person? The radio contact is unchanged. Existing activity remains in this entry.</p><button id="book-confirm-unlink" class="primary">Unlink identity</button>');$('#book-confirm-unlink').onclick=async()=>{try{await store.save({...e,identities:e.identities.filter(n=>n.key!==i.key)});$('#dialog').close();await reload();}catch(error){fail(error);}};},box);unlink.setAttribute('aria-label','Unlink '+(i.name||i.key));root.append(box);}
+  if(e.chatSender)root.append(el('p',null,'Saved chat sender · '+e.chatSender.name+(e.chatSender.prefix?' · Key prefix '+e.chatSender.prefix:'')+'. Full radio identity can be linked later.'));if(!e.identities.length)root.append(el('p',null,'No mesh identity linked.'));for(const i of e.identities){const box=el('div','book-identity');box.append(el('strong',null,i.name||'Unnamed radio'),el('p','public-key',i.key),el('p',null,(live.contacts.some(c=>c.key===i.key)?'On current radio':'Saved locally · absent from current radio')+' · Last advert reported: '+time(i.lastAdvert*1000)));if(i.pathLength!=null)box.append(el('p',null,'Saved outbound route: '+MeshlineRoutes.contactRoute(i.pathLength)+(i.path?' · '+i.path:'')));if(i.flags!=null||i.lastModified!=null)box.append(el('p',null,[i.flags!=null?'Radio flags: '+i.flags:'',i.lastModified!=null?'Radio record modified: '+time(i.lastModified*1000):''].filter(Boolean).join(' · ')));if(!live.contacts.some(c=>c.key===i.key))action('Add identity to current radio',()=>{modal('Add saved identity to radio','<p>This writes the saved public key, radio name and type to the currently connected companion. Personal details, photo, notes and activity stay local. Routes and locations are not restored.</p><label>Radio name<input id="book-radio-name" maxlength="64"></label><p id="book-radio-error" role="alert"></p><button id="book-radio-add" class="primary">Add to current radio</button>');$('#book-radio-name').value=i.name;$('#book-radio-add').onclick=async()=>{const button=$('#book-radio-add');button.disabled=true;try{await radioSession.addContact({key:i.key,name:$('#book-radio-name').value,type:i.type});$('#dialog').close();await reload();}catch(error){$('#book-radio-error').textContent=error.message;button.disabled=false;}};},box);const unlink=action('Unlink identity',()=>{modal('Unlink saved identity','<p>Remove this identity from the saved person? The radio contact is unchanged. Existing activity remains in this entry.</p><button id="book-confirm-unlink" class="primary">Unlink identity</button>');$('#book-confirm-unlink').onclick=async()=>{try{await store.save({...e,identities:e.identities.filter(n=>n.key!==i.key)});$('#dialog').close();await reload();}catch(error){fail(error);}};},box);unlink.setAttribute('aria-label','Unlink '+(i.name||i.key));root.append(box);}
  }
  function confirmDelete(e){modal('Delete saved contact','<p>Delete this saved entry, photo, notes and activity from the Contact Book? Your radio contacts will not change. Export the book first if you need a backup.</p><button id="book-confirm-delete" class="primary">Delete saved entry</button>');$('#book-confirm-delete').onclick=async()=>{try{await store.remove(e.id);selected=null;$('#dialog').close();await reload();}catch(error){fail(error);}};}
  function drawHistory(e,root){root.append(el('p',null,'Up to 300 observations per person, recorded while Nightlink is open. Channel sender names are not verified identities. Queue messages may be older than their observation time; this is not continuous presence tracking.'));
@@ -50,12 +50,54 @@
  find('search').oninput=event=>{query=event.target.value;list();};find('new').onclick=()=>edit();find('pick').onclick=()=>pick();
  find('export').onclick=async()=>{try{const entries=await store.list(),data=JSON.stringify({format:'nightlink-contact-book',version:1,createdAt:new Date().toISOString(),entries});model.parse(data);const url=URL.createObjectURL(new Blob([data],{type:'application/json'})),a=el('a');a.href=url;a.download='Nightlink-Contact-Book-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Contact Book export requested; check your download.');}catch(error){fail(error);}};
  find('import').onchange=async event=>{const file=event.target.files[0];event.target.value='';if(!file)return;try{if(file.size>50*1024*1024)throw Error('Contact Book backup exceeds 50 MB.');const incoming=model.parse(await file.text());modal('Import Contact Book','<p id="book-import-summary"></p><p>Merge missing entries only. Existing IDs or linked mesh keys are skipped; your saved details are never overwritten. No radio changes.</p><button class="primary" id="book-import-confirm">Import missing entries</button>');$('#book-import-summary').textContent=incoming.length+' entries in this backup, including photos, notes and activity.';$('#book-import-confirm').onclick=async()=>{try{const before=(await store.list()).length;const next=await store.import(incoming);$('#dialog').close();await reload();toast((next.length-before)+' entries imported; '+(incoming.length-next.length+before)+' skipped');}catch(error){fail(error);}};}catch(error){fail(error);}};
- // Shared contact detail gains a local-save shortcut. Never auto-save a radio list.
- const open=openContactCard;openContactCard=async function(c){await open(c);if(!model.key(c.key))return;const root=$('#dialog-body');action('Save to Contact Book',async()=>{try{await reload();const existing=rows.find(e=>e.identities.some(i=>i.key===c.key));if(existing){selected=existing.id;$('#dialog').close();view('Contact Book');return;}const e=fromRadio(c);await store.save(e);selected=e.id;$('#dialog').close();view('Contact Book');await reload();}catch(error){fail(error);}},root);};
+ function mountSave(displayed,card){
+  const key=model.key(displayed.key)?displayed.key.toLowerCase():model.key(displayed.directPrefix)?displayed.directPrefix.toLowerCase():null;
+  if(!key&&!displayed.localSender)return;
+  const actions=el('div','book-actions');
+  card.querySelector('#live-dm').after(actions);
+  if(!key)actions.append(el('p',null,'Save this chat name now and link a full radio identity later.'));
+  const button=action('Save to Contact Book',async()=>{
+   button.disabled=true;
+   try{
+    const current=key&&live.contacts.find(c=>c.key.toLowerCase()===key);
+    const radio=current||(model.key(displayed.key)?displayed:null);
+    const personal=contactCards.get(displayed.key)||{};
+    const sender=displayed.localSender?{
+     ref:displayed.key.slice(0,512),
+     name:displayed.name.slice(0,256),
+     prefix:/^[a-f0-9]{12}$/i.test(displayed.directPrefix||'')?displayed.directPrefix:''
+    }:null;
+    const draft=radio?fromRadio(radio):{
+     id:crypto.randomUUID(),displayName:(personal.nickname||displayed.name).slice(0,256),
+     notes:personal.notes||'',photo:personal.photo||'',created:Date.now(),updated:Date.now(),
+     identities:key?[{key,name:displayed.name.slice(0,64),type:1}]:[],history:[]
+    };
+    if(sender)draft.chatSender=sender;
+    let savedId;
+    rows=await store.change(entries=>{
+     const existing=entries.find(e=>key&&e.identities.some(i=>i.key===key))||
+       (sender&&entries.find(e=>e.chatSender?.ref===sender.ref&&(!key||!e.identities.length)));
+     savedId=existing?.id||draft.id;
+     if(!existing)return entries.concat(draft);
+     const identity=draft.identities[0];
+     if(!identity)return entries;
+     const previous=existing.identities.find(i=>i.key===identity.key);
+     if(previous&&(!radio||identity.lastAdvert<previous.lastAdvert))return entries;
+     const identities=previous?existing.identities.map(i=>i.key===identity.key?
+      {...i,...identity,location:identity.location||i.location}:i):existing.identities.concat(identity);
+     return entries.map(e=>e.id===savedId?{...e,identities,updated:Date.now()}:e);
+    });
+    if(!card.isConnected||!$('#dialog').open)return;
+    selected=savedId;tab='Details';query='';find('search').value='';
+    $('#dialog').close();view('Contact Book');toast('Contact saved in your offline Contact Book');
+   }catch(error){fail(error);button.disabled=false;}
+  },actions);
+  button.id='contact-save-to-book';
+ }
  let chain=Promise.resolve();function observe(record,contacts){chain=chain.then(()=>store.observe(record,contacts)).then(()=>{if(current==='Contact Book'&&tab==='Activity'&&!document.activeElement?.closest('#book-detail'))reload().catch(fail);}).catch(fail);}
  radioSession.addEventListener('message',event=>{const m=event.detail;if(m.kind!=='channel'||m.textType===1)return;const channel=live.channels.find(c=>c.slot===m.slot);if(!channel)return;const saved=live.messages.findLast(n=>!n.own&&n.kind==='channel'&&n.target?.slot===m.slot&&n.timestamp===m.timestamp&&n.text===m.text);if(!saved)return;observe({id:'channel:'+live.identity?.key+':'+saved.id,kind:'channel',at:Date.now(),sentAt:m.timestamp,receiver:live.identity?.key,sender:saved.sender,channel:channel.name,channelId:channel.id,text:saved.text},live.contacts.map(c=>({...c})));});
  radioSession.addEventListener('contacts',()=>{const contacts=live.contacts.map(c=>({...c})),receiver=live.identity?.key,at=Date.now();chain=chain.then(()=>store.adverts(contacts,receiver,at)).catch(fail);});
  store.ready.then(reload).catch(error=>{loading=false;find('count').textContent='Local storage unavailable. Your radio contacts are unchanged.';fail(error);});
- window.NightlinkBook={store,open:()=>view('Contact Book'),ready:store.ready,reload,flush:()=>chain};
+ window.NightlinkBook={store,open:()=>view('Contact Book'),ready:store.ready,reload,mountSave,flush:()=>chain};
 })();
 

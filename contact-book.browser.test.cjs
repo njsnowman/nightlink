@@ -20,7 +20,41 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  // Concurrent updates retain history while a stale editor saves personal data.
  await page.evaluate(async()=>{const [old]=await NightlinkBook.store.list();const newer={id:'new',kind:'channel',sender:'ALPHA',channel:'Public',text:'New',at:Date.now(),sentAt:1};await NightlinkBook.store.observe(newer,[]);await NightlinkBook.store.save({...old,notes:'Edited after observation'});});assert.equal((await page.evaluate(()=>NightlinkBook.store.list()))[0].history.length,3);
  for(const mode of ['terminal','cards']){await page.evaluate(mode=>{NightlinkInterface.set(mode);NightlinkBook.open();},mode);for(const width of [1320,760]){await page.setViewportSize({width,height:860});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.ok(await page.locator('#book-new').isVisible());}}
- await page.setViewportSize({width:1320,height:860});await page.evaluate(()=>{NightlinkInterface.set('terminal');NightlinkBook.open();});await page.locator('.book-row').click();await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-backups/rc22-contact-book.png',fullPage:true});await page.locator('#book-detail').getByRole('button',{name:'Map',exact:true}).click();await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-backups/rc22-contact-map.png',fullPage:true});assert.deepEqual(errors,[]);console.log('Contact Book: selected radio save, personal fields/photo, map/coordinate plot, persistence after radio deletion/reload, channel attribution/ambiguity/dedupe, adverts, export/import, concurrent history and terminal/cards layouts passed');
+ await page.setViewportSize({width:1320,height:860});await page.evaluate(()=>{NightlinkInterface.set('terminal');NightlinkBook.open();});await page.locator('.book-row').click();await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-backups/rc22-contact-book.png',fullPage:true});await page.locator('#book-detail').getByRole('button',{name:'Map',exact:true}).click();await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-backups/rc22-contact-map.png',fullPage:true});
+ await fixture();
+ const savedContacts=()=>page.evaluate(()=>NightlinkBook.store.list());
+ async function showSender(mode,sender){
+  await page.evaluate(({mode,sender})=>{
+   NightlinkInterface.set(mode);
+   const target={kind:'channel',...live.channels[0]};
+   live.selected=target;
+   live.messages=[{id:'book-chat-'+sender,conversation:conversationId(target),target,kind:'channel',timestamp:1700000040,sender,text:'A chat message',status:'Received',pathLength:1}];
+   view('Messages');
+  },{mode,sender});
+  if(mode==='terminal')await page.getByRole('button',{name:'Open contact card for '+sender,exact:true}).press('Enter');
+  else await page.locator('#chat-log .sender .contact-link').click();
+  await page.locator('#contact-save-to-book').click();
+  await page.waitForFunction(()=>current==='Contact Book');
+ }
+ await page.evaluate(()=>Object.assign(live.contacts[0],{flags:4,pathLength:1,path:'12',lastAdvert:1700000100,lastModified:1700000090}));
+ await showSender('terminal','ALPHA');
+ let fromChat=await savedContacts();
+ const alpha=fromChat.find(e=>e.identities.some(i=>i.key==='ab'.repeat(32)));
+ assert.equal(alpha.notes,'Edited after observation');
+ assert.equal(alpha.identities[0].flags,4);
+ assert.equal(alpha.identities[0].path,'12');
+ assert.equal(alpha.identities[0].lastModified,1700000090);
+ assert.equal(alpha.identities[0].location.lat,39.1);
+ await showSender('cards','Unknown visitor');
+ await showSender('terminal','Unknown visitor');
+ fromChat=await savedContacts();
+ const unknown=fromChat.filter(e=>e.chatSender?.name==='Unknown visitor');
+ assert.equal(unknown.length,1);
+ assert.deepEqual(unknown[0].identities,[]);
+ await page.reload();
+ await page.waitForFunction(()=>window.NightlinkBook);
+ assert.ok((await savedContacts()).some(e=>e.id===unknown[0].id));
+ assert.deepEqual(errors,[]);console.log('Contact Book: selected radio save, personal fields/photo, map/coordinate plot, persistence after radio deletion/reload, channel attribution/ambiguity/dedupe, adverts, export/import, concurrent history, chat saves, radio snapshot refresh, name-only deduplication and terminal/cards layouts passed');
  }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
 
 
