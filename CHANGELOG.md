@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased - Terminal reactions
+
+- Terminal chat renders matched reactions under the original message and hides the separate wire and delivery rows. Unmatched reactions retain expandable details. Tracks [#205](https://github.com/njsnowman/nightlink/issues/205).
+
 ## 0.8.28-rc.46 - local candidate
 
 - Add optional local planning tools using independent project snapshots: point budget inspection, bounded boundary/exclusion terrain screening, sampled obstacle/path terrain imports and connected 3D, GPX/GeoJSON route classification, parametric antenna/profile experiments, local presets, and confirmed direct-measurement residuals. Study bundles include their source snapshot and observations; normal project backups remain unchanged. No CloudRF integration. See [#199](https://github.com/njsnowman/nightlink/issues/199) and [validation record](releases/0.8.28-rc.46.md).
