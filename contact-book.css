@@ -5,3 +5,6 @@ html[data-interface=terminal] .book-plot{color:var(--t-bright-cyan);background:v
 
 .book-pick-row[hidden]{display:none!important}
 html:root:root:root:root:root[data-interface=terminal] body .book-row:is(:hover,:focus,[aria-pressed=true]){background:var(--t-blue)!important;color:var(--t-white)!important}html:root:root:root:root:root[data-interface=terminal] body .book-row:is(:hover,:focus,[aria-pressed=true]) :is(strong,small){color:var(--t-white)!important}
+
+.contact-quick>.book-actions{justify-content:center;margin-top:12px}
+.contact-quick>.book-actions button{padding:8px 12px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control);color:var(--nl-copy);background:var(--nl-surface)}
