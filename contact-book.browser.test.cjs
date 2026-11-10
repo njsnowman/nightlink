@@ -52,7 +52,7 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  const unknown=fromChat.filter(e=>e.chatSender?.name==='Unknown visitor');
  assert.equal(unknown.length,1);
  assert.deepEqual(unknown[0].identities,[]);
- await page.reload();
+ await page.reload({waitUntil:'commit'});
  await page.waitForFunction(()=>window.NightlinkBook);
  assert.ok((await savedContacts()).some(e=>e.id===unknown[0].id));
  assert.deepEqual(errors,[]);console.log('Contact Book: selected radio save, personal fields/photo, map/coordinate plot, persistence after radio deletion/reload, channel attribution/ambiguity/dedupe, adverts, export/import, concurrent history, chat saves, radio snapshot refresh, name-only deduplication and terminal/cards layouts passed');
