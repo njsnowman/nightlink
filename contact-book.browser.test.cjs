@@ -36,12 +36,13 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
   await page.locator('#contact-save-to-book').click();
   await page.waitForFunction(()=>current==='Contact Book');
  }
- await page.evaluate(()=>Object.assign(live.contacts[0],{flags:4,pathLength:1,path:'12',lastAdvert:1700000100,lastModified:1700000090}));
+ await page.evaluate(()=>Object.assign(live.contacts[0],{flags:4,snr:-3.25,pathLength:1,path:'12',lastAdvert:1700000100,lastModified:1700000090}));
  await showSender('terminal','ALPHA');
  let fromChat=await savedContacts();
  const alpha=fromChat.find(e=>e.identities.some(i=>i.key==='ab'.repeat(32)));
  assert.equal(alpha.notes,'Edited after observation');
  assert.equal(alpha.identities[0].flags,4);
+ assert.equal(alpha.identities[0].snr,-3.25);
  assert.equal(alpha.identities[0].path,'12');
  assert.equal(alpha.identities[0].lastModified,1700000090);
  assert.equal(alpha.identities[0].location.lat,39.1);
