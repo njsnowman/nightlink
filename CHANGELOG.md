@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- Open CoreScope on demand in Terminal chat and reduce hidden transcript and reaction processing. Tracks [#207](https://github.com/njsnowman/nightlink/issues/207) and [candidate validation](releases/0.8.28-rc.50.md).
+
 - Open contact cards from terminal chat nicknames and save chat senders to the offline Contact Book in either interface. Preserve available contact details and permit name-only entries for unlinked senders. Tracks [#203](https://github.com/njsnowman/nightlink/issues/203) and [candidate validation](releases/0.8.28-rc.48.md).
 
 - Add local Compare sites with side-by-side common-grid coverage/backhaul cards, bounded tested mast heights, explicit coverage goal, lowest tested qualifying shortlist, unknown/stale/cancel guards and printable field-visit sheets with sampled path geometry. Source designs and physical evidence stay unchanged. Tracks [#201](https://github.com/njsnowman/nightlink/issues/201); [candidate record](releases/0.8.28-rc.47.md).

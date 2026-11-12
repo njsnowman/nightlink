@@ -53,7 +53,7 @@ const assert=require('node:assert/strict');
  await page.waitForTimeout(100);
  assert.equal(await page.evaluate(()=>attention.position(conversationId(live.selected)).bottom),true);
  assert.equal(await page.locator('#jump-newest').isVisible(),false);
- await page.evaluate(()=>saveHistory());await page.reload();await chooseChannel(1);
+ await page.evaluate(()=>saveHistory());await page.reload({waitUntil:'domcontentloaded',timeout:30000});await chooseChannel(1);
  await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>attention.position(conversationId(live.selected)).bottom),true);
  await page.waitForFunction(()=>attention.unread(live.messages,conversationId(live.selected)).length===0);
  // Sending from deliberately held history resumes the live end through the production send wrapper.

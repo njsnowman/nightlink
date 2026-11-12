@@ -51,6 +51,10 @@ muteChannel.onclick=()=>{if(live.selected?.kind!=='channel')return;const id=conv
 const attentionMessages=renderMessages;
 renderMessages=function(){
  const state=ensureAttention(),next=live.selected?conversationId(live.selected):null;if(live.selected){state.data.selected=live.selected;state.save();}
+ if(terminalChatVisible()){
+  cancelAnimationFrame(attentionFrame);restoringReading=false;readingConversation=null;
+  attentionMessages();return;
+ }
  const changed=next!==readingConversation;if(!changed&&!readingViewDepth)captureReading();
  if(changed){readingConversation=next;readingBoundary=next?state.unread(live.messages,next)[0]?.id:null;manualReading=next&&state.position(next)?.manual===true;readingInputUntil=0;}
  const position=next?state.position(next):null;if(!readingBoundary&&next&&(!chatIsVisible()||(position&&!position.bottom)))readingBoundary=state.unread(live.messages,next)[0]?.id;
@@ -114,7 +118,7 @@ function handleIncomingAttention(){
  for(const m of live.messages){if(attentionSeen.has(m.id))continue;attentionSeen.add(m.id);if(m.own)continue;
   if(live.sync!=='ready'||state.muted.has(m.conversation))continue;
   if(m.target?.kind==='direct'){if(!(typeof quietHoursActive==='function'&&quietHoursActive()))openDM(m.target.key,true);showConversationAlert(m,false);}
-  else if(state.isMention(m.text,live.identity?.name)){soundMention();showConversationAlert(m,true);}else if(!chatIsVisible()||m.conversation!==readingConversation)showConversationAlert(m,false);
+  else if(state.isMention(m.text,live.identity?.name)){soundMention();showConversationAlert(m,true);}else if(!chatIsVisible()||m.conversation!==(terminalChatVisible()&&live.selected?conversationId(live.selected):readingConversation))showConversationAlert(m,false);
  }
  state.save(live.messages);refreshUnreadBadges();
 }

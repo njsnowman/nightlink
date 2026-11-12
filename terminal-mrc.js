@@ -26,11 +26,19 @@
   if(!state.readSessions.has(id)){let position;try{position=ensureAttention().position(id);}catch{}state.readSessions.set(id,{position:position||{bottom:true,manual:false},boundary:position?.boundary||null,focus:null});}
   return state.readSessions.get(id);
  }
- function latestVisible(log,id){const last=live.messages.filter(m=>m.conversation===id).at(-1);return log.scrollHeight-log.scrollTop-log.clientHeight<24&&(!last||log.querySelector('[data-message-id="'+CSS.escape(last.id)+'"]'));}
+ function latestVisible(log,id){const last=live.messages.findLast(m=>m.conversation===id);return log.scrollHeight-log.scrollTop-log.clientHeight<24&&(!last||log.querySelector('[data-message-id="'+CSS.escape(last.id)+'"]'));}
  function captureReading(log=doc.querySelector('#mrc-log'),persist=true,beforeRender=false){
   if(!log?.isConnected||!log.clientHeight||state.restoring||!state.readingWin||state.readingOwner!==(live.identity?.key||'local'))return;
-  const session=readingSession(state.readingWin),rect=log.getBoundingClientRect(),anchor=[...log.querySelectorAll('[data-message-id]')].find(row=>row.getBoundingClientRect().bottom>rect.top+1),bottom=beforeRender?log.scrollHeight-log.scrollTop-log.clientHeight<24&&log.dataset.tailWindow==='true'&&((!doc.hidden&&doc.hasFocus())||!!latestVisible(log,state.readingWin)):!!latestVisible(log,state.readingWin);
-  session.position={anchor:anchor?.dataset.messageId,offset:anchor?anchor.getBoundingClientRect().top-rect.top:0,bottom,manual:!bottom,boundary:session.boundary};
+  const session=readingSession(state.readingWin);
+  const atEnd=log.scrollHeight-log.scrollTop-log.clientHeight<24;
+  const bottom=beforeRender&&atEnd&&log.dataset.tailWindow==='true'&&!doc.hidden&&doc.hasFocus()||atEnd&&!!latestVisible(log,state.readingWin);
+  let anchor,offset=0;
+  if(!bottom){
+   const top=log.getBoundingClientRect().top;
+   anchor=[...log.querySelectorAll('[data-message-id]')].find(row=>row.getBoundingClientRect().bottom>top+1);
+   if(anchor)offset=anchor.getBoundingClientRect().top-top;
+  }
+  session.position={anchor:anchor?.dataset.messageId,offset,bottom,manual:!bottom,boundary:session.boundary};
   if(persist)try{ensureAttention().position(state.readingWin,session.position);}catch{}
  }
  function updateJump(log,win){const button=log.parentElement?.querySelector('.mrc-jump-latest');if(!button)return;const count=unread(win.id);button.hidden=!!latestVisible(log,win.id);button.textContent='Jump to latest'+(count?' · '+count+' new':'')+' ↓';}
@@ -38,7 +46,7 @@
  // This panel stays connected during message renders so incoming chat cannot reload the live map.
  function mapPanel(){
   if(state.mapPanel)return state.mapPanel;
-  const panel=el('details','mrc-map');panel.open=!matchMedia('(max-width:1100px)').matches;
+  const panel=el('details','mrc-map');
   const title=el('summary','mrc-map-title','OKI MESH · CORESCOPE'),holder=el('div','mrc-map-holder'),status=el('p','mrc-map-status','External map');
   const accent=el('span',null,'░▒▓ ');accent.setAttribute('aria-hidden','true');title.prepend(accent);
   status.setAttribute('role','status');panel.append(title,holder,status);
@@ -86,7 +94,12 @@
   const seen=new Set();
   const addDirect=(key,name)=>{const id='direct:'+key;if(seen.has(id))return;seen.add(id);list.push({id,label:'='+display(key,name),kind:'direct',target:{kind:'direct',key,name}});};
   if(live.selected?.kind==='direct')addDirect(live.selected.key,live.selected.name);
-  for(const m of live.messages)if(m.target?.kind==='direct'&&live.contacts.some(c=>c.key===m.target.key))addDirect(m.target.key,live.contacts.find(c=>c.key===m.target.key).name);
+  const contacts=new Map(live.contacts.map(contact=>[contact.key,contact]));
+  for(const message of live.messages){
+   if(message.target?.kind!=='direct')continue;
+   const contact=contacts.get(message.target.key);
+   if(contact)addDirect(contact.key,contact.name);
+  }
   return list;
  }
  function activeWindow(list){
@@ -122,7 +135,17 @@
   wrap.append(el('span','mrc-nick-bracket','<'),label,el('span','mrc-nick-bracket','>'),' ');
   return wrap;
  }
- function isMention(m){if(m.own||!live.identity?.name)return false;const n=live.identity.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return new RegExp('(^|[^\\w])@?\\[?'+n+'\\]?($|[^\\w])','i').test(String(m.text||''));}
+ let mentionName,mentionPattern;
+ function isMention(message){
+  const name=live.identity?.name;
+  if(message.own||!name)return false;
+  if(name!==mentionName){
+   const n=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+   mentionPattern=new RegExp('(^|[^\\w])@?\\[?'+n+'\\]?($|[^\\w])','i');
+   mentionName=name;
+  }
+  return mentionPattern.test(String(message.text||''));
+ }
  function jumpMessage(id,{select=true,focus=true}={}){
   const win=activeWindow(windows()),m=live.messages.find(m=>m.id===id&&m.conversation===win.id);if(!m){toast('Original message is no longer stored in this conversation.');return;}
   const session=readingSession(win.id);session.focus=id;session.position={anchor:id,offset:8,bottom:false,manual:true};if(select)state.selectedMessage=id;state.restoring=true;render();state.restoring=false;
@@ -163,7 +186,7 @@
   const frag=doc.createDocumentFragment();frag.append(line);
   const detail=deliveryText(m);
   if(detail){
-   const row=el('div','mrc-line mrc-delivery-row');row.append(el('span','mrc-time',stamp(m.timestamp)));
+   const row=el('div','mrc-line mrc-delivery-row');row.dataset.reactionDeliveryFor=m.id;row.append(el('span','mrc-time',stamp(m.timestamp)));
    const b=el('button','mrc-delivery '+deliveryClass(m),'└─ '+(m.own&&m.phase!=='acknowledged'&&deliveryClass(m)==='mrc-pending'?'… ':deliveryClass(m)==='mrc-ok'&&m.own?'✓ ':'')+detail);
    if(!m.own&&m.pathLength!=null&&window.MeshlineRoutes){
     const hops=MeshlineRoutes.hopSummary(m.pathLength);
@@ -252,10 +275,12 @@
   side.append(ol,el('p','mrc-dim mrc-legend','alt+1..9 switch'),el('p','mrc-dim mrc-legend','/help for commands'));
   // Scrollback
   const scroll=el('div','mrc-log');scroll.id='mrc-log';scroll.setAttribute('role','log');scroll.setAttribute('aria-label','Scrollback '+win.label);scroll.tabIndex=0;
+  let reactionRows=[];
   if(win.kind==='status')statusLines(scroll);
   else{
    const all=live.messages.filter(m=>m.conversation===win.id),focus=session.focus||(session.position.manual?session.position.anchor:changed?session.boundary:null);
    const focusIndex=focus?all.findIndex(m=>m.id===focus):-1,start=focusIndex>=0?Math.max(0,Math.min(all.length-MAX_ROWS,focusIndex-30)):Math.max(0,all.length-MAX_ROWS),rows=all.slice(start,start+MAX_ROWS);scroll.dataset.tailWindow=String(!all.length||rows.at(-1)?.id===all.at(-1)?.id);
+   reactionRows=rows;
    if(!rows.length){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(nowSeconds())),el('span','mrc-dim','-!- No messages in '+win.label+' yet.'));scroll.append(line);
     // Decorative antenna for an empty window; the line above carries the meaning.
     const art=el('pre','mrc-empty-art');art.setAttribute('aria-hidden','true');
@@ -321,12 +346,13 @@
   else if(session.position.bottom||atEnd)sl.scrollTop=sl.scrollHeight;else sl.scrollTop=keepTop||0;
   state.restoring=false;captureReading(sl);updateJump(sl,win);
   markRead(win,sl);
+  if(reactionRows.length)window.NightlinkReactionUI?.decorate(sl,reactionRows,live.messages,{selfName:live.identity?.name||'',terminal:true});
  }
  function updateCount(){const input=state.form?.querySelector('#mrc-input'),count=state.count;if(!input||!count)return;const v=input.value,n=v.startsWith('/')?bytes(commandPayload(v)||''):bytes(v);count.textContent=String(n);count.classList.toggle('mrc-over',n>LIMIT);}
  function markRead(win,log){
-  if(win.kind==='status'||typeof ensureAttention!=='function'||doc.hidden||!doc.hasFocus()||doc.querySelector('dialog[open]'))return;
+  if(win.kind==='status'||typeof ensureAttention!=='function'||doc.hidden||!doc.hasFocus()||doc.querySelector('dialog[open]')||!unread(win.id))return;
   const rect=log.getBoundingClientRect(),last=[...log.querySelectorAll('[data-message-id]')].filter(row=>row.getBoundingClientRect().top<rect.bottom&&row.getBoundingClientRect().bottom<=rect.bottom+2).at(-1);
-  if(!last||!unread(win.id))return;
+  if(!last)return;
   try{ensureAttention().mark(live.messages,win.id,last.dataset.messageId);}catch{}
   if(typeof refreshUnreadBadges==='function')refreshUnreadBadges();
   const active=doc.querySelector('.mrc-window[aria-current="true"]'),badge=active?.querySelector('.mrc-unread'),count=unread(win.id);if(badge){if(count)badge.textContent=count;else badge.remove();}if(active)active.setAttribute('aria-label',active.getAttribute('aria-label').replace(/, \d+ unread$/,'')+(count?', '+count+' unread':''));
