@@ -12,7 +12,7 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
   const file=u.pathname==='/'?'index.html':u.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':'text/html'});}catch{await route.fulfill({status:404,body:''});}
  });
  const page=await context.newPage();await page.goto('http://127.0.0.1:4173');await page.waitForFunction(()=>window.NightlinkMRC);
- await page.evaluate(()=>view('Messages'));await page.waitForSelector('.mrc-map-holder.ready');
+ await page.evaluate(()=>view('Messages'));assert.equal(await page.locator('.mrc-map iframe').count(),0,'desktop chat starts without a live iframe');await page.locator('.mrc-map summary').click();await page.waitForSelector('.mrc-map-holder.ready');
  assert.equal(await page.locator('.mrc-nodes').count(),0,'chat has no duplicate node listing');
  assert.equal(await page.locator('.mrc-map iframe').count(),1);
  assert.equal(new URLSearchParams((await page.locator('.mrc-map iframe').getAttribute('src')).split('?')[1]).get('zoom'),'7','chat opens at regional zoom');

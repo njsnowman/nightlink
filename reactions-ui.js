@@ -5,8 +5,12 @@
   const generation=(generations.get(container)||0)+1;generations.set(container,generation);
   const terminal=options.terminal===true,bodySelector=terminal?'.mrc-text':'p';
   const rows=[...container.querySelectorAll(terminal?'.mrc-line[data-message-id]':'.message,.dm-bubble')],byId=new Map(visible.map((m,i)=>[m.id,rows[i]]));
-  let result;try{result=await NightlinkReactions.plan(messages,options);}catch{return;}
+  if(!rows.length||!visible.length)return;
+  const scope=message=>message.conversation||options.conversation||'';
+  const visibleScopes=new Set(visible.map(scope));
+  let result;try{result=await NightlinkReactions.plan(messages.filter(message=>visibleScopes.has(scope(message))),options);}catch{return;}
   if(generations.get(container)!==generation||!container.isConnected||rows.some(row=>!container.contains(row)))return;
+  if(!result.parsed.size)return;
   const bottom=container.scrollHeight-container.clientHeight-container.scrollTop<40;
   const anchor=terminal&&!bottom?rows.find(row=>!row.hidden&&row.getBoundingClientRect().bottom>container.getBoundingClientRect().top):null;
   const anchorTop=anchor?.getBoundingClientRect().top;
