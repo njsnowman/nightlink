@@ -1,5 +1,5 @@
 // Packaged Windows regression check. Uses synthetic data and an isolated userData path.
-const { _electron }=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const { _electron }=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
 const fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
 (async()=>{const asar=process.argv[2],runtime=process.argv[3];if(!asar||!runtime)throw Error('Usage: node backup.native.test.cjs <packaged app.asar> <matching electron.exe>');
 const fixture=await fs.mkdtemp(path.join(os.tmpdir(),'nightlink-backup-native-'));

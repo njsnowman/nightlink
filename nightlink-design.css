@@ -1,6 +1,6 @@
 /* Nightlink design standard: approved Radio Tools vocabulary, shared by every document.
    Keep this layer last. Component layouts and interaction semantics remain authoritative. */
-:root{--nl-radius-card:14px;--nl-radius-control:9px;--nl-radius-dialog:20px;--nl-space:16px;--nl-accent:var(--accent,#ffbf56);--nl-surface:var(--panel,#080808);--nl-edge:var(--line,#303030);--nl-copy:var(--text,#eeeeef);--nl-muted:var(--muted,#b9b9bf);--nl-hover:color-mix(in srgb,var(--nl-accent) 6%,var(--nl-surface));--nl-focus:0 0 0 1px var(--nl-accent)}
+:root{--nl-radius-card:14px;--nl-radius-control:9px;--nl-radius-dialog:20px;--nl-space:16px;--nl-accent:var(--accent,#ffbf56);--nl-ready:#7be0b3;--nl-surface:var(--panel,#080808);--nl-edge:var(--line,#303030);--nl-copy:var(--text,#eeeeef);--nl-muted:var(--muted,#b9b9bf);--nl-hover:color-mix(in srgb,var(--nl-accent) 6%,var(--nl-surface));--nl-focus:0 0 0 1px var(--nl-accent)}
 html:root:root:root:root body{font-family:'Segoe UI Variable','Segoe UI',sans-serif;line-height:1.5}
 /* Quiet surfaces replace decorative console corners, without changing panel geometry. */
 html:root:root:root:root body :is(.panel,.dm-inbox,.contact-card,.history-search,.switchboard-settings-shell){border:1px solid var(--nl-edge);border-radius:var(--nl-radius-card);background:var(--nl-surface);box-shadow:0 3px 16px #0002;min-width:0}
@@ -12,6 +12,8 @@ html:root:root:root:root body :is(.page-heading h1,.switchboard-settings-title){
 html:root:root:root:root body .page-heading p{color:var(--nl-muted);line-height:1.6}
 html:root:root:root:root body #overview>.stats{border:0;background:transparent;gap:12px}
 html:root:root:root:root body #overview>.stats article{border:1px solid var(--nl-edge);border-radius:12px;background:var(--nl-surface);padding:12px 16px}
+html:root:root:root:root body #overview>.stats strong{color:var(--nl-ready)}
+html:root:root:root:root body .chat-channel{align-items:center}
 /* Navigation and compact controls share the same rounded, restrained accent treatment. */
 html:root:root:root:root body :is(aside,body.compact aside){border-radius:16px;border-color:var(--nl-edge);background:var(--bg,#000)}
 html:root:root:root:root body aside :is(nav button,.channel,.sidebar-browse,.settings){border-radius:9px}
@@ -19,12 +21,12 @@ html:root:root:root:root body aside nav button.active{background:var(--nl-hover)
 html:root:root:root:root body aside nav button:not(.active):hover{background:var(--nl-surface);border-color:var(--nl-edge)}
 html:root:root:root:root body :is(.header-control,.header-search,.header-inbox,.connection,.compact-toggle){border-radius:9px;border-color:var(--nl-edge);box-shadow:none}
 /* Real controls, including secondary actions that previously appeared as plain text. */
-html:root:root:root:root body :is(.panel-heading,.radio-panel,[id=radio-workbench],[id=radio-status-panel],.switchboard-settings-page,.history-filters,.diagnostics-tabs,.history-results-heading,.conversation-tools,.network-source-bar,.dm-inbox,.diagnostics-actions,.backup-actions,.delete-contact-actions,.contact-profile-actions,.tools-actions) button,
+html:root:root:root:root body :is(.panel-heading,.radio-panel,[id=radio-workbench],[id=radio-status-panel],.switchboard-settings-page,.history-filters,.diagnostics-tabs,.history-results-heading,.conversation-tools,.network-source-bar,.dm-inbox,.diagnostics-actions,.backup-actions,.delete-contact-actions,.contact-profile-actions,.tools-actions,.echo-command-shortcuts) button,
 html:root:root:root:root body dialog:not(:has(.radio-tools-hub)) button:not(.message-reply-target):not(.contact-avatar):not(.dm-person):not(.reaction-chip){min-height:38px;padding:9px 13px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control);background:var(--nl-surface);color:var(--nl-copy);font-family:inherit;font-weight:550;line-height:1.35;white-space:normal;box-shadow:0 1px 2px #0002;cursor:pointer;transition:background .15s,border-color .15s}
-html:root:root:root:root body :is(.panel-heading,.radio-panel,[id=radio-workbench],[id=radio-status-panel],.switchboard-settings-page,.history-filters,.conversation-tools,.network-source-bar,.dm-inbox,.tools-actions) button:hover:not(:disabled),
+html:root:root:root:root body :is(.panel-heading,.radio-panel,[id=radio-workbench],[id=radio-status-panel],.switchboard-settings-page,.history-filters,.conversation-tools,.network-source-bar,.dm-inbox,.tools-actions,.echo-command-shortcuts) button:hover:not(:disabled),
 html:root:root:root:root body dialog:not(:has(.radio-tools-hub)) button:hover:not(:disabled){border-color:color-mix(in srgb,var(--nl-accent) 60%,var(--nl-edge));background:var(--nl-hover);color:var(--nl-copy)}
-html:root:root:root:root body :is(button.primary,#live-dm,#chat-form>button,.dm-compose button.primary){background:var(--nl-accent);border-color:var(--nl-accent);color:#101410;border-radius:var(--nl-radius-control);font-weight:650;box-shadow:none}
-html:root:root:root:root body :is(button.primary,#live-dm,#chat-form>button,.dm-compose button.primary):hover:not(:disabled){background:color-mix(in srgb,var(--nl-accent) 86%,white);color:#101410}
+html:root:root:root:root body :is(button.primary,#live-dm,#chat-form>button:not(.text-art-toggle),.dm-compose button.primary){background:var(--nl-accent);border-color:var(--nl-accent);color:#101410;border-radius:var(--nl-radius-control);font-weight:650;box-shadow:none}
+html:root:root:root:root body :is(button.primary,#live-dm,#chat-form>button:not(.text-art-toggle),.dm-compose button.primary):hover:not(:disabled){background:color-mix(in srgb,var(--nl-accent) 86%,white);color:#101410}
 html:root:root:root:root body :is(button,input,select,textarea):disabled{cursor:not-allowed;opacity:.5;box-shadow:none}
 html:root:root:root:root body :is(button,a,input,select,textarea,summary):focus-visible{outline:2px solid var(--nl-accent);outline-offset:3px}
 html:root:root:root:root body :is(.radio-workbench-tabs,.workspace-message-tabs,.network-source-switch,.switchboard-channel-tabs){gap:6px;border-color:var(--nl-edge);background:transparent;border-radius:10px}
@@ -154,7 +156,7 @@ html body #radio-page-hub .nl-radio-name p{font-size:12px;line-height:1.5;color:
 html:root:root:root:root body #radio-page-hub #radio-status-title{font:550 12px/1.4 'Segoe UI',sans-serif;border:1px solid var(--nl-edge);border-radius:999px;padding:8px 12px;margin:0;color:var(--nl-muted);background:var(--nl-surface);max-width:200px;text-align:center}
 html:root:root:root:root body #radio-page-hub #radio-status-title[data-ready=true]{color:#9edbb6;border-color:#315e43;background:#10221a}
 html:root:root:root:root body #radio-page-hub #radio-status-title[data-error=true]{color:#ffb2b8;border-color:#86444f;background:#241216}
-.nl-radio-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0;padding:14px 0;border-block:1px solid var(--nl-edge)}.nl-radio-facts dt{font-size:11px;color:var(--nl-muted);margin-bottom:4px}.nl-radio-facts dd{font-size:14px;font-weight:550;color:var(--nl-copy);margin:0;overflow-wrap:anywhere}
+.nl-radio-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0;padding:14px 0;border-block:1px solid var(--nl-edge)}.nl-radio-facts dt{font-size:11px;color:var(--nl-muted);margin-bottom:4px}.nl-radio-facts dd{font-size:14px;font-weight:550;color:var(--nl-ready);margin:0;overflow-wrap:anywhere}
 html:root:root:root:root body #radio-page-hub .radio-status-eyebrow{display:none}
 html:root:root:root:root body #radio-page-hub .radio-status-main{gap:16px;align-items:center}.radio-status-main>div:first-child{min-width:0}
 html:root:root:root:root body #radio-page-hub #radio-status-detail{font-size:12px;color:var(--nl-muted);line-height:1.6;max-width:70ch}
@@ -181,3 +183,29 @@ html:root:root:root:root body .map-provider-settings p,html:root:root:root:root 
 html:root:root:root:root body .map-provider-settings label{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control);cursor:pointer}
 html:root:root:root:root body .map-provider-settings label span{display:grid;gap:4px;min-width:0}
 html:root:root:root:root body .map-provider-settings input{flex:0 0 auto;accent-color:var(--nl-accent);width:18px;height:18px}
+
+/* One aligned tray for connectivity, RF, inbox, and radio-sync indicators. */
+.header-actions .header-status-group{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;padding:4px;border:1px solid var(--nl-edge);border-radius:12px;background:var(--nl-surface)}
+.header-actions .header-status-group>button.header-control{height:42px;min-height:42px}
+.header-actions #connection{position:relative;display:flex;justify-content:center;min-width:190px;max-width:230px;min-height:42px;padding:3px 12px;white-space:normal}
+.header-actions #connection>.header-control-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;padding:0 16px;text-align:center;line-height:1.2}
+.header-actions #connection>.header-control-label .connection-confidence-evidence{order:-1;color:var(--nl-copy);font-size:11px;font-weight:650;line-height:1.15;letter-spacing:.01em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.header-actions #connection>.header-control-label .connection-confidence-state{max-width:100%;color:var(--nl-muted);font-size:10px;font-weight:550;line-height:1.2;letter-spacing:0;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+.header-actions #connection[data-confidence=ready]>.header-control-label .connection-confidence-state{color:var(--nl-ready)}
+.header-actions #connection[data-confidence=syncing]>.header-control-label .connection-confidence-state,.header-actions #connection[data-confidence=connecting]>.header-control-label .connection-confidence-state{color:var(--nl-accent)}
+.header-actions #connection[data-confidence=error]>.header-control-label .connection-confidence-state{color:#ff858f}
+.header-actions #connection>svg{position:absolute;left:10px;width:17px;height:17px}
+.header-actions .internet-status{display:flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 9px;border:1px solid var(--nl-edge);border-radius:9px;color:var(--nl-muted);font-size:11px;font-weight:600;white-space:nowrap}
+.header-actions .internet-status svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.header-actions .internet-status i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.header-actions .internet-status[data-state=online]{color:var(--nl-ready);border-color:color-mix(in srgb,var(--nl-ready) 34%,var(--nl-edge));background:color-mix(in srgb,var(--nl-ready) 6%,var(--nl-surface))}
+.header-actions .internet-status[data-state=checking]{color:var(--nl-accent)}
+.header-actions .internet-status[data-state=offline],.header-actions .internet-status[data-state=unavailable]{color:var(--nl-muted)}
+.header-actions .header-status-group #propagation-indicator{width:38px;min-width:38px;padding:0}
+.header-actions .header-status-group #open-activity-inbox{width:auto;min-width:38px;padding-inline:7px}
+@media(max-width:850px){.header-actions .header-status-group{gap:3px;padding:3px}.header-actions .header-status-group #connection{min-width:164px;max-width:176px;padding-inline:7px}.header-actions .internet-status{gap:5px;padding-inline:7px}.header-actions .internet-status-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}}
+@media(max-width:620px){.header-actions .header-status-group #connection{min-width:145px;max-width:155px}.header-actions #connection>.header-control-label .connection-confidence-evidence{font-size:10px}}
+
+/* Center the successful sync message within the connection console's text column. */
+.link-console .link-heading{flex:1;min-width:0}
+.link-console .link-heading p{margin:0 auto;max-width:350px;text-align:center}

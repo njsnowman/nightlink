@@ -1,0 +1,28 @@
+/* Night-blue ANSI logo. The art keeps its own dark night surface in every display scheme so the blue gradient stays legible.
+   Sizing: 78 monospace columns scale with the container width (one column is about 0.6em). */
+:root{--logo-night:#050a16;--logo-edge:color-mix(in srgb,#5c8dff 22%,var(--nl-edge,#303030));
+--logo-15:#f4f9ff;--logo-14:#6fe7f7;--logo-12:#5f95ff;--logo-6:#3fb2c2;--logo-4:#3a62e0;--logo-8:#4d5666;
+--logo-mono:'Cascadia Mono',Consolas,'Lucida Console','DejaVu Sans Mono',monospace}
+html:root:root:root:root:root body .ansi-logo{container-type:inline-size;display:block;min-width:0;max-width:100%;margin:0;padding:12px 16px;border:1px solid var(--logo-edge);border-radius:var(--nl-radius-card,14px);background:var(--logo-night);overflow:hidden}
+html:root:root:root:root:root body .ansi-logo .ansi-logo-art{display:block;margin:0 auto;padding:0;border:0;border-radius:0;background:transparent;width:max-content;max-width:100%;overflow:hidden;white-space:pre;overflow-wrap:normal;
+font-family:var(--logo-mono);font-weight:400;letter-spacing:0;font-size:clamp(4px,calc(100cqi / 47.5),14px);line-height:1;color:var(--logo-8);font-variant-ligatures:none}
+html:root:root:root:root:root body .ansi-logo-15{color:var(--logo-15)}
+html:root:root:root:root:root body .ansi-logo-14{color:var(--logo-14)}
+html:root:root:root:root:root body .ansi-logo-12{color:var(--logo-12)}
+html:root:root:root:root:root body .ansi-logo-6{color:var(--logo-6)}
+html:root:root:root:root:root body .ansi-logo-4{color:var(--logo-4)}
+html:root:root:root:root:root body .ansi-logo-8{color:var(--logo-8)}
+/* Connection dialog: logo above the transport controls, kept short on small windows. */
+html:root:root:root:root:root body .ble-sheet .ansi-logo-connect{flex:none;padding:8px 12px}
+@media(max-height:640px){html:root:root:root:root:root body .ble-sheet .ansi-logo-connect .ansi-logo-art{font-size:clamp(4px,calc(100cqi / 47.5),8px)}}
+/* About: logo leads the page. */
+html:root:root:root:root:root body .help-about .ansi-logo{margin-bottom:16px}
+/* Sidebar wordmark: icon plus a two-line ANSI-style name; hidden in the icon-only sidebar. */
+html:root:root:root:root:root body aside .brand{align-items:center}
+html:root:root:root:root:root body aside .brand .ansi-logo-wordmark{display:block;margin:0;padding:0;border:0;background:transparent;white-space:pre;overflow:hidden;min-width:0;
+font-family:var(--logo-mono);font-weight:700;letter-spacing:1px;font-size:17px;line-height:1.15;color:var(--logo-8)}
+html:root:root:root:root:root body aside .brand .ansi-logo-wordmark .ansi-logo-6,html:root:root:root:root:root body aside .brand .ansi-logo-wordmark .ansi-logo-8{font-weight:400}
+html:root:root:root:root:root body.compact aside .brand .ansi-logo-wordmark{font-size:15px;letter-spacing:.5px}
+@media(max-width:1100px){html:root:root:root:root:root body aside .brand .ansi-logo-wordmark{font-size:15px;letter-spacing:.5px}}
+@media(max-width:850px){html:root:root:root:root:root body aside .brand .ansi-logo-wordmark{display:none}}
+html:root:root:root:root:root body aside .brand:focus-visible{outline:2px solid var(--nl-accent,#ffbf56);outline-offset:2px;border-radius:var(--nl-radius-control,9px)}

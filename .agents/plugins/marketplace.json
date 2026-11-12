@@ -1,0 +1,12 @@
+{
+  "name": "nightlink-local",
+  "interface": { "displayName": "Nightlink local tools" },
+  "plugins": [
+    {
+      "name": "nightlink-live",
+      "source": { "source": "local", "path": "./plugins/nightlink-live" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Developer tools"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const page=await browser.newPage();let remoteLoads=0;
  await page.addInitScript(()=>{window.healthChecks=0;window.nightlinkCoreScope={check:async()=>{healthChecks++;return true;}};const si=setInterval;window.setInterval=(fn,ms,...args)=>si(fn,ms===30000?40:ms,...args);});
  await page.route('**/*',async r=>{const u=new URL(r.request().url());if(u.hostname==='map.okimesh.org'){remoteLoads++;return r.fulfill({contentType:'text/html',body:'<!doctype html><p>Live map fixture</p>'});}if(u.hostname!=='127.0.0.1')return r.abort();const f=u.pathname.slice(1)||'index.html';try{await r.fulfill({body:await fs.readFile(path.join(__dirname,f)),contentType:f.endsWith('.js')?'text/javascript':f.endsWith('.css')?'text/css':'text/html'});}catch{await r.abort();}});

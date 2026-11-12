@@ -9,7 +9,10 @@
   // then undo CBC's previous-ciphertext XOR for each original block to recover ECB.
   const key=await crypto.subtle.importKey('raw',secret,'AES-CBC',false,['encrypt','decrypt']);const tail=new Uint8Array(await crypto.subtle.encrypt({name:'AES-CBC',iv:raw.cipher.slice(-16)},key,new Uint8Array()));const padded=new Uint8Array(raw.cipher.length+16);padded.set(raw.cipher);padded.set(tail,raw.cipher.length);const plain=new Uint8Array(await crypto.subtle.decrypt({name:'AES-CBC',iv:new Uint8Array(16)},key,padded));for(let at=16;at<plain.length;at++)plain[at]^=raw.cipher[at-16];if(plain.length<5||(plain[4]>>2)!==0)return null;return{...raw,timestamp:new DataView(plain.buffer).getUint32(0,true),text:new TextDecoder().decode(plain.slice(5)).split('\0')[0]};
  }
- function hopSummary(encoded){if(encoded==null)return'Route unknown';if(encoded===255)return'Direct · hop count unavailable';const size=(encoded>>6)+1,count=encoded&63;if(size>3||count*size>64)return'Invalid route data';return count===0?'0 hops · direct reception':count+' hop'+(count===1?'':'s');}
+ // Two fields share the byte 0xFF with different meanings. On a received message it marks a direct-routed packet whose hop count the radio did not report.
+ // On a saved contact (out_path_len) it means no known outbound path, so the radio floods.
+ function hopSummary(encoded){if(encoded==null)return'Route unknown';if(encoded===255)return'Direct route · hop count not reported';const size=(encoded>>6)+1,count=encoded&63;if(size>3||count*size>64)return'Invalid route data';return count===0?'0 hops · direct reception':count+' hop'+(count===1?'':'s');}
  function resolvePath(path,contacts){return path.map(hash=>({hash,candidates:contacts.filter(c=>c.type===2&&c.key.startsWith(hash)).map(c=>({key:c.key,name:c.name}))}));}
- root.MeshlineRoutes={parseRaw,decodeRoute,hopSummary,resolvePath};if(typeof module!=='undefined')module.exports=root.MeshlineRoutes;
+ function contactRoute(pathLength){if(pathLength==null||pathLength===255)return'Flood / no known path';if(!Number.isInteger(pathLength)||pathLength<0||pathLength>255)return'Route unknown';const size=(pathLength>>6)+1,count=pathLength&63;if(size>3||count*size>64)return'Invalid route data';return count===0?'Direct · 0 hops':count+(count===1?' hop':' hops');}
+ root.MeshlineRoutes={parseRaw,decodeRoute,hopSummary,resolvePath,contactRoute};if(typeof module!=='undefined')module.exports=root.MeshlineRoutes;
 })(globalThis);

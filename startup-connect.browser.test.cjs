@@ -1,5 +1,5 @@
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  for(const mode of ['success','failure','cancel','sync-error','disabled']){
   const page=await browser.newPage({viewport:{width:1000,height:700}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(mode=>{window.testMode=mode;window.testAttempts=0;window.testRemember=0;window.testCancelled=0;let enabled=mode!=='disabled';const config=()=>({enabled,last:{kind:'bluetooth',name:'Fixture M1'}});window.nightlinkStartup={info:async()=>config(),setEnabled:async value=>{enabled=value;return config();},remember:async()=>{window.testRemember++;return true;},cancel:async()=>{window.testCancelled++;},attempt:async()=>{await window.nightlinkConnectLast('bluetooth');return true;}};const original=window.setTimeout;window.setTimeout=(fn,ms,...args)=>original(fn,[5000,15000].includes(ms)?(mode==='cancel'?500:10):ms,...args);},mode);
