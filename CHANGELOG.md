@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- Remove the project, RF, and full engineering study report exports, the comparison field-visit sheet, and the simple site note. Full-study results are available in the workspace. Tracks [#209](https://github.com/njsnowman/nightlink/issues/209) and the [candidate record](releases/0.8.28-rc.51.md).
+
 - Open CoreScope on demand in Terminal chat and reduce hidden transcript and reaction processing. Tracks [#207](https://github.com/njsnowman/nightlink/issues/207) and [candidate validation](releases/0.8.28-rc.50.md).
 
 - Open contact cards from terminal chat nicknames and save chat senders to the offline Contact Book in either interface. Preserve available contact details and permit name-only entries for unlinked senders. Tracks [#203](https://github.com/njsnowman/nightlink/issues/203) and [candidate validation](releases/0.8.28-rc.48.md).
