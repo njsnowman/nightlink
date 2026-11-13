@@ -13,9 +13,9 @@ For occasional volunteer work: compare a hill or rooftop with an existing site a
 3. Use Place proposed pin for the possible repeater. Enter both antenna heights in feet, the frequency and the local preview radius in miles. Optional radio details let you change power, gain, losses and ground assumptions.
 4. Choose Run preview when ready. This explicitly requests terrain coordinates, or uses cached terrain only if selected. Cancel stops the preview without saving an idea.
 5. The completed preview opens its result summary. Read Will this link likely work, What might this location add and What should I do next. Technical source details stay expandable. Use Adjust antenna height or Try another pin, then run again; editing inputs does not perform a calculation. Read the direct-path explanation and local predicted area results. Unknown coverage is unresolved, not a confirmed gap; predictions are not measured radio service.
-6. Keep this idea saves an independent project without changing the source project. Export a simple site note to share. Neither action requires a team, dates, assignments or an installation record.
+6. Keep this idea saves an independent project without changing the source project. Keeping an idea requires no team, dates, assignments or an installation record.
 7. Open Local planning tools from a saved idea/project for optional point inspection, bounded area/exclusion screening, sampled obstacle and 3D work, GPX routes, parametric antennas, presets and direct-measurement residuals. Work uses a source snapshot. Save local study keeps an independent local version; Export study bundle includes its source and observations. These studies and presets are separate from normal project backups. Screening results are transient; use Keep candidate explicitly to copy a proposed location into the current project. No CloudRF account or integration is used.
-8. In Local planning tools choose Compare sites: choose up to four proposed locations, enter tested antenna heights in feet and an area goal, then Compare locations and heights. Cards show common-grid potential, added percentage points and reciprocal backhaul. A shortlist requires complete inputs, additional known gaps served, the entered goal and all selected destinations meeting budget. Pick a tested option and export its field-visit sheet. This identifies the lowest tested qualifying height, not an exhaustive minimum. Settings save in the separate study bundle; changing inputs clears results.
+8. In Local planning tools choose Compare sites: choose up to four proposed locations, enter tested antenna heights in feet and an area goal, then Compare locations and heights. Cards show common-grid potential, added percentage points and reciprocal backhaul. A shortlist requires complete inputs, additional known gaps served, the entered goal and all selected destinations meeting budget. Pick a tested option to review its modeled coverage and backhaul. This identifies the lowest tested qualifying height, not an exhaustive minimum. Settings save in the separate study bundle; changing inputs clears results.
 9. Return whenever you have time. A field test is optional. Use Detailed planner only for a larger study, multiple sites, repeater-gap searches or formal installation records.
 
 
@@ -178,8 +178,8 @@ Keep assumptions, unresolved work and evidence scope visible before sharing a pl
 ### What to do
 
 1. Read the plain-language review summary, saved assumptions and unresolved checks. A missing goal remains visible even when the calculations themselves are complete.
-2. Export a complete project backup for restoration. Use the project HTML report, GeoJSON, CSV and installation packets for derived review material.
-3. If source inputs change, return to the first unfinished step and regenerate affected models. Keep prior reports labeled as historical.
+2. Export a complete project backup for restoration. Use GeoJSON, CSV and installation packets for derived review material.
+3. If source inputs change, return to the first unfinished step and regenerate affected models. Keep earlier exports labeled as historical.
 4. Use Engineering studio and Deployment workspace when ready to select, approve and install a design. Record actual conditions and field acceptance separately.
 
 
@@ -281,7 +281,7 @@ This optional workflow collects required inputs before an explicit multi-analysi
 
 1. Open Engineering studio and choose the full-study setup. Enter the area, source radio assumptions, study sites, gateways and objectives.
 2. Review missing-input checks and offline/refresh choices. Start the run only after the form is valid.
-3. The run prepares required source terrain/coverage and network analyses with progress and cancellation. Inspect the report for assumptions, unresolved data and bounded-search limits.
+3. The run prepares required source terrain/coverage and network analyses with progress and cancellation. Inspect the study results for assumptions, unresolved data and bounded-search limits.
 4. Save/export the completed study and retain a full project backup. A canceled or failed run does not save partial study models.
 
 

@@ -14,7 +14,7 @@ The workspace keeps the map central, with a compact collapsible site directory, 
 4. Review both directions of the free-space budget. Enter a sourced terrain profile for sampled clearance analysis. Antenna-height sliders update the plot without replacing the map; Save height scenario adds a named comparison. Comparisons use current entered equipment profiles and each scenario's saved height overrides/path assumptions.
 5. Optionally display the free-space-only link-budget radius. Its map display is capped at 200 km. It ignores terrain, clutter, antenna patterns and diffraction; it is not a terrain-coverage model or predicted service area.
 6. Record manual field observations separately: time, heard/not-heard/intermittent, optional measured RSSI/SNR, location, observer and conditions. These do not arise automatically from estimates or simulated data. Located observations appear as distinct outcome markers. No radio is contacted or configured by these actions.
-7. Export RF report for a standalone printable HTML document containing site sheets/photos, path assumptions, sampled profiles where valid, and manually recorded tests. Operation JSON backups retain the full samples and RF records.
+7. Export an operation JSON backup to retain the full samples and RF records.
 
 ## Terrain input
 
