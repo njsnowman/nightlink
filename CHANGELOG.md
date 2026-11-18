@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- Keep the chat transcript readable in short, narrow Cards Echo split views by putting conversation controls and Echo shortcuts in a collapsible section.
+
 - Terminal chat displays matched reactions beneath the original message. Unmatched reactions retain expandable details. Tracks [#205](https://github.com/njsnowman/nightlink/issues/205) and the [candidate record](releases/0.8.28-rc.49.md).
 
 - Remove the project, RF, and full engineering study report exports, the comparison field-visit sheet, and the simple site note. Full-study results are available in the workspace. Tracks [#209](https://github.com/njsnowman/nightlink/issues/209) and the [candidate record](releases/0.8.28-rc.51.md).

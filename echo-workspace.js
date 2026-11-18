@@ -5,8 +5,34 @@
  const isEcho=()=>current==='Messages'&&live.selected?.kind==='channel'&&String(live.selected.name||'').trim().replace(/^#/,'').toLowerCase()==='echo';
  function removeFrame(){stopHealth?.();stopHealth=null;finishPage?.('cancelled');finishPage=null;clearTimeout(timer);timer=null;if(frame){frame.remove();frame=null;}}
  function restoreMap(){if(mapHost?.contains(mapPanel)){homes.get(mapPanel).after(mapPanel);mapPanel.hidden=true;}}
- function cleanup(){removeFrame();restoreMap();if(shell?.contains(chatPanel))alternate.append(chatPanel);shell?.remove();shell=null;mapHost=null;status=null;alternate.classList.remove('echo-active');}
- function setLayout(next){layout=next;shell.dataset.layout=next;const expand=shell.querySelector('#echo-expand');if(expand)expand.textContent=next==='map'?'Restore split':'Expand map';for(const b of shell.querySelectorAll('[data-echo-layout]'))b.setAttribute('aria-pressed',String(b.dataset.echoLayout===next));requestAnimationFrame(()=>{networkStreetMap?.invalidateSize();window.dispatchEvent(new Event('resize'));});}
+ const compactSplit=matchMedia('(max-width:850px) and (max-height:700px)');
+ let chatControls=null;
+ function restoreChatControls(){
+  if(!chatControls)return;
+  const shortcuts=chatControls.querySelector('#echo-command-shortcuts');
+  if(shortcuts)chatPanel.querySelector('#chat-form').before(shortcuts);
+  chatControls.replaceWith(chatControls.querySelector('.conversation-tools'));
+  chatControls=null;
+ }
+ function updateChatControls(){
+  if(!shell||layout!=='split'||!compactSplit.matches){
+   restoreChatControls();
+   return;
+  }
+  if(chatControls)return;
+  const tools=chatPanel.querySelector('.conversation-tools');
+  chatControls=document.createElement('details');
+  chatControls.className='echo-chat-controls';
+  const summary=document.createElement('summary');
+  summary.textContent='Conversation controls';
+  tools.before(chatControls);
+  chatControls.append(summary,tools);
+  const shortcuts=chatPanel.querySelector('#echo-command-shortcuts');
+  if(shortcuts)chatControls.append(shortcuts);
+ }
+ compactSplit.addEventListener('change',updateChatControls);
+ function cleanup(){restoreChatControls();removeFrame();restoreMap();if(shell?.contains(chatPanel))alternate.append(chatPanel);shell?.remove();shell=null;mapHost=null;status=null;alternate.classList.remove('echo-active');}
+ function setLayout(next){layout=next;shell.dataset.layout=next;updateChatControls();const expand=shell.querySelector('#echo-expand');if(expand)expand.textContent=next==='map'?'Restore split':'Expand map';for(const b of shell.querySelectorAll('[data-echo-layout]'))b.setAttribute('aria-pressed',String(b.dataset.echoLayout===next));requestAnimationFrame(()=>{networkStreetMap?.invalidateSize();window.dispatchEvent(new Event('resize'));});}
  function localMap(){removeFrame();mapPanel.hidden=false;mapPanel.classList.remove('overview-corescope');mapHost.append(mapPanel);ensureNetworkStreetMap();renderMap();requestAnimationFrame(()=>networkStreetMap?.invalidateSize());status.textContent=!NightlinkMapProviders.enabled('corescope')?'CoreScope hidden in Settings · local radio map.':navigator.onLine?'CoreScope unavailable · local radio map. Observer activity is unavailable.':'Offline · local radio map with downloaded street tiles where available. CoreScope activity is unavailable.';}
  function displayMap(){
   if(!shell)return;
