@@ -75,16 +75,32 @@ jobs:
             try { $process.Kill($true) } catch [System.InvalidOperationException] { }
             $process.WaitForExit()
           }
-          Invoke-Installer $setup "/S /D=$install"
-          Test-AppStartup (Join-Path $install "Nightlink.exe")
+          function Remove-InstalledApp {
+            $uninstaller = Get-ChildItem $install -Filter "Uninstall*.exe" | Select-Object -First 1
+            if (!$uninstaller) { throw "The installer did not create an uninstaller" }
+            Invoke-Installer $uninstaller.FullName "/S"
+            if (Test-Path (Join-Path $install "Nightlink.exe")) { throw "Uninstall left the installed executable" }
+          }
+          $installed = Join-Path $install "Nightlink.exe"
           $profileMarker = Join-Path $env:APPDATA "Meshline/installer-acceptance.txt"
+          Invoke-Installer $setup "/S /D=$install"
+          Test-AppStartup $installed
+          Remove-InstalledApp
+          $previous = Join-Path $env:RUNNER_TEMP "Nightlink-Setup-0.8.26.exe"
+          Invoke-WebRequest -ProgressAction SilentlyContinue -Uri "https://github.com/njsnowman/nightlink/releases/download/v0.8.26/Nightlink-Setup-0.8.26.exe" -OutFile $previous
+          if ((Get-FileHash $previous).Hash -ne "cb2e31797eb157a997ef675f857cd556a443b167a520f8a193c15bd88d60587c") {
+            throw "The v0.8.26 installer checksum did not match"
+          }
+          Invoke-Installer $previous "/S /D=$install"
+          Test-AppStartup $installed
           Set-Content $profileMarker "Nightlink acceptance profile marker"
           Invoke-Installer $setup "/S /D=$install"
-          if (!(Test-Path $profileMarker)) { throw "Reinstall lost the existing profile" }
-          $uninstaller = Get-ChildItem $install -Filter "Uninstall*.exe" | Select-Object -First 1
-          if (!$uninstaller) { throw "The installer did not create an uninstaller" }
-          Invoke-Installer $uninstaller.FullName "/S"
-          if (Test-Path (Join-Path $install "Nightlink.exe")) { throw "Uninstall left the installed executable" }
+          if ((Get-FileHash $installed).Hash -ne (Get-FileHash dist/win-unpacked/Nightlink.exe).Hash) {
+            throw "Upgrade did not install the expected executable"
+          }
+          if (!(Test-Path $profileMarker)) { throw "Upgrade lost the existing profile" }
+          Test-AppStartup $installed
+          Remove-InstalledApp
           if (!(Test-Path $profileMarker)) { throw "Uninstall lost the existing profile" }
           Test-AppStartup $portable
       - name: Archive verified candidate
