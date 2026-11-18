@@ -39,7 +39,6 @@ jobs:
           path: ${{ runner.temp }}/nightlink-layout
           if-no-files-found: ignore
   package:
-    needs: test
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
@@ -117,7 +116,7 @@ jobs:
   draft-release:
     # Attaches the verified candidate to a draft pre-release so collaborators can download it
     # from the Releases page. Drafts are not public and the in-app updater rejects drafts and pre-releases.
-    needs: package
+    needs: [test, package]
     if: github.event_name == 'workflow_dispatch' && inputs.create_draft_candidate
     runs-on: ubuntu-latest
     timeout-minutes: 10
