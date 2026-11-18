@@ -33,6 +33,7 @@
  const echoRender=renderMessages;renderMessages=function(){echoRender();sync();};
  const echoView=view;view=function(name){cleanup();echoView(name);sync();};
  radioSession.addEventListener('identity',()=>{if(shell&&frame&&locationSignature!==NightlinkCoreScopeLocation.signature()){removeFrame();displayMap();}});
+radioSession.addEventListener('identity-updated',()=>queueMicrotask(()=>{if(shell&&frame&&locationSignature!==NightlinkCoreScopeLocation.signature()){removeFrame();displayMap();}}));
  window.addEventListener('nightlink-map-providers-changed',()=>{if(shell){removeFrame();displayMap();}});
  window.addEventListener('offline',()=>{if(shell)displayMap();});window.addEventListener('online',()=>{failed=false;if(shell)displayMap();});sync();
 })();

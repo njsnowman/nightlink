@@ -19,7 +19,18 @@ const fs=require('node:fs/promises'),path=require('node:path'),assert=require('n
  // Let the previous dialog's close handler finish; it resets dialog classes.
  await page.waitForFunction(()=>!document.querySelector('#dialog').open);await page.waitForTimeout(200);
  await page.evaluate(()=>{const hop=live.contacts[1];Object.assign(hop,{lat:44.5,lon:-100.3,located:true});showMessageRoute({...live.messages[0],observedRoute:{path:[hop.key.slice(0,2)],direct:false,snr:9,rssi:-102}});});await page.locator('#message-hop-list li').first().waitFor();await capture('message-path');await page.locator('#close-dialog').click();
+ // Propagation Monitor: a synthetic baseline from ten demonstration stations, then an unusual window, injected into this isolated page only.
+ await page.waitForFunction(()=>!document.querySelector('#dialog').open);await page.waitForTimeout(200);
+ await page.waitForFunction(()=>window.NightlinkPropagationUI&&NightlinkPropagationUI.monitor);
+ await page.evaluate(()=>{const m=NightlinkPropagationUI.monitor,now=Date.now(),key=live.identity.key,start=now-30*3600000;m.disconnect(start-1);m.restore('{"version":1,"radios":{}}');m.connect(key,start);
+  const stable=Array.from({length:10},(_,i)=>(0x10+i).toString(16).repeat(32));let n=0;
+  for(let t=start;t<=now-60000;t+=600000)for(const s of stable)m.observe({source:'rxlog',at:t,snr:-5+((n++)%3),rssi:-110,station:s,stationKind:'key',type:4,typeName:'Advert',relation:'forwarded',hops:2,path:[],dedup:'base:'+s+':'+t});
+  for(let i=0;i<6;i++)m.observe({source:'rxlog',at:now-300000+i*1000,snr:4,rssi:-98,station:(0x30+i).toString(16).repeat(32),stationKind:'key',type:4,typeName:'Advert',relation:'forwarded',hops:3,path:[],dedup:'new:'+i});
+  for(const s of stable)for(let k=0;k<12;k++)m.observe({source:'rxlog',at:now-240000+k*1000,snr:11,rssi:-92,station:s,stationKind:'key',type:4,typeName:'Advert',relation:'forwarded',hops:2,path:[],dedup:'boost:'+s+':'+k+':'+(n++)});
+  NightlinkPropagationUI.refresh?.();showPropagationMonitor();});
+ await page.locator('dialog[open]').getByText('Recent observations').first().waitFor();await capture('propagation');await page.locator('#close-dialog').click();
+ await page.waitForFunction(()=>!document.querySelector('#dialog').open);await page.waitForTimeout(200);
  await page.evaluate(()=>NightlinkSettings.open('data'));await page.locator('#backup-export').scrollIntoViewIfNeeded();await capture('backup');
  await page.locator('#check-updates').scrollIntoViewIfNeeded();await page.locator('#check-updates').click();await page.waitForFunction(()=>!updateBusy);await capture('updates');
- assert.deepEqual(await page.evaluate(()=>guideWrites),[]);assert.deepEqual(errors,[]);console.log('Captured nine application screenshots with fictional data; no radio commands or external requests.');
+ assert.deepEqual(await page.evaluate(()=>guideWrites),[]);assert.deepEqual(errors,[]);console.log('Captured ten application screenshots with fictional data; no radio commands or external requests.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

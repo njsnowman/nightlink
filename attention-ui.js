@@ -51,6 +51,10 @@ muteChannel.onclick=()=>{if(live.selected?.kind!=='channel')return;const id=conv
 const attentionMessages=renderMessages;
 renderMessages=function(){
  const state=ensureAttention(),next=live.selected?conversationId(live.selected):null;if(live.selected){state.data.selected=live.selected;state.save();}
+ if(terminalChatVisible()){
+  cancelAnimationFrame(attentionFrame);restoringReading=false;readingConversation=null;
+  attentionMessages();return;
+ }
  const changed=next!==readingConversation;if(!changed&&!readingViewDepth)captureReading();
  if(changed){readingConversation=next;readingBoundary=next?state.unread(live.messages,next)[0]?.id:null;manualReading=next&&state.position(next)?.manual===true;readingInputUntil=0;}
  const position=next?state.position(next):null;if(!readingBoundary&&next&&(!chatIsVisible()||(position&&!position.bottom)))readingBoundary=state.unread(live.messages,next)[0]?.id;
@@ -114,7 +118,7 @@ function handleIncomingAttention(){
  for(const m of live.messages){if(attentionSeen.has(m.id))continue;attentionSeen.add(m.id);if(m.own)continue;
   if(live.sync!=='ready'||state.muted.has(m.conversation))continue;
   if(m.target?.kind==='direct'){if(!(typeof quietHoursActive==='function'&&quietHoursActive()))openDM(m.target.key,true);showConversationAlert(m,false);}
-  else if(state.isMention(m.text,live.identity?.name)){soundMention();showConversationAlert(m,true);}else if(!chatIsVisible()||m.conversation!==readingConversation)showConversationAlert(m,false);
+  else if(state.isMention(m.text,live.identity?.name)){soundMention();showConversationAlert(m,true);}else if(!chatIsVisible()||m.conversation!==(terminalChatVisible()&&live.selected?conversationId(live.selected):readingConversation))showConversationAlert(m,false);
  }
  state.save(live.messages);refreshUnreadBadges();
 }
@@ -143,3 +147,6 @@ function decoratePopupReading(key){
 const attentionPopupUpdate=updatePopup;updatePopup=function(key,options={}){const popup=dmPopups.get(key);if(popup instanceof HTMLElement){const thread=popup.querySelector('.dm-thread'),rect=thread.getBoundingClientRect(),anchor=[...thread.querySelectorAll('.dm-bubble')].find(r=>r.getBoundingClientRect().bottom>rect.top);if(anchor&&thread.getClientRects().length&&!popup.classList.contains('minimized'))ensureAttention().position('direct:'+key,{anchor:anchor.dataset.messageId,offset:anchor.getBoundingClientRect().top-rect.top,bottom:atReadingEnd(thread)});}attentionPopupUpdate(key,options);decoratePopupReading(key);const updated=dmPopups.get(key);if(updated instanceof HTMLElement){const thread=updated.querySelector('.dm-thread');let jump=updated.querySelector('.dm-reading-jump');if(!jump){jump=document.createElement('button');jump.className='reading-jump dm-reading-jump';jump.textContent='New messages ↓';thread.after(jump);jump.onclick=()=>{thread.scrollTop=thread.scrollHeight;thread.dispatchEvent(new Event('scroll'));};thread.addEventListener('scroll',()=>jump.hidden=atReadingEnd(thread));}jump.hidden=atReadingEnd(thread);}};
 window.meshlineDM?.onRead(data=>{if(data.radio!==live.identity?.key)return;const messages=live.messages.filter(m=>m.conversation==='direct:'+data.key);if(messages.some(m=>m.id===data.through))markDMRead(data.key,data.through);if(data.position)ensureAttention().position('direct:'+data.key,data.position);});
 ensureAttention();const savedAttentionTarget=attention.data.selected;if(savedAttentionTarget&&['channel','direct'].includes(savedAttentionTarget.kind))live.selected=savedAttentionTarget;view('Overview');refreshUnreadBadges();
+
+// Sending into the active Cards conversation returns its reading window to live messages.
+const attentionSendMessage=sendUIMessage;sendUIMessage=async function(target,text,clear){const owner=live.identity?.key,id=conversationId(target),known=new Set(live.messages.map(m=>m.id));const result=await attentionSendMessage.apply(this,arguments);if(!window.NightlinkInterface?.isTerminal()&&owner===live.identity?.key&&live.selected&&conversationId(live.selected)===id&&['Overview','Messages'].includes(current)&&live.messages.some(m=>!known.has(m.id)&&m.own&&m.conversation===id&&m.text===text.trim())){manualReading=false;readingBoundary=null;ensureAttention().position(id,{bottom:true,manual:false});messageWindowLatest();renderMessages();chatReadingLog.scrollTop=chatReadingLog.scrollHeight;captureReading();jumpNewest.hidden=true;}return result;};

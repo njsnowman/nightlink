@@ -73,6 +73,8 @@
  bar.querySelector('#network-center').onclick=()=>{if(effective()==='meshmapper'){const request=++recenterRequest,expectedFrame=frame;locatePC().then(()=>{if(request===recenterRequest&&current==='Network map'&&effective()==='meshmapper'&&frame===expectedFrame)show(true);});return;}if(effective()!=='radio')start(true);else centerNetworkStreetMap();};
  bar.querySelector('#network-reload').onclick=()=>{failed[wanted()]=false;show(true);};
  radioSession.addEventListener('identity',()=>{if(frame&&effective()!=='meshmapper'&&locationSignature!==NightlinkCoreScopeLocation.signature(context()))start();});
+ // A local location change in Device Center updates live.identity in another listener; check after all listeners have run.
+ radioSession.addEventListener('identity-updated',()=>queueMicrotask(()=>{if(frame&&effective()!=='meshmapper'&&locationSignature!==NightlinkCoreScopeLocation.signature(context()))start();}));
  window.addEventListener('nightlink-map-providers-changed',()=>{recenterRequest++;stop();show();});
  window.addEventListener('offline',()=>show());window.addEventListener('online',()=>{failed.corescope=failed.meshmapper=false;show();});
  const sourceRenderMap=renderMap;renderMap=function(){sourceRenderMap();if(current==='Overview'&&effective()!=='radio')mapPanel.querySelector('.live').textContent='OKI MESH';};

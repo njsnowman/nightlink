@@ -19,8 +19,8 @@ html:root:root:root body #chat-form,html:root:root:root body.compact #chat-form{
 html:root:root:root body #chat-form:focus-within{border-color:var(--accent)}
 html:root:root:root body #chat-form input,html:root:root:root body.compact #chat-form input{flex:1;min-width:0;min-height:45px;border:0;background:transparent;color:#eeeede;padding:10px 12px;font:calc(15px * var(--read-scale,1)) 'Segoe UI',sans-serif}
 html:root:root:root body #chat-form input::placeholder,html:root:root:root body .dm-compose input::placeholder{color:#a4a498;opacity:1}
-html:root:root:root body #chat-form>button{flex:none;min-width:66px;min-height:45px;padding:9px 16px;border:1px solid var(--accent);border-radius:4px;background:var(--accent);color:#16150e;font-size:20px;box-shadow:none}
-html:root:root:root body #chat-form>button:disabled{opacity:.45}
+html:root:root:root body #chat-form>button:not(.text-art-toggle){flex:none;min-width:66px;min-height:45px;padding:9px 16px;border:1px solid var(--accent);border-radius:4px;background:var(--accent);color:#16150e;font-size:20px;box-shadow:none}
+html:root:root:root body #chat-form>button:not(.text-art-toggle):disabled{opacity:.45}
 html:root:root:root body .composer-hint{flex-shrink:0;margin:5px 18px 10px;font-size:calc(10px * var(--read-scale,1));color:#aaa89a;background:transparent;line-height:1.4}
 html:root:root:root body .voice-actions{flex-shrink:0;padding:0 15px;margin:4px 0}
 html:root:root:root body .voice-actions button{font-size:11px;min-height:26px;padding:4px 8px;background:#14150f;color:#c5c2b4;border-color:#3c3d32;border-radius:3px}

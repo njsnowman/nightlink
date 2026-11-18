@@ -20,7 +20,10 @@ contextBridge.exposeInMainWorld('meshlineBluetooth',{
  pairingResponse:response=>ipcRenderer.send('ble:pairing-response',response)
 });
 
+if(process.isMainFrame)contextBridge.exposeInMainWorld('meshlineInternet',{status:()=>ipcRenderer.invoke('internet:status')});
+
 contextBridge.exposeInMainWorld('meshlineSerial',{onPorts:listener=>subscribe('usb:ports',listener),onEnded:listener=>subscribe('usb:ended',listener),select:id=>ipcRenderer.send('usb:select',id)});
+if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkCodexBridge',{publish:data=>ipcRenderer.send('codex-bridge:publish',data)});
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('meshlineDesktop',{state:data=>ipcRenderer.send('desktop:state',data),notify:data=>ipcRenderer.send('desktop:notice',data),quit:()=>ipcRenderer.send('desktop:quit'),readyToQuit:()=>ipcRenderer.send('desktop:quit-ready'),onOpen:listener=>subscribe('desktop:open',listener),onQuit:listener=>subscribe('desktop:quit-request',listener)});
 
@@ -30,7 +33,7 @@ if(process.isMainFrame)contextBridge.exposeInMainWorld("nightlinkOfflineMaps",{o
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkStartup',{info:()=>ipcRenderer.invoke('startup:info'),setEnabled:value=>ipcRenderer.invoke('startup:enabled',value),remember:kind=>ipcRenderer.invoke('startup:remember',kind),attempt:()=>ipcRenderer.invoke('startup:attempt'),cancel:()=>ipcRenderer.invoke('startup:cancel')});
 
-if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkCoreScope',{check:()=>ipcRenderer.invoke('corescope:health')});
+if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkCoreScope',{chatMapSupported:true,check:()=>ipcRenderer.invoke('corescope:health')});
 
 if(process.isMainFrame)contextBridge.exposeInMainWorld('nightlinkMeshMapper',{location:()=>ipcRenderer.invoke('meshmapper:location'),check:region=>ipcRenderer.invoke('meshmapper:health',region),open:region=>ipcRenderer.invoke('meshmapper:open',region)});
 

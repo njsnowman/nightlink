@@ -1,0 +1,433 @@
+From e5e60d4883a9255110219a2b9f68db6caee39a32 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 1 Nov 2026 11:16:50 +0000
+Subject: [PATCH] Add feature indicator strip to the page heading
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Move the RF monitor status out of the header toolbar into a shared
+strip beside the page title. Every chip uses one component
+(indicator-strip.js/.css): a 32 px button with a 16 px line icon,
+"Feature · State" label, semantic tone and a full accessible name.
+
+Chips, in fixed order, all driven by existing state only:
+- RF monitor: propagation monitor level (unchanged logic).
+- RX log: receiving / not seen, shown only while connected.
+- Map: active map source from corescope-ui.js (CoreScope, MeshMapper,
+  Offline map, Fallback, Radio map).
+- Alerts: shown only while quiet hours are active.
+- Update: shown only when an update is available; checksum mismatch
+  is an alert.
+
+The strip stays on one row: calm chips drop labels first, then all
+chips go icon-only. Overview keeps its title hidden but shows the
+strip. The propagation live region is pinned so it adds no page
+scroll. No radio commands are sent.
+
+Tests: new indicator-strip.browser.test.cjs in test:browser, build
+files and required features; propagation and header-control tests
+updated for the new location. npm test 342/342; full test:browser
+passes. Simulated browser results only; no physical-radio evidence.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019jwdUNLdgFDTkdkrPTAK1B
+---
+ DESIGN_SYSTEM.md                 | 12 ++++++
+ corescope-ui.js                  |  1 +
+ header-controls.browser.test.cjs |  2 +-
+ index.html                       |  4 +-
+ indicator-strip.browser.test.cjs | 65 ++++++++++++++++++++++++++++++++
+ indicator-strip.css              | 33 ++++++++++++++++
+ indicator-strip.js               | 65 ++++++++++++++++++++++++++++++++
+ package.json                     |  4 +-
+ propagation-ui.js                | 24 ++++++------
+ propagation.browser.test.cjs     |  6 +--
+ propagation.css                  |  8 +---
+ required-features.json           |  4 +-
+ updates-ui.js                    |  1 +
+ 13 files changed, 202 insertions(+), 27 deletions(-)
+ create mode 100644 indicator-strip.browser.test.cjs
+ create mode 100644 indicator-strip.css
+ create mode 100644 indicator-strip.js
+
+diff --git a/DESIGN_SYSTEM.md b/DESIGN_SYSTEM.md
+index e7fad10..6f19896 100644
+--- a/DESIGN_SYSTEM.md
++++ b/DESIGN_SYSTEM.md
+@@ -15,3 +15,15 @@ Validate representative Overview, Messages, Network, Contacts, Radio, Settings,
+ Submenus are included at every depth: contact options, message actions, sidebar tools, terminal, discovery results, inbox/outbox, identity comparison, import/export, confirmation dialogs and expandable sections. nightlink-design.js adds matching decorative line icons to existing action buttons and dialog headers while preserving their DOM controls, accessible names and event handlers. Do not create a separate appearance for deeper menu levels.
+ 
+ The main Radio landing page uses a live identity/status summary and three labeled groups of full-width action cards: device/setup, routes/discovery and observation/diagnostics. Keep export and hardware details in an expandable section. Reuse existing tool controls and preserve their state across navigation; opening this menu must not issue radio commands.
++
++## Feature indicator strip
++
++Feature status chips live in the page heading, to the right of the page title (`indicator-strip.js`, `indicator-strip.css`). Register new status indicators with `NightlinkIndicators.register(id,{feature,icon,onClick})`; do not add status buttons to the header toolbar.
++
++- Label: `Feature · State`. Feature is a short sentence-case noun (`RF monitor`, `RX log`, `Map`, `Alerts`, `Update`); State is short sentence case (`Normal`, `Learning`, `Possible opening`, `Not seen`, `Quiet hours`). No trailing punctuation.
++- Accessible name `Feature: State. Detail.`; the tooltip repeats it. Detail states what the status means or where to act.
++- Tone sets the colour only: `ok` (green icon), `info` (blue icon), `warn` (amber chip), `alert` (red chip), `off` (dimmed), `neutral`. Use `warn`/`alert` only for states that need attention.
++- Chip: 32 px high (28 px compact), 9 px corners, 12 px label, 16 px line icon, 8 px gaps. Fixed order: RF monitor, RX log, Map, Alerts, Update.
++- Hide a chip when it has nothing to report (for example no update available). Below 1100 px the feature word is dropped; below 860 px and in compact mode calm chips show the icon only, while `warn`/`alert` chips keep their text. The strip stays on one row: if chips still do not fit, calm chips drop their labels first, then every chip shows its icon only. The tone colour, accessible name and tooltip still carry the full status.
++- Chips never send radio commands. Animation follows reduced-motion settings.
++
+diff --git a/corescope-ui.js b/corescope-ui.js
+index 194b481..5af704a 100644
+--- a/corescope-ui.js
++++ b/corescope-ui.js
+@@ -59,6 +59,7 @@
+   bar.querySelector('#network-corescope').hidden=!NightlinkMapProviders.enabled('corescope');bar.querySelector('#network-meshmapper').hidden=overview||!NightlinkMapProviders.enabled('meshmapper');bar.querySelector('#network-meshmapper').textContent='MeshMapper '+region();bar.querySelector('#network-meshmapper-region').hidden=overview||!NightlinkMapProviders.enabled('meshmapper');bar.querySelector('#network-meshmapper-region').textContent='Region: '+region();bar.querySelector('#network-open-meshmapper').hidden=active!=='meshmapper';
+   const remote=wanted(),label=remote==='meshmapper'?'MeshMapper '+region():'CoreScope';
+   bar.querySelector('#network-source-note').textContent=active==='meshmapper'?pcLabel()+' · green coverage / red dropped packets':active==='corescope'?'CoreScope · external live feed':!navigator.onLine?'Offline radio map · downloaded street tiles':failed[remote]?label+' unavailable · local radio map · retrying automatically':'Local radio map · '+(MeshlineStreetMaps.radioView()?'radio-reported location':'saved or regional location');
++  window.dispatchEvent(new CustomEvent('nightlink-map-status',{detail:{active,wanted:remote,label,offline:!navigator.onLine,failed:!!failed[remote]}}));
+   const reload=bar.querySelector('#network-reload');reload.hidden=remote==='radio';reload.textContent='Reload '+label;
+   mapPanel.querySelector('.live').textContent=active==='meshmapper'?'MESHMAPPER':active==='corescope'?'OKI MESH':live.sync==='ready'?'RADIO':'OFFLINE';
+   if(active==='meshmapper'&&!pcAttempted)locatePC();
+diff --git a/header-controls.browser.test.cjs b/header-controls.browser.test.cjs
+index 71fd3ce..ad6e37b 100644
+--- a/header-controls.browser.test.cjs
++++ b/header-controls.browser.test.cjs
+@@ -1,4 +1,4 @@
+ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
+ (async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.route('http://127.0.0.1:4173/**',async r=>{const f=new URL(r.request().url()).pathname.slice(1)||'index.html';try{await r.fulfill({body:await fs.readFile(path.join(__dirname,f)),contentType:f.endsWith('.js')?'text/javascript':f.endsWith('.css')?'text/css':f.endsWith('.svg')?'image/svg+xml':'text/html'});}catch{await r.abort();}});await page.route('https://**',r=>r.abort());await page.goto('http://127.0.0.1:4173');
+- for(const [width,height]of [[1500,900],[1100,740],[760,560]]){await page.setViewportSize({width,height});for(const scale of [1,1.3])for(const compact of [false,true])for(const accent of ['ice-blue','amber','emerald','violet']){await page.evaluate(({scale,compact,accent})=>{applyTextSize(scale,false);setCompact(compact,false,false);NightlinkAccent.apply(accent);}, {scale,compact,accent});for(const state of ['disconnected','connecting','connected']){await page.evaluate(state=>{ble.state=state;updateRadioState();},state);await page.waitForFunction(()=>document.querySelector('#connection>.header-control-label'));const rows=await page.locator('.header-actions button:visible').evaluateAll(bs=>bs.map(b=>{const c=getComputedStyle(b),r=b.getBoundingClientRect();return{height:r.height,top:r.top,bottom:r.bottom,right:r.right,radius:c.borderRadius,size:c.fontSize,icon:b.querySelector('svg')?.getBoundingClientRect().width};}));assert.ok(rows.length===5);for(const row of rows){assert.equal(row.height,42);assert.equal(row.radius,'9px');assert.equal(row.icon,17);assert.equal(row.size,rows[0].size);assert.ok(Math.abs(row.top-rows[0].top)<1);assert.ok(row.right<=width&&row.bottom<=height);}assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight),true);}}}
++ for(const [width,height]of [[1500,900],[1100,740],[760,560]]){await page.setViewportSize({width,height});for(const scale of [1,1.3])for(const compact of [false,true])for(const accent of ['ice-blue','amber','emerald','violet']){await page.evaluate(({scale,compact,accent})=>{applyTextSize(scale,false);setCompact(compact,false,false);NightlinkAccent.apply(accent);}, {scale,compact,accent});for(const state of ['disconnected','connecting','connected']){await page.evaluate(state=>{ble.state=state;updateRadioState();},state);await page.waitForFunction(()=>document.querySelector('#connection>.header-control-label'));const rows=await page.locator('.header-actions button:visible').evaluateAll(bs=>bs.map(b=>{const c=getComputedStyle(b),r=b.getBoundingClientRect();return{height:r.height,top:r.top,bottom:r.bottom,right:r.right,radius:c.borderRadius,size:c.fontSize,icon:b.querySelector('svg')?.getBoundingClientRect().width};}));assert.ok(rows.length===4);for(const row of rows){assert.equal(row.height,42);assert.equal(row.radius,'9px');assert.equal(row.icon,17);assert.equal(row.size,rows[0].size);assert.ok(Math.abs(row.top-rows[0].top)<1);assert.ok(row.right<=width&&row.bottom<=height);}assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight),true);}}}
+  await page.setViewportSize({width:760,height:560});await page.evaluate(()=>{const b=document.createElement('button');b.id='startup-connect-cancel';b.textContent='Cancel';document.querySelector('.header-actions').append(b);document.querySelector('#connection').classList.add('startup-active');document.querySelector('#connection').textContent='Connecting to a radio with a very long name · 3/3';});await page.waitForFunction(()=>document.querySelector('#startup-connect-cancel svg'));assert.equal(await page.locator('#startup-connect-cancel').evaluate(e=>e.getBoundingClientRect().height),42);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.evaluate(()=>{document.querySelector('#startup-connect-cancel').remove();document.querySelector('#connection').classList.remove('startup-active');});await page.locator('#open-message-search').click();assert.equal(await page.evaluate(()=>current),'Search');assert.equal(await page.locator('#history-query').evaluate(e=>e===document.activeElement),true);const before=await page.evaluate(()=>document.body.classList.contains('compact'));await page.locator('#compact-toggle').click();assert.equal(await page.evaluate(()=>document.body.classList.contains('compact')),!before);await page.locator('#connection').click();assert.equal(await page.locator('.ble-sheet').evaluate(e=>e.open),true);await page.locator('#ble-close').click();assert.equal(await page.locator('.signal-iris').isVisible(),false);assert.equal(await page.locator('.demo-tag').isVisible(),false);await page.setViewportSize({width:1100,height:740});await page.evaluate(()=>{applyTextSize(1,false);setCompact(false,false,false);NightlinkAccent.apply('ice-blue');ble.state='disconnected';updateRadioState();view('Overview');});await page.screenshot({path:require('node:path').join(process.env.NIGHTLINK_ARTIFACTS||require('node:os').tmpdir(),'nightlink-header-uniform.png')});assert.deepEqual(errors,[]);console.log('PASS: uniform header height/radius/icon/type/alignment; 3 widths, 2 text sizes, 2 layouts, 4 accents and 3 radio states; Search/Compact/Connect actions retained.');}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+diff --git a/index.html b/index.html
+index 4eeee78..0ed4e53 100644
+--- a/index.html
++++ b/index.html
+@@ -1,4 +1,4 @@
+ <!doctype html>
+-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; frame-src https://map.okimesh.org https://*.meshmapper.net; style-src 'self'; script-src 'self'; img-src 'self' data: https: https://tile.openstreetmap.org"><title>Nightlink</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="glass.css"><link rel="stylesheet" href="readability.css"><link rel="stylesheet" href="connection-window.css"><link rel="stylesheet" href="attention.css"><link rel="stylesheet" href="search.css"><link rel="stylesheet" href="backup.css"><link rel="stylesheet" href="updates.css"><link rel="stylesheet" href="window-fit.css"><link rel="stylesheet" href="radio-tools.css"><link rel="stylesheet" href="corescope.css"><link rel="stylesheet" href="serial.css"><link rel="stylesheet" href="diagnostics.css"><link rel="stylesheet" href="signal-console.css"><link rel="stylesheet" href="accent-theme.css"><script src="performance.js"></script><script src="accent-theme.js"></script><link rel="stylesheet" href="echo-workspace.css"><link rel="stylesheet" href="identity-verification.css"><link rel="stylesheet" href="rf-trends.css"><link rel="stylesheet" href="map-annotations.css"><link rel="stylesheet" href="console-refinement.css"><link rel="stylesheet" href="navigation-refinement.css"><link rel="stylesheet" href="startup-connect.css"><link rel="stylesheet" href="header-controls.css"><link rel="stylesheet" href="message-media.css"><link rel="stylesheet" href="radio-cli.css"><link rel="stylesheet" href="security.css"><link rel="stylesheet" href="link-preview.css"><link rel="stylesheet" href="display-scheme.css"><script src="display-scheme.js"></script><link rel="stylesheet" href="switchboard.css"><link rel="stylesheet" href="switchboard-messages.css"><link rel="stylesheet" href="switchboard-contacts.css"><link rel="stylesheet" href="switchboard-controls.css"><link rel="stylesheet" href="switchboard-settings.css"><link rel="stylesheet" href="message-actions.css"><link rel="stylesheet" href="node-discovery.css"><link rel="stylesheet" href="help.css"><link rel="stylesheet" href="radio-workbench.css"><link rel="stylesheet" href="outgoing-message.css"><link rel="stylesheet" href="message-path.css"><link rel="stylesheet" href="radio-status.css"><link rel="stylesheet" href="mention-highlight.css"><link rel="stylesheet" href="reactions.css"><link rel="stylesheet" href="chat-signals.css"><link rel="stylesheet" href="workspace-confidence.css"><link rel="stylesheet" href="compact-workspace.css"><link rel="stylesheet" href="contact-deletion.css"><link rel="stylesheet" href="layout-consistency.css"><link rel="stylesheet" href="device-management.css"><link rel="stylesheet" href="propagation.css"><link rel="stylesheet" href="nightlink-design.css"></head>
++<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; frame-src https://map.okimesh.org https://*.meshmapper.net; style-src 'self'; script-src 'self'; img-src 'self' data: https: https://tile.openstreetmap.org"><title>Nightlink</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="glass.css"><link rel="stylesheet" href="readability.css"><link rel="stylesheet" href="connection-window.css"><link rel="stylesheet" href="attention.css"><link rel="stylesheet" href="search.css"><link rel="stylesheet" href="backup.css"><link rel="stylesheet" href="updates.css"><link rel="stylesheet" href="window-fit.css"><link rel="stylesheet" href="radio-tools.css"><link rel="stylesheet" href="corescope.css"><link rel="stylesheet" href="serial.css"><link rel="stylesheet" href="diagnostics.css"><link rel="stylesheet" href="signal-console.css"><link rel="stylesheet" href="accent-theme.css"><script src="performance.js"></script><script src="accent-theme.js"></script><link rel="stylesheet" href="echo-workspace.css"><link rel="stylesheet" href="identity-verification.css"><link rel="stylesheet" href="rf-trends.css"><link rel="stylesheet" href="map-annotations.css"><link rel="stylesheet" href="console-refinement.css"><link rel="stylesheet" href="navigation-refinement.css"><link rel="stylesheet" href="startup-connect.css"><link rel="stylesheet" href="header-controls.css"><link rel="stylesheet" href="message-media.css"><link rel="stylesheet" href="radio-cli.css"><link rel="stylesheet" href="security.css"><link rel="stylesheet" href="link-preview.css"><link rel="stylesheet" href="display-scheme.css"><script src="display-scheme.js"></script><link rel="stylesheet" href="switchboard.css"><link rel="stylesheet" href="switchboard-messages.css"><link rel="stylesheet" href="switchboard-contacts.css"><link rel="stylesheet" href="switchboard-controls.css"><link rel="stylesheet" href="switchboard-settings.css"><link rel="stylesheet" href="message-actions.css"><link rel="stylesheet" href="node-discovery.css"><link rel="stylesheet" href="help.css"><link rel="stylesheet" href="radio-workbench.css"><link rel="stylesheet" href="outgoing-message.css"><link rel="stylesheet" href="message-path.css"><link rel="stylesheet" href="radio-status.css"><link rel="stylesheet" href="mention-highlight.css"><link rel="stylesheet" href="reactions.css"><link rel="stylesheet" href="chat-signals.css"><link rel="stylesheet" href="workspace-confidence.css"><link rel="stylesheet" href="compact-workspace.css"><link rel="stylesheet" href="contact-deletion.css"><link rel="stylesheet" href="layout-consistency.css"><link rel="stylesheet" href="device-management.css"><link rel="stylesheet" href="propagation.css"><link rel="stylesheet" href="indicator-strip.css"><link rel="stylesheet" href="nightlink-design.css"></head>
+ <body><aside><a class="brand" href="#"><img class="brandmark brand-icon" src="icon.svg" alt=""> nightlink</a><div class="workspace"><span class="avatar">IF</span><div>Your mesh network<small>Personal workspace</small></div><span>⌄</span></div><div class="nav-label">WORKSPACE</div><nav><button class="active" data-view="Overview">◈ <span>Overview</span></button><button data-view="Messages">▤ <span>Messages</span><b>3</b></button><button data-view="Direct Messages">✉ <span>Direct Messages</span></button><button data-view="Network map">⌖ <span>Network map</span></button><button data-view="Nodes">⬡ <span>Nodes</span><em>8</em></button><button data-view="Activity">≋ <span>Activity</span></button></nav><div class="nav-label channels-label">YOUR CHANNELS <button id="add-channel" aria-label="Add channel">+</button></div><div id="channels"></div><div class="aside-bottom"><div class="offline-card"><span>⌁</span><strong>Beyond the grid.</strong><p>Your network. Your signal.<br>No internet required.</p><div>LOCAL FIRST <span>↗</span></div></div><button data-view="Settings" class="settings">⚙ &nbsp; Settings</button><div class="profile"><span class="avatar">RK</span><div>Ryan K.<small>Local operator</small></div><span class="online-dot"></span></div></div></aside>
+-<main><header><div class="breadcrumb">Workspace <span>/</span> <strong id="crumb">Overview</strong></div><div class="header-actions"><span class="demo-tag">RADIO NOT CONNECTED</span><span class="local-time" id="clock"></span><button id="connection" class="connection"><i></i> Connect radio <span>⌄</span></button></div></header><div class="content"><div class="page-heading"><div><div class="eyebrow">YOUR OFF-GRID COMMAND CENTER</div><h1 id="title">Network overview<span>.</span></h1><p id="subtitle">Stay connected. See the whole mesh.</p></div><button class="primary" id="discover" hidden>＋ Connect radio</button></div><div id="overview"><section class="stats"><article></article><article></article><article></article><article></article></section><div class="dashboard-grid"><section class="panel map-panel overview-corescope corescope-pending"><div class="panel-heading"><h2>Live mesh <span class="live">LIVE</span></h2><button data-view="Network map">Expand map ↗</button></div><div class="corescope-startup" role="status">Opening CoreScope…</div><div class="map" id="map"><svg id="mesh-map" viewBox="0 0 800 440" role="img" aria-label="Simulated Indianapolis mesh network"></svg><div class="map-location">⌖ &nbsp; Waiting for radio locations <span></span></div><div class="map-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="recenter" aria-label="Recenter map">⌖</button></div><div class="map-legend"><span><i></i> Your node</span><span><i></i> Repeater</span><span><i></i> Contact</span><em>COORDINATE PLOT</em></div></div><div class="map-footer"><span><i></i> Connect a radio to synchronize</span><span>Not synchronized &nbsp; ↻</span></div></section><section class="panel conversation"><div class="panel-heading"><h2>Messages <span class="count">3</span></h2><button data-view="Messages">Open inbox ↗</button></div><div class="chat-channel"><strong># &nbsp; field-ops</strong><span>4 members <i></i></span></div><div id="chat-log" class="chat-log"></div><form id="chat-form"><input id="message-input" aria-label="Message field-ops" placeholder="Message #field-ops" maxlength="180" autocomplete="off"><button aria-label="Send message">↑</button></form><div class="composer-hint">⌁ &nbsp; On the mesh. Off the grid. <span id="char-count">0 / 180</span></div></section><section class="panel nodes-panel" hidden><div class="panel-heading"><h2>Known nodes <span class="count">8</span></h2><button data-view="Nodes">View all nodes ↗</button></div><table><thead><tr><th>NODE</th><th>TYPE</th><th>SIGNAL</th><th>LAST ADVERT</th><th></th></tr></thead><tbody id="node-table"></tbody></table></section><section class="panel radio-panel" hidden><div class="panel-heading"><h2>Your radio</h2><button id="radio-settings" aria-label="Radio settings">⚙</button></div><div class="radio-device"><div class="device-art"><div class="antenna"></div><div class="device-body"><span>HELTEC</span><div>meshcore<br><b>⌁ CONNECTED</b></div><i></i></div></div><div><strong>Your companion</strong><p>Bluetooth LE · Not connected</p><span class="device-status">○ Not connected</span></div></div><div class="radio-details"><div>Frequency<strong>—</strong></div><div>TX power<strong>—</strong></div><div>Firmware<strong>—</strong></div><div>Uptime<strong>—</strong></div></div><button class="radio-manage" id="manage-radio">Manage device <span>↗</span></button></section></div></div><section id="alternate" hidden></section><footer><span><span class="footer-logo">⌘</span> Beyond the grid.</span><span>Nightlink <b>v0.8.8</b> <i></i> Local workspace</span></footer></div></main><dialog id="dialog"><div class="dialog-heading"><h2 id="dialog-title"></h2><button id="close-dialog" aria-label="Close">✕</button></div><div id="dialog-body"></div></dialog><div id="toast" role="status"></div><script src="app.js"></script><script src="bluetooth.js"></script><script src="serial.js"></script><script src="transport.js"></script><script src="bluetooth-ui.js"></script><script src="radio.js"></script><script src="radio-tools.js"></script><script src="live-ui.js"></script><script src="routes.js"></script><script src="contacts-ui.js"></script><script src="dm-ui.js"></script><script src="design-ui.js"></script><script src="recovery.js"></script><script src="recovery-ui.js"></script><script src="vendor/leaflet.js"></script><script src="offline-maps.js"></script><script src="offline-maps-ui.js"></script><script src="street-maps.js"></script><script src="route-map.js"></script><script src="overview-ui.js"></script><script src="delivery.js"></script><script src="send-feedback.js"></script><script src="delivery-ui.js"></script><script src="mentions-ui.js"></script><script src="dm-inbox.js"></script><script src="readability-ui.js"></script><script src="connection-window.js"></script><script src="attention.js"></script><script src="attention-ui.js"></script><script src="search.js"></script><script src="search-ui.js"></script><script src="backup.js"></script><script src="backup-ui.js"></script><script src="updates-ui.js"></script><script src="health.js"></script><script src="health-ui.js"></script><script src="drafts.js"></script><script src="drafts-ui.js"></script><script src="backup-reminders.js"></script><script src="backup-reminders-ui.js"></script><script src="navigation-ui.js"></script><script src="vendor/qrcode.js"></script><script src="vendor/jsQR.js"></script><script src="radio-tools-ui.js"></script><script src="corescope-location.js"></script><script src="corescope-availability.js"></script><script src="meshmapper-region.js"></script><script src="map-provider-settings.js"></script><script src="corescope-ui.js"></script><script src="serial-ui.js"></script><script src="tray-policy.js"></script><script src="tray-ui.js"></script><script src="diagnostics.js"></script><script src="diagnostics-ui.js"></script><script src="voice-ui.js"></script><script src="message-media.js"></script><script src="link-preview-ui.js"></script><script src="signal-message-layout.js"></script><script src="signal-console-ui.js"></script><script src="echo-workspace.js"></script><script src="identity-verification.js"></script><script src="identity-verification-ui.js"></script><script src="rf-trends.js"></script><script src="rf-trends-ui.js"></script><script src="map-annotations.js"></script><script src="map-annotations-ui.js"></script><script src="navigation-refinement.js"></script><script src="performance-ui.js"></script><script src="startup-connect-ui.js"></script><script src="header-controls.js"></script><script src="radio-cli.js"></script><script src="radio-cli-ui.js"></script><script src="meshmapper-region-ui.js"></script><script src="security-ui.js"></script><script src="link-preview-settings.js"></script><script src="switchboard-ui.js"></script><script src="switchboard-settings.js"></script><script src="message-actions.js"></script><script src="node-discovery.js"></script><script src="node-discovery-ui.js"></script><script src="user-guide.js"></script><script src="help-licenses.js"></script><script src="help-ui.js"></script><script src="radio-workbench.js"></script><script src="radio-workbench-ui.js"></script><script src="radio-status-ui.js"></script><script src="reactions.js"></script><script src="reactions-ui.js"></script><script src="chat-signals.js"></script><script src="chat-signals-ui.js"></script><script src="workspace-confidence.js"></script><script src="workspace-confidence-ui.js"></script><script src="compact-workspace.js"></script><script src="support-report.js"></script><script src="support-report-ui.js"></script><script src="contact-deletion-ui.js"></script><script src="bulk-contact-removal.js"></script><script src="bulk-contact-removal-ui.js"></script><script src="echo-command-shortcuts.js"></script><script src="device-management.js"></script><script src="device-serial.js"></script><script src="device-management-ui.js"></script><script src="nightlink-design.js"></script><script src="propagation.js"></script><script src="propagation-ui.js"></script><script src="radio-page-ui.js"></script></body></html>
++<main><header><div class="breadcrumb">Workspace <span>/</span> <strong id="crumb">Overview</strong></div><div class="header-actions"><span class="demo-tag">RADIO NOT CONNECTED</span><span class="local-time" id="clock"></span><button id="connection" class="connection"><i></i> Connect radio <span>⌄</span></button></div></header><div class="content"><div class="page-heading"><div><div class="eyebrow">YOUR OFF-GRID COMMAND CENTER</div><h1 id="title">Network overview<span>.</span></h1><p id="subtitle">Stay connected. See the whole mesh.</p></div><button class="primary" id="discover" hidden>＋ Connect radio</button></div><div id="overview"><section class="stats"><article></article><article></article><article></article><article></article></section><div class="dashboard-grid"><section class="panel map-panel overview-corescope corescope-pending"><div class="panel-heading"><h2>Live mesh <span class="live">LIVE</span></h2><button data-view="Network map">Expand map ↗</button></div><div class="corescope-startup" role="status">Opening CoreScope…</div><div class="map" id="map"><svg id="mesh-map" viewBox="0 0 800 440" role="img" aria-label="Simulated Indianapolis mesh network"></svg><div class="map-location">⌖ &nbsp; Waiting for radio locations <span></span></div><div class="map-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="recenter" aria-label="Recenter map">⌖</button></div><div class="map-legend"><span><i></i> Your node</span><span><i></i> Repeater</span><span><i></i> Contact</span><em>COORDINATE PLOT</em></div></div><div class="map-footer"><span><i></i> Connect a radio to synchronize</span><span>Not synchronized &nbsp; ↻</span></div></section><section class="panel conversation"><div class="panel-heading"><h2>Messages <span class="count">3</span></h2><button data-view="Messages">Open inbox ↗</button></div><div class="chat-channel"><strong># &nbsp; field-ops</strong><span>4 members <i></i></span></div><div id="chat-log" class="chat-log"></div><form id="chat-form"><input id="message-input" aria-label="Message field-ops" placeholder="Message #field-ops" maxlength="180" autocomplete="off"><button aria-label="Send message">↑</button></form><div class="composer-hint">⌁ &nbsp; On the mesh. Off the grid. <span id="char-count">0 / 180</span></div></section><section class="panel nodes-panel" hidden><div class="panel-heading"><h2>Known nodes <span class="count">8</span></h2><button data-view="Nodes">View all nodes ↗</button></div><table><thead><tr><th>NODE</th><th>TYPE</th><th>SIGNAL</th><th>LAST ADVERT</th><th></th></tr></thead><tbody id="node-table"></tbody></table></section><section class="panel radio-panel" hidden><div class="panel-heading"><h2>Your radio</h2><button id="radio-settings" aria-label="Radio settings">⚙</button></div><div class="radio-device"><div class="device-art"><div class="antenna"></div><div class="device-body"><span>HELTEC</span><div>meshcore<br><b>⌁ CONNECTED</b></div><i></i></div></div><div><strong>Your companion</strong><p>Bluetooth LE · Not connected</p><span class="device-status">○ Not connected</span></div></div><div class="radio-details"><div>Frequency<strong>—</strong></div><div>TX power<strong>—</strong></div><div>Firmware<strong>—</strong></div><div>Uptime<strong>—</strong></div></div><button class="radio-manage" id="manage-radio">Manage device <span>↗</span></button></section></div></div><section id="alternate" hidden></section><footer><span><span class="footer-logo">⌘</span> Beyond the grid.</span><span>Nightlink <b>v0.8.8</b> <i></i> Local workspace</span></footer></div></main><dialog id="dialog"><div class="dialog-heading"><h2 id="dialog-title"></h2><button id="close-dialog" aria-label="Close">✕</button></div><div id="dialog-body"></div></dialog><div id="toast" role="status"></div><script src="app.js"></script><script src="indicator-strip.js"></script><script src="bluetooth.js"></script><script src="serial.js"></script><script src="transport.js"></script><script src="bluetooth-ui.js"></script><script src="radio.js"></script><script src="radio-tools.js"></script><script src="live-ui.js"></script><script src="routes.js"></script><script src="contacts-ui.js"></script><script src="dm-ui.js"></script><script src="design-ui.js"></script><script src="recovery.js"></script><script src="recovery-ui.js"></script><script src="vendor/leaflet.js"></script><script src="offline-maps.js"></script><script src="offline-maps-ui.js"></script><script src="street-maps.js"></script><script src="route-map.js"></script><script src="overview-ui.js"></script><script src="delivery.js"></script><script src="send-feedback.js"></script><script src="delivery-ui.js"></script><script src="mentions-ui.js"></script><script src="dm-inbox.js"></script><script src="readability-ui.js"></script><script src="connection-window.js"></script><script src="attention.js"></script><script src="attention-ui.js"></script><script src="search.js"></script><script src="search-ui.js"></script><script src="backup.js"></script><script src="backup-ui.js"></script><script src="updates-ui.js"></script><script src="health.js"></script><script src="health-ui.js"></script><script src="drafts.js"></script><script src="drafts-ui.js"></script><script src="backup-reminders.js"></script><script src="backup-reminders-ui.js"></script><script src="navigation-ui.js"></script><script src="vendor/qrcode.js"></script><script src="vendor/jsQR.js"></script><script src="radio-tools-ui.js"></script><script src="corescope-location.js"></script><script src="corescope-availability.js"></script><script src="meshmapper-region.js"></script><script src="map-provider-settings.js"></script><script src="corescope-ui.js"></script><script src="serial-ui.js"></script><script src="tray-policy.js"></script><script src="tray-ui.js"></script><script src="diagnostics.js"></script><script src="diagnostics-ui.js"></script><script src="voice-ui.js"></script><script src="message-media.js"></script><script src="link-preview-ui.js"></script><script src="signal-message-layout.js"></script><script src="signal-console-ui.js"></script><script src="echo-workspace.js"></script><script src="identity-verification.js"></script><script src="identity-verification-ui.js"></script><script src="rf-trends.js"></script><script src="rf-trends-ui.js"></script><script src="map-annotations.js"></script><script src="map-annotations-ui.js"></script><script src="navigation-refinement.js"></script><script src="performance-ui.js"></script><script src="startup-connect-ui.js"></script><script src="header-controls.js"></script><script src="radio-cli.js"></script><script src="radio-cli-ui.js"></script><script src="meshmapper-region-ui.js"></script><script src="security-ui.js"></script><script src="link-preview-settings.js"></script><script src="switchboard-ui.js"></script><script src="switchboard-settings.js"></script><script src="message-actions.js"></script><script src="node-discovery.js"></script><script src="node-discovery-ui.js"></script><script src="user-guide.js"></script><script src="help-licenses.js"></script><script src="help-ui.js"></script><script src="radio-workbench.js"></script><script src="radio-workbench-ui.js"></script><script src="radio-status-ui.js"></script><script src="reactions.js"></script><script src="reactions-ui.js"></script><script src="chat-signals.js"></script><script src="chat-signals-ui.js"></script><script src="workspace-confidence.js"></script><script src="workspace-confidence-ui.js"></script><script src="compact-workspace.js"></script><script src="support-report.js"></script><script src="support-report-ui.js"></script><script src="contact-deletion-ui.js"></script><script src="bulk-contact-removal.js"></script><script src="bulk-contact-removal-ui.js"></script><script src="echo-command-shortcuts.js"></script><script src="device-management.js"></script><script src="device-serial.js"></script><script src="device-management-ui.js"></script><script src="nightlink-design.js"></script><script src="propagation.js"></script><script src="propagation-ui.js"></script><script src="radio-page-ui.js"></script></body></html>
+diff --git a/indicator-strip.browser.test.cjs b/indicator-strip.browser.test.cjs
+new file mode 100644
+index 0000000..5cb9bf8
+--- /dev/null
++++ b/indicator-strip.browser.test.cjs
+@@ -0,0 +1,65 @@
++/* Rendered feature indicator strip checks. Synthetic status events only; no radio commands are sent.
++   Set NIGHTLINK_SCREENSHOTS to a directory to save a screenshot. */
++const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
++(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
++ const context=await browser.newContext({viewport:{width:1340,height:920}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
++ await page.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();const file=u.pathname==='/'?'index.html':u.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.png')?'image/png':'text/html'});}catch{await route.fulfill({status:404,body:''});}});
++ await page.goto('http://127.0.0.1:4173');await page.waitForFunction(()=>window.NightlinkIndicators&&document.querySelector('#propagation-indicator'));
++ await page.evaluate(()=>{window.radioWrites=[];radioSession.request=async b=>{radioWrites.push([...b]);throw Error('blocked');};ble.command=async b=>{radioWrites.push([...b]);throw Error('blocked');};view('Messages');});
++ const chips=()=>page.evaluate(()=>[...document.querySelectorAll('#indicator-strip .indicator-chip')].filter(c=>!c.hidden).map(c=>({id:c.dataset.indicator,tone:c.dataset.tone,text:c.querySelector('.indicator-chip-label').textContent.trim(),aria:c.getAttribute('aria-label'),title:c.title,tag:c.tagName,height:c.getBoundingClientRect().height,radius:getComputedStyle(c).borderRadius})));
++ // Location: inside the page heading, beside the title.
++ assert.equal(await page.locator('.page-heading #indicator-strip').count(),1);
++ assert.equal(await page.locator('.header-actions #propagation-indicator').count(),0,'RF chip moved out of the header toolbar');
++ let list=await chips();
++ assert.deepEqual(list.map(c=>c.id),['rf','map'],'default visible chips in fixed order');
++ assert.equal(list[0].text,'RF monitor · Unavailable');assert.equal(list[0].tone,'off');assert.match(list[0].aria,/^RF monitor: Unavailable\. Monitoring unavailable/);
++ assert.equal(list[1].text,'Map · Radio map');
++ for(const c of list){assert.equal(c.tag,'BUTTON');assert.equal(c.height,32);assert.equal(c.radius,'9px');assert.ok(c.title.startsWith(c.text.split(' · ')[0]+' · '));}
++ // Map status states.
++ for(const [detail,text,tone] of [[{active:'corescope'},'Map · CoreScope','ok'],[{active:'meshmapper'},'Map · MeshMapper','ok'],[{active:'radio',offline:true},'Map · Offline map','info'],[{active:'radio',failed:true,label:'CoreScope'},'Map · Fallback','warn'],[{active:'radio'},'Map · Radio map','neutral']]){
++  await page.evaluate(d=>dispatchEvent(new CustomEvent('nightlink-map-status',{detail:d})),detail);
++  const m=(await chips()).find(c=>c.id==='map');assert.equal(m.text,text);assert.equal(m.tone,tone);}
++ // Update availability: hidden when current, info when available, alert on checksum mismatch.
++ await page.evaluate(()=>dispatchEvent(new CustomEvent('nightlink-update-status',{detail:{status:'current'}})));assert.equal((await chips()).some(c=>c.id==='update'),false);
++ await page.evaluate(()=>dispatchEvent(new CustomEvent('nightlink-update-status',{detail:{status:'available',latest:'0.8.27',verification:'consistent'}})));
++ let u=(await chips()).find(c=>c.id==='update');assert.equal(u.text,'Update · 0.8.27 available');assert.equal(u.tone,'info');
++ await page.evaluate(()=>dispatchEvent(new CustomEvent('nightlink-update-status',{detail:{status:'available',latest:'0.8.27',verification:'mismatch'}})));
++ u=(await chips()).find(c=>c.id==='update');assert.equal(u.text,'Update · Checksum warning');assert.equal(u.tone,'alert');
++ // Quiet hours chip appears only while quiet hours are active.
++ assert.equal((await chips()).some(c=>c.id==='alerts'),false);
++ await page.evaluate(()=>{window.quietHoursActive=()=>true;dispatchEvent(new Event('nightlink-quiet-hours'));});
++ const q=(await chips()).find(c=>c.id==='alerts');assert.equal(q.text,'Alerts · Quiet hours');assert.equal(q.tone,'info');
++ // RX log chip follows the monitor summary while connected.
++ await page.evaluate(()=>{const c=NightlinkIndicators.get('rxlog');c.set({state:'Not seen',tone:'warn',detail:'No raw receive log data yet.'});});
++ const r=(await chips()).find(c=>c.id==='rxlog');assert.equal(r.text,'RX log · Not seen');assert.equal(r.tone,'warn');
++ assert.deepEqual((await chips()).map(c=>c.id),['rf','rxlog','map','alerts','update'],'all chips in fixed order');
++ if(process.env.NIGHTLINK_SCREENSHOTS)await page.screenshot({path:path.join(process.env.NIGHTLINK_SCREENSHOTS,'indicator-strip.png')});
++ // Click targets: RF opens the monitor, Map opens the network map, Update opens Settings.
++ await page.locator('#propagation-indicator').click();await page.locator('#dialog[open]').waitFor();await page.evaluate(()=>document.querySelector('#dialog').close());
++ await page.locator('[data-indicator=map]').click();assert.equal(await page.evaluate(()=>current),'Network map');
++ await page.evaluate(()=>view('Messages'));await page.locator('[data-indicator=update]').click();assert.equal(await page.evaluate(()=>current),'Settings');
++ await page.evaluate(()=>view('Messages'));
++ // Keyboard focus is visible.
++ await page.locator('[data-indicator=map]').focus();await page.keyboard.press('Shift+Tab');while(!await page.locator('#propagation-indicator').evaluate(e=>e===document.activeElement))await page.keyboard.press('Shift+Tab');assert.notEqual(await page.locator('#propagation-indicator').evaluate(e=>getComputedStyle(e).outlineStyle),'none');
++ // Narrow window: icons only for calm chips, alert text kept, no page overflow; full status stays in aria-label.
++ await page.evaluate(()=>dispatchEvent(new CustomEvent('nightlink-update-status',{detail:{status:'available',latest:'0.8.27',verification:'mismatch'}})));
++ await page.setViewportSize({width:760,height:560});
++ assert.equal(await page.locator('[data-indicator=map] .indicator-chip-label').isVisible(),false);
++ // Five chips do not fit beside the title at this width, so every chip is icon-only; tone and accessible name keep the status.
++ assert.equal(await page.locator('[data-indicator=update]').getAttribute('data-tone'),'alert');
++ assert.match(await page.locator('[data-indicator=update]').getAttribute('aria-label'),/^Update: Checksum warning\./);
++ assert.equal(await page.evaluate(()=>{const s=document.querySelector('#indicator-strip'),r=s.getBoundingClientRect();return [...s.children].filter(c=>!c.hidden).every(c=>{const b=c.getBoundingClientRect();return b.left>=r.left-1&&b.right<=r.right+1;});}),true,'all chips inside the strip');
++ assert.match(await page.locator('[data-indicator=map]').getAttribute('aria-label'),/^Map: [A-Z]/);
++ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
++ // Compact mode keeps the strip within the heading.
++ await page.setViewportSize({width:1340,height:920});await page.evaluate(()=>setCompact(true,false));
++ assert.equal(await page.locator('[data-indicator=map] .indicator-chip-label').isVisible(),false);
++ const box=await page.evaluate(()=>{const h=document.querySelector('.page-heading').getBoundingClientRect(),s=document.querySelector('#indicator-strip').getBoundingClientRect();return s.right<=h.right+1&&s.left>=h.left-1;});assert.equal(box,true);
++ await page.evaluate(()=>setCompact(false,false));
++ // Reduced motion: the RF chip does not animate.
++ await page.evaluate(()=>{document.body.classList.add('reduced-motion');const c=NightlinkIndicators.get('rf');c.set({state:'Strong anomaly',tone:'alert',detail:'Open the Propagation Monitor.'});document.querySelector('#propagation-indicator').dataset.level='strong-anomaly';document.querySelector('#propagation-indicator').classList.add('propagation-flash','propagation-animate');});
++ assert.equal(await page.locator('#propagation-indicator').evaluate(b=>getComputedStyle(b).animationName),'none');
++ assert.deepEqual(await page.evaluate(()=>radioWrites),[],'no radio commands');
++ assert.deepEqual(errors,[]);
++ console.log('PASS indicator strip: heading placement, fixed chip order, RF/RX log/Map/Alerts/Update labels and tones, aria and titles, click targets, focus, 760x560 icon-only fit, compact, reduced motion; no radio commands. Synthetic events only.');
++}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
+diff --git a/indicator-strip.css b/indicator-strip.css
+new file mode 100644
+index 0000000..52c75da
+--- /dev/null
++++ b/indicator-strip.css
+@@ -0,0 +1,33 @@
++/* Feature indicator strip: one uniform chip per feature status, in the page heading. */
++:root{--indicator-ok:#7be0b3;--indicator-info:#8fc7ff;--indicator-warn:#f0b44c;--indicator-alert:#ff858f}
++.page-heading{display:flex;align-items:center;gap:16px}
++.page-heading>div:first-child{flex:0 1 auto;min-width:0}
++.indicator-strip{display:flex;flex:1 1 0;flex-wrap:nowrap;overflow:hidden;padding:3px;justify-content:flex-end;align-items:center;gap:8px;min-width:0}
++.indicator-strip[hidden]{display:none}
++.indicator-chip{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;border:1px solid var(--nl-edge,#303030);border-radius:var(--nl-radius-control,9px);background:var(--nl-surface,#080808);color:var(--nl-copy,#eeeeef);font-family:inherit;font-size:12px;font-weight:500;line-height:1;white-space:nowrap;cursor:pointer;max-width:100%}
++.indicator-chip[hidden]{display:none!important}
++.indicator-chip:hover{background:var(--nl-hover)}
++.indicator-chip:focus-visible{outline:2px solid var(--nl-accent,#ffbf56);outline-offset:2px}
++.indicator-chip svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
++.indicator-chip-label{overflow:hidden;text-overflow:ellipsis}
++.indicator-chip-feature{color:var(--nl-muted,#b9b9bf)}
++.indicator-chip-sep{color:var(--nl-muted,#b9b9bf)}
++.indicator-chip[data-tone=off]{opacity:.65}
++.indicator-chip[data-tone=ok] svg{color:var(--indicator-ok)}
++.indicator-chip[data-tone=info] svg{color:var(--indicator-info)}
++.indicator-chip[data-tone=warn]{color:var(--indicator-warn);border-color:color-mix(in srgb,var(--indicator-warn) 55%,transparent);background:color-mix(in srgb,var(--indicator-warn) 10%,var(--nl-surface,#080808))}
++.indicator-chip[data-tone=alert]{color:var(--indicator-alert);border-color:color-mix(in srgb,var(--indicator-alert) 60%,transparent);background:color-mix(in srgb,var(--indicator-alert) 12%,var(--nl-surface,#080808))}
++.indicator-chip:is([data-tone=warn],[data-tone=alert]) .indicator-chip-feature,.indicator-chip:is([data-tone=warn],[data-tone=alert]) .indicator-chip-sep{color:inherit;opacity:.8}
++/* JS adds tight/tighter classes when chips do not fit on one line. */
++.indicator-strip.tight .indicator-chip:not([data-tone=warn]):not([data-tone=alert]) .indicator-chip-label{display:none}
++.indicator-strip.tight .indicator-chip:not([data-tone=warn]):not([data-tone=alert]){padding:0 8px}
++.indicator-strip.tighter .indicator-chip .indicator-chip-label{display:none}
++.indicator-strip.tighter .indicator-chip{padding:0 8px}
++/* Narrow and compact windows keep icons; the full status stays in the accessible name and tooltip. */
++@media (max-width:1100px){.indicator-chip:not([data-tone=warn]):not([data-tone=alert]) .indicator-chip-feature,.indicator-chip:not([data-tone=warn]):not([data-tone=alert]) .indicator-chip-sep{display:none}}
++@media (max-width:860px){.indicator-chip:not([data-tone=warn]):not([data-tone=alert]) .indicator-chip-label{display:none}.indicator-chip{padding:0 8px}}
++body.compact .indicator-chip{height:28px;padding:0 8px}
++body.compact .indicator-chip:not([data-tone=warn]):not([data-tone=alert]) .indicator-chip-label{display:none}
++/* Overview hides the page title (switchboard.css); keep the status strip visible there on its own row. */
++html body .content:has(>#overview:not([hidden]))>.page-heading:has(>#indicator-strip:not([hidden])){display:flex;margin-bottom:8px}
++html body .content:has(>#overview:not([hidden]))>.page-heading>div:first-child{display:none}
+diff --git a/indicator-strip.js b/indicator-strip.js
+new file mode 100644
+index 0000000..341cbae
+--- /dev/null
++++ b/indicator-strip.js
+@@ -0,0 +1,65 @@
++/* Feature indicator strip in the page heading. Each chip shows one existing feature status as "Feature · State"; it never sends radio commands. */
++(function(root){
++ 'use strict';
++ const tones=['neutral','ok','info','warn','alert','off'];
++ const order=['rf','rxlog','map','alerts','update'];
++ let strip=null;const chips=new Map();
++ function mount(){
++  if(strip&&strip.isConnected)return strip;
++  const heading=document.querySelector('.page-heading');if(!heading)return null;
++  strip=document.createElement('div');strip.id='indicator-strip';strip.className='indicator-strip';strip.setAttribute('role','group');strip.setAttribute('aria-label','Feature status');
++  const discover=heading.querySelector('#discover');if(discover)heading.insertBefore(strip,discover);else heading.append(strip);
++  return strip;
++ }
++ function place(chip){const s=mount();if(!s)return;const rank=order.indexOf(chip.dataset.indicator);const next=[...s.children].find(c=>order.indexOf(c.dataset.indicator)>rank);s.insertBefore(chip,next||null);}
++ // register(id,{icon,feature,onClick,element}) returns {set({state,tone,detail,hidden}),element}.
++ function register(id,{icon='',feature,onClick,element}={}){
++  if(chips.has(id))return chips.get(id);
++  const chip=element||document.createElement('button');chip.type='button';chip.classList.add('indicator-chip');chip.dataset.indicator=id;
++  chip.innerHTML=icon+'<span class="indicator-chip-label"><span class="indicator-chip-feature"></span><span class="indicator-chip-sep" aria-hidden="true"> · </span><span class="indicator-chip-state"></span></span>';
++  chip.querySelector('.indicator-chip-feature').textContent=feature;
++  if(onClick)chip.addEventListener('click',onClick);
++  place(chip);
++  const handle={element:chip,set({state,tone='neutral',detail='',hidden=false}){
++   chip.hidden=!!hidden;chip.dataset.tone=tones.includes(tone)?tone:'neutral';
++   chip.querySelector('.indicator-chip-state').textContent=state;
++   const full=feature+': '+state+(detail?'. '+detail:'');chip.setAttribute('aria-label',full);chip.title=feature+' · '+state+(detail?' — '+detail:'');
++   if(strip)strip.hidden=![...strip.children].some(c=>!c.hidden);
++   fit();
++  }};
++  chips.set(id,handle);return handle;
++ }
++ // Keep one row: drop calm labels first, then all labels; full status stays in aria-label and title.
++ // Overflow toward the start edge of a flex-end row is not reported by scrollWidth, so sum the visible chips.
++ function over(){const shown=[...strip.children].filter(c=>!c.hidden);const used=shown.reduce((w,c)=>w+c.getBoundingClientRect().width,0)+8*Math.max(0,shown.length-1)+6;return used>strip.clientWidth+0.5;}
++ function fit(){if(!strip||strip.hidden)return;strip.classList.remove('tight','tighter');if(!over())return;strip.classList.add('tight');if(over())strip.classList.add('tighter');}
++ if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>fit()).observe(document.documentElement);
++ const api={register,get:id=>chips.get(id),order,tones};
++ root.NightlinkIndicators=api;if(typeof module!=='undefined')module.exports=api;
++ if(typeof document==='undefined')return;
++ const svg=d=>'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="'+d+'"/></svg>';
++ const ready=()=>{
++  // Map source, reported by corescope-ui.js.
++  const map=register('map',{feature:'Map',icon:svg('M2.5 5.5 7.5 3.5l5 2 5-2v11l-5 2-5-2-5 2zM7.5 3.5v11M12.5 5.5v11'),onClick:()=>root.view?.('Network map')});
++  map.set({state:'Radio map',tone:'neutral',detail:'Local radio map.'});
++  root.addEventListener('nightlink-map-status',e=>{const d=e.detail||{};
++   if(d.active==='corescope')map.set({state:'CoreScope',tone:'ok',detail:'External live feed.'});
++   else if(d.active==='meshmapper')map.set({state:'MeshMapper',tone:'ok',detail:'Coverage map.'});
++   else if(d.offline)map.set({state:'Offline map',tone:'info',detail:'Downloaded street tiles; no internet.'});
++   else if(d.failed)map.set({state:'Fallback',tone:'warn',detail:(d.label||'Online map')+' unavailable; using the local radio map.'});
++   else map.set({state:'Radio map',tone:'neutral',detail:'Local radio map.'});});
++  // Quiet hours, from tray-ui.js desktop preferences.
++  const alerts=register('alerts',{feature:'Alerts',icon:svg('M10 3a4.5 4.5 0 0 0-4.5 4.5c0 4-1.5 5.5-1.5 5.5h12s-1.5-1.5-1.5-5.5A4.5 4.5 0 0 0 10 3zM8.5 16a1.6 1.6 0 0 0 3 0M3 3l14 14'),onClick:()=>root.NightlinkSettings?.open?.('Notifications')});
++  const quiet=()=>{let on=false;try{on=typeof root.quietHoursActive==='function'&&!!root.quietHoursActive();}catch{}
++   alerts.set({state:'Quiet hours',tone:'info',detail:'Notification sounds and pop-ups are held until quiet hours end.',hidden:!on});};
++  quiet();setInterval(quiet,60000);root.addEventListener('storage',quiet);root.addEventListener('nightlink-quiet-hours',quiet);
++  // Update availability, reported by updates-ui.js.
++  const update=register('update',{feature:'Update',icon:svg('M10 3v9M6.5 8.5 10 12l3.5-3.5M4 15.5h12'),onClick:()=>root.NightlinkSettings?.open?.('Data & updates')});
++  update.set({state:'',hidden:true});
++  root.addEventListener('nightlink-update-status',e=>{const s=e.detail;
++   if(s?.status!=='available'){update.set({state:'',hidden:true});return;}
++   if(s.verification==='mismatch')update.set({state:'Checksum warning',tone:'alert',detail:'Published checksums disagree for '+s.latest+'. Open Settings > Data & updates.'});
++   else update.set({state:s.latest+' available',tone:'info',detail:'Open Settings > Data & updates.'});});
++ };
++ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready);else ready();
++})(globalThis);
+diff --git a/package.json b/package.json
+index 560ab93..e4e999c 100644
+--- a/package.json
++++ b/package.json
+@@ -8,7 +8,7 @@
+     "preview": "node server.cjs",
+     "dist": "electron-builder --win nsis portable",
+     "test": "node --test echo-layout.test.cjs feature-retention.test.cjs send-feedback.test.cjs performance.test.cjs server-assets.test.cjs pc-location.test.cjs link-preview.test.cjs security-core.test.cjs security-store.test.cjs meshmapper-region.test.cjs radio-cli.test.cjs corescope-health.test.cjs startup-desktop.test.cjs bluetooth.test.cjs radio.test.cjs routes.test.cjs recovery.test.cjs delivery.test.cjs attention.test.cjs search.test.cjs backup.test.cjs updates.test.cjs health.test.cjs drafts.test.cjs backup-reminders.test.cjs radio-tools.test.cjs serial.test.cjs tray.test.cjs diagnostics.test.cjs offline-maps.test.cjs identity-verification.test.cjs rf-trends.test.cjs map-annotations.test.cjs corescope-location.test.cjs node-discovery.test.cjs radio-workbench.test.cjs reactions.test.cjs chat-signals.test.cjs workspace-confidence.test.cjs outbox.test.cjs compact-workspace.test.cjs support-report.test.cjs contact-deletion.test.cjs desktop-window.test.cjs bulk-contact-removal.test.cjs bulk-contact-removal-radio.test.cjs propagation.test.cjs device-management.test.cjs device-serial.test.cjs",
+-    "test:browser": "node combined-ui.browser.test.cjs && node device-management.browser.test.cjs && node radio-tools-design.browser.test.cjs && node shared-design.browser.test.cjs && node submenus-design.browser.test.cjs && node radio-page.browser.test.cjs && node map-provider-settings.browser.test.cjs && node delivery-details.browser.test.cjs && node contact-deletion.browser.test.cjs && node bulk-contact-removal.browser.test.cjs && node radio-tools.browser.test.cjs && node radio-cli.browser.test.cjs && node propagation.browser.test.cjs && node attention-dm-memory.browser.test.cjs && node attention-memory.browser.test.cjs && node attention.browser.test.cjs && node compact-workspace.browser.test.cjs && node connection-simple.browser.test.cjs && node contact-flow.browser.test.cjs && node corescope-fallback.browser.test.cjs && node corescope-lifecycle.browser.test.cjs && node corescope-recovery.browser.test.cjs && node corescope-slow-start.browser.test.cjs && node corescope-startup.browser.test.cjs && node corescope.browser.test.cjs && node diagnostics.browser.test.cjs && node dm-performance.browser.test.cjs && node echo-command-shortcuts.browser.test.cjs && node header-controls.browser.test.cjs && node help.browser.test.cjs && node identity-verification.browser.test.cjs && node link-preview.browser.test.cjs && node login-vault.browser.test.cjs && node map-annotations.browser.test.cjs && node mention-highlight.browser.test.cjs && node meshmapper-region.browser.test.cjs && node meshmapper.browser.test.cjs && node message-actions.browser.test.cjs && node message-media.browser.test.cjs && node message-path.browser.test.cjs && node messages-navigation.browser.test.cjs && node navigation.browser.test.cjs && node node-discovery.browser.test.cjs && node outbox.browser.test.cjs && node outgoing-message.browser.test.cjs && node performance.browser.test.cjs && node radio-workbench.browser.test.cjs && node reactions.browser.test.cjs && node rf-trends.browser.test.cjs && node search.browser.test.cjs && node support-report.browser.test.cjs && node switchboard-flows.browser.test.cjs && node switchboard-settings.browser.test.cjs && node switchboard.browser.test.cjs && node voice.browser.test.cjs && node radio-counters.browser.test.cjs",
++    "test:browser": "node combined-ui.browser.test.cjs && node device-management.browser.test.cjs && node radio-tools-design.browser.test.cjs && node shared-design.browser.test.cjs && node submenus-design.browser.test.cjs && node radio-page.browser.test.cjs && node map-provider-settings.browser.test.cjs && node delivery-details.browser.test.cjs && node contact-deletion.browser.test.cjs && node bulk-contact-removal.browser.test.cjs && node radio-tools.browser.test.cjs && node radio-cli.browser.test.cjs && node propagation.browser.test.cjs && node attention-dm-memory.browser.test.cjs && node attention-memory.browser.test.cjs && node attention.browser.test.cjs && node compact-workspace.browser.test.cjs && node connection-simple.browser.test.cjs && node contact-flow.browser.test.cjs && node corescope-fallback.browser.test.cjs && node corescope-lifecycle.browser.test.cjs && node corescope-recovery.browser.test.cjs && node corescope-slow-start.browser.test.cjs && node corescope-startup.browser.test.cjs && node corescope.browser.test.cjs && node diagnostics.browser.test.cjs && node dm-performance.browser.test.cjs && node echo-command-shortcuts.browser.test.cjs && node header-controls.browser.test.cjs && node help.browser.test.cjs && node identity-verification.browser.test.cjs && node link-preview.browser.test.cjs && node login-vault.browser.test.cjs && node map-annotations.browser.test.cjs && node mention-highlight.browser.test.cjs && node meshmapper-region.browser.test.cjs && node meshmapper.browser.test.cjs && node message-actions.browser.test.cjs && node message-media.browser.test.cjs && node message-path.browser.test.cjs && node messages-navigation.browser.test.cjs && node navigation.browser.test.cjs && node node-discovery.browser.test.cjs && node outbox.browser.test.cjs && node outgoing-message.browser.test.cjs && node performance.browser.test.cjs && node radio-workbench.browser.test.cjs && node reactions.browser.test.cjs && node rf-trends.browser.test.cjs && node search.browser.test.cjs && node support-report.browser.test.cjs && node switchboard-flows.browser.test.cjs && node switchboard-settings.browser.test.cjs && node switchboard.browser.test.cjs && node voice.browser.test.cjs && node radio-counters.browser.test.cjs && node indicator-strip.browser.test.cjs",
+     "verify:package": "node verify-package.cjs"
+   },
+   "devDependencies": {
+@@ -223,6 +223,8 @@
+       "radio-page-ui.js",
+       "propagation.js",
+       "propagation-ui.js",
++      "indicator-strip.js",
++      "indicator-strip.css",
+       "propagation.css",
+       "map-provider-settings.js"
+     ],
+diff --git a/propagation-ui.js b/propagation-ui.js
+index 3a1cb85..bdee1ee 100644
+--- a/propagation-ui.js
++++ b/propagation-ui.js
+@@ -64,21 +64,21 @@
+    else if('Notification'in window&&Notification.permission==='granted'&&!quiet&&(document.hidden||!document.hasFocus()))new Notification('Nightlink · Strong RF anomaly',{body,tag:'propagation',silent:true});}});
+  window.meshlineDesktop?.onOpen?.(data=>{if(data?.conversation==='propagation'&&data.radio===monitor.radio)showPropagationMonitor();});
+ 
+- // Header indicator, next to the connection control.
++ // Feature indicator chip in the page-heading strip (indicator-strip.js).
+  const svg='<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 11v7M7 18h6M10 8.5h.01M7 6a4 4 0 0 0 0 5M13 6a4 4 0 0 1 0 5M4.5 3.5a7.5 7.5 0 0 0 0 10M15.5 3.5a7.5 7.5 0 0 1 0 10"/></svg>';
+- const indicator=document.createElement('button');indicator.type='button';indicator.id='propagation-indicator';indicator.className='header-control propagation-indicator';
+- indicator.innerHTML=svg+'<span class="header-control-label"></span>';indicator.onclick=()=>showPropagationMonitor();
+- const status=document.createElement('span');status.className='propagation-live';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+- const header=document.querySelector('.header-actions'),connection=document.querySelector('#connection');
+- if(connection&&connection.parentNode===header)header.insertBefore(indicator,connection);else header.prepend(indicator);indicator.after(status);
+- const short={'possible-opening':'Possible RF Opening','strong-anomaly':'Strong RF Anomaly','insufficient-data':'Learning baseline',unavailable:'Monitor unavailable',normal:'RF normal',disabled:'Monitor off'};
++ const indicator=document.createElement('button');indicator.id='propagation-indicator';indicator.classList.add('propagation-indicator');
++ const chip=NightlinkIndicators.register('rf',{feature:'RF monitor',icon:svg,element:indicator,onClick:()=>showPropagationMonitor()});
++ const status=document.createElement('span');status.className='propagation-live';status.setAttribute('role','status');status.setAttribute('aria-live','polite');document.body.append(status);
++ const short={'possible-opening':'Possible opening','strong-anomaly':'Strong anomaly','insufficient-data':'Learning',unavailable:'Unavailable',normal:'Normal',disabled:'Off'};
++ const tone={'possible-opening':'warn','strong-anomaly':'alert','insufficient-data':'info',unavailable:'off',normal:'ok',disabled:'off'};
++ // RX log availability, from the same monitor summary.
++ const rxChip=NightlinkIndicators.register('rxlog',{feature:'RX log',icon:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h2.5l2-5 3 10 2-5H17"/></svg>',onClick:()=>{view('Radio');}});
+  let last=null,lastLevel=null;
+  function paint(st){
+-  indicator.hidden=!prefs.indicator;
++  const detail=st.state==='unavailable'?'Monitoring unavailable. Connect a radio to monitor reception.':st.state==='insufficient-data'?'Collecting baseline; not enough history for reliable detection.':'Open the Propagation Monitor.';
++  chip.set({state:short[st.state]||st.label,tone:tone[st.state]||'neutral',detail,hidden:!prefs.indicator});
+   indicator.dataset.level=st.state;indicator.classList.toggle('propagation-animate',prefs.animations!==false);
+-  indicator.querySelector('.header-control-label').textContent=short[st.state]||st.label;
+-  const detail=st.state==='unavailable'?'Connect a radio to monitor reception.':st.state==='insufficient-data'?'Collecting baseline; not enough history for reliable detection.':'Open the Propagation Monitor.';
+-  indicator.setAttribute('aria-label','RF propagation monitor: '+st.label+'. '+detail);indicator.title=st.label+' · '+detail;
++  rxChip.set(st.connected?(st.rxLogObserved?{state:'Receiving',tone:'ok',detail:'Raw receive log data is arriving from the radio.'}:{state:'Not seen',tone:'warn',detail:'No raw receive log data yet. Firmware RX logging may be off; monitoring is limited.'}):{state:'',hidden:true});
+   if(st.state!==lastLevel){if(st.state==='strong-anomaly'){indicator.classList.remove('propagation-flash');void indicator.offsetWidth;indicator.classList.add('propagation-flash');}
+    if(lastLevel!==null&&['possible-opening','strong-anomaly'].includes(st.state))status.textContent=st.label+' detected. Unusual reception, not a confirmed propagation event.';
+    else if(lastLevel!==null&&st.state==='normal'&&['possible-opening','strong-anomaly'].includes(lastLevel))status.textContent='Propagation monitor returned to normal.';}
+@@ -139,7 +139,7 @@
+    '<label><span><strong>Enable monitoring</strong><small>Observe receive events already arriving at the radio.</small></span><input id="propagation-enabled" type="checkbox"></label>'+
+    '<label><span><strong>Alert sensitivity</strong><small>Higher sensitivity alerts on weaker evidence.</small></span><select id="propagation-sensitivity"><option value="low">Low</option><option value="medium">Medium (recommended)</option><option value="high">High</option></select></label>'+
+    '<label><span><strong>Baseline period</strong><small>History used for comparison.</small></span><select id="propagation-baseline"><option value="14">14 days</option><option value="30">30 days (recommended)</option><option value="60">60 days</option></select></label>'+
+-   '<label><span><strong>Show status indicator</strong><small>Compact indicator beside the connection control.</small></span><input id="propagation-indicator-setting" type="checkbox"></label>'+
++   '<label><span><strong>Show status indicator</strong><small>RF monitor and RX log chips in the page heading.</small></span><input id="propagation-indicator-setting" type="checkbox"></label>'+
+    '<label><span><strong>Alert animations</strong><small>Reduced motion settings always turn these off.</small></span><input id="propagation-animations" type="checkbox"></label>'+
+    '<label><span><strong>Alert sound</strong><small>Strong anomalies only; respects quiet hours.</small></span><input id="propagation-sound" type="checkbox"></label>'+
+    '<label><span><strong>Windows notification</strong><small>Strong anomalies only; respects quiet hours and Windows settings.</small></span><input id="propagation-notify" type="checkbox"></label>'+
+diff --git a/propagation.browser.test.cjs b/propagation.browser.test.cjs
+index 378e59f..3ddd20d 100644
+--- a/propagation.browser.test.cjs
++++ b/propagation.browser.test.cjs
+@@ -47,7 +47,7 @@ const shots=process.env.PROPAGATION_SCREENSHOTS;
+   for(let i=0;i<6;i++)m.observe({source:'rxlog',at:now-300000+i*1000,snr:4,rssi:-98,station:(0x30+i).toString(16).repeat(32),stationKind:'key',type:4,typeName:'Advert',relation:'forwarded',hops:3,path:[],dedup:'new:'+i});
+   for(const s of stableStations)for(let k=0;k<12;k++)m.observe({source:'rxlog',at:now-240000+k*1000,snr:11,rssi:-92,station:s,stationKind:'key',type:4,typeName:'Advert',relation:'forwarded',hops:2,path:[],dedup:'boost:'+s+':'+k+':'+(n++)});});
+  assert.equal(await level(),'possible-opening');
+- assert.equal(await page.locator('#propagation-indicator .header-control-label').textContent(),'Possible RF Opening');
++ assert.equal(await page.locator('#propagation-indicator .indicator-chip-state').textContent(),'Possible opening');
+  assert.equal(await page.locator('#propagation-indicator').evaluate(b=>b.classList.contains('propagation-animate')),true);
+  assert.match(await page.locator('.propagation-live').textContent(),/not a confirmed propagation event/);
+  await shot('02-header-possible-opening','header');
+@@ -73,7 +73,7 @@ const shots=process.env.PROPAGATION_SCREENSHOTS;
+  // Unusual stations flagged 25, 20 and 15 minutes ago spread the flagged evidence over more than 20 minutes of the window.
+  await page.evaluate(()=>{const m=NightlinkPropagationUI.monitor,now=Date.now();[25,20,15].forEach((min,j)=>{for(let i=0;i<2;i++)m.observe({source:'rxlog',at:now-min*60000+i*1000,snr:4,rssi:-98,station:(0x40+j*2+i).toString(16).repeat(32),stationKind:'key',type:4,typeName:'Advert',relation:'forwarded',hops:3,path:[],dedup:'spread:'+min+':'+i});});});
+  assert.equal(await level(),'strong-anomaly');
+- assert.equal(await page.locator('#propagation-indicator .header-control-label').textContent(),'Strong RF Anomaly');
++ assert.equal(await page.locator('#propagation-indicator .indicator-chip-state').textContent(),'Strong anomaly');
+  assert.equal(await page.locator('#propagation-indicator').evaluate(b=>b.classList.contains('propagation-flash')),true);
+  await shot('03-header-strong-anomaly','header');
+  await page.evaluate(()=>showPropagationMonitor());await page.locator('#propagation-panel .propagation-status h3').waitFor();
+@@ -124,7 +124,7 @@ const shots=process.env.PROPAGATION_SCREENSHOTS;
+  // Disconnect never leaves an active alert; disabling remains explicit unless the indicator is opted out.
+  await page.evaluate(()=>{ble.state='disconnected';radioSession.dispatchEvent(new Event('disconnected'));});assert.equal(await level(),'unavailable');
+  await page.evaluate(()=>{view('Settings');window.NightlinkSettings?.open?.('Notifications');});await page.locator('#propagation-enabled').uncheck();assert.equal(await page.locator('#propagation-indicator').isVisible(),true);
+- assert.equal(await page.locator('#propagation-indicator .header-control-label').textContent(),'Monitor off');
++ assert.equal(await page.locator('#propagation-indicator .indicator-chip-state').textContent(),'Off');
+  await page.locator('#propagation-indicator').click();await page.locator('#propagation-panel').waitFor();
+  assert.match(await page.locator('#propagation-panel').textContent(),/Monitoring is turned off in Settings/);
+  await page.evaluate(()=>document.querySelector('#dialog').close());
+diff --git a/propagation.css b/propagation.css
+index b085f56..a6fa3cb 100644
+--- a/propagation.css
++++ b/propagation.css
+@@ -1,12 +1,6 @@
+ /* RF Propagation Monitor. Uses shared nightlink-design.css tokens; semantic amber/red only for alert states. */
+ :root{--propagation-amber:#f0b44c;--propagation-red:#ff858f;--propagation-ok:#7be0b3}
+-.propagation-live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+-.propagation-indicator[hidden]{display:none!important}
+-.propagation-indicator:is([data-level=normal],[data-level=unavailable],[data-level=insufficient-data]) .header-control-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+-.propagation-indicator:is([data-level=normal],[data-level=unavailable]){color:var(--nl-muted,#b9b9bf);opacity:.7}
+-.propagation-indicator[data-level=insufficient-data]{color:var(--nl-muted,#b9b9bf)}
+-.propagation-indicator[data-level=possible-opening]{color:var(--propagation-amber);border-color:color-mix(in srgb,var(--propagation-amber) 55%,transparent)!important;background:color-mix(in srgb,var(--propagation-amber) 10%,transparent)!important}
+-.propagation-indicator[data-level=strong-anomaly]{color:var(--propagation-red);border-color:color-mix(in srgb,var(--propagation-red) 60%,transparent)!important;background:color-mix(in srgb,var(--propagation-red) 12%,transparent)!important}
++.propagation-live{position:fixed;top:0;left:0;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ .propagation-indicator.propagation-animate[data-level=possible-opening] svg{animation:propagation-pulse 2.4s ease-in-out infinite}
+ .propagation-indicator.propagation-animate.propagation-flash[data-level=strong-anomaly]{animation:propagation-flash .6s ease-in-out 3}
+ @keyframes propagation-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+diff --git a/required-features.json b/required-features.json
+index 6e4b7c4..081efa8 100644
+--- a/required-features.json
++++ b/required-features.json
+@@ -31,6 +31,8 @@
+     "propagation-ui.js",
+     "propagation.css",
+     "echo-workspace.js",
+-    "echo-workspace.css"
++    "echo-workspace.css",
++    "indicator-strip.js",
++    "indicator-strip.css"
+   ]
+ }
+diff --git a/updates-ui.js b/updates-ui.js
+index 67cfa9f..cc8c32c 100644
+--- a/updates-ui.js
++++ b/updates-ui.js
+@@ -10,6 +10,7 @@ function paintUpdateStatus(){
+  else if(!updateState)status.textContent='Checks use public GitHub releases without credentials. Local candidates are not offered by the stable feed.';
+  else status.textContent=({available:'Nightlink '+updateState.latest+' is available.',current:'You have the latest available release.',ahead:'This build is newer than the latest published release.'})[updateState.status]||updateState.message;
+  paintUpdateIntegrity();
++ window.dispatchEvent(new CustomEvent('nightlink-update-status',{detail:updateState}));
+  const last=$('#update-last-check');last.textContent=updateState?.checkedAt?'Last attempt: '+new Date(updateState.checkedAt).toLocaleString():'Not checked this session';
+ }
+ // Nightlink opens downloads in the browser, so the user compares the file against the published checksum.
+-- 
+2.43.0
+

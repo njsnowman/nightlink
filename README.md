@@ -146,7 +146,7 @@ The mesh drawing and sample messages are illustrative. Source labels with middle
 - Radio workbench: Trace Path, offline geometric Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI.
 - Copy public ID, exact-name mention highlighting/chime, and animated located message paths.
 
-Current public stable release: **0.8.24** ([Windows installer](https://github.com/njsnowman/nightlink/releases/download/v0.8.24/Nightlink-Setup-0.8.24.exe), [portable build](https://github.com/njsnowman/nightlink/releases/download/v0.8.24/Nightlink-Portable-0.8.24.exe), [release notes and checksums](releases/0.8.24.md)). **0.8.26** is prepared and its publication is authorized, but no 0.8.26 GitHub release exists yet; see [0.8.26 release record](releases/0.8.26.md). Use only executables attached to a published GitHub release. Both executables are unsigned. See the [documentation index](DOCUMENTATION.md), [user guide](USER_GUIDE.md), [Device Center](docs/device-management.md) and [local client tools](LOCAL_CLIENT_TOOLS.md).
+Current public stable release: **0.8.26** ([Windows installer](https://github.com/njsnowman/nightlink/releases/download/v0.8.26/Nightlink-Setup-0.8.26.exe), [portable build](https://github.com/njsnowman/nightlink/releases/download/v0.8.26/Nightlink-Portable-0.8.26.exe), [checksums](https://github.com/njsnowman/nightlink/releases/download/v0.8.26/SHA256SUMS.txt), [release record](releases/0.8.26.md)). Use only executables attached to a published GitHub release. Both executables are unsigned; verify them against SHA256SUMS.txt. See the [documentation index](DOCUMENTATION.md), [user guide](USER_GUIDE.md), [Device Center](docs/device-management.md) and [local client tools](LOCAL_CLIENT_TOOLS.md).
 
 ## Install or upgrade
 

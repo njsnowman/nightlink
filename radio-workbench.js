@@ -19,6 +19,8 @@
   });
  }
 
+ // A saved contact route stores out_path_len: low 6 bits are the hop count, top 2 bits are hash size minus one; 0xFF means no known path (flood).
+ function savedPath(contact){const len=contact?.pathLength;if(!Number.isInteger(len)||len<0||len>=255||typeof contact.path!=='string')return null;const size=(len>>6)+1,count=len&63,chars=count*size*2;if(size>3||count*size>64)return null;const hex=contact.path.slice(0,chars).toLowerCase();if(!new RegExp('^[a-f0-9]{'+chars+'}$').test(hex))return null;return{size,count,hashes:hex.match(new RegExp('.{'+size*2+'}','g'))||[]};}
  function geometry(a,b,h1,h2,mhz){for(const p of [a,b])if(!Number.isFinite(p.lat)||!Number.isFinite(p.lon)||Math.abs(p.lat)>90||Math.abs(p.lon)>180)throw Error('Enter valid coordinates for both endpoints.');if(![h1,h2,mhz].every(Number.isFinite)||h1<0||h2<0||h1>10000||h2>10000||mhz<=0||mhz>100000)throw Error('Enter valid heights and frequency.');const rad=x=>x*Math.PI/180,p1=rad(a.lat),p2=rad(b.lat),dl=rad(b.lon-a.lon),dp=p2-p1,h=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2,km=6371*2*Math.asin(Math.sqrt(Math.min(1,h))),bearing=(Math.atan2(Math.sin(dl)*Math.cos(p2),Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl))*180/Math.PI+360)%360;return{km,bearing,horizonKm:3.57*(Math.sqrt(h1)+Math.sqrt(h2)),fresnelMidpointM:Math.sqrt((299.792458/mhz)*(km*1000)/4)};}
- root.NightlinkWorkbench={route,traceFrame,traceReply,traceWait,trace,geometry};if(typeof module!=='undefined')module.exports=root.NightlinkWorkbench;
+ root.NightlinkWorkbench={route,traceFrame,traceReply,traceWait,trace,geometry,savedPath};if(typeof module!=='undefined')module.exports=root.NightlinkWorkbench;
 })(globalThis);
