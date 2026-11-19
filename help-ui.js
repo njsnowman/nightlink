@@ -14,7 +14,7 @@
   const center=el('section','help-center');center.setAttribute('aria-label','Nightlink Help and About');
   const head=el('div','help-heading');head.append(el('span','eyebrow','NIGHTLINK / FIELD GUIDE'),el('h3','','Help & About'),el('p','','Practical instructions, illustrated with the current interface. Available offline.'));
   const tabs=el('div','help-mode');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Help section');
-  const guide=button('How to',()=>{mode='guide';draw();}),about=button('About Nightlink',()=>{mode='about';draw();});guide.id='help-guide-tab';about.id='help-about-tab';tabs.append(guide,about);head.append(tabs);
+  const guide=button('How to',()=>{mode='guide';draw();}),about=button('About Nightlink',()=>{mode='about';draw();});guide.id='help-guide-tab';about.id='help-about-tab';tabs.append(guide,about);head.append(tabs,button('Operations help & full guide',()=>NightlinkOperationsHelp.open()));
   const body=el('div','help-body');center.append(head,body);grid.append(center);
   function draw(){
    guide.setAttribute('aria-pressed',String(mode==='guide'));about.setAttribute('aria-pressed',String(mode==='about'));body.replaceChildren();
@@ -41,7 +41,7 @@
   draw();
  };
  function renderAbout(body){
-  const page=el('article','help-about');page.tabIndex=0;page.setAttribute('aria-label','About Nightlink');const brand=el('div','help-brand'),icon=el('img');icon.src='icon.svg';icon.alt='Nightlink';brand.append(icon,el('h4','','Nightlink'));page.append(brand,el('p','help-lead','Off-grid communication. Powered by MeshCore.'));
+  const page=el('article','help-about');page.tabIndex=0;page.setAttribute('aria-label','About Nightlink');const brand=el('div','help-brand'),icon=el('img');icon.src='icon.svg';icon.alt='Nightlink';brand.append(icon,el('h4','','Nightlink'));if(window.NightlinkLogo)page.append(NightlinkLogo.create('logo','Nightlink logo'));page.append(brand,el('p','help-lead','Off-grid communication. Powered by MeshCore.'));
   const purpose=el('section','help-purpose');purpose.append(el('h5','','Our purpose'),el('p','','Nightlink is built to work hand in hand with MeshCore, bringing off-grid radio communication to your Windows desktop. Core messaging connects directly to your MeshCore companion over Bluetooth or USB, with no internet connection, cloud account or online service required. MeshCore carries the messages; Nightlink gives you a clear, capable workspace to send, receive and keep them on your computer.'),el('p','help-caption','Optional online maps, web previews and update checks use the internet when available. They are not required for core MeshCore radio messaging.'));page.append(purpose);
   const version=el('p','help-version','Development preview · installed version is shown in the Windows app.');version.id='help-installed-version';page.append(version);
   if(window.meshlineUpdates)meshlineUpdates.info().then(info=>{if(info&&version.isConnected)version.textContent='Version '+info.version+' · '+(info.mode==='portable'?'Portable':'Windows installation')+(/-/.test(info.version)?' · Release candidate':'');}).catch(()=>{version.textContent='Version unavailable. Use Settings > Data & updates to check the installed build.';});

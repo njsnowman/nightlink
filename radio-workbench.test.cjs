@@ -20,3 +20,11 @@ test('trace timeout preserves acceptance evidence and callback errors cannot aff
 test('trace timeout distinguishes no data from unrelated and invalid frames without retaining packets',async()=>{
  for(const withFrames of [false,true]){const r=radio();let writes=0;r.radioTool=async fn=>fn(async f=>{writes++;const tag=new DataView(f.buffer).getUint32(1,true);if(withFrames){r.ble.dispatchEvent(new CustomEvent('packet',{detail:reply((tag+1)>>>0)}));const bad=reply(tag);bad[3]=1;r.ble.dispatchEvent(new CustomEvent('packet',{detail:bad}));r.ble.dispatchEvent(new CustomEvent('packet',{detail:Uint8Array.of(0x89)}));r.ble.dispatchEvent(new CustomEvent('packet',{detail:Uint8Array.of(0x88,1,2)}));}return accepted(f);},()=>{});await assert.rejects(trace(r,'aa',{timeout:5}),e=>{assert.equal(e.traceDetails.accepted,true);assert.equal(e.traceDetails.traceFrames,withFrames?3:0);assert.equal(e.traceDetails.unrelatedTraceFrames,withFrames?1:0);assert.equal(e.traceDetails.invalidTraceFrames,withFrames?2:0);assert.equal('packet' in e.traceDetails,false);return true;});assert.equal(writes,1);}
 });
+test('saved contact paths decode hop count and hash size and reject unknown routes',()=>{const {savedPath}=require('./radio-workbench.js');
+ assert.deepEqual(savedPath({pathLength:2,path:'a1b2'+'00'.repeat(62)}),{size:1,count:2,hashes:['a1','b2']});
+ assert.deepEqual(savedPath({pathLength:0x42,path:'a1b2c3d4'+'00'.repeat(60)}),{size:2,count:2,hashes:['a1b2','c3d4']});
+ assert.deepEqual(savedPath({pathLength:0,path:''}),{size:1,count:0,hashes:[]});
+ assert.equal(savedPath({pathLength:255,path:'00'.repeat(64)}),null,'0xFF means no known path');
+ assert.equal(savedPath({pathLength:0xc1,path:'00'.repeat(64)}),null,'4-byte hashes are invalid');
+ assert.equal(savedPath({pathLength:3,path:'a1b2'}),null,'path shorter than its hop count');
+ assert.equal(savedPath({pathLength:1}),null);assert.equal(savedPath(null),null);});

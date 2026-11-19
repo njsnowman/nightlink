@@ -1,8 +1,8 @@
 /* Isolated source-renderer layout checks. All network and radio work are blocked. */
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'));
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 (async()=>{
- const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+ const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});
  try{
   const page=await browser.newPage({viewport:{width:1500,height:900}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
@@ -47,9 +47,10 @@ const fs=require('node:fs/promises'),path=require('node:path'),assert=require('n
   const group=page.locator('#channels [data-sidebar-group=channels]');await group.locator('summary').click();
   const open=await group.evaluate(e=>e.open);await page.evaluate(()=>renderChannels());
   assert.equal(await group.evaluate(e=>e.open),open,'existing conversation disclosure retains choice');
-  assert.equal(await page.locator('aside nav>button').count(),5,'no new primary destinations');
+  for(const choice of [false,true]){await page.evaluate(open=>{document.querySelector('#channels [data-sidebar-group=channels]').open=open;renderChannels();},choice);assert.equal(await group.evaluate(e=>e.open),choice,'synchronous rerender preserves disclosure before queued toggle event');}
+  assert.deepEqual(await page.locator('aside nav > button').evaluateAll(buttons => buttons.map(button => button.dataset.view)), ['Overview', 'Messages', 'Network map', 'Nodes', 'Radio', 'Contact Book', 'Operations']);
   await page.evaluate(()=>view('Messages'));assert.equal(await splitter.isVisible(),false);
   assert.deepEqual(await page.evaluate(()=>window.layoutCommands||[]),[]);assert.deepEqual(errors,[]);
-  console.log('PASS Overview keyboard/pointer split, persisted preference, five viewport sizes/two densities at 130% text, existing conversation collapse and no new primary destinations. Synthetic only; no radio operations.');
+  console.log('PASS Overview keyboard/pointer split, persisted preference, five viewport sizes/two densities at 130% text, existing conversation collapse and expected Cards destinations. Synthetic only; no radio operations.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

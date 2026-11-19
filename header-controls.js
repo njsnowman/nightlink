@@ -13,6 +13,6 @@
   button.replaceChildren(svg,span);
   if(kind==='radio')button.title=label;
  }
- function refresh(){for(const [id,kind]of [['open-message-search','search'],['compact-toggle','layout'],['connection','radio'],['startup-connect-cancel','cancel'],['startup-connect-retry','retry']])decorate(document.getElementById(id),kind);}
+ function refresh(){for(const [id,kind]of [['open-message-search','search'],['compact-toggle','layout'],['connection','radio'],['startup-connect-cancel','cancel'],['startup-connect-retry','retry'],['header-recovery-retry','retry']])decorate(document.getElementById(id),kind);}
  new MutationObserver(refresh).observe(root,{childList:true,subtree:true,characterData:true});refresh();
 })();

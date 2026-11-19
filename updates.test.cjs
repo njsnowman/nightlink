@@ -23,3 +23,40 @@ test('installed candidates compare against approved stable releases without acce
  assert.equal(U.selectRelease(next,'0.8.22-rc.32','installer').status,'available');
  assert.throws(()=>U.selectRelease({...next,tag_name:'v0.8.22-rc.33'},'0.8.22-rc.32'));
 });
+
+const H='a'.repeat(64),H2='b'.repeat(64),SUMS_URL='https://github.com/njsnowman/nightlink/releases/download/v0.8.9/SHA256SUMS.txt';
+test('SHA256SUMS parsing accepts the published format and rejects malformed, duplicate, path and oversized input',()=>{
+ const sums=U.parseSums(H+'  Nightlink-Setup-0.8.9.exe\n'+H2.toUpperCase()+' *Nightlink-Portable-0.8.9.exe\r\n\n');
+ assert.equal(sums.get('Nightlink-Setup-0.8.9.exe'),H);assert.equal(sums.get('Nightlink-Portable-0.8.9.exe'),H2);
+ for(const bad of ['zz  Nightlink-Setup-0.8.9.exe',H+'Nightlink.exe',H+'  ../evil.exe',H+'  dir\\evil.exe',H+'  a.exe\n'+H2+'  a.exe','','\n\n','x'.repeat(17000)])assert.throws(()=>U.parseSums(bad),bad.slice(0,20));
+});
+test('integrity requires the asset digest and SHA256SUMS to agree',()=>{
+ const sums=new Map([['Nightlink-Setup-0.8.9.exe',H]]);
+ assert.deepEqual(U.integrity('Nightlink-Setup-0.8.9.exe','sha256:'+H,sums),{verification:'consistent',sha256:H});
+ assert.deepEqual(U.integrity('Nightlink-Setup-0.8.9.exe','sha256:'+H2,sums),{verification:'mismatch',sha256:null});
+ assert.equal(U.integrity('Nightlink-Setup-0.8.9.exe',null,sums).verification,'incomplete');
+ assert.equal(U.integrity('Nightlink-Setup-0.8.9.exe','sha256:'+H,null).verification,'incomplete');
+ assert.equal(U.integrity('Nightlink-Setup-0.8.9.exe',null,null).verification,'missing');
+ assert.equal(U.integrity('Nightlink-Setup-0.8.9.exe','md5:'+H,sums).verification,'incomplete');
+});
+const body=text=>({status:200,ok:true,headers:{get:()=>null},text:async()=>text});
+test('checksum download follows only GitHub release storage redirects with bounded size',async()=>{
+ const calls=[];const sums=await U.fetchSums(SUMS_URL,'0.8.8',async(url,options)=>{calls.push([url,options.redirect]);if(url===SUMS_URL)return{status:302,ok:false,headers:{get:k=>k==='location'?'https://release-assets.githubusercontent.com/x/SHA256SUMS.txt':null}};return body(H+'  Nightlink-Setup-0.8.9.exe\n');});
+ assert.equal(sums.get('Nightlink-Setup-0.8.9.exe'),H);assert.deepEqual(calls.map(c=>c[1]),['manual','error']);
+ await assert.rejects(U.fetchSums(SUMS_URL,'0.8.8',async()=>({status:302,ok:false,headers:{get:()=>'https://example.com/SHA256SUMS.txt'}})),/left GitHub/);
+ await assert.rejects(U.fetchSums(SUMS_URL,'0.8.8',async()=>({status:302,ok:false,headers:{get:()=>'http://objects.githubusercontent.com/x'}})),/left GitHub/);
+ await assert.rejects(U.fetchSums('https://example.com/SHA256SUMS.txt','0.8.8',async()=>body('')),/Unexpected/);
+ await assert.rejects(U.fetchSums(SUMS_URL,'0.8.8',async()=>body('x'.repeat(17000))),/too large/);
+ await assert.rejects(U.fetchSums(SUMS_URL,'0.8.8',async()=>({status:404,ok:false,headers:{get:()=>null}})),/HTTP 404/);
+});
+test('update check reports consistent, mismatched, incomplete and unavailable checksums',async()=>{
+ const release=(digest,withSums=true)=>({...base,assets:[{...asset('Nightlink-Setup-0.8.9.exe'),digest},...(withSums?[asset('SHA256SUMS.txt')]:[])]});
+ const run=(data,sumsText,sumsStatus=200)=>U.check('0.8.8','installer',async url=>url===U.API?body(JSON.stringify(data)):sumsStatus===200?body(sumsText):{status:sumsStatus,ok:false,headers:{get:()=>null}});
+ const ok=await run(release('sha256:'+H),H+'  Nightlink-Setup-0.8.9.exe\n');assert.equal(ok.verification,'consistent');assert.equal(ok.sha256,H);assert.equal(ok.name,'Nightlink-Setup-0.8.9.exe');
+ assert.equal((await run(release('sha256:'+H2),H+'  Nightlink-Setup-0.8.9.exe\n')).verification,'mismatch');
+ assert.equal((await run(release('sha256:'+H,false),'')).verification,'incomplete');
+ assert.equal((await run(release(undefined,false),'')).verification,'missing');
+ const down=await run(release('sha256:'+H),'',500);assert.equal(down.verification,'unavailable');assert.equal(down.sha256,null);
+ assert.equal((await run(release('sha256:'+H),'garbage')).verification,'unavailable');
+ const current=await U.check('0.8.9','installer',async url=>{assert.equal(url,U.API);return body(JSON.stringify(release('sha256:'+H)));});assert.equal(current.status,'current');assert.equal(current.verification,undefined);
+});

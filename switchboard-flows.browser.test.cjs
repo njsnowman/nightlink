@@ -1,7 +1,7 @@
 /* Synthetic map and DM interaction checks. Never accesses a physical radio or normal profile. */
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const page=await browser.newPage({viewport:{width:1320,height:860}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{window.nightlinkCoreScope={check:async()=>true};window.nightlinkMeshMapper={location:async()=>({lat:39.3,lon:-85.2}),check:async()=>true,open(){}};});
  await page.route('**/*',async route=>{const url=new URL(route.request().url());if(url.hostname!=='127.0.0.1')return route.fulfill({body:'<p>Isolated map fixture</p>',contentType:'text/html'});const file=url.pathname==='/'?'index.html':url.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':file.endsWith('.svg')?'image/svg+xml':'text/html'});}catch{await route.fulfill({status:404,body:''});}});
@@ -14,7 +14,7 @@ const fs=require('node:fs/promises'),path=require('node:path'),assert=require('n
  await page.setViewportSize({width:600,height:700});await page.goto('http://127.0.0.1:4173/dm.html',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.updateFixture);await page.addStyleTag({url:'http://127.0.0.1:4173/switchboard-controls.css'});
  await page.evaluate(()=>updateFixture({key:'ab'.repeat(32),name:'Demo contact',connected:false,accent:'amber',scheme:'black',textScale:1,soundEnabled:false,messages:[{id:'demo',text:'Unconfirmed demonstration',timestamp:Math.floor(Date.now()/1000),status:'Failed / unconfirmed',phase:'unconfirmed',own:true,direct:true,pending:false}]}));
  assert.equal(await page.locator('#dm-send').isDisabled(),true);assert.equal(await page.locator('.retry-delivery').isDisabled(),true);assert.match(await page.locator('.delivery-badge').innerText(),/unconfirmed/i);await page.getByRole('button',{name:'Delivery details',exact:true}).click();assert.deepEqual(await page.evaluate(()=>lastAction),{id:'demo',type:'details'});await page.locator('#dm-contact').click();assert.equal(await page.evaluate(()=>contactOpened),true);
- assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight),true);assert.ok((await page.locator('#dm-reply').boundingBox()).y>=0);await page.screenshot({path:'C:/Users/ryank/.cache/nightlink-switchboard-dm-controls.png'});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight),true);assert.ok((await page.locator('#dm-reply').boundingBox()).y>=0);await page.screenshot({path:require('node:path').join(process.env.NIGHTLINK_ARTIFACTS||require('node:os').tmpdir(),'nightlink-switchboard-dm-controls.png')});
  assert.deepEqual(errors,[]);console.log('PASS: Map source tabs and embedded MeshMapper retained, keyboard focus and compact130% fit; disconnected DM preserves details/contact actions while send/retry remain disabled. Synthetic presentation only.');
 }finally{await browser.close();}})().catch(error=>{console.error(error);process.exitCode=1;});
 

@@ -20,8 +20,14 @@
  function direct(m){return m.kind==='direct'||m.kind==='contact'||m.direct===true||m.target?.kind==='direct'||m.target?.kind==='contact';}
  async function plan(messages,{selfName='',peerName='',conversation=''}={}){
   const reactions=new Map(),targets=new Map(),parsed=new Map(),index=new Map(),scope=m=>m.conversation||conversation;
-  for(const m of messages){const r=parse(m.text,direct(m));if(r)parsed.set(m.id,r);}
-  await Promise.all(messages.filter(m=>!parsed.has(m.id)).map(async m=>{const h=await hash(m.text,m.timestamp);if(!h)return;const key=JSON.stringify([scope(m),h]),list=index.get(key)||[];list.push(m);index.set(key,list);}));
+  const reactionScopes=new Set();
+  for(const m of messages){
+   const reaction=parse(m.text,direct(m));
+   if(reaction){parsed.set(m.id,reaction);reactionScopes.add(scope(m));}
+  }
+  if(!reactionScopes.size)return {parsed,targets,reactions};
+  const candidates=messages.filter(m=>!parsed.has(m.id)&&reactionScopes.has(scope(m)));
+  await Promise.all(candidates.map(async m=>{const h=await hash(m.text,m.timestamp);if(!h)return;const key=JSON.stringify([scope(m),h]),list=index.get(key)||[];list.push(m);index.set(key,list);}));
   const seen=new Set();for(const m of messages){const r=parsed.get(m.id);if(!r)continue;const sender=m.own?selfName:(m.sender||peerName||'Unknown sender');const candidates=(index.get(JSON.stringify([scope(m),r.hash]))||[]).filter(t=>direct(m)===direct(t)&&(r.targetSender===null||(t.own?selfName:t.sender)===r.targetSender));
    // Short hashes and channel display names are not authenticated identities.
    if(candidates.length!==1)continue;const target=candidates[0],dedup=JSON.stringify([scope(m),r.hash,r.targetSender,sender,r.emoji]);targets.set(m.id,target.id);if(seen.has(dedup))continue;seen.add(dedup);const list=reactions.get(target.id)||[];list.push({emoji:r.emoji,sender,id:m.id});reactions.set(target.id,list);

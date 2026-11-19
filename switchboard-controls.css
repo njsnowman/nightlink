@@ -47,7 +47,7 @@ html:root:root:root body .message-route:not(.signal-hop):hover:not(:disabled){bo
 html:root:root:root body .message-route:disabled,html:root:root:root body .dm-compose button:disabled{opacity:.5;cursor:not-allowed;filter:none}
 html:root:root:root body .dm-compose input:focus-visible{border-color:var(--accent);outline:1px solid var(--accent);outline-offset:2px}
 html:root:root:root body #chat-form:focus-within{box-shadow:0 0 0 1px var(--accent-line)}
-html:root:root:root body #chat-form>button:hover:not(:disabled),html:root:root:root body .dm-compose button.primary:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 85%,white);border-color:var(--accent);color:#15140e}
+html:root:root:root body #chat-form>button:not(.text-art-toggle):hover:not(:disabled),html:root:root:root body .dm-compose button.primary:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 85%,white);border-color:var(--accent);color:#15140e}
 html:root:root:root body .reading-jump{border:1px solid var(--accent-line);border-radius:3px;padding:5px 11px;background:#191d13;color:var(--accent);font:600 11px/1.4 'Segoe UI',sans-serif;box-shadow:0 3px 10px #0007}
 html:root:root:root body .reading-jump:hover{background:var(--accent-soft)}
 html:root:root:root body #dm-sound{min-width:36px;min-height:32px;padding:5px 8px;border:1px solid var(--sb-edge);border-radius:3px;background:#151911;color:var(--sb-muted)}

@@ -1,7 +1,7 @@
 /* Synthetic browser profile; local assets only, no physical radio or network requests. */
-const {chromium}=require('C:/Users/ryank/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'));
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const page=await browser.newPage({viewport:{width:1320,height:860}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();const file=u.pathname==='/'?'index.html':u.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':'text/html'});}catch{await route.fulfill({status:404,body:''});}});
  await page.addInitScript(()=>{if(location.origin!=='http://127.0.0.1:4173')return;HTMLMediaElement.prototype.play=()=>Promise.resolve();if(!localStorage.getItem('meshline.profile'))localStorage.setItem('meshline.profile',JSON.stringify({identity:{key:'cd'.repeat(32),name:'Memory owner',version:'test',model:'Test radio',frequency:906.875,txPower:22},contacts:[],channels:[{slot:0,id:'01'.repeat(12),name:'memory'},{slot:1,id:'02'.repeat(12),name:'other'}]}));});
