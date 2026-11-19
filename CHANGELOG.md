@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- Record the post-merge Windows package and offline MeshCore validation for the 0.8.28-rc.51 candidate. Tracks [#212](https://github.com/njsnowman/nightlink/issues/212) and the [candidate record](releases/0.8.28-rc.51-post-merge.md).
+
 - Keep the chat transcript readable in short, narrow Cards Echo split views by putting conversation controls and Echo shortcuts in a collapsible section.
 
 - Terminal chat displays matched reactions beneath the original message. Unmatched reactions retain expandable details. Tracks [#205](https://github.com/njsnowman/nightlink/issues/205) and the [candidate record](releases/0.8.28-rc.49.md).
