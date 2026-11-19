@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- Prepare the 0.8.28 stable Windows builds and validate the update and upgrade from 0.8.26. Tracks [#214](https://github.com/njsnowman/nightlink/issues/214) and the [stable release record](releases/0.8.28.md).
+
 - Record the post-merge Windows package and offline MeshCore validation for the 0.8.28-rc.51 candidate. Tracks [#212](https://github.com/njsnowman/nightlink/issues/212) and the [candidate record](releases/0.8.28-rc.51-post-merge.md).
 
 - Keep the chat transcript readable in short, narrow Cards Echo split views by putting conversation controls and Echo shortcuts in a collapsible section.
