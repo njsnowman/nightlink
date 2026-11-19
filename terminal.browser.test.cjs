@@ -71,7 +71,11 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  await sizePage.close();await page.selectOption('#mrc-text-size','large');
  const clearColors=await page.evaluate(()=>{const color=s=>getComputedStyle(document.querySelector(s)).color;return {peer:color('.mrc-nick-peer'),own:color('.mrc-nick-own'),body:color('.mrc-text'),ownBody:color('.mrc-own .mrc-text')};});assert.deepEqual(clearColors,{peer:'rgb(85, 255, 255)',own:'rgb(255, 255, 85)',body:'rgb(255, 255, 255)',ownBody:'rgb(255, 255, 255)'});
  const lines=await page.$$eval('#mrc-log .mrc-line',l=>l.map(x=>x.textContent));
- assert.ok(lines.some(l=>/^\d\d:\d\d <KD9XYZ> net check tonight$/.test(l)),lines.join('\n'));
+ assert.ok(lines.some(l=>/^\d\d:\d\d <KD9XYZ> .*net check tonight$/.test(l)),lines.join('\n'));
+ // Received messages carry hop count and SNR on the nick line (one button to the message path), colour-coded by distance and signal.
+ const meta=await page.$eval('[data-message-id="t1"] .mrc-meta',b=>({hop:b.querySelector('.mrc-hop')?.textContent,hopCls:b.querySelector('.mrc-hop')?.className,snr:b.querySelector('.mrc-snr')?.textContent,snrCls:b.querySelector('.mrc-snr')?.className,label:b.getAttribute('aria-label'),sameLine:Math.abs(b.getBoundingClientRect().top-b.parentElement.querySelector('.mrc-nick-wrap').getBoundingClientRect().top)<8}));
+ assert.equal(meta.hop,'2 hops');assert.match(meta.hopCls,/mrc-hop-near/);assert.match(meta.snr,/SNR 8\.2 dB/);assert.match(meta.snrCls,/mrc-snr-good/);assert.match(meta.label,/^View message path on map: 2 hops · SNR 8\.2$/);assert.ok(meta.sameLine,'tags share the nick line');
+ assert.equal(await page.$('[data-reaction-delivery-for="t1"]'),null,'no separate delivery row for a received message');
  assert.ok(lines.some(l=>/^\d\d:\d\d >>> <SNOMAN> copy, 5\/9$/.test(l)),lines.join('\n'));
  assert.match(await page.textContent('.mrc-topic'),/MRC Mesh Relay Chat │ #field-ops/);
  assert.deepEqual(await page.$$eval('.mrc-window',b=>b.map(x=>x.textContent.trim())),['1 (status)','2 #field-ops','3 #public']);

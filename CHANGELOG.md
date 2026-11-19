@@ -7,6 +7,7 @@
 
 ## Unreleased
 
+- Terminal chat (MRC): received messages show the hop count and SNR on the nick line as one button to the message path, instead of a separate dim line. The hop badge is colour-coded by distance (direct green, 1-2 cyan, 3-4 yellow, 5+ magenta) and SNR by quality (>= 5 dB green, 0-5 yellow, < 0 red); the text always states the value. Messages get more vertical space, an 88-character line limit and a thin left rule (received blue, own grey, mention yellow). Own messages keep the delivery line. Candidate record: [0.8.28-rc.52](releases/0.8.28-rc.52.md). Tracks [#213](https://github.com/njsnowman/nightlink/issues/213).
 - Keep the chat transcript readable in short, narrow Cards Echo split views by putting conversation controls and Echo shortcuts in a collapsible section.
 
 - Terminal chat displays matched reactions beneath the original message. Unmatched reactions retain expandable details. Tracks [#205](https://github.com/njsnowman/nightlink/issues/205) and the [candidate record](releases/0.8.28-rc.49.md).

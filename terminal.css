@@ -542,3 +542,17 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-line>.message-r
 html:root:root:root:root:root[data-interface=terminal] body .mrc-line .message-reaction-chip{background:var(--t-black);color:var(--t-white);border:1px solid var(--t-bright-cyan);border-radius:0;box-shadow:none;padding:2px 8px;min-height:24px;text-indent:0}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-line .reaction-unmatched,
 html:root:root:root:root:root[data-interface=terminal] body .mrc-line .reaction-wire-details{color:var(--t-grey);text-indent:0}
+/* MRC readability pass: hop count and SNR on the nick line, colour-coded; more air between messages; readable line length. */
+html:root:root:root:root:root[data-interface=terminal] body #mrc-log .mrc-line[data-message-id]{margin-top:12px;padding-top:2px}
+html:root:root:root:root:root[data-interface=terminal] body #mrc-log .mrc-line[data-message-id]>.mrc-text{max-width:88ch;border-left:2px solid var(--t-bright-blue);padding-left:1ch !important;margin-top:2px}
+html:root:root:root:root:root[data-interface=terminal] body #mrc-log .mrc-own[data-message-id]>.mrc-text{border-left-color:var(--t-dark-grey)}
+html:root:root:root:root:root[data-interface=terminal] body #mrc-log .mrc-line.mrc-mention[data-message-id]>.mrc-text{border-left-color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-meta{display:inline-flex !important;align-items:center;gap:1ch;margin-left:1ch;vertical-align:baseline;text-decoration:none !important;font-size:14px !important;line-height:20px;padding:0 2px !important;text-indent:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-meta:hover .mrc-hop,html:root:root:root:root:root[data-interface=terminal] body .mrc-meta:focus-visible .mrc-hop{outline:1px solid var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-hop{font-size:14px;border-radius:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-hop.mrc-hop-direct{background:#00aa00;color:#000;border-color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-hop.mrc-hop-near{background:#00aaaa;color:#000;border-color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-hop.mrc-hop-mid{background:var(--t-yellow);color:#000;border-color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-hop.mrc-hop-far{background:var(--t-bright-magenta);color:#000;border-color:var(--t-bright-magenta)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-snr{font-weight:700}html:root:root:root:root:root[data-interface=terminal] body .mrc-snr-bar{margin-right:2px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-snr-good{color:var(--t-bright-green)}html:root:root:root:root:root[data-interface=terminal] body .mrc-snr-fair{color:var(--t-yellow)}html:root:root:root:root:root[data-interface=terminal] body .mrc-snr-poor{color:var(--t-bright-red)}

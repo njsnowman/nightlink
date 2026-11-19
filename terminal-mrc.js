@@ -165,6 +165,15 @@
    const close=note.querySelector('[aria-label="Dismiss reply context"]'),prior=close.onclick;close.onclick=e=>{state.replySource=null;state.replyPrefix=null;prior(e);};
   }else{input.value=draft;updateCount();}
  }
+ // Hop and signal tags for received messages, shown on the nick line. Colour classes follow distance and SNR;
+ // the text always states the value, so colour is never the only cue.
+ function hopTag(m){
+  const e=m.pathLength;if(e==null||!window.MeshlineRoutes)return null;
+  const count=e===255?null:(e&63),label=e===255?'direct':count===0?'direct':count+' hop'+(count===1?'':'s');
+  const cls=count==null||count===0?'mrc-hop-direct':count<=2?'mrc-hop-near':count<=4?'mrc-hop-mid':'mrc-hop-far';
+  return el('span','mrc-hop '+cls,label);
+ }
+ function snrTag(snr){if(snr==null)return null;const cls=snr>=5?'mrc-snr-good':snr>=0?'mrc-snr-fair':'mrc-snr-poor',bars=snr>=10?'▆':snr>=5?'▅':snr>=0?'▃':'▁';const s=el('span','mrc-snr '+cls);s.append(el('span','mrc-snr-bar',bars),' SNR '+snr+' dB');return s;}
  function messageLine(m){
   const line=el('div','mrc-line'+(m.own?' mrc-own':''));line.dataset.messageId=m.id;
   line.append(el('span','mrc-time',stamp(m.timestamp)));
@@ -178,14 +187,20 @@
   if(window.NightlinkMessageActions)NightlinkMessageActions.bind(body,()=>beginReply(m,name),'Reply to '+name);
   body.addEventListener('focus',()=>{if(body.matches(':focus-visible'))selectMessage(m);});
   if(m.localReply?.id&&m.localReply.conversation===m.conversation){const quote=el('button','mrc-reply-quote','↳ '+String(m.localReply.name||'Message')+': '+String(m.localReply.text||'').slice(0,100));quote.type='button';quote.setAttribute('aria-label','Jump to original message from '+String(m.localReply.name||'sender'));quote.onclick=()=>jumpMessage(m.localReply.id);line.append(quote);}
+  // Received messages: hop count and SNR on the nick line, as one button that opens the message path.
+  const detail=deliveryText(m);
+  if(!m.own&&detail&&!body.classList.contains('mrc-action')){
+   const meta=el('button','mrc-delivery mrc-meta mrc-recv');meta.type='button';meta.setAttribute('aria-label','View message path on map: '+detail);meta.title='View message path on map';
+   const hop=hopTag(m),snr=snrTag(m.snr);if(hop)meta.append(hop);if(snr)meta.append(snr);if(!hop&&!snr)meta.append(detail);
+   meta.onclick=()=>{if(typeof showMessageRoute==='function')showMessageRoute(m);};line.append(meta);
+  }
   line.append(body);
   // Mentions of your own name (as @name, [name] or the plain word) highlight the line, as IRC clients do.
   if(isMention(m))line.classList.add('mrc-mention');
   if(state.find.open&&state.find.query.trim()&&findText(m).toLocaleLowerCase().includes(state.find.query.trim().toLocaleLowerCase()))line.classList.add(m.id===state.find.activeId?'mrc-find-current':'mrc-find-match');
   if(state.selectedMessage===m.id)line.append(actionsFor(m));
   const frag=doc.createDocumentFragment();frag.append(line);
-  const detail=deliveryText(m);
-  if(detail){
+  if(detail&&(m.own||body.classList.contains('mrc-action'))){
    const row=el('div','mrc-line mrc-delivery-row');row.dataset.reactionDeliveryFor=m.id;row.append(el('span','mrc-time',stamp(m.timestamp)));
    const b=el('button','mrc-delivery '+deliveryClass(m),'└─ '+(m.own&&m.phase!=='acknowledged'&&deliveryClass(m)==='mrc-pending'?'… ':deliveryClass(m)==='mrc-ok'&&m.own?'✓ ':'')+detail);
    if(!m.own&&m.pathLength!=null&&window.MeshlineRoutes){
