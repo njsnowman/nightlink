@@ -1,0 +1,73 @@
+html[data-focus-mode] #workspace-sidebar {
+  display: none !important;
+}
+
+html[data-focus-mode][data-interface=cards] body > main {
+  margin-left: 0;
+  width: 100%;
+}
+
+html[data-focus-mode][data-interface=terminal] #term-menubar {
+  display: none !important;
+}
+
+html:root:root:root:root:root[data-interface=terminal][data-focus-mode] body > main {
+  margin-top: 0 !important;
+  height: calc(100dvh - var(--t-bar)) !important;
+}
+
+#focus-mode-toggle {
+  flex: none;
+  margin-inline-end: 8px;
+}
+
+#focus-mode-toggle svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+#focus-mode-toggle .focus-mode-key,
+html[data-interface=terminal] #focus-mode-toggle svg {
+  display: none;
+}
+
+html[data-interface=terminal] #focus-mode-toggle .focus-mode-key {
+  display: inline;
+  color: var(--t-yellow);
+}
+
+html[data-interface=cards] #focus-mode-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: var(--nl-surface);
+  border: 1px solid var(--nl-edge);
+  color: var(--nl-copy);
+}
+
+html[data-interface=cards] #focus-mode-toggle:hover,
+html[data-interface=cards][data-focus-mode] #focus-mode-toggle {
+  border-color: var(--nl-accent);
+  color: var(--nl-accent);
+}
+
+html[data-interface=cards] #focus-mode-toggle:focus-visible {
+  outline: 2px solid var(--nl-accent);
+  outline-offset: 2px;
+}
+
+
+/* Keep the Focus control reachable when long terminal status labels fill the header. */
+html[data-interface=terminal] main > header .header-actions {
+  overflow-x: auto;
+  scrollbar-width: none;
+  justify-content: safe flex-end;
+}
+
+html[data-interface=terminal] main > header .header-actions > :is(.header-status-group, button) {
+  flex-shrink: 0;
+}
