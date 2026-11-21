@@ -10,6 +10,8 @@
     "workspace-confidence.css",
     "compact-workspace.js",
     "compact-workspace.css",
+    "focus-mode.js",
+    "focus-mode.css",
     "support-report.js",
     "support-report-ui.js",
     "contact-deletion-ui.js",
