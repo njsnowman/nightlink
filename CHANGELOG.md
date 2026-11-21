@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- Prepare the unpublished 0.8.28-rc.52 Focus Mode Windows candidate. Tracks [#218](https://github.com/njsnowman/nightlink/issues/218) and [candidate validation](releases/0.8.28-rc.52.md).
+
 - Add Focus Mode to hide the Cards sidebar or Terminal menu bar. Toggle it from the header or with Ctrl+B. The preference is stored locally. Tracks [#216](https://github.com/njsnowman/nightlink/issues/216).
 
 - Prepare the 0.8.28 stable Windows builds and validate the update and upgrade from 0.8.26. Tracks [#214](https://github.com/njsnowman/nightlink/issues/214) and the [stable release record](releases/0.8.28.md).
@@ -172,7 +174,7 @@
 
 - Add Signal Rail activity indicators to channel chats and DM windows, with distinct receive, sending, awaiting ACK, recipient confirmation, radio acceptance and error states. Respect reduced motion and suppress saved-history activity flashes. [#97](https://github.com/njsnowman/nightlink/issues/97).
 
-## 0.8.24 — 2026-10-27
+## 0.8.24 ï¿½ 2026-10-27
 
 - Animate awaiting-ACK badges with reduced-motion support; add a once-per-message completion sound with mute/quiet-hours controls. Restore native DM presentation for hidden windows and retain explicit open/focus intent during startup. [#96](https://github.com/njsnowman/nightlink/issues/96).
 
