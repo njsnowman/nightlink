@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- Restore each Operation's last map center and zoom from a separate local preference. Shared map styles and overlays remain independent. Tracks [#221](https://github.com/njsnowman/nightlink/issues/221).
+
 - Add Focus Mode to hide the Cards sidebar or Terminal menu bar. Toggle it from the header or with Ctrl+B. The preference is stored locally. Tracks [#216](https://github.com/njsnowman/nightlink/issues/216).
 
 - Prepare the 0.8.28 stable Windows builds and validate the update and upgrade from 0.8.26. Tracks [#214](https://github.com/njsnowman/nightlink/issues/214) and the [stable release record](releases/0.8.28.md).
