@@ -253,6 +253,7 @@
       "contact-book-ui.js",
       "contact-book.css",
       "operations.js",
+      "operations-map-view.js",
       "operations-ui.js",
       "operations.css",
       "rf-planning.js",
