@@ -7,6 +7,9 @@
 
 ## Unreleased
 
+- Clarify the Overview chat expansion action: label it “Expand chat” and open the full Messages page. Tracks [#218](https://github.com/njsnowman/nightlink/issues/218); see the [0.8.28-rc.54 candidate record](releases/0.8.28-rc.54.md).
+
+
 - Restore each Operation's last map center and zoom from a separate local preference. Shared map styles and overlays remain independent. Tracks [#221](https://github.com/njsnowman/nightlink/issues/221).
 
 - Add Focus Mode to hide the Cards sidebar or Terminal menu bar. Toggle it from the header or with Ctrl+B. The preference is stored locally. Tracks [#216](https://github.com/njsnowman/nightlink/issues/216).
@@ -174,7 +177,7 @@
 
 - Add Signal Rail activity indicators to channel chats and DM windows, with distinct receive, sending, awaiting ACK, recipient confirmation, radio acceptance and error states. Respect reduced motion and suppress saved-history activity flashes. [#97](https://github.com/njsnowman/nightlink/issues/97).
 
-## 0.8.24 � 2026-10-27
+## 0.8.24 � 2026-10-27
 
 - Animate awaiting-ACK badges with reduced-motion support; add a once-per-message completion sound with mute/quiet-hours controls. Restore native DM presentation for hidden windows and retain explicit open/focus intent during startup. [#96](https://github.com/njsnowman/nightlink/issues/96).
 
