@@ -32,7 +32,11 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
   await page.evaluate(()=>{const key='55'.repeat(32);live.contacts.push({key,name:'Far RPT',type:2,snr:null,lastAdvert:Math.floor(Date.now()/1000)});
    const k=Array.from({length:32},()=>0x55),frame=Uint8Array.from([0x88,-6*4&255,-100&255,(4<<2)|1,0,...k,1,0,0,0,...Array(64).fill(0),0x81]);
    ble.dispatchEvent(new CustomEvent('packet',{detail:frame}));renderNodes(true);});
-  assert.equal(await page.evaluate(()=>[...document.querySelectorAll('#node-table tr')].at(-1).querySelector('td.signal').getAttribute('aria-label')),'SNR -6 dB, 1 of 4 bars','advert-derived repeater SNR');assert.equal(rows[0].label,'SNR 7 dB, 4 of 4 bars');assert.equal(rows[2].label,'Signal unavailable');
+  assert.equal(await page.evaluate(()=>[...document.querySelectorAll('#node-table tr')].at(-1).querySelector('td.signal').getAttribute('aria-label')),'SNR -6 dB, 1 of 4 bars','advert-derived repeater SNR');
+  // Rows are matched by contact, not position: the favourites view removes non-favourite rows before readings are applied.
+  const fav=await page.evaluate(()=>{favoriteKeys=new Set(['55'.repeat(32)]);renderNodes(false);return [...document.querySelectorAll('#node-table tr')].filter(r=>r.querySelector('[data-node]')).map(r=>[r.querySelector('.node-name')?.textContent.replace(/\s+/g,' ').trim(),r.querySelector('td.signal')?.getAttribute('aria-label')]);});
+  assert.equal(fav.length,1,'only the favourite row: '+JSON.stringify(fav));assert.match(fav[0][0],/Far RPT/);assert.equal(fav[0][1],'SNR -6 dB, 1 of 4 bars','reading stays on its own node');
+  await page.evaluate(()=>{favoriteKeys=new Set();});assert.equal(rows[0].label,'SNR 7 dB, 4 of 4 bars');assert.equal(rows[2].label,'Signal unavailable');
   assert.deepEqual(errors,[],mode+' page errors');await page.close();
  }
  console.log('PASS command palette (Ctrl+P open, filter, Enter to channel, arrows/aria-activedescendant, Escape, empty state, contacts) and Nodes signal bars/relative age in terminal and cards. Synthetic only.');

@@ -19,10 +19,12 @@
  const core={bars,age,heard,merge};
  if(typeof module==='object'&&module.exports){module.exports=core;return;}
  root.NightlinkNodeSignal=core;const doc=root.document;
- function decorate(all){const L=typeof live==='object'?live:null;if(!L)return;const contacts=L.contacts.slice(0,all?L.contacts.length:4);const table=doc.querySelector('#node-table')?.closest('table');
-  if(table){table.classList.toggle('node-signal-on',!!all);const th=table.querySelectorAll('th')[2];if(th)th.textContent='LAST SNR';}
+ function decorate(all){const L=typeof live==='object'?live:null;if(!L)return;const table=doc.querySelector('#node-table')?.closest('table');
+  // The column shows on the Nodes page; Overview keeps its compact favourites list.
+  if(table){table.classList.toggle('node-signal-on',!!all||(typeof current==='string'&&current==='Nodes'));const th=table.querySelectorAll('th')[2];if(th)th.textContent='LAST SNR';}
   const seen=merge(heard(L.messages||[],L.contacts,root.MeshlineRoutes?.resolvePath,typeof messageContact==='function'?m=>{try{return messageContact(m);}catch{return null;}}:null),root.NightlinkHeardAdverts);
-  doc.querySelectorAll('#node-table tr').forEach((row,i)=>{const n0=contacts[i];if(!n0)return;const h=seen.get(n0.key),n=h?{...n0,snr:h.snr}:n0;const sig=row.querySelector('td.signal'),heard=row.children[3];
+  // Rows are matched by their contact index (data-node), not position: other modules remove, hide and filter rows.
+  doc.querySelectorAll('#node-table tr').forEach(row=>{const idx=row.querySelector('[data-node]')?.dataset.node;const n0=idx==null?null:L.contacts[Number(idx)];if(!n0)return;const h=seen.get(n0.key),n=h?{...n0,snr:h.snr}:n0;const sig=row.querySelector('td.signal'),heard=row.children[3];
    if(sig&&!sig.querySelector('.node-bars')){if(h)sig.textContent=h.snr+' dB';const b=bars(n.snr),w=doc.createElement('span');w.className='node-bars';w.dataset.level=String(b);w.setAttribute('aria-hidden','true');
     for(let k=1;k<=4;k++){const s=doc.createElement('span');s.className='node-bar'+(k<=b?' on':'');s.textContent='▂▄▆█'[k-1];w.append(s);}
     sig.prepend(w,' ');sig.setAttribute('aria-label',n.snr==null?'Signal unavailable':'SNR '+n.snr+' dB, '+b+' of 4 bars');if(h)sig.title='Heard directly by your radio '+age(h.at)+(h.source==='advert'?' (advert)':row.children[1]?.textContent==='Repeater'?' (final hop of a message)':' (direct packet)');}
