@@ -25,6 +25,9 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  assert.equal(await page.evaluate(()=>document.activeElement.textContent),'[O] Contact Book');await page.keyboard.press('ArrowUp');assert.match(await page.evaluate(()=>document.activeElement.textContent),/RX Log/);
  await page.keyboard.press('Escape');assert.equal(await page.evaluate(()=>document.activeElement.id),'term-more');assert.ok(await page.isHidden('#term-more-menu'));
  await page.click('#term-more');await page.click('#term-more-menu >> text=Contact Book');await page.waitForFunction(()=>current==='Contact Book');
+ // Propagation lives under More (owner, 2026-11-27); the RF indicator is not in the bottom bar.
+ assert.equal(await page.locator('.term-status-dock #propagation-indicator').count(),0);
+ await page.click('#term-more');await page.click('#term-more-menu >> text=Propagation');await page.waitForFunction(()=>document.querySelector('dialog[open]'));await page.keyboard.press('Escape');
  // Palette covers the strip's actions.
  await page.keyboard.press('Control+p');await page.keyboard.type('connection');assert.match(await page.locator('#cmd-palette [role=option]').first().textContent(),/Radio connection/);await page.keyboard.press('Escape');
  await page.evaluate(()=>NightlinkInterface.set('cards'));assert.equal(await page.evaluate(()=>document.querySelector('#connection').closest('main>header')!==null),true,'cards: controls back in strip');await page.evaluate(()=>NightlinkInterface.set('terminal'));assert.ok(await page.isVisible('.term-status-dock #connection'));

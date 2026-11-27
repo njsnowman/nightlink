@@ -7,6 +7,7 @@
 
 ## Unreleased
 
+- Terminal: the RF indicator is no longer in the bottom bar (owner request); the Propagation monitor stays under More in the menu bar.
 - Update notice no longer covers the message box (owner report, 2026-11-27). Terminal: it appears in the bottom status line as `UPD 0.8.28 ↗` (click to open the download; full text in the tooltip). Cards: it moved from the bottom right to the top right, under the header.
 - Terminal consolidation (owner choice): the top strip (Focus, breadcrumb, Internet, sync, RF, Inbox, Search, Compact) is hidden. Internet and RF state appear in the status line; the link field opens the radio connection; Focus mode, Compact, Activity inbox and Radio connection are Ctrl+P entries. Each page's keys join the bottom F-key bar without repeats. The chat status bar no longer repeats the clock, node name, link or RF. A More menu in the menu bar lists Contact Book, Mesh Planner, Backup, Propagation and RX Log.
 - Fix: Nodes LAST SNR showed `-` for repeaters. It now also uses the SNR your radio measured from the final hop of received messages (the repeater that delivered them), when that hop matches exactly one repeater. Values appear as messages arrive while connected; nodes not heard this way keep `-`.
