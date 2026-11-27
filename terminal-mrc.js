@@ -251,6 +251,35 @@
  }
  function rfLabel(){try{const s=window.NightlinkPropagationUI?.monitor?.summary?.();if(!s||s.state==='unavailable'||s.state==='disabled')return null;return {text:String(s.label||s.state).toUpperCase(),cls:s.state==='normal'?'mrc-ok':s.state==='insufficient-data'?'mrc-info':'mrc-pending'};}catch{return null;}}
 
+ // Append fast path (#207): when the only change in the open window is new messages at the end and the reader is at
+ // the bottom, add those rows to the existing scrollback instead of rebuilding ~300 rows and forcing a full layout.
+ // Anything else (window change, edits to shown messages, reactions, find, selection, local lines, other windows'
+ // unread counts, mentions) falls back to the full render.
+ const rowSig=m=>[m.id,m.status||'',m.phase||'',m.pathLength??'',m.snr??'',String(m.text??'').length,m.localReply?.id||''].join('|');
+ function renderSnapshot(win,rows,list){state.lastRender={win:win.id,ids:rows.map(m=>m.id),sigs:new Map(rows.map(m=>[m.id,rowSig(m)])),winSig:list.map(w=>w.id+':'+(w.kind==='status'?0:unread(w.id))).join(','),mentions:live.messages.filter(m=>m.conversation===win.id&&isMention(m)).length,local:(state.local.get(win.id)||[]).length};}
+ function fastAppend(list,win,changed,session){
+  const last=state.lastRender,log=doc.querySelector('#mrc-log');
+  if(!last||changed||last.win!==win.id||win.kind==='status'||!log?.isConnected||log.dataset.tailWindow!=='true'||state.find.open||state.selectedMessage||state.restoring)return false;
+  if(log.scrollHeight-log.scrollTop-log.clientHeight>=24&&!session.position.bottom)return false;
+  if((state.local.get(win.id)||[]).length!==last.local)return false;
+  const all=live.messages.filter(m=>m.conversation===win.id),rows=all.slice(Math.max(0,all.length-MAX_ROWS));
+  const known=new Set(last.ids),fresh=rows.filter(m=>!known.has(m.id));if(!fresh.length)return false;
+  const kept=rows.slice(0,rows.length-fresh.length);if(fresh.some((m,i)=>rows[kept.length+i]!==m))return false;
+  if(kept.some(m=>last.sigs.get(m.id)!==rowSig(m)))return false;
+  const keptIds=kept.map(m=>m.id),tail=last.ids.slice(last.ids.length-keptIds.length);if(keptIds.join('\n')!==tail.join('\n'))return false;
+  if(fresh.some(m=>window.NightlinkReactions?.parse?.(String(m.text??''),m.kind==='direct')))return false;
+  const winSig=list.map(w=>w.id+':'+(w.kind==='status'||w.id===win.id?0:unread(w.id))).join(','),lastSig=last.winSig.split(',').map(x=>x.startsWith(win.id+':')?win.id+':0':x).join(',');if(winSig!==lastSig)return false;
+  if(live.messages.filter(m=>m.conversation===win.id&&isMention(m)).length!==last.mentions)return false;
+  // Remove rows that scrolled out of the 300-row window, then append the new ones (with a day-change line when needed).
+  for(const id of last.ids.slice(0,last.ids.length-keptIds.length))log.querySelectorAll('[data-message-id="'+CSS.escape(id)+'"],[data-reaction-delivery-for="'+CSS.escape(id)+'"]').forEach(e=>e.remove());
+  let prev=kept.at(-1)||null;
+  for(const m of fresh){const d=new Date(m.timestamp*1000).toDateString();if(prev&&new Date(prev.timestamp*1000).toDateString()!==d){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));log.append(line);}log.append(messageLine(m));prev=m;}
+  const count=log.querySelectorAll('.mrc-banner')[2]?.lastChild;if(count)count.textContent=rows.length+' stored message'+(rows.length===1?'':'s')+' · '+live.contacts.length+' nodes known';
+  const clock=doc.querySelector('#mrc .mrc-statusbar .mrc-field strong');if(clock)clock.textContent=hhmm(nowSeconds());
+  state.restoring=true;log.scrollTop=log.scrollHeight;state.restoring=false;captureReading(log);updateJump(log,win);markRead(win,log);
+  window.NightlinkReactionUI?.decorate(log,rows,live.messages,{selfName:live.identity?.name||'',terminal:true});
+  renderSnapshot(win,rows,list);state.fastAppends=(state.fastAppends||0)+1;return true;
+ }
  function render(){
   const host=doc.querySelector('#alternate');
   if(!host)return;
@@ -267,6 +296,7 @@
   if(state.find.scope&&state.find.scope!==findScope(win)){state.find.open=false;state.find.query='';state.find.activeId=null;clearTimeout(state.find.timer);if(state.find.input)state.find.input.value='';}
   state.readingWin=win.id;
   if(!session.boundary&&(changed||session.position.manual||doc.hidden||!doc.hasFocus())){try{session.boundary=ensureAttention().unread(live.messages,win.id)[0]?.id||null;}catch{}}
+  if(root?.isConnected&&fastAppend(list,win,changed,session))return;
   if(!root){root=el('section');root.id='mrc';root.className='mrc';root.setAttribute('aria-label','Mesh Relay Chat');}
   for(const child of [...root.children])if(child!==state.mapPanel)child.remove();
   if(!state.mapPanel?.isConnected)root.append(mapPanel());
@@ -368,6 +398,7 @@
   state.restoring=false;captureReading(sl);updateJump(sl,win);
   markRead(win,sl);
   if(reactionRows.length)window.NightlinkReactionUI?.decorate(sl,reactionRows,live.messages,{selfName:live.identity?.name||'',terminal:true});
+  if(win.kind!=='status'&&sl.dataset.tailWindow==='true')renderSnapshot(win,reactionRows,list);else state.lastRender=null;
  }
  function updateCount(){const input=state.form?.querySelector('#mrc-input'),count=state.count;if(!input||!count)return;const v=input.value,n=v.startsWith('/')?bytes(commandPayload(v)||''):bytes(v);count.textContent=String(n);count.classList.toggle('mrc-over',n>LIMIT);}
  function markRead(win,log){

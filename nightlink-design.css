@@ -22,9 +22,9 @@ html:root:root:root:root body aside nav button:not(.active):hover{background:var
 html:root:root:root:root body :is(.header-control,.header-search,.header-inbox,.connection,.compact-toggle){border-radius:9px;border-color:var(--nl-edge);box-shadow:none}
 /* Real controls, including secondary actions that previously appeared as plain text. */
 html:root:root:root:root body :is(.panel-heading,.radio-panel,[id=radio-workbench],[id=radio-status-panel],.switchboard-settings-page,.history-filters,.diagnostics-tabs,.history-results-heading,.conversation-tools,.network-source-bar,.dm-inbox,.diagnostics-actions,.backup-actions,.delete-contact-actions,.contact-profile-actions,.tools-actions,.echo-command-shortcuts) button,
-html:root:root:root:root body dialog:not(:has(.radio-tools-hub)) button:not(.message-reply-target):not(.contact-avatar):not(.dm-person):not(.reaction-chip){min-height:38px;padding:9px 13px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control);background:var(--nl-surface);color:var(--nl-copy);font-family:inherit;font-weight:550;line-height:1.35;white-space:normal;box-shadow:0 1px 2px #0002;cursor:pointer;transition:background .15s,border-color .15s}
+html:root:root:root:root body dialog:not(.nlh-8) button:not(.message-reply-target):not(.contact-avatar):not(.dm-person):not(.reaction-chip){min-height:38px;padding:9px 13px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control);background:var(--nl-surface);color:var(--nl-copy);font-family:inherit;font-weight:550;line-height:1.35;white-space:normal;box-shadow:0 1px 2px #0002;cursor:pointer;transition:background .15s,border-color .15s}
 html:root:root:root:root body :is(.panel-heading,.radio-panel,[id=radio-workbench],[id=radio-status-panel],.switchboard-settings-page,.history-filters,.conversation-tools,.network-source-bar,.dm-inbox,.tools-actions,.echo-command-shortcuts) button:hover:not(:disabled),
-html:root:root:root:root body dialog:not(:has(.radio-tools-hub)) button:hover:not(:disabled){border-color:color-mix(in srgb,var(--nl-accent) 60%,var(--nl-edge));background:var(--nl-hover);color:var(--nl-copy)}
+html:root:root:root:root body dialog:not(.nlh-8) button:hover:not(:disabled){border-color:color-mix(in srgb,var(--nl-accent) 60%,var(--nl-edge));background:var(--nl-hover);color:var(--nl-copy)}
 html:root:root:root:root body :is(button.primary,#live-dm,#chat-form>button:not(.text-art-toggle),.dm-compose button.primary){background:var(--nl-accent);border-color:var(--nl-accent);color:#101410;border-radius:var(--nl-radius-control);font-weight:650;box-shadow:none}
 html:root:root:root:root body :is(button.primary,#live-dm,#chat-form>button:not(.text-art-toggle),.dm-compose button.primary):hover:not(:disabled){background:color-mix(in srgb,var(--nl-accent) 86%,white);color:#101410}
 html:root:root:root:root body :is(button,input,select,textarea):disabled{cursor:not-allowed;opacity:.5;box-shadow:none}
@@ -38,9 +38,9 @@ html:root:root:root:root body :is(input:not([type=checkbox]):not([type=radio]):n
 html:root:root:root:root body :is(input,select,textarea)::placeholder{color:var(--nl-muted);opacity:.75}
 html:root:root:root:root body :is(input[type=checkbox],input[type=radio]){accent-color:var(--nl-accent)}
 /* Every menu and dialog uses the same surface, separator and action vocabulary. */
-html:root:root:root:root body dialog:not(:has(.radio-tools-hub)){padding:24px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-dialog);background:var(--bg,#000);color:var(--nl-copy);box-shadow:0 24px 100px #0009;max-height:calc(100dvh - 32px);overflow-x:hidden}
-html:root:root:root:root body dialog:not(:has(.radio-tools-hub)) .dialog-heading{margin:0 0 20px;padding:0 0 16px;border-bottom:1px solid var(--nl-edge);background:transparent;align-items:center}
-html:root:root:root:root body dialog:not(:has(.radio-tools-hub)) .dialog-heading h2{margin:0;font-weight:650;font-size:20px;letter-spacing:-.4px}
+html:root:root:root:root body dialog:not(.nlh-8){padding:24px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-dialog);background:var(--bg,#000);color:var(--nl-copy);box-shadow:0 24px 100px #0009;max-height:calc(100dvh - 32px);overflow-x:hidden}
+html:root:root:root:root body dialog:not(.nlh-8) .dialog-heading{margin:0 0 20px;padding:0 0 16px;border-bottom:1px solid var(--nl-edge);background:transparent;align-items:center}
+html:root:root:root:root body dialog:not(.nlh-8) .dialog-heading h2{margin:0;font-weight:650;font-size:20px;letter-spacing:-.4px}
 html:root:root:root:root body dialog .dialog-heading #close-dialog{display:grid;place-items:center;flex:0 0 36px;width:36px;min-height:36px;height:36px;padding:0;border:1px solid var(--nl-edge);border-radius:10px;background:var(--nl-surface);color:var(--nl-muted);font-size:16px}
 html:root:root:root:root body dialog :is(p,label){line-height:1.6}
 html:root:root:root:root body :is(.message-more-actions,#contact-actions,.contact-more-actions,.conversation-browser-item,.ble-device){border:1px solid var(--nl-edge);border-radius:12px;background:var(--nl-surface);color:var(--nl-copy);box-shadow:0 8px 24px #0003}
@@ -76,7 +76,7 @@ html:root:root:root:root body.security-lock button{min-height:44px;border:1px so
 html:root:root:root:root body.security-lock #security-unlock-button{background:var(--nl-accent);color:#101410;border-color:var(--nl-accent)}
 html:root:root:root:root body.security-lock #security-quit{background:transparent;color:var(--nl-muted)}
 @media(max-height:700px){html:root:root:root:root body .panel-heading{min-height:40px;padding-inline:12px}html:root:root:root:root body #overview>.stats article{padding:8px 10px}html:root:root:root:root body :is(.conversation-tools,.panel-heading,.radio-workbench-tabs,.network-source-bar) button{min-height:32px;padding:6px 9px}html:root:root:root:root body .switchboard-settings-page{padding:16px}}
-@media(max-width:650px){html:root:root:root:root body dialog:not(:has(.radio-tools-hub)){padding:18px}html:root:root:root:root body .switchboard-settings-page{padding:14px}html:root:root:root:root body .switchboard-settings-page>label{padding:12px}html:root:root:root:root body .contact-profile-hero{padding:14px;gap:12px}html:root:root:root:root body .panel-heading{padding-inline:12px}}
+@media(max-width:650px){html:root:root:root:root body dialog:not(.nlh-8){padding:18px}html:root:root:root:root body .switchboard-settings-page{padding:14px}html:root:root:root:root body .switchboard-settings-page>label{padding:12px}html:root:root:root:root body .contact-profile-hero{padding:14px;gap:12px}html:root:root:root:root body .panel-heading{padding-inline:12px}}
 @media(prefers-reduced-motion:reduce){html:root:root:root:root body button{transition:none}}
 
 /* High-specificity legacy components explicitly adopt the same shared tokens. */
@@ -100,7 +100,7 @@ html:root:root:root:root body button.nl-menu-action.contact-delete-action{color:
 html:root:root:root:root body .nl-menu-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 20px;width:20px;height:20px;color:var(--nl-accent)}
 html:root:root:root:root body button.contact-delete-action .nl-menu-icon{color:inherit}
 html:root:root:root:root body .nl-menu-icon svg{display:block;width:20px;height:20px}
-html:root:root:root:root body dialog .dialog-heading h2:has(.nl-submenu-mark){display:flex;align-items:center;gap:12px;min-width:0}
+html:root:root:root:root body dialog .dialog-heading h2.nlh-9{display:flex;align-items:center;gap:12px;min-width:0}
 html:root:root:root:root body .nl-submenu-mark{display:inline-grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border:1px solid color-mix(in srgb,var(--nl-accent) 20%,var(--nl-edge));border-radius:10px;background:var(--nl-hover);color:var(--nl-accent)}
 html:root:root:root:root body .nl-submenu-mark svg{width:20px;height:20px;display:block}
 html:root:root:root:root body dialog :is(details:not(.message-more),fieldset){margin:14px 0;border:1px solid var(--nl-edge);border-radius:12px;background:var(--nl-surface);padding:14px 16px;min-width:0}
@@ -121,7 +121,7 @@ html:root:root:root:root body .identity-warning{border-color:#866338;color:#ffd1
 html:root:root:root:root body #contact-actions .contact-delete-action:hover{background:#241216;border-color:#86444f}
 @media(max-width:650px){html:root:root:root:root body dialog :is(details:not(.message-more),fieldset){padding:12px}html:root:root:root:root body button.nl-menu-action{min-height:42px;padding:10px}html:root:root:root:root body .nl-submenu-mark{flex-basis:32px;width:32px;height:32px}}
 
-html:root:root:root:root body .radio-tools:has(#cli-output){height:min(560px,calc(100dvh - 180px));min-height:140px}
+html:root:root:root:root body .radio-tools.nlh-10{height:min(560px,calc(100dvh - 180px));min-height:140px}
 html:root:root:root:root body button.nl-menu-action{min-width:0;overflow-wrap:anywhere}
 
 html:root:root:root:root body #contact-actions{width:min(280px,calc(100vw - 64px));max-height:min(440px,calc(100dvh - 180px));overflow:auto}
@@ -145,7 +145,7 @@ html:root:root:root:root body dialog.ble-sheet.link-console #ble-help{color:var(
 @media(max-height:650px){html:root:root:root:root body dialog.ble-sheet.link-console[open]{padding:18px;gap:12px}}
 
 /* Main Radio landing menu follows the approved grouped action-card layout. */
-html:root:root:root:root body #alternate.nl-radio-page:has(#radio-workbench){display:flex;flex-direction:column;gap:24px;overflow-y:auto;overflow-x:hidden;scroll-behavior:auto}
+html:root:root:root:root body #alternate.nl-radio-page.nlh-11{display:flex;flex-direction:column;gap:24px;overflow-y:auto;overflow-x:hidden;scroll-behavior:auto}
 #radio-page-hub{display:flex;flex-direction:column;gap:24px;min-width:0;flex:0 0 auto}
 html:root:root:root:root body #radio-page-hub #radio-status-panel{padding:22px 24px;border-radius:14px;background:linear-gradient(115deg,var(--nl-hover),var(--nl-surface));width:100%;margin:0}
 .nl-radio-identity{display:flex;align-items:center;gap:16px;min-width:0}

@@ -50,6 +50,10 @@ Terminal chat readability: message bodies start on a separate, consistently alig
 
 Terminal chat map: the right side of MRC contains a compact OKI Mesh CoreScope live map instead of the node listing. Use a double blue ANSI-style frame, cyan border title and a quiet external-feed status line; no provider chooser, CoreScope navigation, packet list or settings appear there. The map is approximately 280 x 190px on desktop. At widths up to 1100px it sits above scrollback with a 140px map height and starts collapsed in a fresh compact window. Preserve the iframe across chat renders; unload it when collapsed, offline, hidden by provider preference, outside Messages or outside terminal mode. Map-only presentation is desktop-only and is applied only to the explicitly marked allowlisted CoreScope iframe. Keep map attribution. The remote page must signal readiness before the iframe is visible; external UI changes or timeouts must not expose the full CoreScope interface.
 
+## Stylesheet performance (#207)
+
+Do not use `:has()` in stylesheets. Rules anchored on page ancestors made Chromium restyle the whole document on every DOM insertion. To express a parent-depends-on-child state, add a row to `has-state-rules.js` (class, anchor selector, condition) and use that class in the CSS, or set a class from the owning module. `has-state.js` keeps table classes current; `has-state.test.cjs` fails if a stylesheet contains `:has(`. `:has()` in JavaScript `querySelector` calls is unaffected.
+
 ## Card interface (alternate)
 
 

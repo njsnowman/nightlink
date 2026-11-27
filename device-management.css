@@ -1,6 +1,6 @@
 /* Scoped Device Center surfaces and unmistakable controls. */
-html body #dialog:has(.device-center){width:min(1000px,calc(100vw - 32px));max-width:1000px;border:1px solid var(--line,#343438);border-radius:18px;padding:24px;background:var(--bg,#101411)}
-html body #dialog:has(.device-center) .dialog-heading{margin-bottom:16px;padding:0 0 16px;border-bottom:1px solid var(--line,#343438)}
+html body #dialog.nlh-1{width:min(1000px,calc(100vw - 32px));max-width:1000px;border:1px solid var(--line,#343438);border-radius:18px;padding:24px;background:var(--bg,#101411)}
+html body #dialog.nlh-1 .dialog-heading{margin-bottom:16px;padding:0 0 16px;border-bottom:1px solid var(--line,#343438)}
 .device-center{max-width:960px;min-width:0}.device-intro{margin:0 0 20px;color:var(--muted,#b9b9bf);line-height:1.6;max-width:74ch}
 .device-connection,.device-center fieldset,#device-review-panel,.device-center details{background:var(--panel,#171c18);border:1px solid var(--line,#343438);border-radius:12px;padding:18px;min-width:0}
 .device-connection h3{margin:0 0 14px;font-size:14px;font-weight:650}.device-target,#device-auth{display:flex;align-items:end;gap:10px;flex-wrap:wrap}.device-target>label{flex:1 1 260px}.device-center label{display:flex;flex-direction:column;gap:8px;min-width:0;color:var(--muted,#b9b9bf);font-size:12px;font-weight:550}
@@ -21,19 +21,19 @@ html body #dialog .device-center :is(input,select){min-height:42px;width:100%;pa
 #device-review-panel{margin-top:20px;border-color:var(--accent,var(--lime,#c0ed83))}#device-review-panel h3{margin:0 0 10px}#device-review-panel p{line-height:1.6;color:var(--muted,#b9b9bf)}#device-review-panel>button{margin:16px 8px 0 0}.device-center table{width:100%;table-layout:fixed;border-collapse:collapse}.device-center th,.device-center td{padding:12px 8px;text-align:left;overflow-wrap:anywhere;border-bottom:1px solid var(--line,#343438);font-size:12px}.device-center th{color:var(--muted,#b9b9bf);font-weight:550}.device-center td:last-child{color:var(--accent,var(--lime,#c0ed83))}
 #device-results,#device-usb-output{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;padding:14px;background:var(--panel,#171c18);border:1px solid var(--line,#343438);border-radius:8px;font-size:12px;line-height:1.7}#device-results:empty,#device-usb-output:empty{display:none}
 .device-center details{margin-top:18px;color:var(--muted,#b9b9bf);font-size:12px;line-height:1.6}.device-center summary{cursor:pointer;color:var(--text,#eee);font-weight:600}.device-center details p:last-child{margin-bottom:0}#device-usb-command-form{display:flex;align-items:end;gap:10px}#device-usb-command-form label{flex:1}
-@media(max-width:800px){html body #dialog:has(.device-center){padding:18px}.device-target>label{flex-basis:100%}.device-target>button{flex:1 1 150px}.device-connection,.device-center fieldset,.device-center details{padding:14px}.device-intro{font-size:12px}.device-actions>button{flex:1 1 180px}}
+@media(max-width:800px){html body #dialog.nlh-1{padding:18px}.device-target>label{flex-basis:100%}.device-target>button{flex:1 1 150px}.device-connection,.device-center fieldset,.device-center details{padding:14px}.device-intro{font-size:12px}.device-actions>button{flex:1 1 180px}}
 @media(max-width:560px){.device-center fieldset{grid-template-columns:1fr}.device-flow{gap:4px}.device-flow span{flex-basis:calc(50% - 4px)}#device-usb-command-form{flex-wrap:wrap}#device-usb-command-form label{flex-basis:100%}}
 @media(prefers-reduced-motion:reduce){html body #dialog .device-center button{transition:none}}
 
 /* Override the legacy terminal dialog's full-width controls and label margins. */
 html body #dialog .device-center button{width:auto;margin:0;min-width:0}
 html body #dialog .device-center label{margin:0}
-.device-center fieldset>label:has([data-setting=name]),.device-center fieldset>label:has([data-setting=owner]){grid-column:1/-1}
+.device-center fieldset>label.nlh-2,.device-center fieldset>label.nlh-3{grid-column:1/-1}
 
 /* Balanced axes: consistent control centers, equal action columns and centered headings. */
-html body #dialog:has(.device-center) .dialog-heading{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;column-gap:10px}
-html body #dialog:has(.device-center) .dialog-heading h2{grid-column:2;text-align:center;margin:0}
-html body #dialog:has(.device-center) .dialog-heading>button{grid-column:3;justify-self:center;align-self:center;margin:0;width:42px;height:42px;display:grid;place-items:center;padding:0}
+html body #dialog.nlh-1 .dialog-heading{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;column-gap:10px}
+html body #dialog.nlh-1 .dialog-heading h2{grid-column:2;text-align:center;margin:0}
+html body #dialog.nlh-1 .dialog-heading>button{grid-column:3;justify-self:center;align-self:center;margin:0;width:42px;height:42px;display:grid;place-items:center;padding:0}
 .device-center{margin-inline:auto}.device-intro{margin-inline:auto;text-align:center}
 .device-connection h3,.device-center label,.device-identity,#device-permission,#device-status,#device-summary,#device-review-panel h3,.device-review-key{text-align:center}
 .device-target{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;justify-items:stretch;gap:12px}

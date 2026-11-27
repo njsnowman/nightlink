@@ -108,6 +108,6 @@ button.propagation-danger{border-color:var(--propagation-red)!important;color:va
 .propagation-settings select{flex:0 0 auto;min-width:180px}
 .propagation-settings-actions button{min-height:38px;padding:9px 13px;border:1px solid var(--nl-edge,#303030);border-radius:9px;background:var(--nl-surface,#080808);color:var(--nl-copy,#eee);font:inherit}
 @media(max-width:640px){.propagation-settings label{flex-wrap:wrap}.propagation-settings select{min-width:0;width:100%}}
-dialog:has(.propagation-panel){width:min(920px,calc(100vw - 32px));max-width:920px}
+dialog.nlh-16{width:min(920px,calc(100vw - 32px));max-width:920px}
 .propagation-panel{width:100%;max-width:none}
 @media(max-width:640px){.propagation-readouts{grid-template-columns:repeat(2,minmax(0,1fr))}.propagation-readout:last-child{grid-column:1/-1}}
