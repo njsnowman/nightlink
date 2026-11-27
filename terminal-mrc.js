@@ -259,7 +259,7 @@
  function renderSnapshot(win,rows,list){state.lastRender={win:win.id,ids:rows.map(m=>m.id),sigs:new Map(rows.map(m=>[m.id,rowSig(m)])),winSig:list.map(w=>w.id+':'+(w.kind==='status'?0:unread(w.id))).join(','),mentions:live.messages.filter(m=>m.conversation===win.id&&isMention(m)).length,local:(state.local.get(win.id)||[]).length};}
  function fastAppend(list,win,changed,session){
   const last=state.lastRender,log=doc.querySelector('#mrc-log');
-  if(!last||changed||last.win!==win.id||win.kind==='status'||!log?.isConnected||log.dataset.tailWindow!=='true'||state.find.open||state.selectedMessage||state.restoring)return false;
+  if(!last||changed||last.win!==win.id||win.kind==='status'||!log?.isConnected||log.dataset.tailWindow!=='true'||state.find.open||state.selectedMessage||state.restoring||doc.hidden||!doc.hasFocus()||session.boundary)return false;
   if(log.scrollHeight-log.scrollTop-log.clientHeight>=24&&!session.position.bottom)return false;
   if((state.local.get(win.id)||[]).length!==last.local)return false;
   const all=live.messages.filter(m=>m.conversation===win.id),rows=all.slice(Math.max(0,all.length-MAX_ROWS));
