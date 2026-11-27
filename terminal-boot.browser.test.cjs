@@ -5,10 +5,10 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
   const context=await browser.newContext({viewport:{width:options.width||1320,height:options.height||860},reducedMotion:options.reduced?'reduce':'no-preference'});
   await context.addInitScript(options=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});if(options.screenOff)localStorage.setItem('nightlink.bootScreen','off');if(options.off)localStorage.setItem('nightlink.bootSound','off');if(options.quiet)localStorage.setItem('nightlink.desktop',JSON.stringify({quietEnabled:true,start:'00:00',end:'00:00'}));if(options.cards)localStorage.setItem('nightlink.interface','cards');
    window.__startupAudio=null;window.Audio=class extends EventTarget{
-    constructor(src){super();this.src=src;this.currentTime=0;this.duration=6.1;this.paused=true;this.ended=false;this.calls=0;if(src==='startup-modem-laser.wav')window.__startupAudio=this;}
-    play(){this.calls++;if(this.src==='startup-modem-laser.wav'){if(options.block&&this.calls===1)return Promise.reject(new DOMException('Gesture required','NotAllowedError'));if(options.fault)return Promise.reject(new Error('Decode failed'));}this.paused=false;this.dispatchEvent(new Event('playing'));return Promise.resolve();}
+    constructor(src){super();this.src=src;this.currentTime=0;this.duration=4.2;this.paused=true;this.ended=false;this.calls=0;if(src==='startup-modem.wav')window.__startupAudio=this;}
+    play(){this.calls++;if(this.src==='startup-modem.wav'){if(options.block&&this.calls===1)return Promise.reject(new DOMException('Gesture required','NotAllowedError'));if(options.fault)return Promise.reject(new Error('Decode failed'));}this.paused=false;this.dispatchEvent(new Event('playing'));return Promise.resolve();}
     pause(){this.paused=true;this.dispatchEvent(new Event('pause'));}
-    end(){this.currentTime=6.1;this.paused=true;this.ended=true;this.dispatchEvent(new Event('ended'));}
+    end(){this.currentTime=4.2;this.paused=true;this.ended=true;this.dispatchEvent(new Event('ended'));}
    };
   },options);
   await context.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();const f=u.pathname==='/'?'index.html':u.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,f)),contentType:f.endsWith('.js')?'text/javascript':f.endsWith('.css')?'text/css':f.endsWith('.wav')?'audio/wav':'text/html'});}catch{await route.fulfill({status:404,body:''});}});

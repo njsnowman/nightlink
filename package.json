@@ -247,7 +247,7 @@
       "terminal-mrc.js",
       "terminal-windows.js",
       "terminal-boot.js",
-      "startup-modem-laser.wav",
+      "startup-modem.wav",
       "terminal-sound.js",
       "contact-book.js",
       "contact-book-ui.js",

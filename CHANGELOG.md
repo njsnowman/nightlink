@@ -8,6 +8,7 @@
 ## Unreleased
 
 - Terminal chat (MRC): received messages show the hop count and SNR on the nick line as one button to the message path, instead of a separate dim line. The hop badge is colour-coded by distance (direct green, 1-2 cyan, 3-4 yellow, 5+ magenta) and SNR by quality (>= 5 dB green, 0-5 yellow, < 0 red); the text always states the value. Messages get more vertical space, an 88-character line limit and a thin left rule (received blue, own grey, mention yellow). Own messages keep the delivery line. Tracks [#213](https://github.com/njsnowman/nightlink/issues/213).
+- Startup sound: modem dial-up only (`startup-modem.wav`, 4.2 s): dial tone, touch-tone dialling, ringback, answer tone and handshake, then a fade-out. The rising tone and laser shot are removed. Settings and the startup screen now say "Modem dial-up". Tracks [#223](https://github.com/njsnowman/nightlink/issues/223).
 - Restore each Operation's last map center and zoom from a separate local preference. Shared map styles and overlays remain independent. Tracks [#221](https://github.com/njsnowman/nightlink/issues/221).
 
 - Add Focus Mode to hide the Cards sidebar or Terminal menu bar. Toggle it from the header or with Ctrl+B. The preference is stored locally. Tracks [#216](https://github.com/njsnowman/nightlink/issues/216).

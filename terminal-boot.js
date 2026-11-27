@@ -1,8 +1,8 @@
-/* BBS introduction: approved modem-to-laser audio gates dismissal until media ends.
+/* BBS introduction: approved modem dial-up audio gates dismissal until media ends.
    Presentation only: no connections or navigation; actual radio state is separate. */
 (function(root){
  'use strict';
- const KEY='nightlink.bootScreen',SOUND_KEY='nightlink.bootSound',SOUND_FILE='startup-modem-laser.wav';
+ const KEY='nightlink.bootScreen',SOUND_KEY='nightlink.bootSound',SOUND_FILE='startup-modem.wav';
  const enabled=s=>{try{return s?.getItem(KEY)!=='off';}catch{return true;}};
  const soundEnabled=s=>{try{return s?.getItem(SOUND_KEY)!=='off';}catch{return true;}};
  const setEnabled=(s,on)=>{try{s?.setItem(KEY,on?'on':'off');}catch{}};
@@ -17,8 +17,8 @@
   label.append(box,' Start-up screen',hint);const iface=grid.querySelector('.interface-setting:not(#boot-screen-setting)');if(iface)iface.after(label);else grid.prepend(label);
   const audioLabel=doc.createElement('label'),audioBox=doc.createElement('input');audioLabel.className='accent-setting interface-setting';audioBox.id='boot-sound';audioBox.type='checkbox';audioBox.checked=soundEnabled(root.localStorage);
   audioBox.onchange=()=>{try{root.localStorage.setItem(SOUND_KEY,audioBox.checked?'on':'off');}catch{}};
-  const audioHint=doc.createElement('small');audioHint.textContent='Modem connection transforms into a laser shot. On by default; explicit sound-off and quiet hours are respected.';
-  audioLabel.append(audioBox,' Modem-to-laser startup sound',audioHint);label.after(audioLabel);
+  const audioHint=doc.createElement('small');audioHint.textContent='Classic modem dial-up and handshake. On by default; explicit sound-off and quiet hours are respected.';
+  audioLabel.append(audioBox,' Modem dial-up startup sound',audioHint);label.after(audioLabel);
  };}}
  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',installSettings,{once:true});else installSettings();
  let played=false;try{played=root.sessionStorage?.getItem(KEY+'.played')==='1';}catch{}
@@ -53,7 +53,7 @@
   audioDone=false;
   try{audio=new root.Audio(SOUND_FILE);audio.preload='auto';
    audio.addEventListener('ended',()=>completeAudio());audio.addEventListener('error',()=>completeAudio(true));
-   audio.addEventListener('playing',()=>{awaitingGesture=false;skip.textContent='Playing modem → laser · waiting for sound to finish';});
+   audio.addEventListener('playing',()=>{awaitingGesture=false;skip.textContent='Playing modem dial-up · waiting for sound to finish';});
    audio.addEventListener('pause',()=>{if(!done&&!audioDone&&!audio.ended){awaitingGesture=true;skip.textContent='[click / any key] resume startup sound';}});
    let lastTime=0,lastProgress=performance.now();
    watchdog=setInterval(()=>{if(done||audioDone)return;const now=performance.now();if(awaitingGesture){lastProgress=now;return;}if(audio.currentTime>lastTime){lastTime=audio.currentTime;lastProgress=now;}else if(now-lastProgress>10000)completeAudio(true);},1000);
@@ -68,7 +68,7 @@
  function start(){radioState();if(typeof radioSession==='object')radioSession.addEventListener('sync',radioState);if(typeof ble==='object')ble.addEventListener('state',radioState);
   const title=line('NIGHTLINK · MeshCore companion terminal','boot-title');
   try{root.meshlineUpdates?.info?.().then(info=>{if(info?.version&&!done)title.textContent='NIGHTLINK v'+info.version+' · MeshCore companion terminal';}).catch(()=>{});}catch{}
-  if(reduced){line('LOCAL TERMINAL · MODEM → LASER','boot-info');if(root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));progress.textContent='Local console ready';visualDone=true;}
+  if(reduced){line('LOCAL TERMINAL · MODEM DIAL-UP','boot-info');if(root.NightlinkTerminalLogo)logo.append(NightlinkTerminalLogo.logo(doc,'Nightlink'));progress.textContent='Local console ready';visualDone=true;}
   else{
   later(150,()=>line('ATZ','boot-command',true));later(420,()=>line('OK','boot-ok'));later(650,()=>line('ATDT NIGHTLINK','boot-command',true));later(1150,()=>line('DIALING . . .','boot-info'));
   later(1550,()=>line('~ ▂▄▆█▆▄▂ ~  negotiating terminal display','boot-info'));later(2200,()=>line('ANSI / VGA 16-COLOR','boot-info'));later(2750,()=>line('LOCAL TERMINAL READY','boot-ok'));
