@@ -30,3 +30,7 @@ test('zero-hop adverts give an exact-key SNR; relayed or other packet types do n
  const m=S.merge(new Map([['a',{snr:1,at:10}],['b',{snr:2,at:50}]]),new Map([['a',{snr:5,at:20}],['b',{snr:9,at:40}],['c',{snr:3,at:5}]]));
  assert.deepEqual([m.get('a'),m.get('b').snr,m.get('c').source],[{snr:5,at:20,source:'advert'},2,'advert']);
 });
+test('nodes without a direct reading show relayed hops or route length',()=>{
+ assert.equal(S.relayLabel({hops:2},null),'relayed · 2 hops');assert.equal(S.relayLabel({hops:1},3),'relayed · 1 hop');
+ assert.equal(S.relayLabel(null,3),'route · 3 hops');assert.equal(S.relayLabel(null,255),'—');assert.equal(S.relayLabel(null,null),'—');assert.equal(S.relayLabel({hops:0},0),'—');
+});

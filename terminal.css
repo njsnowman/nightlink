@@ -712,3 +712,4 @@ html:root:root:root:root:root[data-interface=terminal] body .feedback-dialog :is
 html:root:root:root:root:root[data-interface=terminal] body .feedback-dialog :is(input,textarea):focus-visible{outline:2px solid var(--t-white);outline-offset:1px}
 html:root:root:root:root:root[data-interface=terminal] body :is(.feedback-actions,.first-run-nav,.first-run-connect,.first-run-help,.first-run-feedback)>button{width:auto !important;flex:none;margin:0}
 html:root:root:root:root:root[data-interface=terminal] body .first-run-nav>.first-run-skip{margin-right:auto !important}
+html:root:root:root:root:root[data-interface=terminal] body td.signal.node-relayed{color:var(--t-grey)}
