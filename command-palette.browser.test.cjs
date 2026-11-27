@@ -24,9 +24,10 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
   // Contacts and pages are listed.
   await page.keyboard.press('Control+p');await page.keyboard.type('hill');assert.match(await page.locator('#cmd-palette [role=option]').first().textContent(),/Hilltop RPT.*Contact/);await page.keyboard.press('Escape');
   // Nodes: bars and relative age.
-  await page.evaluate(()=>{view('Nodes');renderNodes(true);});
+  await page.evaluate(()=>{const c=live.channels[0];live.contacts.push({key:'44'.repeat(32),name:'Ridge RPT',type:2,snr:null,lastAdvert:Math.floor(Date.now()/1000)-60});
+   live.messages.push({id:'r1',conversation:conversationId(c),target:c,kind:'channel',sender:'X',text:'via ridge',timestamp:Math.floor(Date.now()/1000)-30,status:'Received',observedRoute:{path:['44'],direct:false,snr:2.5,rssi:-90}});view('Nodes');renderNodes(true);});
   const rows=await page.evaluate(()=>[...document.querySelectorAll('#node-table tr')].map(r=>({level:r.querySelector('.node-bars')?.dataset.level,heard:r.children[3]?.textContent,label:r.querySelector('td.signal')?.getAttribute('aria-label')})));
-  assert.deepEqual(rows.map(r=>r.level),['4','1','0']);assert.deepEqual(rows.map(r=>r.heard),['5m ago','2h ago','Unknown']);assert.equal(rows[0].label,'SNR 7 dB, 4 of 4 bars');assert.equal(rows[2].label,'Signal unavailable');
+  assert.deepEqual(rows.map(r=>r.level),['4','1','0','3']);assert.deepEqual(rows.map(r=>r.heard),['5m ago','2h ago','Unknown','1m ago']);assert.equal(rows[3].label,'SNR 2.5 dB, 3 of 4 bars','repeater SNR from relayed message');assert.equal(rows[0].label,'SNR 7 dB, 4 of 4 bars');assert.equal(rows[2].label,'Signal unavailable');
   assert.deepEqual(errors,[],mode+' page errors');await page.close();
  }
  console.log('PASS command palette (Ctrl+P open, filter, Enter to channel, arrows/aria-activedescendant, Escape, empty state, contacts) and Nodes signal bars/relative age in terminal and cards. Synthetic only.');

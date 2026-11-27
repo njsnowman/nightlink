@@ -7,6 +7,7 @@
 
 ## Unreleased
 
+- Fix: Nodes LAST SNR showed `-` for repeaters. It now also uses the SNR your radio measured from the final hop of received messages (the repeater that delivered them), when that hop matches exactly one repeater. Values appear as messages arrive while connected; nodes not heard this way keep `-`.
 - Pinned messages (terminal chat): /pin pins the selected message, or the latest when none is selected; /pins lists pins; /unpin [n] removes one or all. Up to five per window, shown in a [PIN] bar at the top of the log; selecting a pin scrolls to the message. Stored locally per radio identity; nothing is sent to the radio.
 - Terminal status line shows auto-reconnect progress while the link is down: `retry N in Xs`, `reconnecting`, or `retry stopped`.
 - Terminal chat split view: F6 opens a read-only pane with the latest 60 lines of another window beside the active one. Press F6 again for the next window, then off; the pane also has a close button. Below 1000 px the window list hides to make room.
