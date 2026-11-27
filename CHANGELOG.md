@@ -7,6 +7,7 @@
 
 ## Unreleased
 
+- Fix: terminal dialog buttons that hold structured content (such as message-path repeater rows) could briefly take the grey key-cap style, at 1.0-2.3:1 contrast, before the rc.57 state classes updated. That one rule again uses `:has()` on the button itself, which applies immediately and showed no measurable cost (insert recalculation about 0 ms).
 - Command palette: Ctrl+P (or ^P Go to in the terminal key bar) opens a Go to box listing pages, channels, contacts and common actions. Typing filters the list, the arrow keys choose and Enter opens. Works in both interfaces. Navigation only; nothing is sent to the radio. Ctrl+K remains message Search.
 - Nodes page: the reported SNR column is shown again, as LAST SNR with four bars, and LAST ADVERT shows a relative age (for example 5m ago) with the exact time on hover. The SNR is the value from the last direct message received from that contact; it stays blank when none has been received. The column remains hidden on Overview and in compact mode.
 - Terminal status line on the right of the key bar: node name, `✉ N unread` (a button that opens chat, highlighted when N > 0), battery voltage `BAT x.xx V` with `LOW` below 3.50 V, and the existing link state. Updates on sync, identity, battery and message events. Tracks [#227](https://github.com/njsnowman/nightlink/issues/227).
