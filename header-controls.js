@@ -14,5 +14,8 @@
   if(kind==='radio')button.title=label;
  }
  function refresh(){for(const [id,kind]of [['open-message-search','search'],['compact-toggle','layout'],['connection','radio'],['startup-connect-cancel','cancel'],['startup-connect-retry','retry'],['header-recovery-retry','retry']])decorate(document.getElementById(id),kind);}
- new MutationObserver(refresh).observe(root,{childList:true,subtree:true,characterData:true});refresh();
+ const observer=new MutationObserver(()=>{refresh();watch();});observer.observe(root,{childList:true,subtree:true,characterData:true});
+ // The terminal interface docks some controls outside the strip; watch the controls themselves so labels are rebuilt anywhere.
+ const watched=new WeakSet();function watch(){for(const id of ['connection','header-recovery-retry','startup-connect-retry','startup-connect-cancel']){const e=document.getElementById(id);if(e&&!watched.has(e)){watched.add(e);observer.observe(e,{childList:true,subtree:true,characterData:true});}}}
+ refresh();watch();
 })();

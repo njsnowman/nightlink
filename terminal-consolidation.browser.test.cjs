@@ -7,9 +7,10 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  await page.evaluate(()=>{radioSession.request=async()=>{throw Error('radio blocked');};live.identity={key:'ee'.repeat(32),name:'SN0WMAN',frequency:910.525,bandwidth:250,spreadingFactor:11,codingRate:5,txPower:22};live.sync='ready';const a={kind:'channel',slot:0,id:'ab'.repeat(12),name:'Public'};live.channels=[a];live.selected={...a};live.messages=[];NightlinkStatusLine.refresh();});
  assert.ok(await page.isHidden('main>header'),'top strip hidden');
  // Internet state from the hidden strip appears in the status line.
- await page.evaluate(()=>{document.querySelector('#internet-status').dataset.state='offline';});await page.waitForFunction(()=>document.querySelector('.term-status-net').textContent==='NET off');
+ for(const id of ['internet-status','connection','open-activity-inbox'])assert.ok(await page.isVisible('.term-status-dock #'+id),id+' docked and visible');
+ assert.ok(await page.isVisible('.term-status-dock #focus-mode-toggle'),'focus toggle docked');
  // Link field opens the radio connection dialog.
- await page.click('.term-fkeys-link');await page.waitForFunction(()=>[...document.querySelectorAll('dialog[open]')].length>0);await page.keyboard.press('Escape');
+ await page.click('.term-status-dock #connection');await page.waitForFunction(()=>[...document.querySelectorAll('dialog[open]')].length>0);await page.keyboard.press('Escape');
  // One key bar: page keys sit inside the F-key bar without repeating its keys.
  await page.evaluate(()=>view('Nodes'));const keys=await page.evaluate(()=>{const p=document.querySelector('#term-page-keys');return {inBar:!!p?.closest('#term-fkeys'),keys:[...document.querySelectorAll('#term-fkeys .term-fkey')].map(k=>k.textContent)};});
  assert.ok(keys.inBar);assert.equal(new Set(keys.keys).size,keys.keys.length,'no repeated keys: '+keys.keys.join(' '));assert.ok(keys.keys.includes('Tab'));
@@ -22,5 +23,6 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  await page.click('#term-more');await page.click('#term-more-menu >> text=Contact Book');await page.waitForFunction(()=>current==='Contact Book');
  // Palette covers the strip's actions.
  await page.keyboard.press('Control+p');await page.keyboard.type('connection');assert.match(await page.locator('#cmd-palette [role=option]').first().textContent(),/Radio connection/);await page.keyboard.press('Escape');
- assert.deepEqual(errors,[]);console.log('PASS consolidation: strip hidden, NET in status line, link opens connection, one key bar without repeats, chat bar without clock/node/link, More menu keyboard and click, palette connection entry. Synthetic only.');
+ await page.evaluate(()=>NightlinkInterface.set('cards'));assert.equal(await page.evaluate(()=>document.querySelector('#connection').closest('main>header')!==null),true,'cards: controls back in strip');await page.evaluate(()=>NightlinkInterface.set('terminal'));assert.ok(await page.isVisible('.term-status-dock #connection'));
+ assert.deepEqual(errors,[]);console.log('PASS consolidation: strip hidden, its controls docked (internet, connection, inbox) and focus in menu bar, connection opens dialog, one key bar without repeats, chat bar without clock/node/link, More menu keyboard and click, palette connection entry. Synthetic only.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1);});

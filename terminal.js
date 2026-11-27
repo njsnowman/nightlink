@@ -70,20 +70,23 @@
   const node=field('term-status-node'),unreadBtn=doc.createElement('button'),batt=field('term-status-battery'),noise=field('term-status-noise'),dmBtn=doc.createElement('button');
   dmBtn.type='button';dmBtn.className='term-status-field term-status-dm';dmBtn.onclick=()=>view('Direct Messages');
   unreadBtn.type='button';unreadBtn.className='term-status-field term-status-unread';unreadBtn.onclick=()=>view('Messages');
-  // The top strip is hidden in the terminal interface (consolidation); its unique states move here.
-  const net=field('term-status-net'),rf=field('term-status-rf');
-  const link=doc.createElement('button');link.type='button';link.className='term-fkeys-link';link.title='Radio connection';link.onclick=()=>{if(typeof showBluetooth==='function')showBluetooth();else doc.querySelector('#connection')?.click();};
-  status.append(node,dmBtn,unreadBtn,noise,batt,net,rf,link);keys.append(status);
+  // The top strip is hidden in the terminal interface (consolidation). Its live controls are moved, not copied, into
+  // this status line so they keep their ids and behaviour: internet, RF monitor, activity inbox, recovery retry and
+  // the radio connection button. They return to the strip when the Cards interface is chosen.
+  const dock=doc.createElement('span');dock.className='term-status-dock';
+  status.append(node,dmBtn,unreadBtn,noise,batt,dock);keys.append(status);
+  const DOCK=['#focus-mode-toggle','#internet-status','#propagation-indicator','#open-activity-inbox','#header-recovery-retry','#connection'],homes=new Map();
+  function placeControls(){const terminal=root.NightlinkInterface?.isTerminal?.()??true;
+   for(const sel of DOCK){const e=doc.querySelector(sel);if(!e)continue;if(e.parentElement!==dock)homes.set(sel,{parent:e.parentElement,next:e.nextSibling});
+    if(terminal){if(e.parentElement!==dock)dock.append(e);}else{const h=homes.get(sel);if(e.parentElement===dock&&h.parent?.isConnected)h.parent.insertBefore(e,h.next?.parentElement===h.parent?h.next:null);}}}
+  // Other modules create or regroup these controls after this runs; re-dock whenever the strip changes.
+  let placing=false;const replace=()=>{if(placing||!loaded)return;placing=true;queueMicrotask(()=>{placeControls();placing=false;});};
+  {const strip=doc.querySelector('main>header');if(strip)new MutationObserver(replace).observe(strip,{childList:true,subtree:true});}
+  // Dock only after every module has set up the strip (labels, groups); before that the hidden strip keeps them.
+  let loaded=doc.readyState==='complete';root.addEventListener('nightlink-interface',()=>loaded&&placeControls());root.addEventListener('load',()=>{loaded=true;placeControls();});if(loaded)placeControls();
   doc.body.prepend(bar);doc.body.append(keys);
   function tick(){const now=new Date();clock.textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
-   const state=typeof live==='object'?live.sync:'disconnected',kind=typeof ble==='object'&&ble.kind==='usb'?'USB':'BLE';link.textContent='● '+kind+' '+(state==='ready'?'ok':state==='syncing'?'sync':'off');link.dataset.state=state==='ready'?'ok':state==='syncing'?'pending':'off';
-   // Auto-reconnect progress (recovery.js), shown instead of 'off' while a retry is pending.
-   const rec=root.NightlinkStatusLine?.recovery;if(state!=='ready'&&state!=='syncing'&&rec){if(rec.state==='waiting'&&rec.until){const left=Math.max(0,Math.ceil((rec.until-Date.now())/1000));link.textContent='● '+kind+' retry '+rec.attempt+' in '+left+'s';link.dataset.state='pending';}
-    else if(rec.state==='retrying'){link.textContent='● '+kind+' reconnecting';link.dataset.state='pending';}else if(rec.state==='exhausted'||rec.state==='paused'){link.textContent='● '+kind+' off · retry stopped';}}
-   link.setAttribute('aria-label','Radio link: '+link.textContent.replace('● ','')+'. Open radio connection');
-   const ns=doc.querySelector('#internet-status')?.dataset.state;net.textContent=ns==='online'?'NET ok':ns==='offline'?'NET off':'';net.hidden=!net.textContent;net.dataset.state=ns||'';
-   const rfText=(doc.querySelector('#propagation-indicator')?.textContent||'').replace(/^\s*RF\s*/,'').trim();rf.textContent=rfText&&!/unavailable/i.test(rfText)?'RF '+rfText:'';rf.hidden=!rf.textContent;
-   const L=typeof live==='object'?live:null,ready=state==='ready';
+   const state=typeof live==='object'?live.sync:'disconnected',kind=typeof ble==='object'&&ble.kind==='usb'?'USB':'BLE';   const L=typeof live==='object'?live:null,ready=state==='ready';
    node.textContent=ready&&L?.identity?.name?L.identity.name:'';node.hidden=!node.textContent;
    let unread=0,dms=0;try{if(ready&&typeof ensureAttention==='function'){const u=ensureAttention().unread(L.messages);unread=u.length;dms=u.filter(m=>m.target?.kind==='direct'||m.kind==='direct').length;}}catch{}
    dmBtn.textContent='DM '+dms;dmBtn.hidden=!ready||!dms;dmBtn.setAttribute('aria-label',dms+' unread direct message'+(dms===1?'':'s')+', open chat');
@@ -91,13 +94,7 @@
    unreadBtn.textContent='✉ '+unread+' unread';unreadBtn.hidden=!ready;unreadBtn.dataset.unread=unread?'yes':'no';unreadBtn.setAttribute('aria-label',unread+' unread message'+(unread===1?'':'s')+', open chat');
    const mv=L?.battery?.millivolts;batt.textContent=ready&&mv?'BAT '+(mv/1000).toFixed(2)+' V'+(mv<3500?' LOW':''):'';batt.hidden=!batt.textContent;batt.dataset.low=mv&&mv<3500?'yes':'no';}
   tick();setInterval(tick,15000);
-  {const h=doc.querySelector('.header-actions');if(h)new MutationObserver(()=>soonTick()).observe(h,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['data-state']});}
-  root.NightlinkStatusLine={refresh:tick,recovery:null};
-  let countdown=null;const onRecovery=d=>{root.NightlinkStatusLine.recovery=d?{...d,until:d.state==='waiting'&&d.delay?Date.now()+d.delay:null}:null;clearInterval(countdown);countdown=null;
-   if(d?.state==='waiting')countdown=setInterval(()=>{tick();if(root.NightlinkStatusLine.recovery?.until<Date.now()){clearInterval(countdown);countdown=null;}},1000);tick();};
-  root.NightlinkStatusLine.onRecovery=onRecovery;
-  if(typeof recovery==='object'&&recovery?.addEventListener)recovery.addEventListener('recovery',e=>onRecovery(e.detail));
-  function soonTick(){soon();}
+  root.NightlinkStatusLine={refresh:tick};
   let queued=false;const soon=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;tick();});};
   if(typeof radioSession==='object')for(const ev of ['sync','battery','identity','message','messages','stats'])radioSession.addEventListener(ev,soon);
   if(typeof ble==='object')ble.addEventListener('state',soon);
