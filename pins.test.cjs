@@ -1,0 +1,10 @@
+const test=require('node:test'),assert=require('node:assert/strict'),P=require('./pins.js');
+const mem=()=>{const m=new Map();return {getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,String(v))};};
+test('pins are per identity and conversation, newest first, capped at five',()=>{const s=mem();
+ assert.equal(P.pin(s,'a','c1','m1').ok,true);P.pin(s,'a','c1','m2');assert.deepEqual(P.list(s,'a','c1'),['m2','m1']);
+ P.pin(s,'a','c1','m1');assert.deepEqual(P.list(s,'a','c1'),['m1','m2'],'re-pin moves to front');
+ assert.deepEqual(P.list(s,'b','c1'),[],'other identity');assert.deepEqual(P.list(s,'a','c2'),[]);
+ for(const id of ['m3','m4','m5'])P.pin(s,'a','c1',id);assert.deepEqual(P.pin(s,'a','c1','m6'),{ok:false,reason:'full'});
+ assert.equal(P.unpin(s,'a','c1','m3'),1);assert.equal(P.list(s,'a','c1').length,4);assert.equal(P.unpin(s,'a','c1'),4);assert.deepEqual(P.list(s,'a','c1'),[]);
+ assert.deepEqual(P.read({getItem:()=>'[1]'},'a'),{});assert.equal(P.pin(s,'a','c1','').ok,false);
+});

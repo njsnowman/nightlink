@@ -218,3 +218,40 @@ html:root:root:root:root body .map-provider-settings input{flex:0 0 auto;accent-
 .channel-manage-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .channel-manage-list li{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .channel-manage-list small{color:var(--nl-muted)}
+html:root:root:root:root body dialog.cmd-palette{width:min(620px,calc(100vw - 32px));padding:0;margin-top:12vh;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-dialog,16px);background:var(--nl-surface);color:var(--nl-copy);overflow:hidden}
+html:root:root:root:root body dialog.cmd-palette::backdrop{background:#0008}
+html:root:root:root:root body .cmd-palette-title{padding:14px 16px 0;font-weight:650;color:var(--nl-muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+html:root:root:root:root body #cmd-palette-input{display:block;width:calc(100% - 32px);margin:8px 16px 10px;padding:11px 12px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control,10px);background:var(--nl-hover);color:var(--nl-copy);font:inherit;font-size:15px}
+html:root:root:root:root body #cmd-palette-input:focus-visible{outline:2px solid var(--nl-accent);outline-offset:1px}
+html:root:root:root:root body #cmd-palette-list{list-style:none;margin:0;padding:4px 8px;max-height:50vh;overflow:auto;border-top:1px solid var(--nl-edge)}
+html:root:root:root:root body .cmd-palette-item{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;border-radius:8px;cursor:pointer}
+html:root:root:root:root body .cmd-palette-item.active{background:var(--nl-hover);box-shadow:inset 3px 0 0 var(--nl-accent)}
+html:root:root:root:root body .cmd-palette-group{color:var(--nl-muted);font-size:12px}
+html:root:root:root:root body .cmd-palette-empty{padding:10px;color:var(--nl-muted)}
+html:root:root:root:root body .cmd-palette-hint{margin:0;padding:8px 16px 12px;color:var(--nl-muted);font-size:12px;border-top:1px solid var(--nl-edge)}
+html:root:root:root:root body .node-bars{display:inline-flex;gap:1px;vertical-align:-1px}
+html:root:root:root:root body .node-bar{color:color-mix(in srgb,var(--nl-muted) 45%,transparent)}
+html:root:root:root:root body .node-bar.on{color:var(--nl-accent)}
+html:root:root:root:root body:not(.compact) .nodes-panel table.node-signal-on th:nth-child(3),html:root:root:root:root body:not(.compact) .nodes-panel table.node-signal-on td:nth-child(3){display:table-cell}
+html:root:root:root:root body .node-signal-on td.signal{white-space:nowrap}
+html:root:root:root:root body dialog.first-run,html:root:root:root:root body dialog.feedback-dialog{width:min(600px,calc(100vw - 32px));padding:24px}
+html:root:root:root:root body .first-run-progress{display:flex;gap:6px;margin-bottom:14px}
+html:root:root:root:root body .first-run-progress span{flex:1;height:4px;border-radius:2px;background:var(--nl-edge)}
+html:root:root:root:root body .first-run-progress span.on{background:var(--nl-accent)}
+html:root:root:root:root body .first-run-title{margin:0 0 10px;font-size:22px}
+html:root:root:root:root body .first-run-body p{margin:0 0 10px;color:var(--nl-copy);line-height:1.55}
+html:root:root:root:root body .first-run-connect,html:root:root:root:root body .first-run-feedback,html:root:root:root:root body .first-run-help,html:root:root:root:root body .first-run-nav,html:root:root:root:root body .feedback-actions,html:root:root:root:root body .help-feedback{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:12px}
+html:root:root:root:root body .first-run-radio{margin:0;color:var(--nl-muted)}
+html:root:root:root:root body .first-run-radio[data-state=ok]{color:var(--nl-ready,#7bd88f)}
+html:root:root:root:root body .first-run-help-label{color:var(--nl-muted);font-size:13px}
+html:root:root:root:root body .first-run-nav{justify-content:flex-end;border-top:1px solid var(--nl-edge);padding-top:14px;margin-top:18px}
+html:root:root:root:root body .first-run-skip{margin-right:auto}
+html:root:root:root:root body .feedback-dialog form{display:grid;gap:6px}
+html:root:root:root:root body .feedback-field{font-size:13px;color:var(--nl-muted);margin-top:6px}
+html:root:root:root:root body .feedback-dialog :is(input,textarea){width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid var(--nl-edge);border-radius:var(--nl-radius-control,10px);background:var(--nl-hover);color:var(--nl-copy);font:inherit}
+html:root:root:root:root body .feedback-intro,html:root:root:root:root body .feedback-note,html:root:root:root:root body .feedback-status{color:var(--nl-muted);font-size:13px;margin:4px 0}
+html:root:root:root:root body .feedback-actions{justify-content:flex-end}
+html:root:root:root:root body :is(.feedback-actions,.first-run-nav,.first-run-connect,.first-run-help,.first-run-feedback)>button{width:auto !important;flex:none;margin:0}
+html:root:root:root:root body dialog:is(.first-run,.feedback-dialog){max-height:calc(100dvh - 32px);overflow:auto}
+html:root:root:root:root body .feedback-dialog textarea{min-height:64px;resize:vertical}
+html:root:root:root:root body .first-run-nav>.first-run-skip{margin-right:auto !important}

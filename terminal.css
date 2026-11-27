@@ -271,13 +271,13 @@ html:root:root:root:root:root[data-interface=terminal] body .term-window-title .
 /* Buttons in dialog windows and page windows (BBS pass): Turbo Vision buttons. Secondary grey, primary cyan,
    destructive red, solid dark-grey shadow that disappears while pressed. Black on #aaaaaa 9.0:1, on #00aaaa 7.3:1. */
 html:root:root:root:root:root[data-interface=terminal] body dialog.term-window .dialog-heading .nl-submenu-mark{display:none !important}
-html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not(.term-window-key *):not([role=tab]):not(.leaflet-control *):not(.mrc *):not(.bbs *):not(.help-topics *):not(.help-figure *):not(.nlh-26){background:#aaaaaa !important;color:#000 !important;border:0 !important;border-radius:0 !important;box-shadow:3px 3px 0 0 #555555 !important;font-weight:700;text-shadow:none !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not(.term-window-key *):not([role=tab]):not(.leaflet-control *):not(.mrc *):not(.bbs *):not(.help-topics *):not(.help-figure *):not(:has(div,strong,small,time,p,.avatar)){background:#aaaaaa !important;color:#000 !important;border:0 !important;border-radius:0 !important;box-shadow:3px 3px 0 0 #555555 !important;font-weight:700;text-shadow:none !important}
 html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) :is(button.primary,.primary):not(.mrc *){background:#00aaaa !important;color:#000 !important}
 html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) :is(button.danger,button.destructive):not(.mrc *){background:var(--t-red) !important;color:var(--t-white) !important}
 html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not(:disabled):hover:not(.mrc *){background:var(--t-white) !important}
 html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not(:disabled):active:not(.mrc *){transform:translate(3px,3px);box-shadow:none !important}
 html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:disabled:not(.mrc *){background:#555555 !important;color:#aaaaaa !important;box-shadow:none !important}
-html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not([role=tab]):not(.leaflet-control *):not(.mrc *):not(.bbs *):not(.help-topics *):not(.help-figure *):not(.nlh-26) *:not(svg):not(path){color:inherit !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,.term-window-page .content) button:not([role=tab]):not(.leaflet-control *):not(.mrc *):not(.bbs *):not(.help-topics *):not(.help-figure *):not(:has(div,strong,small,time,p,.avatar)) *:not(svg):not(path){color:inherit !important}
 /* ANSI maps (BBS pass): frame, scale, line segments; ground dots dark grey are decorative inside role=img. */
 html:root:root:root:root:root[data-interface=terminal] body .term-path-grid{border:0 !important;padding:0 !important;background:#000 !important}
 html:root:root:root:root:root[data-interface=terminal] body .term-path-frame{color:var(--t-bright-blue)}
@@ -593,3 +593,122 @@ html:root:root:root:root:root[data-interface=terminal] body button.term-status-u
 html:root:root:root:root:root[data-interface=terminal] body button.term-status-unread:focus-visible{outline:2px solid #ffffff;outline-offset:-2px}
 html:root:root:root:root:root[data-interface=terminal] body .term-status-battery[data-low=yes]{background:#aa0000;color:#ffffff;font-weight:700}
 @media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body .term-status-node{display:none}}
+html:root:root:root:root:root[data-interface=terminal] body dialog.cmd-palette{width:min(640px,calc(100vw - 32px));padding:0;background:var(--t-blue);color:var(--t-white);font-family:var(--t-font,monospace);margin-top:12vh}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-title{background:var(--t-grey);color:#000;padding:2px 12px;font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body #cmd-palette-input{display:block;width:calc(100% - 24px);margin:10px 12px;padding:6px 8px;background:#000;color:var(--t-yellow);border:1px solid var(--t-bright-cyan);border-radius:0;font:inherit}
+html:root:root:root:root:root[data-interface=terminal] body #cmd-palette-input:focus-visible{outline:2px solid var(--t-white);outline-offset:1px}
+html:root:root:root:root:root[data-interface=terminal] body #cmd-palette-list{list-style:none;margin:0 12px;padding:0;max-height:50vh;overflow:auto;border:1px solid var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-item{display:flex;justify-content:space-between;gap:12px;padding:3px 8px;cursor:pointer;color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-item.active{background:var(--t-bright-cyan);color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-group{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-item.active .cmd-palette-group{color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-empty{padding:6px 8px;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-hint{margin:8px 12px 10px;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars{display:inline-flex;gap:1px;font-family:var(--t-font,monospace)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bar{color:var(--t-dark-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="4"] .node-bar.on{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="3"] .node-bar.on{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="2"] .node-bar.on{color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="1"] .node-bar.on{color:var(--t-bright-red)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-0{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-1{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-2{color:var(--t-bright-magenta)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-3{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-4{color:var(--t-bright-red)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-5{color:#00aaaa}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-6{color:#00aa00}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-7{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body button.term-status-dm{background:var(--t-bright-magenta);color:#000;border:0;border-left:1px solid #000;border-radius:0;font:inherit;font-weight:700;cursor:pointer;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body button.term-status-dm:focus-visible{outline:2px solid #ffffff;outline-offset:-2px}
+@media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body .term-status-noise{display:none}}
+html:root:root:root:root:root[data-interface=terminal] body .term-window-art{margin-left:auto;padding:0 12px;color:var(--t-bright-cyan);white-space:nowrap;letter-spacing:1px}
+@media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body .term-window-art{display:none}}
+html:root:root:root:root:root[data-interface=terminal] body .term-custom{border:1px solid var(--t-bright-cyan);padding:8px 12px;display:grid;gap:6px}
+html:root:root:root:root:root[data-interface=terminal] body .term-custom legend{padding:0 6px;color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .term-custom-row{display:flex;align-items:center;gap:10px}
+html:root:root:root:root:root[data-interface=terminal] body .term-custom-row input[type=color]{width:44px;height:28px;padding:0;border:1px solid var(--t-grey);background:#000}
+html:root:root:root:root:root[data-interface=terminal] body .term-custom-ratio{margin-left:auto;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .term-custom-ratio[data-ok=no]{color:#ff5555;font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-body.mrc-split-on{grid-template-columns:180px minmax(0,1fr) minmax(0,1fr)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-split{display:flex;flex-direction:column;min-height:0;min-width:0;border-left:1px solid var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-split-title{display:flex;justify-content:space-between;align-items:center}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-split-close{background:transparent;border:0;color:var(--t-white);font:inherit;cursor:pointer;padding:0 6px;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-split-close:focus-visible,html:root:root:root:root:root[data-interface=terminal] body .mrc-split-log:focus-visible{outline:2px solid var(--t-white);outline-offset:-2px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-split-log{flex:1;min-height:0;overflow:auto;padding:4px 8px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-split-empty{color:var(--t-grey)}
+@media (max-width:1000px){html:root:root:root:root:root[data-interface=terminal] body .mrc-body.mrc-split-on{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}html:root:root:root:root:root[data-interface=terminal] body .mrc-split-on>.mrc-windows{display:none}}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pins{position:sticky;top:0;z-index:2;display:flex;flex-direction:column;border-bottom:1px solid var(--t-bright-cyan);background:#000;max-height:7.5em;overflow:auto;margin:0 0 4px}
+html:root:root:root:root:root[data-interface=terminal] body button.mrc-pin{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:0;padding:1px 8px;color:var(--t-white);font:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body button.mrc-pin:hover,html:root:root:root:root:root[data-interface=terminal] body button.mrc-pin:focus-visible{background:var(--t-blue);outline:1px solid var(--t-white);outline-offset:-1px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pin-tag{color:var(--t-yellow);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pin-nick{color:var(--t-bright-cyan)}
+/* Consolidation (owner choice, 2026-11-27): the top strip duplicated the menu bar, page title and status line. */
+html:root:root:root:root:root[data-interface=terminal] body main>header{display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body button.term-fkeys-link{background:transparent;border:0;border-left:1px solid #000;border-radius:0;font:inherit;cursor:pointer;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body button.term-fkeys-link:focus-visible{outline:2px solid #ffffff;outline-offset:-2px}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-net[data-state=offline]{background:#aa0000;color:#ffffff;font-weight:700}
+@media (max-width:1100px){html:root:root:root:root:root[data-interface=terminal] body .term-status-rf{display:none}}
+html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>.term-fkeys-page{display:flex;align-items:center;gap:0;margin:0;padding:0 0 0 6px;border:0;background:transparent;color:#000;white-space:nowrap;overflow:hidden}
+html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>.term-fkeys-page .term-window-key{padding:0 10px;color:#000;border-left:1px solid #555}
+html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>.term-fkeys-page .term-fkey{color:#000;font-weight:700;text-decoration:underline}
+@media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>.term-fkeys-page{display:none}}
+html:root:root:root:root:root[data-interface=terminal] body .term-more{position:relative;display:inline-flex}
+html:root:root:root:root:root[data-interface=terminal] body .term-more-menu{position:absolute;top:100%;left:0;z-index:1000;min-width:200px;display:flex;flex-direction:column;background:var(--t-grey);border:1px solid #000;box-shadow:8px 8px 0 #000a;padding:2px 0}
+html:root:root:root:root:root[data-interface=terminal] body .term-more-menu[hidden]{display:none}
+html:root:root:root:root:root[data-interface=terminal] body .term-more-menu button{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:0;padding:2px 12px;color:#000;font:inherit;cursor:pointer;min-height:0;white-space:nowrap}
+html:root:root:root:root:root[data-interface=terminal] body .term-more-menu button:hover,html:root:root:root:root:root[data-interface=terminal] body .term-more-menu button:focus-visible{background:var(--t-blue);color:#fff;outline:none}
+html:root:root:root:root:root[data-interface=terminal] body .term-more-menu button .term-fkey{color:inherit;font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar{overflow:visible}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock{display:flex;align-items:stretch;min-width:0}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock>*{display:inline-flex !important;align-items:center;gap:4px;height:var(--t-bar) !important;min-height:0 !important;margin:0 !important;padding:0 10px !important;border:0 !important;border-left:1px solid #000 !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important;color:#000 !important;font:inherit !important;white-space:nowrap;max-width:28ch;overflow:hidden;text-overflow:ellipsis}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock>[hidden]{display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock svg{width:14px;height:14px;flex:none}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock>button:focus-visible{outline:2px solid #fff !important;outline-offset:-2px}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #header-recovery-retry{background:#aa0000 !important;color:#fff !important;font-weight:700 !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar>#focus-mode-toggle{margin-left:auto;background:transparent;border:0;border-radius:0;padding:0 10px;color:#000;font:inherit;cursor:pointer;min-height:0;height:var(--t-bar)}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar>#focus-mode-toggle svg{display:none}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar>#focus-mode-toggle+.term-menubar-clock{margin-left:0}
+@media (max-width:1100px){html:root:root:root:root:root[data-interface=terminal] body .term-status-dock>#internet-status{display:none !important}}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock svg{display:none !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #propagation-indicator::after{content:'RF'}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #open-activity-inbox::after{content:'Inbox'}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock .activity-inbox-count:not([hidden]){display:inline-block;padding:0 4px;background:#000;color:#ffff55;font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection{flex-direction:row !important;max-width:34ch}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection *{display:inline !important;position:static !important;font:inherit !important;color:#000 !important;margin:0 !important;padding:0 !important;line-height:var(--t-bar) !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection i{display:inline-block !important;width:8px;height:8px;border-radius:50%;background:#555;margin-right:6px !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection[data-confidence=live] i,html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection[data-signal-state=ready] i{background:#00aa00}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #internet-status .internet-status-label{display:inline !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection .connection-confidence-state::after{content:' · '}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #focus-mode-toggle .focus-mode-key{display:inline !important}
+@media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body .term-status-node,html:root:root:root:root:root[data-interface=terminal] body .term-status-battery,html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection .connection-confidence-evidence{display:none !important}}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock>:not(#header-recovery-retry),html:root:root:root:root:root[data-interface=terminal] body .term-status-dock>:not(#header-recovery-retry) *:not(.activity-inbox-count){color:#000 !important;text-shadow:none !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-statusline{flex:0 1 auto;min-width:0;overflow:hidden}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock{min-width:0;flex:0 1 auto}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection{flex:0 1 auto;min-width:14ch;max-width:36ch;display:inline-flex !important;overflow:hidden}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection .header-control-label{display:inline-flex !important;flex-direction:row-reverse;justify-content:flex-end;min-width:0}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection .connection-confidence-evidence{overflow:hidden;text-overflow:ellipsis;min-width:0;display:block !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #connection .connection-confidence-state{flex:none;font-weight:700 !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock>*{opacity:1 !important;filter:none !important}
+html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>button,html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>.term-fkeys-page{flex-shrink:1;min-width:0;overflow:hidden;white-space:nowrap}
+@media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>button{font-size:0 !important;padding:0 6px !important;flex-shrink:0}html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>button .term-fkey{font-size:13px}}
+/* Update notice docked in the status line so it never covers the composer (owner report, 2026-11-27). */
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available{position:static !important;background:#000 !important;color:#ffff55 !important;font-weight:700 !important;max-width:30ch;backdrop-filter:none !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available::before{content:'UPD';margin-right:6px;color:#000;background:#ffff55;padding:0 4px}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available{font-size:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available::before{font-size:13px}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available::after{content:attr(data-version) ' ↗';font-size:13px}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available[data-verified=no]::after{content:attr(data-version) ' !'}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available{flex:none !important;max-width:none}
+html:root:root:root:root:root[data-interface=terminal] body dialog.first-run,html:root:root:root:root:root[data-interface=terminal] body dialog.feedback-dialog{background:var(--t-blue);color:var(--t-white);font-family:var(--t-font,monospace);border-radius:0}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-progress span{border-radius:0;background:var(--t-dark-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-progress span.on{background:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-title,html:root:root:root:root:root[data-interface=terminal] body .feedback-dialog h2{color:var(--t-yellow);font-size:18px}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-body p{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-radio{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-radio[data-state=ok]{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-help-label,html:root:root:root:root:root[data-interface=terminal] body :is(.feedback-intro,.feedback-note,.feedback-status,.feedback-field){color:#ffffff}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-nav{border-top:1px solid var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .feedback-dialog :is(input,textarea){background:#000;color:var(--t-yellow);border:1px solid var(--t-bright-cyan);border-radius:0;font:inherit}
+html:root:root:root:root:root[data-interface=terminal] body .feedback-dialog :is(input,textarea):focus-visible{outline:2px solid var(--t-white);outline-offset:1px}
+html:root:root:root:root:root[data-interface=terminal] body :is(.feedback-actions,.first-run-nav,.first-run-connect,.first-run-help,.first-run-feedback)>button{width:auto !important;flex:none;margin:0}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-nav>.first-run-skip{margin-right:auto !important}

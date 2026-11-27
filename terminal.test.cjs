@@ -22,4 +22,5 @@ test('owner logo art is 240 x 39 VGA pixels and renders as merged runs',()=>{con
 test('retro sound pack is off by default, maps the three notification files and keeps every sound short',()=>{const s=require('./terminal-sound.js');
  const store=new Map(),storage={getItem:k=>store.has(k)?store.get(k):null,setItem:(k,v)=>store.set(k,String(v))};
  assert.equal(s.read(storage),'standard');s.write(storage,'retro');assert.equal(s.read(storage),'retro');s.write(storage,'loud');assert.equal(s.read(storage),'standard');
- assert.deepEqual(Object.keys(s.FILES).sort(),['dm.wav','mention.wav','sent.wav']);for(const name of Object.keys(s.PATTERNS))assert.ok(s.duration(name)<=0.6,name+' '+s.duration(name));});
+ assert.deepEqual(Object.keys(s.FILES).sort(),['dm.wav','mention.wav','sent.wav']);for(const pack of Object.keys(s.PACKS)){assert.ok(s.VALUES.includes(pack),pack);for(const name of Object.keys(s.PATTERNS)){assert.ok(s.PACKS[pack].patterns[name],pack+' '+name);assert.ok(s.duration(name,pack)<=0.6,pack+' '+name+' '+s.duration(name,pack));}}
+ s.write(storage,'modem');assert.equal(s.read(storage),'modem');s.write(storage,'bells');assert.equal(s.read(storage),'bells');});

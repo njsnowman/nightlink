@@ -25,5 +25,4 @@ window.NightlinkHasRules=[["nlh-0","label","textarea"],
 ["nlh-23","#alternate","#radio-workbench:not([hidden])"],
 ["nlh-24","#alternate",">.switchboard-settings-shell"],
 ["nlh-25",".content",">#overview:not([hidden])"],
-["nlh-26","button","div,strong,small,time,p,.avatar"],
 ["nlh-27","span","svg"]];

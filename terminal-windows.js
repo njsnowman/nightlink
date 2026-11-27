@@ -20,6 +20,10 @@
   'Direct Messages':{title:'DIRECT',sub:'private conversations',keys:[['Tab','Next control'],['F2','Chat'],['Esc','Back']]},
   Search:{title:'SEARCH',sub:'stored messages and contacts',keys:[['Tab','Next control'],['F2','Chat'],['Esc','Back']]}
  };
+ // One-line ANSI motif at the right of each page title bar (decorative; hidden from assistive technology).
+ const PAGE_ART={Radio:'((( ·▲· )))',Settings:'[≡]──[■]──[≡]',Operations:'▲ ░▒▓ ▲ ▒░ ▲',
+  'Contact Book':'┌─┐┌─┐┌─┐ ◄►',Nodes:'◆─◇─◆─◇─◆','Network map':'N▲ ·─◆─· ░▒▓',Activity:'▁▂▃▅▂▁▃▆▂',
+  'Direct Messages':'◄═ ✉ ═►',Search:'[?]──►[■]',Help:'[?] F1 [?]'};
  function keyLine(keys){const p=el('p','term-window-keys');for(const [k,label] of keys){const s=el('span','term-window-key');s.append(el('span','term-fkey',k),' '+label);p.append(s);}return p;}
  function pageWindow(){
   const content=doc.querySelector('main .content');if(!content)return;
@@ -33,9 +37,14 @@
   if(!page){bar?.remove();doc.querySelector('#term-page-keys')?.remove();return;}
   if(!bar){bar=el('div','term-window-title');bar.id='term-page-title';}
   bar.replaceChildren(el('span','term-window-box','[■]'),el('h1','term-window-name',page.title),el('span','term-window-sub',page.sub));
+  {const motif=PAGE_ART[help?'Help':current];if(motif){const a=el('span','term-window-art',motif);a.setAttribute('aria-hidden','true');bar.append(a);}}
   bar.dataset.page=current;
   if(bar.parentNode!==content||content.firstChild!==bar)content.prepend(bar);
-  doc.querySelector('#term-page-keys')?.remove();const keys=keyLine(page.keys);keys.id='term-page-keys';content.append(keys);
+  doc.querySelector('#term-page-keys')?.remove();
+  // One key bar (consolidation): page-specific keys join the global F-key bar; keys it already shows are dropped.
+  const fbar=doc.querySelector('#term-fkeys'),shown=new Set([...(fbar?.querySelectorAll(':scope>button .term-fkey')||[])].map(k=>k.textContent));
+  const keys=keyLine(page.keys.filter(([k])=>!shown.has(k)));keys.id='term-page-keys';keys.classList.add('term-fkeys-page');
+  const anchor=fbar?.querySelector('.term-statusline');if(fbar&&anchor)fbar.insertBefore(keys,anchor);else content.append(keys);
  }
 
  // Dialog windows: the single shared #dialog takes a window name from its title and a key line at the bottom.

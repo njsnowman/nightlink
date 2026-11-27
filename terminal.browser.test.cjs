@@ -81,7 +81,7 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  assert.deepEqual(await page.$$eval('.mrc-window',b=>b.map(x=>x.textContent.trim())),['1 (status)','2 #field-ops','3 #public']);
  assert.equal(await page.locator('.mrc-nodes').count(),0,'compact map replaces the chat node listing');
  assert.ok(await page.isVisible('.mrc-map summary'));
- assert.match(await page.textContent('.mrc-statusbar'),/\[\d\d:\d\d\] \[SNOMAN\] \[2:#field-ops\] \[Act: .*\] \[BLE ok\] .*\[bytes 0\/133\]/);
+ assert.match(await page.textContent('.mrc-statusbar'),/^\[2:#field-ops\] \[Act: .*\] \[bytes 0\/133\]/);assert.doesNotMatch(await page.textContent('.mrc-statusbar'),/SNOMAN|BLE/,'no repeats of the status line');
  assert.equal(await page.textContent('.mrc-prompt'),'[#field-ops] ');
  // Delivery line opens the existing message path map for that message.
  const delivery=await page.$$eval('.mrc-delivery',b=>b.map(x=>[x.textContent,x.getAttribute('aria-label')]));

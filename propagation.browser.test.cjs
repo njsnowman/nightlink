@@ -5,7 +5,9 @@ const shots=process.env.PROPAGATION_SCREENSHOTS;
 (async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  const context=await browser.newContext({viewport:{width:1320,height:860}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  // Test clock: Date.now() can be shifted forward; the offset survives reloads so restored history stays in the past. Timers stay real.
- await context.addInitScript(()=>{const real=Date.now.bind(Date),KEY='nightlink-test-shift';let shift=0;try{shift=Number(sessionStorage.getItem(KEY)||0);}catch{}
+ // The header RF indicator is shown in Cards; in Terminal it is reached from More > Propagation (terminal-consolidation test).
+await context.addInitScript(()=>{try{localStorage.setItem('nightlink.interface','cards');}catch{}});
+await context.addInitScript(()=>{const real=Date.now.bind(Date),KEY='nightlink-test-shift';let shift=0;try{shift=Number(sessionStorage.getItem(KEY)||0);}catch{}
   Date.now=()=>real()+shift;window.__shift=ms=>{shift+=ms;try{sessionStorage.setItem(KEY,String(shift));}catch{}return Date.now();};});
  await page.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();const file=u.pathname==='/'?'index.html':u.pathname.slice(1);try{await route.fulfill({body:await fs.readFile(path.join(__dirname,file)),contentType:file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.png')?'image/png':'text/html'});}catch{await route.fulfill({status:404,body:''});}});
  const shot=async(name,target)=>{if(!shots)return;await fs.mkdir(shots,{recursive:true});await page.waitForTimeout(150);await(target?page.locator(target):page).screenshot({path:path.join(shots,name+'.png'),animations:'disabled'});};

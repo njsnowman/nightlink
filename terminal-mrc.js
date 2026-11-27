@@ -249,7 +249,6 @@
   box.append(list,el('p','mrc-dim mrc-legend','@ you  + repeater'));
   return box;
  }
- function rfLabel(){try{const s=window.NightlinkPropagationUI?.monitor?.summary?.();if(!s||s.state==='unavailable'||s.state==='disabled')return null;return {text:String(s.label||s.state).toUpperCase(),cls:s.state==='normal'?'mrc-ok':s.state==='insufficient-data'?'mrc-info':'mrc-pending'};}catch{return null;}}
 
  // Append fast path (#207): when the only change in the open window is new messages at the end and the reader is at
  // the bottom, add those rows to the existing scrollback instead of rebuilding ~300 rows and forcing a full layout.
@@ -275,11 +274,13 @@
   let prev=kept.at(-1)||null;
   for(const m of fresh){const d=new Date(m.timestamp*1000).toDateString();if(prev&&new Date(prev.timestamp*1000).toDateString()!==d){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));log.append(line);}log.append(messageLine(m));prev=m;}
   const count=log.querySelectorAll('.mrc-banner')[2]?.lastChild;if(count)count.textContent=rows.length+' stored message'+(rows.length===1?'':'s')+' · '+live.contacts.length+' nodes known';
-  const clock=doc.querySelector('#mrc .mrc-statusbar .mrc-field strong');if(clock)clock.textContent=hhmm(nowSeconds());
   state.restoring=true;log.scrollTop=log.scrollHeight;state.restoring=false;captureReading(log);updateJump(log,win);markRead(win,log);
   window.NightlinkReactionUI?.decorate(log,rows,live.messages,{selfName:live.identity?.name||'',terminal:true});
   renderSnapshot(win,rows,list);state.fastAppends=(state.fastAppends||0)+1;return true;
  }
+ function cycleSplit(){const list=windows().filter(w=>w.kind!=='status'),cur=activeWindow(windows());const others=list.filter(w=>w.id!==cur.id);if(!others.length)return;
+  const i=others.findIndex(w=>w.id===state.split);state.split=i<0?others[0].id:i+1<others.length?others[i+1].id:null;render();}
+ doc.addEventListener('keydown',e=>{if(e.key!=='F6'||e.defaultPrevented||!doc.querySelector('#mrc')||doc.querySelector('dialog[open]'))return;e.preventDefault();cycleSplit();});
  function render(){
   const host=doc.querySelector('#alternate');
   if(!host)return;
@@ -312,6 +313,11 @@
   sizeSelect.onchange=()=>NightlinkInterface.setChatSize(sizeSelect.value);
   sizeLabel.append(sizeSelect);
   const heading=el('div','mrc-heading');heading.append(topic,sizeLabel);root.append(heading);
+  // Pinned messages bar (local, per identity and conversation). Each pin jumps to the stored message.
+  let pinsBar=null;if(win.kind!=='status'&&window.NightlinkPins){const ids=NightlinkPins.list(localStorage,live.identity?.key,win.id),byId=new Map(live.messages.filter(m=>m.conversation===win.id).map(m=>[m.id,m]));const pins=ids.map(id=>byId.get(id)).filter(Boolean);
+   if(pins.length){const bar=el('div','mrc-pins');bar.setAttribute('role','region');bar.setAttribute('aria-label','Pinned messages');
+    for(const m of pins){const b=el('button','mrc-pin');b.type='button';b.append(el('span','mrc-pin-tag','[PIN]'),' ',el('span','mrc-pin-nick','<'+(m.own?(live.identity?.name||'me'):(m.sender||'?'))+'>'),' ',el('span','mrc-pin-text',String(m.text??'')));b.title='Jump to pinned message';b.onclick=()=>jumpMessage(m.id);bar.append(b);}
+    pinsBar=bar;}}
   const findButton=el('button','mrc-find-toggle','Find');findButton.type='button';findButton.title='Find in this chat (Ctrl+F)';findButton.setAttribute('aria-label','Find in current chat');findButton.onclick=openFind;heading.append(findButton);if(state.find.open){heading.append(findForm());refreshFind(win);}
   const mentions=live.messages.filter(m=>m.conversation===win.id&&isMention(m));if(mentions.length){const nav=el('div','mrc-mention-nav'),label=el('span',null,'Mentions '+mentions.length);nav.setAttribute('role','group');nav.setAttribute('aria-label','Mention navigation');nav.append(label);for(const [name,direction,glyph]of [['Previous mention',-1,'↑'],['Next mention',1,'↓']]){const b=el('button',null,glyph);b.type='button';b.setAttribute('aria-label',name);b.onclick=()=>{const index=mentions.findIndex(m=>m.id===session.mentionId),next=index<0?(direction>0?0:mentions.length-1):(index+direction+mentions.length)%mentions.length;session.mentionId=mentions[next].id;jumpMessage(session.mentionId);const current=doc.querySelector('.mrc-mention-nav span');if(current)current.textContent='Mentions '+(next+1)+'/'+mentions.length;};nav.append(b);}heading.append(nav);}
   // Window list
@@ -347,15 +353,25 @@
    for(const m of rows){const d=new Date(m.timestamp*1000).toDateString();if(day&&d!==day){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));scroll.append(line);}const sameDay=day===d;day=d;if(m.id===session.boundary){const divider=el('div','mrc-new-messages','── New messages ──');divider.setAttribute('role','separator');divider.setAttribute('aria-label','New messages');scroll.append(divider);}const fragment=messageLine(m);if(previous&&sameDay&&m.id!==session.boundary&&!m.localReply&&!isMention(m)&&!!m.own===!!previous.own&&(m.own||String(m.sender||m.target?.name)===String(previous.sender||previous.target?.name))&&Number.isFinite(m.timestamp)&&m.timestamp>=previous.timestamp&&m.timestamp-previous.timestamp<=120&&!String(m.text).startsWith('* ')&&!String(previous.text).startsWith('* '))fragment.querySelector('[data-message-id]')?.classList.add('mrc-continuation');scroll.append(fragment);previous=m;}
   }
   for(const l of state.local.get(win.id)||[]){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(l.t)),el('span',l.cls,l.text));scroll.append(line);}
+  if(pinsBar)scroll.prepend(pinsBar);
   body.append(side,scroll);root.append(body);
+  // Split view (F6): a read-only pane with the latest lines of a second window, IRC style. Plain text lines keep
+  // message ids unique to the main log, so reply, reaction and reading logic are unaffected.
+  const splitWin=state.split&&state.split!==win.id?list.find(w=>w.id===state.split&&w.kind!=='status'):null;if(state.split&&!splitWin)state.split=null;
+  body.classList.toggle('mrc-split-on',!!splitWin);
+  if(splitWin){const pane=el('section','mrc-split');pane.setAttribute('aria-label','Split view: '+splitWin.label);
+   const head=el('div','mrc-pane-title mrc-split-title');head.append(el('span','',splitWin.label));const close=el('button','mrc-split-close','×');close.type='button';close.setAttribute('aria-label','Close split view');close.onclick=()=>{state.split=null;render();};head.append(close);
+   const lines=el('div','mrc-split-log');lines.setAttribute('role','log');lines.tabIndex=0;
+   for(const m of live.messages.filter(m=>m.conversation===splitWin.id).slice(-60)){const line=el('div','mrc-line mrc-split-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-nick '+(m.own?'mrc-nick-own':'mrc-nick-peer '+nickColor(m.sender||'')),'<'+(m.own?(live.identity?.name||'me'):(m.sender||'?'))+'>'),' ',el('span','mrc-text',String(m.text??'')));lines.append(line);}
+   if(!lines.childElementCount)lines.append(el('div','mrc-line mrc-split-empty','No messages in this window yet.'));
+   pane.append(head,lines);body.append(pane);requestAnimationFrame(()=>{lines.scrollTop=lines.scrollHeight;});}
   if(win.kind!=='status'){const jump=el('button','mrc-jump-latest','Jump to latest ↓');jump.type='button';jump.hidden=true;jump.onclick=()=>jumpLatest(win);body.append(jump);scroll.addEventListener('scroll',()=>{if(state.restoring||!scroll.isConnected)return;cancelAnimationFrame(state.readFrame);state.readFrame=requestAnimationFrame(()=>{if(!scroll.isConnected)return;captureReading(scroll,false);markRead(win,scroll);updateJump(scroll,win);clearTimeout(state.positionTimer);state.positionTimer=setTimeout(()=>{if(scroll.isConnected&&state.readingWin===win.id)captureReading(scroll);},180);});},{passive:true});}
   // Status bar
   const status=el('div','mrc-statusbar');status.setAttribute('role','status');
   const field=(...parts)=>{const s=el('span','mrc-field');s.append('[',...parts,']');status.append(s,' ');};
-  field(el('strong',null,hhmm(nowSeconds())));field(el('strong',null,own()));field(String(index)+':',el('strong',null,win.label));
+  // Clock, node name and link state are in the menu bar and the bottom status line (consolidation).
+  field(String(index)+':',el('strong',null,win.label));
   const act=list.map((w,i)=>w.kind!=='status'&&w!==win&&unread(w.id)?String(i+1):null).filter(Boolean);field('Act: ',el('span','mrc-bar-pending',act.join(',')||'—'));
-  const link=live.sync==='ready'?['ok','mrc-bar-ok']:live.sync==='syncing'?['sync','mrc-bar-pending']:['off','mrc-bar-bad'];field((typeof ble==='object'&&ble.kind==='usb'?'USB ':'BLE ')+'',el('span',link[1],link[0]));
-  const rf=rfLabel();if(rf)field('RF ',el('span',rf.cls==='mrc-ok'?'mrc-bar-ok':'mrc-bar-pending',rf.text));
   const count=el('strong','mrc-bytes','0');field('bytes ',count,'/'+LIMIT);
   root.append(status);
   // Input line: one persistent form so drafts, focus and the text-art picker survive re-renders.
@@ -419,7 +435,7 @@
   const [word,...words]=rest.split(/\s+/),matches=people.filter(c=>c.name.toLowerCase().startsWith(word.toLowerCase())||c.key.startsWith(word.toLowerCase()));
   return matches.length===1?{contact:matches[0],text:words.join(' ')}:null;
  }
- const HELP=['Commands:','/join #channel   switch to a radio channel window','/msg <name> <text>   send a direct message to a saved contact','/query <name>   open a direct message window','/me <text>   send "* '+'<your name> <text>"','/whois <name>   show a saved contact: type, route, signal, last advert','Tab   complete a nick or #channel','/part   remove the current channel from the radio (asks first; Public cannot be removed)','/help   show this help','Keys: alt+1..9 switch window · F9 main menu · F1 help'];
+ const HELP=['Commands:','/join #channel   switch to a radio channel window','/pin  /unpin [n]  /pins   pin the selected (or latest) message locally','/msg <name> <text>   send a direct message to a saved contact','/query <name>   open a direct message window','/me <text>   send "* '+'<your name> <text>"','/whois <name>   show a saved contact: type, route, signal, last advert','Tab   complete a nick or #channel','/part   remove the current channel from the radio (asks first; Public cannot be removed)','/help   show this help','Keys: alt+1..9 switch window · F9 main menu · F1 help'];
  async function submit(value,win,input){
   const text=value.trim();if(!text)return;
   const send=async(target,body)=>{if(bytes(body)>LIMIT){localLine(win.id,'-!- Message is '+bytes(body)+' bytes; the limit is '+LIMIT+'.','mrc-error');render();return;}const owner=live.identity?.key,id=conversationId(target),reply=state.replyWindow===id?state.replySource:null,before=new Set(live.messages.map(m=>m.id));await sendUIMessage({...target},body,()=>{if(draftStore().get(owner,id).trim()===body.trim())draftStore().clearIf(owner,id,body);const i=state.form?.querySelector('#mrc-input');if(state.draftOwner===owner&&state.draftId===id&&i?.value.trim()===body.trim()){i.value='';state.lastSavedDraft='';syncCardDraft('');state.form.querySelector('.message-reply-context')?.remove();state.replyWindow=null;state.replySource=null;}});if(reply&&owner===live.identity?.key){const sent=live.messages.find(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim());if(sent){sent.localReply={...reply};saveHistory();}}if(owner===live.identity?.key&&state.readingWin===id&&live.messages.some(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim())){const session=readingSession(id);session.focus=null;session.boundary=null;session.position={bottom:true,manual:false};state.restoring=true;try{render();}finally{state.restoring=false;}}};
@@ -430,6 +446,15 @@
   const [,cmd,rest='']=/^\/(\w*)\s*(.*)$/s.exec(text)||[];
   input.value='';
   saveTerminalDraft();
+  if(cmd==='pin'||cmd==='unpin'||cmd==='pins'){
+   if(win.kind==='status'||!window.NightlinkPins){localLine(win.id,'-!- Pins belong to a channel or direct message window.','mrc-error');render();return;}
+   const owner=live.identity?.key,rows=live.messages.filter(m=>m.conversation===win.id),ids=NightlinkPins.list(localStorage,owner,win.id);
+   if(cmd==='pins'){localLine(win.id,ids.length?'-!- Pinned: '+ids.map((id,i)=>(i+1)+') '+String(rows.find(m=>m.id===id)?.text??'(no longer stored)').slice(0,40)).join('  '):'-!- No pinned messages in this window. Select a message and type /pin.');render();return;}
+   if(cmd==='unpin'){const n=Number(rest);const id=Number.isInteger(n)&&n>=1?ids[n-1]:state.selectedMessage&&ids.includes(state.selectedMessage)?state.selectedMessage:null;
+    if(rest&&!id){localLine(win.id,'-!- Usage: /unpin [number from /pins]. Without a number, removes all pins in this window.','mrc-error');render();return;}
+    const removed=NightlinkPins.unpin(localStorage,owner,win.id,id);localLine(win.id,'-!- '+(removed?removed+' pin'+(removed===1?'':'s')+' removed.':'Nothing to unpin.'));render();return;}
+   const target=state.selectedMessage&&rows.some(m=>m.id===state.selectedMessage)?state.selectedMessage:rows.at(-1)?.id;
+   const r=NightlinkPins.pin(localStorage,owner,win.id,target);localLine(win.id,r.ok?'-!- Message pinned. /pins lists pins; /unpin removes them.':r.reason==='full'?'-!- This window already has '+NightlinkPins.MAX+' pins. Remove one with /unpin <number>.':'-!- No message to pin.',r.ok?'':'mrc-error');render();return;}
   if(cmd==='part'||cmd==='leave'){if(win.kind!=='channel'){localLine(win.id,'-!- /part removes a channel; switch to that channel window first.','mrc-error');render();return;}if(win.target.slot===0){localLine(win.id,'-!- The Public channel (slot 0) cannot be removed.','mrc-error');render();return;}confirmRemoveChannel(win.target.slot);return;}
   if(cmd==='help'){for(const h of HELP)localLine(win.id,'-!- '+h,'mrc-info');render();return;}
   if(cmd==='join'){const name=rest.trim().replace(/^#/,'').toLowerCase(),c=live.channels.find(c=>c.name.toLowerCase()===name);if(!c){localLine(win.id,'-!- No channel #'+name+' on this radio. Channels are configured on the radio.','mrc-error');render();return;}state.window=null;selectConversation({kind:'channel',...c});return;}
@@ -454,5 +479,5 @@
  doc.addEventListener('keydown',e=>{if(!terminal()||current!=='Messages'||doc.querySelector('dialog[open]'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='f'){e.preventDefault();e.stopPropagation();openFind();}else if(e.key==='Escape'&&state.find.open){e.preventDefault();e.stopPropagation();closeFind();}},true);
  function resumeReading(){if(!terminal()||current!=='Messages'||doc.hidden||!doc.hasFocus()||doc.querySelector('dialog[open]'))return;const win=activeWindow(windows()),session=readingSession(win.id);if(win.kind!=='status'&&unread(win.id)&&!session.position.manual){try{session.boundary=session.boundary||ensureAttention().unread(live.messages,win.id)[0]?.id;}catch{}if(session.boundary){session.focus=session.boundary;session.position={anchor:session.boundary,offset:24,manual:true,bottom:false};state.restoring=true;render();state.restoring=false;return;}}const log=doc.querySelector('#mrc-log');if(log){markRead(win,log);updateJump(log,win);}}
  window.addEventListener('focus',resumeReading);window.addEventListener('blur',()=>{saveTerminalDraft();captureReading();});window.addEventListener('beforeunload',()=>{saveTerminalDraft();captureReading();});doc.addEventListener('visibilitychange',()=>{if(doc.hidden){saveTerminalDraft();captureReading();}else resumeReading();});
- window.NightlinkMRC={render,windows,jumpTo:jumpMessage,submit:value=>{const list=windows();return submit(value,activeWindow(list),doc.querySelector('#mrc-input')||{value:''});},switchTo:n=>switchTo(windows()[n-1])};
+ window.NightlinkMRC={render,windows,split:cycleSplit,jumpTo:jumpMessage,submit:value=>{const list=windows();return submit(value,activeWindow(list),doc.querySelector('#mrc-input')||{value:''});},switchTo:n=>switchTo(windows()[n-1])};
 })();
