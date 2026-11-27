@@ -27,7 +27,12 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
   await page.evaluate(()=>{const c=live.channels[0];live.contacts.push({key:'44'.repeat(32),name:'Ridge RPT',type:2,snr:null,lastAdvert:Math.floor(Date.now()/1000)-60});
    live.messages.push({id:'r1',conversation:conversationId(c),target:c,kind:'channel',sender:'X',text:'via ridge',timestamp:Math.floor(Date.now()/1000)-30,status:'Received',observedRoute:{path:['44'],direct:false,snr:2.5,rssi:-90}});view('Nodes');renderNodes(true);});
   const rows=await page.evaluate(()=>[...document.querySelectorAll('#node-table tr')].map(r=>({level:r.querySelector('.node-bars')?.dataset.level,heard:r.children[3]?.textContent,label:r.querySelector('td.signal')?.getAttribute('aria-label')})));
-  assert.deepEqual(rows.map(r=>r.level),['4','1','0','3']);assert.deepEqual(rows.map(r=>r.heard),['5m ago','2h ago','Unknown','1m ago']);assert.equal(rows[3].label,'SNR 2.5 dB, 3 of 4 bars','repeater SNR from relayed message');assert.equal(rows[0].label,'SNR 7 dB, 4 of 4 bars');assert.equal(rows[2].label,'Signal unavailable');
+  assert.deepEqual(rows.map(r=>r.level),['4','1','0','3']);assert.deepEqual(rows.map(r=>r.heard),['5m ago','2h ago','Unknown','1m ago']);assert.equal(rows[3].label,'SNR 2.5 dB, 3 of 4 bars','repeater SNR from relayed message');
+  // A zero-hop advert from a repeater with no relayed messages gives it an exact-key reading.
+  await page.evaluate(()=>{const key='55'.repeat(32);live.contacts.push({key,name:'Far RPT',type:2,snr:null,lastAdvert:Math.floor(Date.now()/1000)});
+   const k=Array.from({length:32},()=>0x55),frame=Uint8Array.from([0x88,-6*4&255,-100&255,(4<<2)|1,0,...k,1,0,0,0,...Array(64).fill(0),0x81]);
+   ble.dispatchEvent(new CustomEvent('packet',{detail:frame}));renderNodes(true);});
+  assert.equal(await page.evaluate(()=>[...document.querySelectorAll('#node-table tr')].at(-1).querySelector('td.signal').getAttribute('aria-label')),'SNR -6 dB, 1 of 4 bars','advert-derived repeater SNR');assert.equal(rows[0].label,'SNR 7 dB, 4 of 4 bars');assert.equal(rows[2].label,'Signal unavailable');
   assert.deepEqual(errors,[],mode+' page errors');await page.close();
  }
  console.log('PASS command palette (Ctrl+P open, filter, Enter to channel, arrows/aria-activedescendant, Escape, empty state, contacts) and Nodes signal bars/relative age in terminal and cards. Synthetic only.');

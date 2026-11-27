@@ -22,3 +22,11 @@ test('node SNR from last hop or direct packets, skipping ambiguous hashes',()=>{
  assert.deepEqual(h.get(contacts[0].key),{snr:6,at:2},'latest final-hop SNR');assert.equal(h.has(contacts[1].key),false,'ambiguous b2 skipped');
  assert.deepEqual(h.get(contacts[3].key),{snr:4,at:4},'direct sender');
 });
+test('zero-hop adverts give an exact-key SNR; relayed or other packet types do not',()=>{
+ const R=require('./routes.js');const key=Buffer.alloc(32,0xab),frame=(header,path)=>Uint8Array.from([0x88,Math.round(7.5*4),-60&255,header,path.length,...path,...key,1,0,0,0,...Buffer.alloc(64),0x81]);
+ const d=R.parseAdvert(frame((4<<2)|1,[]));assert.equal(d.key,'ab'.repeat(32));assert.equal(d.direct,true);assert.equal(d.hops,0);assert.equal(d.snr,7.5);assert.equal(d.rssi,-60);assert.equal(d.timestamp,1);
+ assert.equal(R.parseAdvert(frame((4<<2)|1,[0x11,0x22])).direct,false,'relayed advert');
+ assert.equal(R.parseAdvert(frame((5<<2)|1,[])),null,'group text is not an advert');assert.equal(R.parseAdvert(Uint8Array.from([0x88,0,0,0x11,0])),null,'truncated');
+ const m=S.merge(new Map([['a',{snr:1,at:10}],['b',{snr:2,at:50}]]),new Map([['a',{snr:5,at:20}],['b',{snr:9,at:40}],['c',{snr:3,at:5}]]));
+ assert.deepEqual([m.get('a'),m.get('b').snr,m.get('c').source],[{snr:5,at:20,source:'advert'},2,'advert']);
+});

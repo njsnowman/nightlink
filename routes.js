@@ -25,5 +25,11 @@
   return{segments,totalKm:segments.reduce((sum,s)=>sum+s.km,0)};
  }
  function formatDistance(km,unit='mi'){if(!Number.isFinite(km)||km<0)return'Unavailable';if(unit==='ft')return (km*1000/.3048).toFixed(0)+' ft';const value=unit==='km'?km:km/1.609344;return value.toFixed(value>0&&value<.01&&unit!=='km'?4:value>0&&value<.1?2:1)+' '+(unit==='km'?'km':'mi');}
- root.MeshlineRoutes={parseRaw,decodeRoute,hopSummary,resolvePath,contactRoute,pathDistances,formatDistance};if(typeof module!=='undefined')module.exports=root.MeshlineRoutes;
+ // RX-log advert (payload type 4): same framing as parseRaw. The payload starts with the advertiser's 32-byte public
+// key, so a zero-hop advert gives the SNR the companion measured from that exact node (no path-hash ambiguity).
+function parseAdvert(d){if(!d||d.length<5||d[0]!==0x88)return null;const raw=d.slice(3),header=raw[0],route=header&3;if((header>>6)!==0||((header>>2)&15)!==4)return null;
+ let at=(route===0||route===3)?5:1;if(at>=raw.length)return null;const encoded=raw[at++],size=(encoded>>6)+1,count=encoded&63;if(size>3||count*size>64)return null;
+ const path=[];for(let i=0;i<count;i++)path.push(hex(raw.slice(at+i*size,at+(i+1)*size)));at+=count*size;if(raw.length<at+32+4+64)return null;
+ const dv=new DataView(d.buffer,d.byteOffset,d.byteLength);return {key:hex(raw.slice(at,at+32)),path,hops:count,direct:count===0,timestamp:new DataView(raw.buffer,raw.byteOffset+at+32,4).getUint32(0,true),snr:dv.getInt8(1)/4,rssi:dv.getInt8(2)};}
+root.MeshlineRoutes={parseAdvert,parseRaw,decodeRoute,hopSummary,resolvePath,contactRoute,pathDistances,formatDistance};if(typeof module!=='undefined')module.exports=root.MeshlineRoutes;
 })(globalThis);
