@@ -585,3 +585,11 @@ html:root:root:root:root:root[data-interface=terminal] body #term-goodbye .goodb
 html:root:root:root:root:root[data-interface=terminal] body #term-goodbye .goodbye-carrier{margin:0;color:var(--t-yellow);font-weight:700;letter-spacing:.2em}
 html:root:root:root:root:root[data-interface=terminal] body #term-goodbye .goodbye-note{margin:0;color:var(--t-grey)}
 html:root:root:root:root:root[data-interface=terminal] body .help-article .help-art{float:right;margin:0 0 6px 16px;color:var(--t-bright-cyan);font-size:14px;line-height:1.15}
+html:root:root:root:root:root[data-interface=terminal] body .term-statusline{margin-left:auto;display:flex;align-items:stretch;min-width:0}
+html:root:root:root:root:root[data-interface=terminal] body .term-statusline .term-fkeys-link{margin-left:0}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-field{padding:0 10px;line-height:var(--t-bar);color:#000;white-space:nowrap;border-left:1px solid #000}
+html:root:root:root:root:root[data-interface=terminal] body button.term-status-unread{background:transparent;border:0;border-left:1px solid #000;border-radius:0;font:inherit;cursor:pointer;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body button.term-status-unread[data-unread=yes]{background:#000;color:#ffff55;font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body button.term-status-unread:focus-visible{outline:2px solid #ffffff;outline-offset:-2px}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-battery[data-low=yes]{background:#aa0000;color:#ffffff;font-weight:700}
+@media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body .term-status-node{display:none}}

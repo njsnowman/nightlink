@@ -49,11 +49,26 @@
   const clock=doc.createElement('span');clock.className='term-menubar-clock';bar.append(clock);
   const keys=doc.createElement('div');keys.id='term-fkeys';keys.className='term-only term-fkeys';
   for(const [k,label,run] of [['F1','Help',()=>doc.querySelector('#open-help')?.click()],['F2','Chat',()=>view('Messages')],['F9','Menu',()=>view('Overview')],['Esc','Back',()=>view('Overview')]]){const b=doc.createElement('button');b.type='button';const s=doc.createElement('span');s.className='term-fkey';s.textContent=k;b.append(s,' '+label);b.onclick=run;keys.append(b);}
-  const link=doc.createElement('span');link.className='term-fkeys-link';keys.append(link);
+  // One-glance status line (#227): node, unread total, battery voltage and link state. Text, not colour, carries meaning.
+  const status=doc.createElement('div');status.className='term-statusline';status.setAttribute('role','status');status.setAttribute('aria-label','Radio status');
+  const field=cls=>{const e=doc.createElement('span');e.className='term-status-field '+cls;return e;};
+  const node=field('term-status-node'),unreadBtn=doc.createElement('button'),batt=field('term-status-battery');
+  unreadBtn.type='button';unreadBtn.className='term-status-field term-status-unread';unreadBtn.onclick=()=>view('Messages');
+  const link=doc.createElement('span');link.className='term-fkeys-link';status.append(node,unreadBtn,batt,link);keys.append(status);
   doc.body.prepend(bar);doc.body.append(keys);
   function tick(){const now=new Date();clock.textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
-   const state=typeof live==='object'?live.sync:'disconnected',kind=typeof ble==='object'&&ble.kind==='usb'?'USB':'BLE';link.textContent='● '+kind+' '+(state==='ready'?'ok':state==='syncing'?'sync':'off');link.dataset.state=state==='ready'?'ok':state==='syncing'?'pending':'off';}
+   const state=typeof live==='object'?live.sync:'disconnected',kind=typeof ble==='object'&&ble.kind==='usb'?'USB':'BLE';link.textContent='● '+kind+' '+(state==='ready'?'ok':state==='syncing'?'sync':'off');link.dataset.state=state==='ready'?'ok':state==='syncing'?'pending':'off';
+   const L=typeof live==='object'?live:null,ready=state==='ready';
+   node.textContent=ready&&L?.identity?.name?L.identity.name:'';node.hidden=!node.textContent;
+   let unread=0;try{if(ready&&typeof ensureAttention==='function')unread=ensureAttention().unread(L.messages).length;}catch{}
+   unreadBtn.textContent='✉ '+unread+' unread';unreadBtn.hidden=!ready;unreadBtn.dataset.unread=unread?'yes':'no';unreadBtn.setAttribute('aria-label',unread+' unread message'+(unread===1?'':'s')+', open chat');
+   const mv=L?.battery?.millivolts;batt.textContent=ready&&mv?'BAT '+(mv/1000).toFixed(2)+' V'+(mv<3500?' LOW':''):'';batt.hidden=!batt.textContent;batt.dataset.low=mv&&mv<3500?'yes':'no';}
   tick();setInterval(tick,15000);
+  root.NightlinkStatusLine={refresh:tick};
+  let queued=false;const soon=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;tick();});};
+  if(typeof radioSession==='object')for(const ev of ['sync','battery','identity','message','messages'])radioSession.addEventListener(ev,soon);
+  if(typeof ble==='object')ble.addEventListener('state',soon);
+  if(typeof renderMessages==='function'){const prev=renderMessages;renderMessages=function(){const r=prev.apply(this,arguments);soon();return r;};}
   function mark(name){for(const b of bar.querySelectorAll('[data-term-view]')){const on=b.dataset.termView===name||(b.dataset.termView==='Messages'&&name==='Direct Messages');b.classList.toggle('active',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}tick();}
   const previous=view;view=function(name){previous(name);mark(name);if(name!=='Settings')return;
    const label=doc.createElement('label');label.className='accent-setting interface-setting';label.append('Interface');
