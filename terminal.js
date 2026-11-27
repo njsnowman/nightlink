@@ -48,7 +48,7 @@
   for(const [name,key,label,run] of MENU){const b=doc.createElement('button');b.type='button';b.dataset.termView=name;const i=label.toUpperCase().indexOf(key),k=doc.createElement('span');k.className='term-key';k.textContent=label[i];b.append(label.slice(0,i),k,label.slice(i+1));b.setAttribute('aria-label',label);b.onclick=run;bar.append(b);}
   const clock=doc.createElement('span');clock.className='term-menubar-clock';bar.append(clock);
   const keys=doc.createElement('div');keys.id='term-fkeys';keys.className='term-only term-fkeys';
-  for(const [k,label,run] of [['F1','Help',()=>doc.querySelector('#open-help')?.click()],['F2','Chat',()=>view('Messages')],['F9','Menu',()=>view('Overview')],['Esc','Back',()=>view('Overview')]]){const b=doc.createElement('button');b.type='button';const s=doc.createElement('span');s.className='term-fkey';s.textContent=k;b.append(s,' '+label);b.onclick=run;keys.append(b);}
+  for(const [k,label,run] of [['F1','Help',()=>doc.querySelector('#open-help')?.click()],['F2','Chat',()=>view('Messages')],['F9','Menu',()=>view('Overview')],['^P','Go to',()=>root.NightlinkPalette?.open()],['Esc','Back',()=>view('Overview')]]){const b=doc.createElement('button');b.type='button';const s=doc.createElement('span');s.className='term-fkey';s.textContent=k;b.append(s,' '+label);b.onclick=run;keys.append(b);}
   // One-glance status line (#227): node, unread total, battery voltage and link state. Text, not colour, carries meaning.
   const status=doc.createElement('div');status.className='term-statusline';status.setAttribute('role','status');status.setAttribute('aria-label','Radio status');
   const field=cls=>{const e=doc.createElement('span');e.className='term-status-field '+cls;return e;};

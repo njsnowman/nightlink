@@ -593,3 +593,20 @@ html:root:root:root:root:root[data-interface=terminal] body button.term-status-u
 html:root:root:root:root:root[data-interface=terminal] body button.term-status-unread:focus-visible{outline:2px solid #ffffff;outline-offset:-2px}
 html:root:root:root:root:root[data-interface=terminal] body .term-status-battery[data-low=yes]{background:#aa0000;color:#ffffff;font-weight:700}
 @media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body .term-status-node{display:none}}
+html:root:root:root:root:root[data-interface=terminal] body dialog.cmd-palette{width:min(640px,calc(100vw - 32px));padding:0;background:var(--t-blue);color:var(--t-white);font-family:var(--t-font,monospace);margin-top:12vh}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-title{background:var(--t-grey);color:#000;padding:2px 12px;font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body #cmd-palette-input{display:block;width:calc(100% - 24px);margin:10px 12px;padding:6px 8px;background:#000;color:var(--t-yellow);border:1px solid var(--t-bright-cyan);border-radius:0;font:inherit}
+html:root:root:root:root:root[data-interface=terminal] body #cmd-palette-input:focus-visible{outline:2px solid var(--t-white);outline-offset:1px}
+html:root:root:root:root:root[data-interface=terminal] body #cmd-palette-list{list-style:none;margin:0 12px;padding:0;max-height:50vh;overflow:auto;border:1px solid var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-item{display:flex;justify-content:space-between;gap:12px;padding:3px 8px;cursor:pointer;color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-item.active{background:var(--t-bright-cyan);color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-group{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-item.active .cmd-palette-group{color:#000}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-empty{padding:6px 8px;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .cmd-palette-hint{margin:8px 12px 10px;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars{display:inline-flex;gap:1px;font-family:var(--t-font,monospace)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bar{color:var(--t-dark-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="4"] .node-bar.on{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="3"] .node-bar.on{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="2"] .node-bar.on{color:var(--t-yellow)}
+html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="1"] .node-bar.on{color:var(--t-bright-red)}
