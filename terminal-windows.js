@@ -160,7 +160,9 @@
  // Decorative ANSI art on empty pages (aria-hidden; each page already states that it is empty in text).
  const EMPTY_ART={
   Nodes:{when:()=>!live.contacts.length,lines:[['   .         .          .','term-art-dim'],['     \\       |        /','term-art-dim'],['  .---( o )---( o )---( o )---.','term-art-cyan'],['        \\_______|_______/','term-art-dim'],['           ( @ ) your radio','term-art-white'],['','',],['  no saved nodes yet · adverts appear here as they are heard','term-art-dim']]},
-  'Direct Messages':{when:()=>!live.messages.some(m=>m.target?.kind==='direct'||m.kind==='direct'),lines:[['   ╔══════════════════╗','term-art-cyan'],['   ║ \\              / ║','term-art-cyan'],['   ║   \\  ·──·   /   ║','term-art-cyan'],['   ║     \\______/     ║','term-art-cyan'],['   ╚══════════════════╝','term-art-cyan'],['',''],['   no direct messages yet','term-art-dim']]}
+  'Direct Messages':{when:()=>!live.messages.some(m=>m.target?.kind==='direct'||m.kind==='direct'),lines:[['   ╔══════════════════╗','term-art-cyan'],['   ║ \\              / ║','term-art-cyan'],['   ║   \\  ·──·   /   ║','term-art-cyan'],['   ║     \\______/     ║','term-art-cyan'],['   ╚══════════════════╝','term-art-cyan'],['',''],['   no direct messages yet','term-art-dim']]},
+  Search:{when:()=>!live.messages.length,lines:[['     .--.','term-art-cyan'],['    /    \\','term-art-cyan'],['    \\    /','term-art-cyan'],['     `--´\\','term-art-cyan'],['           \\\\','term-art-white'],['',''],['  nothing stored to search yet · messages are saved as they arrive','term-art-dim']]},
+  Activity:{when:()=>typeof activity==='object'&&activity.length<=1,lines:[['  ┌─────────────────────┐','term-art-cyan'],['  │ ▒▒▒▒▒░░░            │','term-art-cyan'],['  └─────────────────────┘','term-art-cyan'],['',''],['  quiet so far · radio events are logged here','term-art-dim']]}
  };
  function emptyArt(){
   doc.querySelector('#term-empty-art')?.remove();
@@ -185,6 +187,23 @@
    const rows=[...doc.querySelectorAll('main .content tbody tr')].map(r=>r.querySelector('button,a[href],[tabindex]:not([tabindex="-1"])')).filter(Boolean);if(!rows.length)return;
    const at=rows.findIndex(b=>b.closest('tr')?.contains(doc.activeElement));const i=at<0?0:Math.max(0,Math.min(rows.length-1,at+(e.key==='ArrowDown'?1:-1)));e.preventDefault();rows[i].focus();}
  });
+
+ // Help: a small decorative ANSI drawing per topic group beside the article heading (terminal only, aria-hidden).
+ const HELP_ART={
+  'Getting started':['  ┌──┐ ','  │>_│ ','  └──┘ '],
+  Radio:['  ((·))','    │  ','   /│\\ '],
+  Messaging:[' ┌────┐',' │ ·· │',' └┬───┘'],
+  Messages:[' ┌────┐',' │ ·· │',' └┬───┘'],
+  Contacts:['  (@) ','  /█\\ ','  / \\ '],
+  Maps:[' ┼──┼─',' │ ●│ ',' ┼──┼─'],
+  Settings:[' [≡≡≡]',' [≡ ≡]',' [≡≡≡]'],
+  Support:['  ?‾‾ ','   │  ','   ·  ']
+ };
+ function helpArt(){
+  if(!on())return;const article=doc.querySelector('.help-article');if(!article)return;const eyebrow=article.querySelector('.eyebrow');if(!eyebrow||article.querySelector('.help-art'))return;
+  const art=HELP_ART[eyebrow.textContent.trim()];if(!art)return;const pre=el('pre','help-art');pre.setAttribute('aria-hidden','true');pre.textContent=art.join('\n');article.prepend(pre);
+ }
+ new MutationObserver(()=>{if(current==='Settings')helpArt();}).observe(doc.body,{childList:true,subtree:true});
 
  // Settings as a DOS menu: hotkey letters on the category buttons; a letter opens its category when no field has focus.
  function settingsKeys(){if(!on()||current!=='Settings')return;const used=new Set();for(const b of doc.querySelectorAll('.switchboard-settings-nav button')){const label=(b.textContent||'').replace(/^\[.\]\s*/,'').trim();const k=[...label.toUpperCase()].find(c=>/[A-Z]/.test(c)&&!used.has(c));if(!k)continue;used.add(k);b.dataset.hotkey=k;b.setAttribute('aria-keyshortcuts',k);}}

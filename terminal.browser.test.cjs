@@ -136,6 +136,9 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  const who=await page.$$eval('#mrc-log .mrc-line',l=>l.map(x=>x.textContent).join('\n'));assert.match(who,/-!-   type    companion/);assert.match(who,/-!-   signal  SNR 8\.2 dB/);assert.match(who,/End of \/whois/);
  await page.fill('#mrc-input','kd');await page.press('#mrc-input','Tab');assert.equal(await page.inputValue('#mrc-input'),'KD9XYZ: ');
  await page.fill('#mrc-input','hi w9');await page.press('#mrc-input','Tab');assert.equal(await page.inputValue('#mrc-input'),'hi W9ABC-RPT ');await page.fill('#mrc-input','');
+ // Older messages carry the date (MM/DD) before the time.
+ await page.evaluate(()=>{const ch={kind:'channel',...live.channels[0]};live.messages.unshift({id:'old1',conversation:conversationId(ch),target:ch,kind:'channel',timestamp:Math.floor(Date.now()/1000)-3*86400,sender:'KD9XYZ',text:'from earlier this week',status:'Received'});view('Messages');});
+ assert.match(await page.textContent('[data-message-id="old1"] .mrc-time'),/^\d\d\/\d\d \d\d:\d\d $/);assert.equal(await page.$('[data-message-id="t1"] .mrc-date'),null,"today's lines keep HH:MM only");
  // Channel removal: an × beside each removable channel (not slot 0), a confirmation, then the radio call; /part refuses Public.
  await page.evaluate(()=>{window.__removed=[];radioSession.removeChannel=async slot=>{window.__removed.push(slot);radioSession.channels=live.channels.filter(c=>c.slot!==slot);radioSession.dispatchEvent(new CustomEvent('channels',{detail:radioSession.channels.slice()}));return{channel:live.channels.find(c=>c.slot===slot)};};view('Messages');});
  assert.deepEqual(await page.$$eval('.mrc-window-remove',b=>b.map(x=>x.getAttribute('aria-label'))),['Remove channel #public from the radio']);

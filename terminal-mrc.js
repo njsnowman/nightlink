@@ -81,6 +81,10 @@
  for(const name of ['online','offline','nightlink-map-providers-changed'])window.addEventListener(name,syncMap);
  const hhmm=t=>{const d=new Date((t||0)*1000);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
  const stamp=t=>hhmm(t)+' ';
+ // Message lines older than today carry the date (MM/DD) before the time; today's lines keep HH:MM only.
+ function messageStamp(t){const d=new Date((t||0)*1000),today=new Date();const s=el('span','mrc-time');
+  if(d.toDateString()!==today.toDateString()){s.append(el('span','mrc-date',String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '));s.title=d.toLocaleString();}
+  s.append(stamp(t));return s;}
  const nowSeconds=()=>Math.floor(Date.now()/1000);
  const bytes=text=>new TextEncoder().encode(text).length;
  const display=(key,name)=>typeof cardName==='function'&&key?cardName(key,name):name||'Mesh';
@@ -152,10 +156,10 @@
   const log=doc.querySelector('#mrc-log'),row=log?.querySelector('[data-message-id="'+CSS.escape(id)+'"]');if(row){log.scrollTop+=row.getBoundingClientRect().top-log.getBoundingClientRect().top-8;if(focus)row.querySelector('.mrc-text')?.focus({preventScroll:true});captureReading(log);updateJump(log,win);}
  }
  function actionsFor(m){const tools=el('div','mrc-message-actions');tools.setAttribute('role','toolbar');tools.setAttribute('aria-label','Selected message actions');
-  const dismiss=()=>{state.selectedMessage=null;tools.remove();state.form?.querySelector('#mrc-input')?.focus();};
+  const dismiss=()=>{state.selectedMessage=null;doc.querySelectorAll('#mrc-log .mrc-selected').forEach(e=>e.classList.remove('mrc-selected'));tools.remove();state.form?.querySelector('#mrc-input')?.focus();};
   for(const [label,action] of [['Reply',()=>beginReply(m,m.own?own():m.sender||m.target?.name||'Mesh')],['Copy',async()=>{try{await navigator.clipboard.writeText(String(m.text||''));toast('Message copied');}catch{toast('Clipboard unavailable. Select the message text to copy.');}}],['Path',()=>showMessageRoute(m)],['×',dismiss]]){const b=el('button',null,label);b.type='button';if(label==='×')b.setAttribute('aria-label','Dismiss message actions');b.onclick=e=>{e.stopPropagation();action();};tools.append(b);}tools.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();dismiss();}};return tools;
  }
- function selectMessage(m){state.selectedMessage=m.id;doc.querySelectorAll('.mrc-message-actions').forEach(e=>e.remove());const row=doc.querySelector('#mrc-log [data-message-id="'+CSS.escape(m.id)+'"]');if(row)row.append(actionsFor(m));}
+ function selectMessage(m){state.selectedMessage=m.id;doc.querySelectorAll('.mrc-message-actions').forEach(e=>e.remove());doc.querySelectorAll('#mrc-log .mrc-selected').forEach(e=>e.classList.remove('mrc-selected'));doc.querySelector('#mrc-log [data-message-id="'+CSS.escape(m.id)+'"]')?.classList.add('mrc-selected');const row=doc.querySelector('#mrc-log [data-message-id="'+CSS.escape(m.id)+'"]');if(row)row.append(actionsFor(m));}
  function beginReply(m,name){
   const input=state.form?.querySelector('#mrc-input');if(!input)return;selectMessage(m);
   const draft=input.value;if(state.form.querySelector('.message-reply-context')&&state.replyPrefix&&draft.startsWith(state.replyPrefix))input.value=draft.slice(state.replyPrefix.length);
@@ -175,8 +179,8 @@
  }
  function snrTag(snr){if(snr==null)return null;const cls=snr>=5?'mrc-snr-good':snr>=0?'mrc-snr-fair':'mrc-snr-poor',bars=snr>=10?'▆':snr>=5?'▅':snr>=0?'▃':'▁';const s=el('span','mrc-snr '+cls);s.append(el('span','mrc-snr-bar',bars),' SNR '+snr+' dB');return s;}
  function messageLine(m){
-  const line=el('div','mrc-line'+(m.own?' mrc-own':''));line.dataset.messageId=m.id;
-  line.append(el('span','mrc-time',stamp(m.timestamp)));
+  const line=el('div','mrc-line'+(m.own?' mrc-own':'')+(state.selectedMessage===m.id?' mrc-selected':''));line.dataset.messageId=m.id;
+  line.append(messageStamp(m.timestamp));
   const body=el('span','mrc-text'),name=m.own?own():(m.sender||m.target?.name||'Mesh'),text=String(m.text??'');
   if(text.startsWith('* '+name+' ')){body.classList.add('mrc-action');body.textContent=' '+text;if(!m.own)line.append(nick(name,'mrc-nick-peer',m));}
   else{

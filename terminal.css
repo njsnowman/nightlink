@@ -557,3 +557,31 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-hop.mrc-hop-far
 html:root:root:root:root:root[data-interface=terminal] body .mrc-snr{font-weight:700}html:root:root:root:root:root[data-interface=terminal] body .mrc-snr-bar{margin-right:2px}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-snr-good{color:var(--t-bright-green)}html:root:root:root:root:root[data-interface=terminal] body .mrc-snr-fair{color:var(--t-yellow)}html:root:root:root:root:root[data-interface=terminal] body .mrc-snr-poor{color:var(--t-bright-red)}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-window-list li{display:flex;align-items:center}html:root:root:root:root:root[data-interface=terminal] body .mrc-window-list li>.mrc-window{flex:1;min-width:0}html:root:root:root:root:root[data-interface=terminal] body .mrc-window-remove{background:transparent !important;border:0 !important;color:var(--t-grey) !important;padding:0 6px !important;min-height:0 !important;font-size:14px;line-height:20px;cursor:pointer}html:root:root:root:root:root[data-interface=terminal] body .mrc-window-remove:hover,html:root:root:root:root:root[data-interface=terminal] body .mrc-window-remove:focus-visible{background:var(--t-red) !important;color:var(--t-white) !important}
+/* Selected chat message (reply/react target) and dates on older lines. */
+html:root:root:root:root:root[data-interface=terminal] body #mrc-log .mrc-line.mrc-selected{background:#00002a;box-shadow:inset 3px 0 0 var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body #mrc-log .mrc-line.mrc-selected>.mrc-text{border-left-color:var(--t-bright-cyan) !important}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-date{color:#00aaaa}
+/* Palette consistency (design pass): card-era greys inside terminal pages and dialogs map to VGA grey for notes and
+   labels and VGA white for values. Elements with their own semantic colour class are not targeted. */
+html:root:root:root:root:root[data-interface=terminal] body :is(.device-intro,.device-identity,.device-import,.radio-tools-status,.radio-tool-group-note,.radio-tool-arrow,.radio-tools-foot,.empty-cell,.search-local,.history-query-label,.search-empty,.accent-setting,.device-status){color:var(--t-grey) !important}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,main .content) :is(label,p:not([class*=term-]):not([class*=mrc-]):not([role=alert]),summary){color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,main .content) :is(dd,b,strong):not([class*=term-]):not([class*=mrc-]):not([class*=bbs-]):not([class*=ok]):not([class*=bad]):not([class*=pending]){color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,main .content) dt{color:#00aaaa}
+html:root:root:root:root:root[data-interface=terminal] body :is(#dialog-body,main .content) :is(.radio-status-panel,.nl-radio-hub) :is(span,div):not([class]){color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .history-mentions,html:root:root:root:root:root[data-interface=terminal] body #history-results span{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body :is(.device-flow,.radio-tool-copy,.contact-search-tools,.history-results-heading)>span{color:var(--t-grey) !important}
+/* Floating menus share the dialog window's solid dark-grey drop shadow and square frame. */
+html:root:root:root:root:root[data-interface=terminal] body :is(.text-art-popover,.mrc-message-actions,.message-more-actions,.contact-more-actions,.message-more[open]>div,[role=menu],[role=listbox]:not(select)){box-shadow:6px 5px 0 0 #555555 !important;border-radius:0 !important}
+/* Display options (Settings > Text size / Colour palette). Daylight inverts the terminal palette to a light background and
+   inverts pictures back; high contrast raises body greys to white. */
+html[data-interface=terminal][data-term-palette=contrast]{--t-grey:#ffffff;--t-dark-grey:#aaaaaa}
+html[data-interface=terminal][data-term-palette=daylight]{filter:invert(1) hue-rotate(180deg);background:#fff}
+html:root:root:root:root:root[data-interface=terminal][data-term-palette=daylight] body :is(img,video,iframe,.term-logo-svg,.help-figure,.term-lock-logo){filter:invert(1) hue-rotate(180deg)}
+html:root:root:root:root:root[data-interface=terminal][data-term-text=large] body{zoom:1.15}
+html:root:root:root:root:root[data-interface=terminal][data-term-text=xlarge] body{zoom:1.3}
+/* Sign-off screen (terminal-goodbye.js). */
+html:root:root:root:root:root[data-interface=terminal] body #term-goodbye{position:fixed;inset:0;z-index:1001;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+html:root:root:root:root:root[data-interface=terminal] body #term-goodbye .goodbye-logo .term-logo-svg{width:min(80vw,760px);height:auto}
+html:root:root:root:root:root[data-interface=terminal] body #term-goodbye .goodbye-carrier{margin:0;color:var(--t-yellow);font-weight:700;letter-spacing:.2em}
+html:root:root:root:root:root[data-interface=terminal] body #term-goodbye .goodbye-note{margin:0;color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .help-article .help-art{float:right;margin:0 0 6px 16px;color:var(--t-bright-cyan);font-size:14px;line-height:1.15}

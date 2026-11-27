@@ -50,6 +50,7 @@
     "terminal-mrc.js",
     "terminal-windows.js",
     "terminal-boot.js",
+    "terminal-goodbye.js",
     "startup-modem.wav",
     "terminal-sound.js",
     "corescope-chat-desktop.cjs",

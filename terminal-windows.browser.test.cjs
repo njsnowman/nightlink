@@ -123,5 +123,17 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
   const q=await ctx.newPage();await q.emulateMedia({reducedMotion:'reduce'});await q.evaluate?.(()=>0);await q.goto('http://127.0.0.1:4173');await q.waitForFunction(()=>window.NightlinkBBS);await q.waitForTimeout(300);assert.equal(await q.$('#term-boot-screen'),null,'reduced motion or preference skips it');
   await ctx.close();}
  {const p=await context.newPage();await p.goto('http://127.0.0.1:4173');await p.waitForFunction(()=>window.NightlinkBBS);assert.equal(await p.$('#term-boot-screen'),null,'skipped under automation');await p.close();}
+ // Sign-off screen: shown by NightlinkGoodbye.show (called on the desktop quit request) with the logo and NO CARRIER.
+ {const g=await context.newPage();await g.addInitScript(()=>localStorage.setItem('nightlink.interface','terminal'));await g.goto('http://127.0.0.1:4173');await g.waitForFunction(()=>window.NightlinkGoodbye&&window.NightlinkBBS);
+  await g.evaluate(()=>NightlinkGoodbye.show());assert.ok(await g.isVisible('#term-goodbye'));assert.match(await g.textContent('#term-goodbye'),/NO CARRIER/);assert.ok(await g.$('#term-goodbye svg'));
+  assert.equal(await g.evaluate(()=>NightlinkGoodbye.show()),null,'shown once');if(shots)await g.screenshot({path:path.join(shots,'term-goodbye.png')});await g.close();}
+ // Display options: text size scales the app; palettes set the root attribute and persist.
+ {const d=await context.newPage();await d.addInitScript(()=>localStorage.setItem('nightlink.interface','terminal'));await d.goto('http://127.0.0.1:4173');await d.waitForFunction(()=>window.NightlinkBBS);
+  await d.evaluate(()=>view('Settings'));await d.selectOption('#term-text','large');assert.equal(await d.evaluate(()=>getComputedStyle(document.body).zoom),'1.15');
+  await d.selectOption('#term-palette','contrast');assert.equal(await d.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--t-grey').trim()),'#ffffff');
+  await d.selectOption('#term-palette','daylight');assert.match(await d.evaluate(()=>getComputedStyle(document.documentElement).filter),/invert/);
+  if(shots){await d.evaluate(()=>view('Messages'));await d.screenshot({path:path.join(shots,'term-daylight.png')});}
+  await d.reload();await d.waitForFunction(()=>window.NightlinkBBS);assert.equal(await d.evaluate(()=>[document.documentElement.dataset.termText,document.documentElement.dataset.termPalette].join()),'large,daylight');
+  await d.evaluate(()=>{localStorage.removeItem('nightlink.term-text');localStorage.removeItem('nightlink.term-palette');});await d.close();}
  assert.deepEqual(errors,[]);console.log('terminal windows browser checks passed');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1);});
