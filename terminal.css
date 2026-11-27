@@ -637,3 +637,8 @@ html:root:root:root:root:root[data-interface=terminal] body .mrc-split-close:foc
 html:root:root:root:root:root[data-interface=terminal] body .mrc-split-log{flex:1;min-height:0;overflow:auto;padding:4px 8px}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-split-empty{color:var(--t-grey)}
 @media (max-width:1000px){html:root:root:root:root:root[data-interface=terminal] body .mrc-body.mrc-split-on{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}html:root:root:root:root:root[data-interface=terminal] body .mrc-split-on>.mrc-windows{display:none}}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pins{position:sticky;top:0;z-index:2;display:flex;flex-direction:column;border-bottom:1px solid var(--t-bright-cyan);background:#000;max-height:7.5em;overflow:auto;margin:0 0 4px}
+html:root:root:root:root:root[data-interface=terminal] body button.mrc-pin{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:0;padding:1px 8px;color:var(--t-white);font:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body button.mrc-pin:hover,html:root:root:root:root:root[data-interface=terminal] body button.mrc-pin:focus-visible{background:var(--t-blue);outline:1px solid var(--t-white);outline-offset:-1px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pin-tag{color:var(--t-yellow);font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-pin-nick{color:var(--t-bright-cyan)}

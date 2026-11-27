@@ -8,6 +8,9 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  const tick=()=>page.evaluate(()=>new Promise(r=>{NightlinkStatusLine.refresh();requestAnimationFrame(()=>requestAnimationFrame(r));}));
  await page.evaluate(()=>{radioSession.request=async()=>{throw Error('radio blocked');};});await tick();
  let s=await read();assert.equal(s.node,null);assert.equal(s.unread,null);assert.equal(s.batt,null);assert.match(s.link,/off$/,'disconnected shows link only');
+ await page.evaluate(()=>recovery.dispatchEvent(new CustomEvent('recovery',{detail:{state:'waiting',attempt:2,delay:5000}})));await tick();assert.match((await read()).link,/retry 2 in [45]s$/,'reconnect countdown');
+ await page.evaluate(()=>recovery.dispatchEvent(new CustomEvent('recovery',{detail:{state:'retrying'}})));await tick();assert.match((await read()).link,/reconnecting$/);
+ await page.evaluate(()=>recovery.dispatchEvent(new CustomEvent('recovery',{detail:{state:'exhausted'}})));await tick();assert.match((await read()).link,/retry stopped$/);
  await page.evaluate(()=>{live.sync='syncing';});await tick();assert.match((await read()).link,/sync$/);
  await page.evaluate(()=>{live.identity={key:'ee'.repeat(32),name:'SN0WMAN'};live.sync='ready';live.battery={millivolts:3920};const c={kind:'channel',slot:0,id:'ab'.repeat(12),name:'Public'};live.channels=[c];live.messages=[];ensureAttention();});await tick();
  s=await read();assert.equal(s.node,'SN0WMAN');assert.equal(s.unread,'✉ 0 unread');assert.equal(s.flag,'no');assert.equal(s.batt,'BAT 3.92 V');assert.match(s.link,/ok$/);

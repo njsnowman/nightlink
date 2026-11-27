@@ -59,6 +59,9 @@
   doc.body.prepend(bar);doc.body.append(keys);
   function tick(){const now=new Date();clock.textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
    const state=typeof live==='object'?live.sync:'disconnected',kind=typeof ble==='object'&&ble.kind==='usb'?'USB':'BLE';link.textContent='● '+kind+' '+(state==='ready'?'ok':state==='syncing'?'sync':'off');link.dataset.state=state==='ready'?'ok':state==='syncing'?'pending':'off';
+   // Auto-reconnect progress (recovery.js), shown instead of 'off' while a retry is pending.
+   const rec=root.NightlinkStatusLine?.recovery;if(state!=='ready'&&state!=='syncing'&&rec){if(rec.state==='waiting'&&rec.until){const left=Math.max(0,Math.ceil((rec.until-Date.now())/1000));link.textContent='● '+kind+' retry '+rec.attempt+' in '+left+'s';link.dataset.state='pending';}
+    else if(rec.state==='retrying'){link.textContent='● '+kind+' reconnecting';link.dataset.state='pending';}else if(rec.state==='exhausted'||rec.state==='paused'){link.textContent='● '+kind+' off · retry stopped';}}
    const L=typeof live==='object'?live:null,ready=state==='ready';
    node.textContent=ready&&L?.identity?.name?L.identity.name:'';node.hidden=!node.textContent;
    let unread=0,dms=0;try{if(ready&&typeof ensureAttention==='function'){const u=ensureAttention().unread(L.messages);unread=u.length;dms=u.filter(m=>m.target?.kind==='direct'||m.kind==='direct').length;}}catch{}
@@ -67,7 +70,11 @@
    unreadBtn.textContent='✉ '+unread+' unread';unreadBtn.hidden=!ready;unreadBtn.dataset.unread=unread?'yes':'no';unreadBtn.setAttribute('aria-label',unread+' unread message'+(unread===1?'':'s')+', open chat');
    const mv=L?.battery?.millivolts;batt.textContent=ready&&mv?'BAT '+(mv/1000).toFixed(2)+' V'+(mv<3500?' LOW':''):'';batt.hidden=!batt.textContent;batt.dataset.low=mv&&mv<3500?'yes':'no';}
   tick();setInterval(tick,15000);
-  root.NightlinkStatusLine={refresh:tick};
+  root.NightlinkStatusLine={refresh:tick,recovery:null};
+  let countdown=null;const onRecovery=d=>{root.NightlinkStatusLine.recovery=d?{...d,until:d.state==='waiting'&&d.delay?Date.now()+d.delay:null}:null;clearInterval(countdown);countdown=null;
+   if(d?.state==='waiting')countdown=setInterval(()=>{tick();if(root.NightlinkStatusLine.recovery?.until<Date.now()){clearInterval(countdown);countdown=null;}},1000);tick();};
+  root.NightlinkStatusLine.onRecovery=onRecovery;
+  if(typeof recovery==='object'&&recovery?.addEventListener)recovery.addEventListener('recovery',e=>onRecovery(e.detail));
   let queued=false;const soon=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;tick();});};
   if(typeof radioSession==='object')for(const ev of ['sync','battery','identity','message','messages','stats'])radioSession.addEventListener(ev,soon);
   if(typeof ble==='object')ble.addEventListener('state',soon);

@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- Pinned messages (terminal chat): /pin pins the selected message, or the latest when none is selected; /pins lists pins; /unpin [n] removes one or all. Up to five per window, shown in a [PIN] bar at the top of the log; selecting a pin scrolls to the message. Stored locally per radio identity; nothing is sent to the radio.
+- Terminal status line shows auto-reconnect progress while the link is down: `retry N in Xs`, `reconnecting`, or `retry stopped`.
 - Terminal chat split view: F6 opens a read-only pane with the latest 60 lines of another window beside the active one. Press F6 again for the next window, then off; the pane also has a close button. Below 1000 px the window list hides to make room.
 - Settings > Custom colours (terminal): change body text, accent, highlight and bar colours. A colour is applied only if text keeps at least 4.5:1 contrast (text on black; white title text on the bar). Stored locally; Reset returns to VGA colours.
 - Terminal page title bars show a one-line ANSI motif per page (decorative, hidden from screen readers, hidden below 900 px).

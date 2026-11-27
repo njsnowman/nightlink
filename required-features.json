@@ -56,6 +56,7 @@
     "command-palette.js",
     "node-signal.js",
     "terminal-theme.js",
+    "pins.js",
     "startup-modem.wav",
     "terminal-sound.js",
     "corescope-chat-desktop.cjs",
