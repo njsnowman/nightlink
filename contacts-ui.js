@@ -42,3 +42,31 @@ radioSession.addEventListener('message',()=>{for(const raw of rawPackets.slice(-
 function startContactDM(n){const current=resolveContactDM(n);if(current){$('#dialog').close();openDM(current.key);return;}const setup=$('#contact-identity-setup');if(!setup){openContactCard(n).then(()=>startContactDM(n));return;}setup.hidden=false;setup.innerHTML='<h4>Link this sender’s radio</h4><p>Channel messages include a name, not a full recipient key. Add this person’s public key once to address their DM.</p><label for="dm-contact-key">Public key · 64 hexadecimal characters</label><input id="dm-contact-key" maxlength="64" autocomplete="off" spellcheck="false"><button class="primary" id="dm-add-contact">Save identity and message</button><p id="dm-resolution-error" role="status"></p>';if(/^[a-f0-9]{64}$/.test(n.key))$('#dm-contact-key').value=n.key;$('#dm-contact-key').focus();$('#dm-add-contact').onclick=async()=>{const button=$('#dm-add-contact');button.disabled=true;try{const key=$('#dm-contact-key').value.trim().toLowerCase();if(!/^[a-f0-9]{64}$/.test(key))throw Error('Enter this person’s full 64-character public key.');let c=live.contacts.find(c=>c.key===key);if(c&&c.type!==1)throw Error('This key belongs to a non-companion radio.');if(!c){if(live.sync!=='ready')throw Error('Connect your radio before adding a new companion contact.');c=await radioSession.addContact({key,name:n.name,type:1});}if(n.localSender){const links=JSON.parse(localStorage.getItem('nightlink.sender-links')||'{}');links[n.key]=c.key;localStorage.setItem('nightlink.sender-links',JSON.stringify(links));}$('#dialog').close();openDM(c.key);}catch(error){$('#dm-resolution-error').textContent=error.message;button.disabled=false;}};}
 
 $('#add-channel').onclick=showAddChannel;
+// Remove a channel from the connected radio after confirmation. Public (slot 0) is not offered. Messages already
+// stored in Nightlink are kept; only the radio's channel slot is cleared.
+function confirmRemoveChannel(slot){
+ const channel=live.channels.find(c=>c.slot===Number(slot));if(!channel||channel.slot===0)return;
+ const label=channel.name.startsWith('#')?channel.name:'#'+channel.name;
+ modal('Remove channel','');const body=$('#dialog-body');
+ const p=document.createElement('p');p.textContent='Remove '+label+' from your radio? Channel slot '+channel.slot+' is cleared on the radio. Messages already saved in Nightlink stay in history. To rejoin later you need the channel name, or the key for a private channel.';
+ const actions=document.createElement('div');actions.className='dialog-actions';
+ const remove=document.createElement('button');remove.type='button';remove.className='danger';remove.id='confirm-remove-channel';remove.textContent='Remove channel';
+ const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Cancel';cancel.onclick=()=>$('#dialog').close();
+ remove.onclick=async()=>{remove.disabled=true;cancel.disabled=true;remove.textContent='Removing…';
+  try{await radioSession.removeChannel(channel.slot);$('#dialog').close();toast(label+' removed from the radio.');
+   if(live.selected?.kind==='channel'&&live.selected.slot===channel.slot){const first=live.channels.find(c=>c.slot!==channel.slot);if(first&&typeof selectConversation==='function')selectConversation({kind:'channel',...first});}
+  }catch(e){remove.disabled=false;cancel.disabled=false;remove.textContent='Remove channel';toast(e.message||'Channel could not be removed.');}};
+ actions.append(remove,cancel);body.append(p,actions);cancel.focus();
+}
+window.confirmRemoveChannel=confirmRemoveChannel;
+// The Add channel dialog also lists the radio's channels with a Remove action for each one except Public.
+{const openAddChannel=showAddChannel;showAddChannel=function(){openAddChannel.apply(this,arguments);
+ const body=$('#dialog-body');if(!body||!live.channels.length)return;
+ const section=document.createElement('section');section.className='channel-manage';section.setAttribute('aria-label','Channels on this radio');
+ const h=document.createElement('h3');h.textContent='Channels on this radio';const list=document.createElement('ul');list.className='channel-manage-list';
+ for(const c of live.channels){const li=document.createElement('li');const name=document.createElement('span');name.textContent=(c.name.startsWith('#')?c.name:'#'+c.name)+' · slot '+c.slot;li.append(name);
+  if(c.slot===0){const note=document.createElement('small');note.textContent='Public · cannot be removed';li.append(note);}
+  else{const b=document.createElement('button');b.type='button';b.className='danger channel-remove';b.textContent='Remove';b.setAttribute('aria-label','Remove channel '+(c.name.startsWith('#')?c.name:'#'+c.name)+' from the radio');b.onclick=()=>confirmRemoveChannel(c.slot);li.append(b);}
+  list.append(li);}
+ section.append(h,list);body.append(section);};
+ $('#add-channel').onclick=showAddChannel;}

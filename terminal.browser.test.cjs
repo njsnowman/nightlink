@@ -136,6 +136,18 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  const who=await page.$$eval('#mrc-log .mrc-line',l=>l.map(x=>x.textContent).join('\n'));assert.match(who,/-!-   type    companion/);assert.match(who,/-!-   signal  SNR 8\.2 dB/);assert.match(who,/End of \/whois/);
  await page.fill('#mrc-input','kd');await page.press('#mrc-input','Tab');assert.equal(await page.inputValue('#mrc-input'),'KD9XYZ: ');
  await page.fill('#mrc-input','hi w9');await page.press('#mrc-input','Tab');assert.equal(await page.inputValue('#mrc-input'),'hi W9ABC-RPT ');await page.fill('#mrc-input','');
+ // Channel removal: an × beside each removable channel (not slot 0), a confirmation, then the radio call; /part refuses Public.
+ await page.evaluate(()=>{window.__removed=[];radioSession.removeChannel=async slot=>{window.__removed.push(slot);radioSession.channels=live.channels.filter(c=>c.slot!==slot);radioSession.dispatchEvent(new CustomEvent('channels',{detail:radioSession.channels.slice()}));return{channel:live.channels.find(c=>c.slot===slot)};};view('Messages');});
+ assert.deepEqual(await page.$$eval('.mrc-window-remove',b=>b.map(x=>x.getAttribute('aria-label'))),['Remove channel #public from the radio']);
+ await page.fill('#mrc-input','/part');await page.press('#mrc-input','Enter');
+ assert.match(await page.$$eval('#mrc-log .mrc-line',l=>l.map(x=>x.textContent).join('\n')),/Public channel \(slot 0\) cannot be removed/);assert.equal(await page.evaluate(()=>document.querySelector('#dialog').open),false);
+ await page.click('.mrc-window-remove');await page.waitForSelector('#dialog[open] #confirm-remove-channel');
+ assert.match(await page.textContent('#dialog-body'),/Remove #public from your radio\? Channel slot 1 is cleared on the radio\. Messages already saved in Nightlink stay in history/);
+ assert.equal(await page.evaluate(()=>document.activeElement?.textContent),'Cancel','Cancel has focus first');
+ await page.click('#confirm-remove-channel');await page.waitForFunction(()=>!document.querySelector('#dialog').open);
+ assert.deepEqual(await page.evaluate(()=>window.__removed),[1]);assert.equal(await page.$('.mrc-window-remove'),null);
+ assert.deepEqual(await page.$$eval('[data-mrc-window]',b=>b.map(x=>x.textContent.replace(/\d+$/,'').trim())),['1 (status)','2 #field-ops']);
+ await fixture(page);
  // Settings: switch to Cards and back; each choice persists across reloads.
  await page.evaluate(()=>view('Settings'));
  assert.deepEqual(await page.$$eval('#interface-mode option',o=>o.map(x=>[x.value,x.textContent])),[['terminal','Terminal (default)'],['cards','Cards']]);
@@ -146,7 +158,11 @@ async function fixture(page){await page.evaluate(async()=>{if(window.cardsReady)
  await page.reload();await page.waitForFunction(()=>typeof view==='function'&&window.NightlinkBBS);
  assert.equal(await page.evaluate(()=>document.documentElement.dataset.interface),'cards');
  assert.ok(await page.isVisible('#overview'));assert.equal(await page.$('#bbs'),null);
- await fixture(page);await page.evaluate(()=>view('Messages'));assert.equal(await page.$('#mrc'),null);assert.ok(await page.isVisible('.conversation'));
+ await fixture(page);await page.evaluate(()=>view('Messages'));assert.equal(await page.$('#mrc'),null);
+ // Cards: the Add channel dialog lists the radio's channels; Public is marked as not removable, others offer Remove.
+ await page.evaluate(()=>showAddChannel());await page.waitForSelector('#dialog[open] .channel-manage');
+ assert.deepEqual(await page.$$eval('.channel-manage-list li',l=>l.map(x=>x.textContent)),['#field-ops · slot 0Public · cannot be removed','#public · slot 1Remove']);
+ await page.click('.channel-remove');await page.waitForSelector('#confirm-remove-channel');assert.match(await page.textContent('#dialog-body'),/Remove #public from your radio\?/);await page.evaluate(()=>document.querySelector('#dialog').close());assert.ok(await page.isVisible('.conversation'));
  assert.doesNotMatch(await page.evaluate(()=>getComputedStyle(document.body).fontFamily),/Cascadia Mono/);
  if(shots)await page.screenshot({path:path.join(shots,'term-cards.png')});
  await page.evaluate(()=>view('Settings'));assert.equal(await page.inputValue('#interface-mode'),'cards');

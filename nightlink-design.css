@@ -212,3 +212,9 @@ html:root:root:root:root body .map-provider-settings input{flex:0 0 auto;accent-
 
 /* Feet scales share readable map surfaces in both interfaces. */
 .leaflet-container .leaflet-control-scale-line{color:var(--nl-copy);background:var(--nl-surface);border-color:var(--nl-edge);text-shadow:none}
+/* Channel management list inside the Add channel dialog (Cards). */
+.channel-manage{margin-top:18px;border-top:1px solid var(--nl-edge);padding-top:12px}
+.channel-manage h3{margin:0 0 8px;font-size:14px}
+.channel-manage-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.channel-manage-list li{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.channel-manage-list small{color:var(--nl-muted)}

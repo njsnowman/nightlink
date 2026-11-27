@@ -286,7 +286,9 @@
   const ol=el('ol','mrc-window-list');
   list.forEach((w,i)=>{const li=el('li'),b=el('button','mrc-window'+(w===win?' active':''));b.type='button';b.dataset.mrcWindow=w.id;const n=w.kind==='status'?0:unread(w.id);
    b.append(el('span','mrc-window-num',String(i+1)),' ',el('span','mrc-window-name '+(w.kind==='direct'?'mrc-dm':''),w.label));if(n)b.append(el('span','mrc-unread',String(n)));
-   if(w===win)b.setAttribute('aria-current','true');b.setAttribute('aria-label',(i+1)+' '+w.label+(n?', '+n+' unread':''));b.onclick=()=>switchTo(w);li.append(b);ol.append(li);});
+   if(w===win)b.setAttribute('aria-current','true');b.setAttribute('aria-label',(i+1)+' '+w.label+(n?', '+n+' unread':''));b.onclick=()=>switchTo(w);li.append(b);
+   if(w.kind==='channel'&&w.target.slot!==0&&typeof confirmRemoveChannel==='function'){const x=el('button','mrc-window-remove','×');x.type='button';x.title='Remove '+w.label+' from the radio';x.setAttribute('aria-label','Remove channel '+w.label+' from the radio');x.onclick=e=>{e.stopPropagation();confirmRemoveChannel(w.target.slot);};li.append(x);}
+   ol.append(li);});
   side.append(ol,el('p','mrc-dim mrc-legend','alt+1..9 switch'),el('p','mrc-dim mrc-legend','/help for commands'));
   // Scrollback
   const scroll=el('div','mrc-log');scroll.id='mrc-log';scroll.setAttribute('role','log');scroll.setAttribute('aria-label','Scrollback '+win.label);scroll.tabIndex=0;
@@ -382,7 +384,7 @@
   const [word,...words]=rest.split(/\s+/),matches=people.filter(c=>c.name.toLowerCase().startsWith(word.toLowerCase())||c.key.startsWith(word.toLowerCase()));
   return matches.length===1?{contact:matches[0],text:words.join(' ')}:null;
  }
- const HELP=['Commands:','/join #channel   switch to a radio channel window','/msg <name> <text>   send a direct message to a saved contact','/query <name>   open a direct message window','/me <text>   send "* '+'<your name> <text>"','/whois <name>   show a saved contact: type, route, signal, last advert','Tab   complete a nick or #channel','/help   show this help','Keys: alt+1..9 switch window · F9 main menu · F1 help'];
+ const HELP=['Commands:','/join #channel   switch to a radio channel window','/msg <name> <text>   send a direct message to a saved contact','/query <name>   open a direct message window','/me <text>   send "* '+'<your name> <text>"','/whois <name>   show a saved contact: type, route, signal, last advert','Tab   complete a nick or #channel','/part   remove the current channel from the radio (asks first; Public cannot be removed)','/help   show this help','Keys: alt+1..9 switch window · F9 main menu · F1 help'];
  async function submit(value,win,input){
   const text=value.trim();if(!text)return;
   const send=async(target,body)=>{if(bytes(body)>LIMIT){localLine(win.id,'-!- Message is '+bytes(body)+' bytes; the limit is '+LIMIT+'.','mrc-error');render();return;}const owner=live.identity?.key,id=conversationId(target),reply=state.replyWindow===id?state.replySource:null,before=new Set(live.messages.map(m=>m.id));await sendUIMessage({...target},body,()=>{if(draftStore().get(owner,id).trim()===body.trim())draftStore().clearIf(owner,id,body);const i=state.form?.querySelector('#mrc-input');if(state.draftOwner===owner&&state.draftId===id&&i?.value.trim()===body.trim()){i.value='';state.lastSavedDraft='';syncCardDraft('');state.form.querySelector('.message-reply-context')?.remove();state.replyWindow=null;state.replySource=null;}});if(reply&&owner===live.identity?.key){const sent=live.messages.find(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim());if(sent){sent.localReply={...reply};saveHistory();}}if(owner===live.identity?.key&&state.readingWin===id&&live.messages.some(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim())){const session=readingSession(id);session.focus=null;session.boundary=null;session.position={bottom:true,manual:false};state.restoring=true;try{render();}finally{state.restoring=false;}}};
@@ -393,6 +395,7 @@
   const [,cmd,rest='']=/^\/(\w*)\s*(.*)$/s.exec(text)||[];
   input.value='';
   saveTerminalDraft();
+  if(cmd==='part'||cmd==='leave'){if(win.kind!=='channel'){localLine(win.id,'-!- /part removes a channel; switch to that channel window first.','mrc-error');render();return;}if(win.target.slot===0){localLine(win.id,'-!- The Public channel (slot 0) cannot be removed.','mrc-error');render();return;}confirmRemoveChannel(win.target.slot);return;}
   if(cmd==='help'){for(const h of HELP)localLine(win.id,'-!- '+h,'mrc-info');render();return;}
   if(cmd==='join'){const name=rest.trim().replace(/^#/,'').toLowerCase(),c=live.channels.find(c=>c.name.toLowerCase()===name);if(!c){localLine(win.id,'-!- No channel #'+name+' on this radio. Channels are configured on the radio.','mrc-error');render();return;}state.window=null;selectConversation({kind:'channel',...c});return;}
   if(cmd==='msg'||cmd==='query'){const r=resolveContact(rest.trim());if(!r){localLine(win.id,'-!- No unique saved contact matches "'+rest.trim().split(/\s+/)[0]+'".','mrc-error');render();return;}
