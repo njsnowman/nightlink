@@ -610,3 +610,14 @@ html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-leve
 html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="3"] .node-bar.on{color:var(--t-bright-cyan)}
 html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="2"] .node-bar.on{color:var(--t-yellow)}
 html:root:root:root:root:root[data-interface=terminal] body .node-bars[data-level="1"] .node-bar.on{color:var(--t-bright-red)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-0{color:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-1{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-2{color:var(--t-bright-magenta)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-3{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-4{color:var(--t-bright-red)}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-5{color:#00aaaa}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-6{color:#00aa00}
+html:root:root:root:root:root[data-interface=terminal][data-term-nicks=sender] body .mrc-nick-peer.mrc-nick-peer.mrc-nc-7{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body button.term-status-dm{background:var(--t-bright-magenta);color:#000;border:0;border-left:1px solid #000;border-radius:0;font:inherit;font-weight:700;cursor:pointer;min-height:0}
+html:root:root:root:root:root[data-interface=terminal] body button.term-status-dm:focus-visible{outline:2px solid #ffffff;outline-offset:-2px}
+@media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body .term-status-noise{display:none}}

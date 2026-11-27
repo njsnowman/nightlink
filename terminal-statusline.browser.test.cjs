@@ -12,7 +12,11 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  await page.evaluate(()=>{live.identity={key:'ee'.repeat(32),name:'SN0WMAN'};live.sync='ready';live.battery={millivolts:3920};const c={kind:'channel',slot:0,id:'ab'.repeat(12),name:'Public'};live.channels=[c];live.messages=[];ensureAttention();});await tick();
  s=await read();assert.equal(s.node,'SN0WMAN');assert.equal(s.unread,'✉ 0 unread');assert.equal(s.flag,'no');assert.equal(s.batt,'BAT 3.92 V');assert.match(s.link,/ok$/);
  await page.evaluate(()=>{const c=live.channels[0];for(let i=0;i<3;i++)live.messages.push({id:'u'+i,conversation:conversationId(c),target:c,kind:'channel',sender:'ALPHA',text:'hi '+i,timestamp:1700000000+i,status:'Received'});live.battery={millivolts:3410};});await tick();
- s=await read();assert.equal(s.unread,'✉ 3 unread');assert.equal(s.flag,'yes');assert.equal(s.batt,'BAT 3.41 V LOW');
+ s=await read();assert.equal(s.unread,'✉ 3 unread');
+ await page.evaluate(()=>{const k='77'.repeat(32);live.messages.push({id:'d1',conversation:'direct:'+k,target:{kind:'direct',key:k,name:'Pal'},kind:'direct',sender:'Pal',text:'hey',timestamp:1700000100,status:'Received'});live.stats.noise=-112;});await tick();
+ assert.equal(await page.evaluate(()=>{const b=document.querySelector('.term-status-dm');return b.hidden?null:b.textContent;}),'DM 1');
+ assert.equal(await page.evaluate(()=>document.querySelector('.term-status-noise').textContent),'NF -112 dBm');
+ await page.evaluate(()=>{live.messages=live.messages.filter(m=>m.id!=='d1');});await tick();assert.ok(await page.evaluate(()=>document.querySelector('.term-status-dm').hidden));assert.equal(s.flag,'yes');assert.equal(s.batt,'BAT 3.41 V LOW');
  await page.evaluate(()=>{ensureAttention().mark(live.messages,conversationId(live.channels[0]));});await tick();assert.equal((await read()).unread,'✉ 0 unread','reading clears the count');
  await page.evaluate(()=>view('Overview'));await page.focus('.term-status-unread');await page.keyboard.press('Enter');await page.waitForFunction(()=>current==='Messages');
  const contrast=await page.evaluate(()=>{const lum=c=>{const [r,g,b]=c.match(/\d+/g).slice(0,3).map(v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4;});return .2126*r+.7152*g+.0722*b;};const bg=e=>{for(;e;e=e.parentElement){const c=getComputedStyle(e).backgroundColor;if(!/rgba\(0, 0, 0, 0\)|transparent/.test(c))return c;}return 'rgb(0,0,0)';};

@@ -7,6 +7,9 @@
 
 ## Unreleased
 
+- Settings > Nick colours (terminal): Single colour (default; the owner-approved cyan) or By sender, which gives each chat nickname one of eight VGA colours chosen from its name. All eight are at least 4.5:1 on black.
+- Settings > Sound pack adds Modem (FSK warble, 1070/1270 and 2025/2225 Hz) and BBS bells (triangle chimes) alongside Standard and Retro (PC speaker). Every sound is 0.6 s or shorter. Existing sound switches and quiet hours still apply.
+- Terminal status line: `DM n` when direct messages are unread (a button that opens Direct Messages) and `NF x dBm`, the noise floor reported by the radio (hidden below 900 px).
 - Fix: terminal dialog buttons that hold structured content (such as message-path repeater rows) could briefly take the grey key-cap style, at 1.0-2.3:1 contrast, before the rc.57 state classes updated. That one rule again uses `:has()` on the button itself, which applies immediately and showed no measurable cost (insert recalculation about 0 ms).
 - Command palette: Ctrl+P (or ^P Go to in the terminal key bar) opens a Go to box listing pages, channels, contacts and common actions. Typing filters the list, the arrow keys choose and Enter opens. Works in both interfaces. Navigation only; nothing is sent to the radio. Ctrl+K remains message Search.
 - Nodes page: the reported SNR column is shown again, as LAST SNR with four bars, and LAST ADVERT shows a relative age (for example 5m ago) with the exact time on hover. The SNR is the value from the last direct message received from that contact; it stays blank when none has been received. The column remains hidden on Overview and in compact mode.

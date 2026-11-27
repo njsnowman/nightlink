@@ -10,9 +10,9 @@
  const validChatSize=value=>CHAT_SIZES.includes(value)?value:'medium';
  function readChatSize(storage){try{return validChatSize(storage?.getItem(CHAT_KEY));}catch{return 'medium';}}
  // Terminal display: whole-app text size and colour palette (night default, daylight, high contrast).
- const TEXT_KEY='nightlink.term-text',TEXT_SIZES=['normal','large','xlarge'],PALETTE_KEY='nightlink.term-palette',PALETTES=['night','daylight','contrast'];
+ const TEXT_KEY='nightlink.term-text',TEXT_SIZES=['normal','large','xlarge'],PALETTE_KEY='nightlink.term-palette',PALETTES=['night','daylight','contrast'],NICK_KEY='nightlink.term-nicks',NICKS=['single','sender'];
  const pick=(list,v)=>list.includes(v)?v:list[0];
- function readDisplay(storage){try{return {text:pick(TEXT_SIZES,storage?.getItem(TEXT_KEY)),palette:pick(PALETTES,storage?.getItem(PALETTE_KEY))};}catch{return {text:'normal',palette:'night'};}}
+ function readDisplay(storage){try{return {text:pick(TEXT_SIZES,storage?.getItem(TEXT_KEY)),palette:pick(PALETTES,storage?.getItem(PALETTE_KEY)),nicks:pick(NICKS,storage?.getItem(NICK_KEY))};}catch{return {text:'normal',palette:'night',nicks:'single'};}}
  const core={KEY,DEFAULT,VALUES,valid,read,write,CHAT_KEY,CHAT_SIZES,validChatSize,readChatSize,TEXT_KEY,TEXT_SIZES,PALETTE_KEY,PALETTES,readDisplay};
  if(typeof module==='object'&&module.exports){module.exports=core;return;}
  const doc=root.document;
@@ -21,7 +21,7 @@
  const active=()=>valid(doc.documentElement.dataset.interface);
  root.NightlinkInterface={...core,apply,set,current:active,isTerminal:()=>active()==='terminal'};
  apply(read(root.localStorage));
- function applyDisplay(d){doc.documentElement.dataset.termText=d.text;doc.documentElement.dataset.termPalette=d.palette;}
+ function applyDisplay(d){doc.documentElement.dataset.termText=d.text;doc.documentElement.dataset.termPalette=d.palette;doc.documentElement.dataset.termNicks=d.nicks||'single';}
  applyDisplay(readDisplay(root.localStorage));
  root.addEventListener('storage',e=>{if(e.key===TEXT_KEY||e.key===PALETTE_KEY)applyDisplay(readDisplay(root.localStorage));});
  function applyChatSize(value){value=validChatSize(value);doc.documentElement.dataset.chatSize=value;for(const select of doc.querySelectorAll('[data-chat-text-size]'))select.value=value;return value;}
@@ -52,21 +52,24 @@
   // One-glance status line (#227): node, unread total, battery voltage and link state. Text, not colour, carries meaning.
   const status=doc.createElement('div');status.className='term-statusline';status.setAttribute('role','status');status.setAttribute('aria-label','Radio status');
   const field=cls=>{const e=doc.createElement('span');e.className='term-status-field '+cls;return e;};
-  const node=field('term-status-node'),unreadBtn=doc.createElement('button'),batt=field('term-status-battery');
+  const node=field('term-status-node'),unreadBtn=doc.createElement('button'),batt=field('term-status-battery'),noise=field('term-status-noise'),dmBtn=doc.createElement('button');
+  dmBtn.type='button';dmBtn.className='term-status-field term-status-dm';dmBtn.onclick=()=>view('Direct Messages');
   unreadBtn.type='button';unreadBtn.className='term-status-field term-status-unread';unreadBtn.onclick=()=>view('Messages');
-  const link=doc.createElement('span');link.className='term-fkeys-link';status.append(node,unreadBtn,batt,link);keys.append(status);
+  const link=doc.createElement('span');link.className='term-fkeys-link';status.append(node,dmBtn,unreadBtn,noise,batt,link);keys.append(status);
   doc.body.prepend(bar);doc.body.append(keys);
   function tick(){const now=new Date();clock.textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
    const state=typeof live==='object'?live.sync:'disconnected',kind=typeof ble==='object'&&ble.kind==='usb'?'USB':'BLE';link.textContent='● '+kind+' '+(state==='ready'?'ok':state==='syncing'?'sync':'off');link.dataset.state=state==='ready'?'ok':state==='syncing'?'pending':'off';
    const L=typeof live==='object'?live:null,ready=state==='ready';
    node.textContent=ready&&L?.identity?.name?L.identity.name:'';node.hidden=!node.textContent;
-   let unread=0;try{if(ready&&typeof ensureAttention==='function')unread=ensureAttention().unread(L.messages).length;}catch{}
+   let unread=0,dms=0;try{if(ready&&typeof ensureAttention==='function'){const u=ensureAttention().unread(L.messages);unread=u.length;dms=u.filter(m=>m.target?.kind==='direct'||m.kind==='direct').length;}}catch{}
+   dmBtn.textContent='DM '+dms;dmBtn.hidden=!ready||!dms;dmBtn.setAttribute('aria-label',dms+' unread direct message'+(dms===1?'':'s')+', open chat');
+   const nf=L?.stats?.noise;noise.textContent=ready&&Number.isFinite(nf)?'NF '+nf+' dBm':'';noise.hidden=!noise.textContent;noise.title='Noise floor reported by the radio';
    unreadBtn.textContent='✉ '+unread+' unread';unreadBtn.hidden=!ready;unreadBtn.dataset.unread=unread?'yes':'no';unreadBtn.setAttribute('aria-label',unread+' unread message'+(unread===1?'':'s')+', open chat');
    const mv=L?.battery?.millivolts;batt.textContent=ready&&mv?'BAT '+(mv/1000).toFixed(2)+' V'+(mv<3500?' LOW':''):'';batt.hidden=!batt.textContent;batt.dataset.low=mv&&mv<3500?'yes':'no';}
   tick();setInterval(tick,15000);
   root.NightlinkStatusLine={refresh:tick};
   let queued=false;const soon=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;tick();});};
-  if(typeof radioSession==='object')for(const ev of ['sync','battery','identity','message','messages'])radioSession.addEventListener(ev,soon);
+  if(typeof radioSession==='object')for(const ev of ['sync','battery','identity','message','messages','stats'])radioSession.addEventListener(ev,soon);
   if(typeof ble==='object')ble.addEventListener('state',soon);
   if(typeof renderMessages==='function'){const prev=renderMessages;renderMessages=function(){const r=prev.apply(this,arguments);soon();return r;};}
   function mark(name){for(const b of bar.querySelectorAll('[data-term-view]')){const on=b.dataset.termView===name||(b.dataset.termView==='Messages'&&name==='Direct Messages');b.classList.toggle('active',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}tick();}
@@ -84,7 +87,8 @@
      sel.onchange=()=>{try{root.localStorage.setItem(key,sel.value);}catch{}applyDisplay(readDisplay(root.localStorage));};const h=doc.createElement('small');h.textContent=help;l.append(sel,h);return l;};
     const text=make('term-text','Text size',TEXT_KEY,[['normal','Normal'],['large','Large (115%)'],['xlarge','Extra large (130%)']],d.text,'Scales the whole terminal interface, including menus, chat and dialogs.');
     const palette=make('term-palette','Colour palette',PALETTE_KEY,[['night','Night (default)'],['daylight','Daylight'],['contrast','High contrast']],d.palette,'Daylight uses a light background for bright rooms and outdoors. High contrast shows body text in white.');
-    label.after(text,palette);}};
+    const nicks=make('term-nicks','Nick colours',NICK_KEY,[['single','Single colour (default)'],['sender','By sender']],d.nicks,'By sender gives each chat nickname one of eight VGA colours, chosen from its name, so the same person keeps the same colour.');
+    label.after(text,palette,nicks);}};
   // Function keys and Escape. Escape only acts when no dialog, menu or text field owns it.
   doc.addEventListener('keydown',e=>{if(!root.NightlinkInterface.isTerminal()||e.defaultPrevented)return;
    const typing=e.target.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]');
