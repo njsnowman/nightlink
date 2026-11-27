@@ -14,6 +14,10 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  // One key bar: page keys sit inside the F-key bar without repeating its keys.
  await page.evaluate(()=>view('Nodes'));const keys=await page.evaluate(()=>{const p=document.querySelector('#term-page-keys');return {inBar:!!p?.closest('#term-fkeys'),keys:[...document.querySelectorAll('#term-fkeys .term-fkey')].map(k=>k.textContent)};});
  assert.ok(keys.inBar);assert.equal(new Set(keys.keys).size,keys.keys.length,'no repeated keys: '+keys.keys.join(' '));assert.ok(keys.keys.includes('Tab'));
+ // Update notice is docked in the status line and does not cover the composer.
+ await page.evaluate(()=>{view('Messages');const b=document.querySelector('#update-available');b.textContent='Nightlink 9.9.9 available · Open download ↗';b.hidden=false;});
+ const upd=await page.evaluate(()=>{const b=document.querySelector('#update-available'),i=document.querySelector('#mrc-input')?.getBoundingClientRect(),r=b.getBoundingClientRect();return {docked:!!b.closest('.term-status-dock'),overlap:!!i&&!(r.bottom<=i.top||r.top>=i.bottom||r.right<=i.left||r.left>=i.right)};});
+ assert.ok(upd.docked,'update notice docked');assert.equal(upd.overlap,false,'update notice does not cover the message box');
  // Chat bar: no clock, node name or link state.
  await page.evaluate(()=>view('Messages'));const bar=await page.textContent('.mrc-statusbar');assert.doesNotMatch(bar,/SN0WMAN|BLE|\d\d:\d\d/,bar);assert.match(bar,/#Public/);
  // More menu: keyboard open, arrows, Escape returns focus, item runs.

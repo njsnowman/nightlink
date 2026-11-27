@@ -30,7 +30,7 @@ function paintUpdateIntegrity(){
 }
 async function checkNightlinkUpdates(){
  if(updateBusy||!window.meshlineUpdates)return;updateBusy=true;paintUpdateStatus();
- try{updateState=await window.meshlineUpdates.check();if(updateState?.status==='available'){updateBanner.textContent='Nightlink '+updateState.latest+' available · '+(updateState.verification==='consistent'?'Open download ↗':'Checksum warning · open release ↗');updateBanner.hidden=false;}else updateBanner.hidden=true;}
+ try{updateState=await window.meshlineUpdates.check();if(updateState?.status==='available'){updateBanner.textContent='Nightlink '+updateState.latest+' available · '+(updateState.verification==='consistent'?'Open download ↗':'Checksum warning · open release ↗');updateBanner.dataset.version=String(updateState.latest||'');updateBanner.dataset.verified=updateState.verification==='consistent'?'yes':'no';updateBanner.title=updateBanner.textContent;updateBanner.hidden=false;}else updateBanner.hidden=true;}
  catch{updateState={status:'error',message:'Update check failed. Open GitHub releases to check manually.'};updateBanner.hidden=true;}
  finally{updateBusy=false;paintUpdateStatus();}
 }

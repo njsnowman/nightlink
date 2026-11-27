@@ -71,11 +71,11 @@
   dmBtn.type='button';dmBtn.className='term-status-field term-status-dm';dmBtn.onclick=()=>view('Direct Messages');
   unreadBtn.type='button';unreadBtn.className='term-status-field term-status-unread';unreadBtn.onclick=()=>view('Messages');
   // The top strip is hidden in the terminal interface (consolidation). Its live controls are moved, not copied, into
-  // this status line so they keep their ids and behaviour: internet, RF monitor, activity inbox, recovery retry and
-  // the radio connection button. They return to the strip when the Cards interface is chosen.
+  // this status line so they keep their ids and behaviour: update notice, internet, RF monitor, activity inbox, recovery
+  // retry and the radio connection button (the floating update banner covered the message box). They return to the strip when the Cards interface is chosen.
   const dock=doc.createElement('span');dock.className='term-status-dock';
   status.append(node,dmBtn,unreadBtn,noise,batt,dock);keys.append(status);
-  const DOCK=['#focus-mode-toggle','#internet-status','#propagation-indicator','#open-activity-inbox','#header-recovery-retry','#connection'],homes=new Map();
+  const DOCK=['#update-available','#focus-mode-toggle','#internet-status','#propagation-indicator','#open-activity-inbox','#header-recovery-retry','#connection'],homes=new Map();
   function placeControls(){const terminal=root.NightlinkInterface?.isTerminal?.()??true;
    for(const sel of DOCK){const e=doc.querySelector(sel);if(!e)continue;if(e.parentElement!==dock)homes.set(sel,{parent:e.parentElement,next:e.nextSibling});
     if(terminal){if(e.parentElement!==dock)dock.append(e);}else{const h=homes.get(sel);if(e.parentElement===dock&&h.parent?.isConnected)h.parent.insertBefore(e,h.next?.parentElement===h.parent?h.next:null);}}}

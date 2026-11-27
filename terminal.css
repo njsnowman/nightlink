@@ -691,3 +691,11 @@ html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #c
 html:root:root:root:root:root[data-interface=terminal] body .term-status-dock>*{opacity:1 !important;filter:none !important}
 html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>button,html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>.term-fkeys-page{flex-shrink:1;min-width:0;overflow:hidden;white-space:nowrap}
 @media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>button{font-size:0 !important;padding:0 6px !important;flex-shrink:0}html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>button .term-fkey{font-size:13px}}
+/* Update notice docked in the status line so it never covers the composer (owner report, 2026-11-27). */
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available{position:static !important;background:#000 !important;color:#ffff55 !important;font-weight:700 !important;max-width:30ch;backdrop-filter:none !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available::before{content:'UPD';margin-right:6px;color:#000;background:#ffff55;padding:0 4px}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available{font-size:0 !important}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available::before{font-size:13px}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available::after{content:attr(data-version) ' ↗';font-size:13px}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available[data-verified=no]::after{content:attr(data-version) ' !'}
+html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available{flex:none !important;max-width:none}
