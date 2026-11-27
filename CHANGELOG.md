@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- Overview last callers (owner report): the list refreshes as messages and adverts arrive while the Overview is open, and is ordered by when your radio heard each caller, not by the sender's clock. Incoming messages now store a local receive time. Nodes with clocks set in the future show `--:--` instead of staying pinned at the top. The name column is wider (up to 26 characters).
+- Nodes LAST SNR also uses repeater and companion adverts your radio hears directly (zero hops, matched by full public key), so every node in direct radio range gets a reading, not only the final hop of messages. The newest reading wins; the tooltip says whether it came from an advert, a message's final hop or a direct packet. Owner report, 2026-11-27: only the owner's own nearby nodes showed values.
 - First-run setup guide (new installs only: no saved radio profile): four steps (welcome, connect your radio with live sync status, first messages, finding your way around), each linking to the matching Help topics. Skip or finish once; reopen from Ctrl+P, More or Help > About > Setup guide. Not shown automatically to existing users.
 - Report a bug / Request a feature: a short form that opens a pre-filled GitHub issue (labels bug or enhancement; version, platform and interface added; radio name, keys and messages not included). Nothing is sent from Nightlink and no webhook or secret ships in the app. Available from Ctrl+P, More, Help > About and the last setup step.
 - Terminal: the RF indicator is no longer in the bottom bar (owner request); the Propagation monitor stays under More in the menu bar.

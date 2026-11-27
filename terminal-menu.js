@@ -63,9 +63,11 @@
   menu.append(grid);root.append(menu);
   // Last callers and mesh today, from stored messages and contact adverts.
   const lower=el('div','bbs-lower'),callers=frame('last callers','bbs-callers'),ul=el('ul','bbs-list');
-  const events=[...live.messages.filter(m=>!m.own).slice(-12).map(m=>({t:m.timestamp,name:m.sender||m.target?.name||'Mesh',kind:'msg',route:m.pathLength!=null&&window.MeshlineRoutes?MeshlineRoutes.hopSummary(m.pathLength):'',snr:m.snr})),
-   ...live.contacts.filter(c=>Number.isFinite(c.lastAdvert)).map(c=>({t:c.lastAdvert,name:typeof cardName==='function'?cardName(c.key,c.name):c.name,kind:'advert',route:c.type===2?'repeater':window.MeshlineRoutes?MeshlineRoutes.contactRoute(c.pathLength):'',snr:c.snr}))].sort((a,b)=>b.t-a.t).slice(0,5);
-  for(const e of events){const li=el('li','bbs-caller');li.append(el('span','term-dim',hhmm(e.t)),el('span','term-name',e.name),el('span',null,e.kind),el('span','term-dim',e.route||''),el('span',e.snr==null?'term-dim':e.snr>=5?'term-ok':e.snr>=0?'term-pending':'term-bad',e.snr==null?'':'SNR '+e.snr));ul.append(li);}
+  // Sorted by when this radio heard them (local clock), not the sender's clock, which can be wrong or far in the past.
+  const lastHeardAt=window.NightlinkLastHeard||new Map();
+  const events=[...live.messages.filter(m=>!m.own).slice(-40).map(m=>({t:m.heardAt||m.timestamp,name:m.sender||m.target?.name||'Mesh',kind:'msg',route:m.pathLength!=null&&window.MeshlineRoutes?MeshlineRoutes.hopSummary(m.pathLength):'',snr:m.snr})),
+   ...live.contacts.filter(c=>Number.isFinite(c.lastAdvert)).map(c=>({t:lastHeardAt.get(c.key)||(c.lastAdvert>Date.now()/1000+300?0:c.lastAdvert),name:typeof cardName==='function'?cardName(c.key,c.name):c.name,kind:'advert',route:c.type===2?'repeater':window.MeshlineRoutes?MeshlineRoutes.contactRoute(c.pathLength):'',snr:c.snr}))].sort((a,b)=>b.t-a.t).slice(0,5);
+  for(const e of events){const li=el('li','bbs-caller');li.append(el('span','term-dim',e.t?hhmm(e.t):'--:--'),el('span','term-name',e.name),el('span',null,e.kind),el('span','term-dim',e.route||''),el('span',e.snr==null?'term-dim':e.snr>=5?'term-ok':e.snr>=0?'term-pending':'term-bad',e.snr==null?'':'SNR '+e.snr));ul.append(li);}
   if(!events.length)ul.append(el('li','term-dim','No messages or adverts stored yet.'));
   callers.append(ul);
   const today=frame('mesh today','bbs-today'),tl=el('dl','term-kv'),day=new Date().toDateString(),start=new Date();start.setHours(0,0,0,0);
@@ -89,7 +91,12 @@
   if(e.key.length===1&&KEYS.includes(e.key.toUpperCase())){e.preventDefault();run(e.key);}
  });
  const previousView=view;view=function(){previousView.apply(this,arguments);render();};
- for(const type of ['sync','contacts','identity','battery','stats'])radioSession.addEventListener(type,()=>{if(current==='Overview')render();});
+ // Local "last heard" per node: set when a contact's advert time changes after the first sync, or a direct advert arrives.
+ const lastHeard=window.NightlinkLastHeard=new Map(),seenAdvert=new Map();let primed=false;
+ radioSession.addEventListener('contacts',e=>{const now=Math.floor(Date.now()/1000);for(const c of e.detail||live.contacts){const prev=seenAdvert.get(c.key);if(primed&&prev!==undefined&&prev!==c.lastAdvert)lastHeard.set(c.key,now);seenAdvert.set(c.key,c.lastAdvert);}if(live.sync==='ready')primed=true;
+  for(const [k,v] of window.NightlinkHeardAdverts||[])if(!(lastHeard.get(k)>=v.at))lastHeard.set(k,v.at);});
+ let pending=null;const soon=()=>{if(pending||current!=='Overview')return;pending=setTimeout(()=>{pending=null;if(current==='Overview')render();},1000);};
+ for(const type of ['sync','contacts','identity','battery','stats','message'])radioSession.addEventListener(type,soon);
  window.addEventListener('nightlink-interface',render);
  window.NightlinkBBS={render,run,keys:KEYS};
  render();

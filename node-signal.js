@@ -14,16 +14,18 @@
    else{const hop=resolve?.([r.path[r.path.length-1]],contacts)?.[0];if(hop?.candidates?.length===1)key=hop.candidates[0].key;}
    if(key&&!out.has(key))out.set(key,{snr:r.snr,at:m.timestamp});}
   return out;}
- const core={bars,age,heard};
+ // Merge zero-hop advert readings (exact public key) with message-derived readings; the newest wins per node.
+ function merge(fromMessages,adverts){const out=new Map(fromMessages);for(const [key,v] of adverts||[]){const cur=out.get(key);if(!cur||v.at>=cur.at)out.set(key,{...v,source:'advert'});}return out;}
+ const core={bars,age,heard,merge};
  if(typeof module==='object'&&module.exports){module.exports=core;return;}
  root.NightlinkNodeSignal=core;const doc=root.document;
  function decorate(all){const L=typeof live==='object'?live:null;if(!L)return;const contacts=L.contacts.slice(0,all?L.contacts.length:4);const table=doc.querySelector('#node-table')?.closest('table');
   if(table){table.classList.toggle('node-signal-on',!!all);const th=table.querySelectorAll('th')[2];if(th)th.textContent='LAST SNR';}
-  const seen=heard(L.messages||[],L.contacts,root.MeshlineRoutes?.resolvePath,typeof messageContact==='function'?m=>{try{return messageContact(m);}catch{return null;}}:null);
+  const seen=merge(heard(L.messages||[],L.contacts,root.MeshlineRoutes?.resolvePath,typeof messageContact==='function'?m=>{try{return messageContact(m);}catch{return null;}}:null),root.NightlinkHeardAdverts);
   doc.querySelectorAll('#node-table tr').forEach((row,i)=>{const n0=contacts[i];if(!n0)return;const h=seen.get(n0.key),n=h?{...n0,snr:h.snr}:n0;const sig=row.querySelector('td.signal'),heard=row.children[3];
    if(sig&&!sig.querySelector('.node-bars')){if(h)sig.textContent=h.snr+' dB';const b=bars(n.snr),w=doc.createElement('span');w.className='node-bars';w.dataset.level=String(b);w.setAttribute('aria-hidden','true');
     for(let k=1;k<=4;k++){const s=doc.createElement('span');s.className='node-bar'+(k<=b?' on':'');s.textContent='▂▄▆█'[k-1];w.append(s);}
-    sig.prepend(w,' ');sig.setAttribute('aria-label',n.snr==null?'Signal unavailable':'SNR '+n.snr+' dB, '+b+' of 4 bars');if(h)sig.title='Last heard by your radio '+age(h.at)+(row.children[1]?.textContent==='Repeater'?' as the final hop':'');}
+    sig.prepend(w,' ');sig.setAttribute('aria-label',n.snr==null?'Signal unavailable':'SNR '+n.snr+' dB, '+b+' of 4 bars');if(h)sig.title='Heard directly by your radio '+age(h.at)+(h.source==='advert'?' (advert)':row.children[1]?.textContent==='Repeater'?' (final hop of a message)':' (direct packet)');}
    if(heard&&n.lastAdvert){heard.textContent=age(n.lastAdvert);heard.title=new Date(n.lastAdvert*1000).toLocaleString();heard.classList.add('node-heard');}});}
  doc.addEventListener('DOMContentLoaded',()=>{if(typeof renderNodes!=='function')return;const prev=renderNodes;renderNodes=function(all){const r=prev.apply(this,arguments);decorate(all);return r;};});
 })(typeof window==='object'?window:globalThis);
