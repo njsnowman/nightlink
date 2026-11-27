@@ -9,5 +9,6 @@ This process applies to Nightlink releases and downloadable release candidates.
 5. Record physical-radio validation separately from simulations. Keep unresolved release-blocking connection defects visible and open. Do not claim a hardware fix from simulated evidence alone.
 6. Review the release record before publishing a tag or GitHub release. Do not publish a release with unresolved blocking acceptance criteria. Local diagnostic candidates must be marked as candidates and linked to the open issue.
 7. Publish approved release scope and artifacts, verify the uploaded checksum, and link the release from its tracking issue. Archive the release record with the final tag and artifact URLs.
+8. Record per-file download counts for every published release in releases/DOWNLOADS.md, as a new dated section. Counts are downloads, not unique users.
 
 Documentation, commit messages, issues, and release notes should use concise technical language. State the problem, resulting behavior, evidence, and known limitations. Omit promotional claims and unsupported assertions.
