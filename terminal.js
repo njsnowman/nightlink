@@ -9,7 +9,11 @@
  const CHAT_KEY='nightlink.chat-text-size',CHAT_SIZES=['small','medium','large'];
  const validChatSize=value=>CHAT_SIZES.includes(value)?value:'medium';
  function readChatSize(storage){try{return validChatSize(storage?.getItem(CHAT_KEY));}catch{return 'medium';}}
- const core={KEY,DEFAULT,VALUES,valid,read,write,CHAT_KEY,CHAT_SIZES,validChatSize,readChatSize};
+ // Terminal display: whole-app text size and colour palette (night default, daylight, high contrast).
+ const TEXT_KEY='nightlink.term-text',TEXT_SIZES=['normal','large','xlarge'],PALETTE_KEY='nightlink.term-palette',PALETTES=['night','daylight','contrast'];
+ const pick=(list,v)=>list.includes(v)?v:list[0];
+ function readDisplay(storage){try{return {text:pick(TEXT_SIZES,storage?.getItem(TEXT_KEY)),palette:pick(PALETTES,storage?.getItem(PALETTE_KEY))};}catch{return {text:'normal',palette:'night'};}}
+ const core={KEY,DEFAULT,VALUES,valid,read,write,CHAT_KEY,CHAT_SIZES,validChatSize,readChatSize,TEXT_KEY,TEXT_SIZES,PALETTE_KEY,PALETTES,readDisplay};
  if(typeof module==='object'&&module.exports){module.exports=core;return;}
  const doc=root.document;
  function apply(value){value=valid(value);doc.documentElement.dataset.interface=value;return value;}
@@ -17,6 +21,9 @@
  const active=()=>valid(doc.documentElement.dataset.interface);
  root.NightlinkInterface={...core,apply,set,current:active,isTerminal:()=>active()==='terminal'};
  apply(read(root.localStorage));
+ function applyDisplay(d){doc.documentElement.dataset.termText=d.text;doc.documentElement.dataset.termPalette=d.palette;}
+ applyDisplay(readDisplay(root.localStorage));
+ root.addEventListener('storage',e=>{if(e.key===TEXT_KEY||e.key===PALETTE_KEY)applyDisplay(readDisplay(root.localStorage));});
  function applyChatSize(value){value=validChatSize(value);doc.documentElement.dataset.chatSize=value;for(const select of doc.querySelectorAll('[data-chat-text-size]'))select.value=value;return value;}
  function setChatSize(value){value=applyChatSize(value);try{root.localStorage.setItem(CHAT_KEY,value);}catch{}return value;}
  applyChatSize(readChatSize(root.localStorage));
@@ -54,7 +61,15 @@
    for(const [value,title] of [['terminal','Terminal (default)'],['cards','Cards']]){const o=doc.createElement('option');o.value=value;o.textContent=title;select.append(o);}
    select.value=active();select.onchange=()=>set(select.value);label.append(select);
    const hint=doc.createElement('small');hint.textContent='Terminal uses the 16-color text interface with Mesh Relay Chat and the main menu. Cards keeps the rc.11 card layout.';label.append(hint);
-   doc.querySelector('.settings-grid')?.prepend(label);};
+   doc.querySelector('.settings-grid')?.prepend(label);
+   // Text size and colour palette (terminal only; stored per profile, applied in the head of every document).
+   if(active()==='terminal'){const d=readDisplay(root.localStorage);
+    const make=(id,title,key,options,value,help)=>{const l=doc.createElement('label');l.className='accent-setting interface-setting';l.id=id+'-setting';l.append(title);const sel=doc.createElement('select');sel.id=id;sel.setAttribute('aria-label',title);
+     for(const [v,t] of options){const o=doc.createElement('option');o.value=v;o.textContent=t;sel.append(o);}sel.value=value;
+     sel.onchange=()=>{try{root.localStorage.setItem(key,sel.value);}catch{}applyDisplay(readDisplay(root.localStorage));};const h=doc.createElement('small');h.textContent=help;l.append(sel,h);return l;};
+    const text=make('term-text','Text size',TEXT_KEY,[['normal','Normal'],['large','Large (115%)'],['xlarge','Extra large (130%)']],d.text,'Scales the whole terminal interface, including menus, chat and dialogs.');
+    const palette=make('term-palette','Colour palette',PALETTE_KEY,[['night','Night (default)'],['daylight','Daylight'],['contrast','High contrast']],d.palette,'Daylight uses a light background for bright rooms and outdoors. High contrast shows body text in white.');
+    label.after(text,palette);}};
   // Function keys and Escape. Escape only acts when no dialog, menu or text field owns it.
   doc.addEventListener('keydown',e=>{if(!root.NightlinkInterface.isTerminal()||e.defaultPrevented)return;
    const typing=e.target.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]');

@@ -81,6 +81,10 @@
  for(const name of ['online','offline','nightlink-map-providers-changed'])window.addEventListener(name,syncMap);
  const hhmm=t=>{const d=new Date((t||0)*1000);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
  const stamp=t=>hhmm(t)+' ';
+ // Message lines older than today carry the date (MM/DD) before the time; today's lines keep HH:MM only.
+ function messageStamp(t){const d=new Date((t||0)*1000),today=new Date();const s=el('span','mrc-time');
+  if(d.toDateString()!==today.toDateString()){s.append(el('span','mrc-date',String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '));s.title=d.toLocaleString();}
+  s.append(stamp(t));return s;}
  const nowSeconds=()=>Math.floor(Date.now()/1000);
  const bytes=text=>new TextEncoder().encode(text).length;
  const display=(key,name)=>typeof cardName==='function'&&key?cardName(key,name):name||'Mesh';
@@ -152,10 +156,10 @@
   const log=doc.querySelector('#mrc-log'),row=log?.querySelector('[data-message-id="'+CSS.escape(id)+'"]');if(row){log.scrollTop+=row.getBoundingClientRect().top-log.getBoundingClientRect().top-8;if(focus)row.querySelector('.mrc-text')?.focus({preventScroll:true});captureReading(log);updateJump(log,win);}
  }
  function actionsFor(m){const tools=el('div','mrc-message-actions');tools.setAttribute('role','toolbar');tools.setAttribute('aria-label','Selected message actions');
-  const dismiss=()=>{state.selectedMessage=null;tools.remove();state.form?.querySelector('#mrc-input')?.focus();};
+  const dismiss=()=>{state.selectedMessage=null;doc.querySelectorAll('#mrc-log .mrc-selected').forEach(e=>e.classList.remove('mrc-selected'));tools.remove();state.form?.querySelector('#mrc-input')?.focus();};
   for(const [label,action] of [['Reply',()=>beginReply(m,m.own?own():m.sender||m.target?.name||'Mesh')],['Copy',async()=>{try{await navigator.clipboard.writeText(String(m.text||''));toast('Message copied');}catch{toast('Clipboard unavailable. Select the message text to copy.');}}],['Path',()=>showMessageRoute(m)],['×',dismiss]]){const b=el('button',null,label);b.type='button';if(label==='×')b.setAttribute('aria-label','Dismiss message actions');b.onclick=e=>{e.stopPropagation();action();};tools.append(b);}tools.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();dismiss();}};return tools;
  }
- function selectMessage(m){state.selectedMessage=m.id;doc.querySelectorAll('.mrc-message-actions').forEach(e=>e.remove());const row=doc.querySelector('#mrc-log [data-message-id="'+CSS.escape(m.id)+'"]');if(row)row.append(actionsFor(m));}
+ function selectMessage(m){state.selectedMessage=m.id;doc.querySelectorAll('.mrc-message-actions').forEach(e=>e.remove());doc.querySelectorAll('#mrc-log .mrc-selected').forEach(e=>e.classList.remove('mrc-selected'));doc.querySelector('#mrc-log [data-message-id="'+CSS.escape(m.id)+'"]')?.classList.add('mrc-selected');const row=doc.querySelector('#mrc-log [data-message-id="'+CSS.escape(m.id)+'"]');if(row)row.append(actionsFor(m));}
  function beginReply(m,name){
   const input=state.form?.querySelector('#mrc-input');if(!input)return;selectMessage(m);
   const draft=input.value;if(state.form.querySelector('.message-reply-context')&&state.replyPrefix&&draft.startsWith(state.replyPrefix))input.value=draft.slice(state.replyPrefix.length);
@@ -165,9 +169,18 @@
    const close=note.querySelector('[aria-label="Dismiss reply context"]'),prior=close.onclick;close.onclick=e=>{state.replySource=null;state.replyPrefix=null;prior(e);};
   }else{input.value=draft;updateCount();}
  }
+ // Hop and signal tags for received messages, shown on the nick line. Colour classes follow distance and SNR;
+ // the text always states the value, so colour is never the only cue.
+ function hopTag(m){
+  const e=m.pathLength;if(e==null||!window.MeshlineRoutes)return null;
+  const count=e===255?null:(e&63),label=e===255?'direct':count===0?'direct':count+' hop'+(count===1?'':'s');
+  const cls=count==null||count===0?'mrc-hop-direct':count<=2?'mrc-hop-near':count<=4?'mrc-hop-mid':'mrc-hop-far';
+  return el('span','mrc-hop '+cls,label);
+ }
+ function snrTag(snr){if(snr==null)return null;const cls=snr>=5?'mrc-snr-good':snr>=0?'mrc-snr-fair':'mrc-snr-poor',bars=snr>=10?'▆':snr>=5?'▅':snr>=0?'▃':'▁';const s=el('span','mrc-snr '+cls);s.append(el('span','mrc-snr-bar',bars),' SNR '+snr+' dB');return s;}
  function messageLine(m){
-  const line=el('div','mrc-line'+(m.own?' mrc-own':''));line.dataset.messageId=m.id;
-  line.append(el('span','mrc-time',stamp(m.timestamp)));
+  const line=el('div','mrc-line'+(m.own?' mrc-own':'')+(state.selectedMessage===m.id?' mrc-selected':''));line.dataset.messageId=m.id;
+  line.append(messageStamp(m.timestamp));
   const body=el('span','mrc-text'),name=m.own?own():(m.sender||m.target?.name||'Mesh'),text=String(m.text??'');
   if(text.startsWith('* '+name+' ')){body.classList.add('mrc-action');body.textContent=' '+text;if(!m.own)line.append(nick(name,'mrc-nick-peer',m));}
   else{
@@ -178,14 +191,20 @@
   if(window.NightlinkMessageActions)NightlinkMessageActions.bind(body,()=>beginReply(m,name),'Reply to '+name);
   body.addEventListener('focus',()=>{if(body.matches(':focus-visible'))selectMessage(m);});
   if(m.localReply?.id&&m.localReply.conversation===m.conversation){const quote=el('button','mrc-reply-quote','↳ '+String(m.localReply.name||'Message')+': '+String(m.localReply.text||'').slice(0,100));quote.type='button';quote.setAttribute('aria-label','Jump to original message from '+String(m.localReply.name||'sender'));quote.onclick=()=>jumpMessage(m.localReply.id);line.append(quote);}
+  // Received messages: hop count and SNR on the nick line, as one button that opens the message path.
+  const detail=deliveryText(m);
+  if(!m.own&&detail&&!body.classList.contains('mrc-action')){
+   const meta=el('button','mrc-delivery mrc-meta mrc-recv');meta.type='button';meta.setAttribute('aria-label','View message path on map: '+detail);meta.title='View message path on map';
+   const hop=hopTag(m),snr=snrTag(m.snr);if(hop)meta.append(hop);if(snr)meta.append(snr);if(!hop&&!snr)meta.append(detail);
+   meta.onclick=()=>{if(typeof showMessageRoute==='function')showMessageRoute(m);};line.append(meta);
+  }
   line.append(body);
   // Mentions of your own name (as @name, [name] or the plain word) highlight the line, as IRC clients do.
   if(isMention(m))line.classList.add('mrc-mention');
   if(state.find.open&&state.find.query.trim()&&findText(m).toLocaleLowerCase().includes(state.find.query.trim().toLocaleLowerCase()))line.classList.add(m.id===state.find.activeId?'mrc-find-current':'mrc-find-match');
   if(state.selectedMessage===m.id)line.append(actionsFor(m));
   const frag=doc.createDocumentFragment();frag.append(line);
-  const detail=deliveryText(m);
-  if(detail){
+  if(detail&&(m.own||body.classList.contains('mrc-action'))){
    const row=el('div','mrc-line mrc-delivery-row');row.dataset.reactionDeliveryFor=m.id;row.append(el('span','mrc-time',stamp(m.timestamp)));
    const b=el('button','mrc-delivery '+deliveryClass(m),'└─ '+(m.own&&m.phase!=='acknowledged'&&deliveryClass(m)==='mrc-pending'?'… ':deliveryClass(m)==='mrc-ok'&&m.own?'✓ ':'')+detail);
    if(!m.own&&m.pathLength!=null&&window.MeshlineRoutes){
@@ -232,6 +251,35 @@
  }
  function rfLabel(){try{const s=window.NightlinkPropagationUI?.monitor?.summary?.();if(!s||s.state==='unavailable'||s.state==='disabled')return null;return {text:String(s.label||s.state).toUpperCase(),cls:s.state==='normal'?'mrc-ok':s.state==='insufficient-data'?'mrc-info':'mrc-pending'};}catch{return null;}}
 
+ // Append fast path (#207): when the only change in the open window is new messages at the end and the reader is at
+ // the bottom, add those rows to the existing scrollback instead of rebuilding ~300 rows and forcing a full layout.
+ // Anything else (window change, edits to shown messages, reactions, find, selection, local lines, other windows'
+ // unread counts, mentions) falls back to the full render.
+ const rowSig=m=>[m.id,m.status||'',m.phase||'',m.pathLength??'',m.snr??'',String(m.text??'').length,m.localReply?.id||''].join('|');
+ function renderSnapshot(win,rows,list){state.lastRender={win:win.id,ids:rows.map(m=>m.id),sigs:new Map(rows.map(m=>[m.id,rowSig(m)])),winSig:list.map(w=>w.id+':'+(w.kind==='status'?0:unread(w.id))).join(','),mentions:live.messages.filter(m=>m.conversation===win.id&&isMention(m)).length,local:(state.local.get(win.id)||[]).length};}
+ function fastAppend(list,win,changed,session){
+  const last=state.lastRender,log=doc.querySelector('#mrc-log');
+  if(!last||changed||last.win!==win.id||win.kind==='status'||!log?.isConnected||log.dataset.tailWindow!=='true'||state.find.open||state.selectedMessage||state.restoring||doc.hidden||!doc.hasFocus()||session.boundary)return false;
+  if(log.scrollHeight-log.scrollTop-log.clientHeight>=24&&!session.position.bottom)return false;
+  if((state.local.get(win.id)||[]).length!==last.local)return false;
+  const all=live.messages.filter(m=>m.conversation===win.id),rows=all.slice(Math.max(0,all.length-MAX_ROWS));
+  const known=new Set(last.ids),fresh=rows.filter(m=>!known.has(m.id));if(!fresh.length)return false;
+  const kept=rows.slice(0,rows.length-fresh.length);if(fresh.some((m,i)=>rows[kept.length+i]!==m))return false;
+  if(kept.some(m=>last.sigs.get(m.id)!==rowSig(m)))return false;
+  const keptIds=kept.map(m=>m.id),tail=last.ids.slice(last.ids.length-keptIds.length);if(keptIds.join('\n')!==tail.join('\n'))return false;
+  if(fresh.some(m=>window.NightlinkReactions?.parse?.(String(m.text??''),m.kind==='direct')))return false;
+  const winSig=list.map(w=>w.id+':'+(w.kind==='status'||w.id===win.id?0:unread(w.id))).join(','),lastSig=last.winSig.split(',').map(x=>x.startsWith(win.id+':')?win.id+':0':x).join(',');if(winSig!==lastSig)return false;
+  if(live.messages.filter(m=>m.conversation===win.id&&isMention(m)).length!==last.mentions)return false;
+  // Remove rows that scrolled out of the 300-row window, then append the new ones (with a day-change line when needed).
+  for(const id of last.ids.slice(0,last.ids.length-keptIds.length))log.querySelectorAll('[data-message-id="'+CSS.escape(id)+'"],[data-reaction-delivery-for="'+CSS.escape(id)+'"]').forEach(e=>e.remove());
+  let prev=kept.at(-1)||null;
+  for(const m of fresh){const d=new Date(m.timestamp*1000).toDateString();if(prev&&new Date(prev.timestamp*1000).toDateString()!==d){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));log.append(line);}log.append(messageLine(m));prev=m;}
+  const count=log.querySelectorAll('.mrc-banner')[2]?.lastChild;if(count)count.textContent=rows.length+' stored message'+(rows.length===1?'':'s')+' · '+live.contacts.length+' nodes known';
+  const clock=doc.querySelector('#mrc .mrc-statusbar .mrc-field strong');if(clock)clock.textContent=hhmm(nowSeconds());
+  state.restoring=true;log.scrollTop=log.scrollHeight;state.restoring=false;captureReading(log);updateJump(log,win);markRead(win,log);
+  window.NightlinkReactionUI?.decorate(log,rows,live.messages,{selfName:live.identity?.name||'',terminal:true});
+  renderSnapshot(win,rows,list);state.fastAppends=(state.fastAppends||0)+1;return true;
+ }
  function render(){
   const host=doc.querySelector('#alternate');
   if(!host)return;
@@ -248,6 +296,7 @@
   if(state.find.scope&&state.find.scope!==findScope(win)){state.find.open=false;state.find.query='';state.find.activeId=null;clearTimeout(state.find.timer);if(state.find.input)state.find.input.value='';}
   state.readingWin=win.id;
   if(!session.boundary&&(changed||session.position.manual||doc.hidden||!doc.hasFocus())){try{session.boundary=ensureAttention().unread(live.messages,win.id)[0]?.id||null;}catch{}}
+  if(root?.isConnected&&fastAppend(list,win,changed,session))return;
   if(!root){root=el('section');root.id='mrc';root.className='mrc';root.setAttribute('aria-label','Mesh Relay Chat');}
   for(const child of [...root.children])if(child!==state.mapPanel)child.remove();
   if(!state.mapPanel?.isConnected)root.append(mapPanel());
@@ -271,7 +320,9 @@
   const ol=el('ol','mrc-window-list');
   list.forEach((w,i)=>{const li=el('li'),b=el('button','mrc-window'+(w===win?' active':''));b.type='button';b.dataset.mrcWindow=w.id;const n=w.kind==='status'?0:unread(w.id);
    b.append(el('span','mrc-window-num',String(i+1)),' ',el('span','mrc-window-name '+(w.kind==='direct'?'mrc-dm':''),w.label));if(n)b.append(el('span','mrc-unread',String(n)));
-   if(w===win)b.setAttribute('aria-current','true');b.setAttribute('aria-label',(i+1)+' '+w.label+(n?', '+n+' unread':''));b.onclick=()=>switchTo(w);li.append(b);ol.append(li);});
+   if(w===win)b.setAttribute('aria-current','true');b.setAttribute('aria-label',(i+1)+' '+w.label+(n?', '+n+' unread':''));b.onclick=()=>switchTo(w);li.append(b);
+   if(w.kind==='channel'&&w.target.slot!==0&&typeof confirmRemoveChannel==='function'){const x=el('button','mrc-window-remove','×');x.type='button';x.title='Remove '+w.label+' from the radio';x.setAttribute('aria-label','Remove channel '+w.label+' from the radio');x.onclick=e=>{e.stopPropagation();confirmRemoveChannel(w.target.slot);};li.append(x);}
+   ol.append(li);});
   side.append(ol,el('p','mrc-dim mrc-legend','alt+1..9 switch'),el('p','mrc-dim mrc-legend','/help for commands'));
   // Scrollback
   const scroll=el('div','mrc-log');scroll.id='mrc-log';scroll.setAttribute('role','log');scroll.setAttribute('aria-label','Scrollback '+win.label);scroll.tabIndex=0;
@@ -347,6 +398,7 @@
   state.restoring=false;captureReading(sl);updateJump(sl,win);
   markRead(win,sl);
   if(reactionRows.length)window.NightlinkReactionUI?.decorate(sl,reactionRows,live.messages,{selfName:live.identity?.name||'',terminal:true});
+  if(win.kind!=='status'&&sl.dataset.tailWindow==='true')renderSnapshot(win,reactionRows,list);else state.lastRender=null;
  }
  function updateCount(){const input=state.form?.querySelector('#mrc-input'),count=state.count;if(!input||!count)return;const v=input.value,n=v.startsWith('/')?bytes(commandPayload(v)||''):bytes(v);count.textContent=String(n);count.classList.toggle('mrc-over',n>LIMIT);}
  function markRead(win,log){
@@ -367,7 +419,7 @@
   const [word,...words]=rest.split(/\s+/),matches=people.filter(c=>c.name.toLowerCase().startsWith(word.toLowerCase())||c.key.startsWith(word.toLowerCase()));
   return matches.length===1?{contact:matches[0],text:words.join(' ')}:null;
  }
- const HELP=['Commands:','/join #channel   switch to a radio channel window','/msg <name> <text>   send a direct message to a saved contact','/query <name>   open a direct message window','/me <text>   send "* '+'<your name> <text>"','/whois <name>   show a saved contact: type, route, signal, last advert','Tab   complete a nick or #channel','/help   show this help','Keys: alt+1..9 switch window · F9 main menu · F1 help'];
+ const HELP=['Commands:','/join #channel   switch to a radio channel window','/msg <name> <text>   send a direct message to a saved contact','/query <name>   open a direct message window','/me <text>   send "* '+'<your name> <text>"','/whois <name>   show a saved contact: type, route, signal, last advert','Tab   complete a nick or #channel','/part   remove the current channel from the radio (asks first; Public cannot be removed)','/help   show this help','Keys: alt+1..9 switch window · F9 main menu · F1 help'];
  async function submit(value,win,input){
   const text=value.trim();if(!text)return;
   const send=async(target,body)=>{if(bytes(body)>LIMIT){localLine(win.id,'-!- Message is '+bytes(body)+' bytes; the limit is '+LIMIT+'.','mrc-error');render();return;}const owner=live.identity?.key,id=conversationId(target),reply=state.replyWindow===id?state.replySource:null,before=new Set(live.messages.map(m=>m.id));await sendUIMessage({...target},body,()=>{if(draftStore().get(owner,id).trim()===body.trim())draftStore().clearIf(owner,id,body);const i=state.form?.querySelector('#mrc-input');if(state.draftOwner===owner&&state.draftId===id&&i?.value.trim()===body.trim()){i.value='';state.lastSavedDraft='';syncCardDraft('');state.form.querySelector('.message-reply-context')?.remove();state.replyWindow=null;state.replySource=null;}});if(reply&&owner===live.identity?.key){const sent=live.messages.find(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim());if(sent){sent.localReply={...reply};saveHistory();}}if(owner===live.identity?.key&&state.readingWin===id&&live.messages.some(m=>!before.has(m.id)&&m.own&&m.conversation===id&&m.text===body.trim())){const session=readingSession(id);session.focus=null;session.boundary=null;session.position={bottom:true,manual:false};state.restoring=true;try{render();}finally{state.restoring=false;}}};
@@ -378,6 +430,7 @@
   const [,cmd,rest='']=/^\/(\w*)\s*(.*)$/s.exec(text)||[];
   input.value='';
   saveTerminalDraft();
+  if(cmd==='part'||cmd==='leave'){if(win.kind!=='channel'){localLine(win.id,'-!- /part removes a channel; switch to that channel window first.','mrc-error');render();return;}if(win.target.slot===0){localLine(win.id,'-!- The Public channel (slot 0) cannot be removed.','mrc-error');render();return;}confirmRemoveChannel(win.target.slot);return;}
   if(cmd==='help'){for(const h of HELP)localLine(win.id,'-!- '+h,'mrc-info');render();return;}
   if(cmd==='join'){const name=rest.trim().replace(/^#/,'').toLowerCase(),c=live.channels.find(c=>c.name.toLowerCase()===name);if(!c){localLine(win.id,'-!- No channel #'+name+' on this radio. Channels are configured on the radio.','mrc-error');render();return;}state.window=null;selectConversation({kind:'channel',...c});return;}
   if(cmd==='msg'||cmd==='query'){const r=resolveContact(rest.trim());if(!r){localLine(win.id,'-!- No unique saved contact matches "'+rest.trim().split(/\s+/)[0]+'".','mrc-error');render();return;}

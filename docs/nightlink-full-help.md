@@ -743,9 +743,9 @@ The reply preview is local context, not a new MeshCore threading protocol. Check
 
 
 
-## Add a channel
+## Add or remove a channel
 
-Create or join a channel and verify it on the companion.
+Create, join or remove a channel and verify it on the companion.
 
 ### Create or join
 
@@ -754,6 +754,15 @@ Create or join a channel and verify it on the companion.
 3. Enter the channel details requested by the form. Use the exact agreed hashtag name or shared channel key for your group.
 4. Submit Add channel to radio. Nightlink chooses an available slot and reads back the configuration to verify it.
 5. Select the new channel from the channel controls. Other participants must use matching channel settings.
+
+
+
+### Remove a channel
+
+1. Connect and finish synchronization.
+2. Terminal: in Chat, select × beside the channel in the window list, or type /part in that channel window. Cards: open Add channel; under Channels on this radio, select Remove beside the channel.
+3. Confirm Remove channel. Nightlink clears that slot on the radio and reads it back to verify. The Public channel (slot 0) cannot be removed.
+4. Messages already saved in Nightlink stay in history. To rejoin, add the channel again with the same hashtag name or shared key.
 
 
 

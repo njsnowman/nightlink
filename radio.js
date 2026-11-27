@@ -10,6 +10,18 @@
  function message(d){const channel=[8,17].includes(d[0]),direct=[7,16].includes(d[0]);if(!channel&&!direct)return null;const modern=[16,17].includes(d[0]),start=modern?4:1,min=start+(channel?7:12);if(d.length<min)throw new Error('Incomplete message frame');let at=start;const m={kind:channel?'channel':'direct',snr:modern?dv(d).getInt8(1)/4:null};if(channel)m.slot=d[at++];else{m.prefix=hex(d.slice(at,at+6));at+=6;}m.pathLength=d[at++];m.textType=d[at++];m.timestamp=dv(d).getUint32(at,true);at+=4;if(direct&&m.textType===2){if(d.length<at+4)throw new Error('Incomplete signed message');m.signature=hex(d.slice(at,at+4));at+=4;}m.text=decoder.decode(d.slice(at)).split('\0')[0];return m;}
  class MeshlineRadio extends EventTarget{
   constructor(ble,{pollInterval=30000}={}){super();this.pollInterval=pollInterval;this.ble=ble;this.generation=0;this.tail=Promise.resolve();this.contacts=[];this.channels=[];this.ready=false;this.draining=false;this.identity=null;this.poll=null;this.lastTimestamp=0;this.telemetryBusy=false;this.statsDisabled=new Set();ble.addEventListener('identity',e=>{const work=this.start(e.detail),generation=this.generation;work.catch(error=>{if(generation!==this.generation)return;this.ready=false;this.syncing=false;this.emit('sync',{state:'error',message:error.message});this.warn(error);});});ble.addEventListener('state',e=>{if(e.detail.state==='disconnected'){this.stop();this.emit('disconnected');}});ble.addEventListener('packet',e=>this.packet(e.detail));}
+  // Clears a channel slot on the radio: the same set-channel command as addChannel with an empty name and an all-zero
+  // key, then reads the slot back to confirm it is empty. Slot 0 (Public) is not removed. Stored history is untouched.
+  async removeChannel(slot){
+   if(!this.ready)throw new Error('Connect and synchronize your radio first.');if(this.configuring)throw new Error('Another radio update is in progress.');
+   slot=Number(slot);if(!Number.isInteger(slot)||slot<1)throw new Error('The Public channel (slot 0) cannot be removed.');
+   const channel=this.channels.find(c=>c.slot===slot);if(!channel)throw new Error('That channel is no longer on the radio. Refresh radio data.');
+   this.configuring=true;const generation=this.generation;const configRequest=(...args)=>{if(generation!==this.generation)throw new Error('Radio connection changed during this update. Refresh before retrying.');return this.request(...args);};
+   try{const bytes=new Uint8Array(50);bytes.set([32,slot]);await configRequest(bytes,0);
+    const check=await configRequest([31,slot],18);if(check.length<50||check[1]!==slot||text(check,2,34))throw new Error('Channel removal could not be verified. Refresh radio data before retrying.');
+    this.channels=this.channels.filter(c=>c.slot!==slot);this.emit('channels',this.channels.slice());return{channel};
+   }finally{this.configuring=false;}
+  }
   async addChannel({name,mode='hashtag',secret}){
    if(!this.ready)throw new Error('Connect and synchronize your radio first.');if(this.configuring)throw new Error('Another radio update is in progress.');this.configuring=true;const generation=this.generation;const configRequest=(...args)=>{if(generation!==this.generation)throw new Error('Radio connection changed during this update. Refresh before retrying.');return this.request(...args);};
    try{name=name.trim();if(mode==='hashtag')name='#'+name.replace(/^#+/,'').toLowerCase();const encoded=encoder.encode(name);if(!name||name==='#'||encoded.length>31||name.includes('\0'))throw new Error('Channel name must be 1–31 UTF-8 bytes.');

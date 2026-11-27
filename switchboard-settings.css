@@ -1,5 +1,5 @@
 /* Settings is a compact category workspace; only its content pane scrolls. */
-html:root body #alternate:has(>.switchboard-settings-shell){overflow:hidden;display:flex;flex-direction:column}
+html:root body #alternate.nlh-24{overflow:hidden;display:flex;flex-direction:column}
 html:root body .switchboard-settings-shell{display:flex;flex-direction:column;min-height:0;height:100%;overflow:hidden}
 html:root body .switchboard-settings-shell>.panel-heading{flex:none;min-height:48px}
 html:root body .settings-grid.switchboard-settings{display:grid;grid-template-columns:180px minmax(0,1fr);gap:0;min-height:0;flex:1;overflow:hidden;padding:0;border:0;background:#090b08}

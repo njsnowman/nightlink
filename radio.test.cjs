@@ -65,3 +65,13 @@ test('stopped queue fetch cannot report catch-up completion or clear a replaceme
   r.stop();
  }
 });
+test('channel removal clears the slot with an empty name and zero key, verifies readback, and refuses Public',async()=>{const b=new FakeBLE(),r=new MeshlineRadio(b);await r.start(hello());const original=b.command.bind(b);let saved=null;const writes=[];
+ b.command=async(bytes,types)=>{if(bytes[0]===32){saved=Uint8Array.from(bytes);writes.push(saved);return frame(0,1);}if(bytes[0]===31&&bytes[1]===1&&saved){const d=saved.slice();d[0]=18;return d;}return original(bytes,types);};
+ await r.addChannel({name:'Trail-Crew',mode:'hashtag'});assert.equal(r.channels.length,2);
+ const result=await r.removeChannel(1);assert.equal(result.channel.name,'#trail-crew');const clear=writes.at(-1);assert.equal(clear.length,50);assert.equal(clear[1],1);assert.ok(clear.slice(2).every(x=>x===0),'name and key are zeroed');
+ assert.deepEqual(r.channels.map(c=>c.slot),[0]);
+ await assert.rejects(()=>r.removeChannel(0),/Public channel/);r.stop();});
+test('channel removal that does not verify keeps the channel listed',async()=>{const b=new FakeBLE(),r=new MeshlineRadio(b);await r.start(hello());const original=b.command.bind(b);let saved=null,adding=true;
+ b.command=async(bytes,types)=>{if(bytes[0]===32){if(adding)saved=Uint8Array.from(bytes);return frame(0,1);}if(bytes[0]===31&&bytes[1]===1&&saved){const d=saved.slice();d[0]=18;return d;}return original(bytes,types);};
+ await r.addChannel({name:'Trail-Crew',mode:'hashtag'});adding=false;
+ await assert.rejects(()=>r.removeChannel(1),/could not be verified/);assert.equal(r.channels.length,2);assert.equal(r.configuring,false);r.stop();});
