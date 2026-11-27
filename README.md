@@ -1,222 +1,188 @@
-# Nightlink
+<p align="center">
+  <img src="art/ansi/nightlink-logo-v2.png" alt="Nightlink ANSI logo" width="720">
+</p>
 
-```text
-##   ##  ####   #####   ##   ##  ######  ##      ####  ##   ##  ##  ##
-###  ##   ##   ##       ##   ##    ##    ##       ##   ###  ##  ## ##
-## # ##   ##   ## ####  #######    ##    ##       ##   ## # ##  ####
-##  ###   ##   ##   ##  ##   ##    ##    ##       ##   ##  ###  ## ##
-##   ##  ####   #####   ##   ##    ##    ######  ####  ##   ##  ##  ##
+<p align="center">
+  <b>A Windows desktop companion for MeshCore radios.</b><br>
+  Chat on mesh channels, send direct messages and watch the network over Bluetooth LE or USB, with a BBS-style terminal interface or a modern card layout.
+</p>
 
-        (( o ))          o-----o-----o
-          |              |    / \    |
-         [=]   ~~~~~~~   o---o   o---o
+<p align="center">
+  <a href="https://github.com/njsnowman/nightlink/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/njsnowman/nightlink?label=release&color=0000aa"></a>
+  <a href="https://github.com/njsnowman/nightlink/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/njsnowman/nightlink/total?color=00aaaa"></a>
+  <img alt="Platform" src="https://img.shields.io/badge/platform-Windows%20x64-555555">
+  <img alt="Radio" src="https://img.shields.io/badge/radio-MeshCore%20companion-00aa00">
+</p>
 
-  Windows desktop client for MeshCore companion radios
-  Bluetooth LE or USB serial | local message history
+<p align="center">
+  <a href="https://github.com/njsnowman/nightlink/releases/latest"><b>Download</b></a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#screenshots">Screenshots</a> ·
+  <a href="#features">Features</a> ·
+  <a href="docs/nightlink-full-help.md">Full guide</a> ·
+  <a href="https://github.com/njsnowman/nightlink/issues/new?labels=bug">Report a bug</a>
+</p>
+
+![Nightlink terminal chat](docs/images/readme/terminal-chat.png)
+
+> **Development note:** Nightlink is developed with AI assistance. If you prefer not to use software built that way, don't use it.
+
+## How it connects
+
+```mermaid
+flowchart LR
+  PC["Windows PC<br/>Nightlink"] <-- "Bluetooth LE<br/>or USB serial" --> R["Your MeshCore<br/>companion radio"]
+  R <-- LoRa --> RP1["Repeater"]
+  RP1 <-- LoRa --> RP2["Repeater"]
+  RP2 <-- LoRa --> P1(("Peer"))
+  RP1 <-- LoRa --> P2(("Peer"))
+  RP2 <-- LoRa --> RM["Room server"]
 ```
 
-Windows desktop client for MeshCore companion radios over Bluetooth LE or USB serial. Built with Electron and a local HTML/CSS/JavaScript interface.
+Nightlink talks only to **your own** companion radio. Everything on the mesh goes through that radio. Messages, contact cards and settings are stored on your computer.
 
-> **Development note:** Nightlink is vibe coded with AI-assisted development. If you don’t want to use the program because of that, don’t use it.
+## Quick start
 
-## At a glance
-
-Connection path: PC to companion radio to the MeshCore mesh.
-
-```text
-   +-----------+   Bluetooth LE    +-----------+
-   | Windows   |<=================>| companion |
-   | PC        |   or USB serial   | radio     |
-   | Nightlink |                   +-----+-----+
-   +-----------+                         | LoRa
-                                         v
-              +----------+        +----------+        +----------+
-   peer o ----| repeater |--------| repeater |--------| room     |
-              +----------+        +----------+        +----------+
-                   |                                       |
-                peer o                                  peer o
-```
-
-Overview layout: messages, splitter and map, with the Signal Rail above the conversation.
-
-```text
-+------------------------------------------------------------------------+
-| Overview  Messages  Network  Contacts  Radio          [ Connect radio v]|
-+------------------------------------------------------------------------+
-| Network overview.                                                      |
-+-----------------------------------+--+---------------------------------+
-| #channel                          |  |  [CoreScope] [Radio map]        |
-| [o LINK] [o RX] [o TX] [o ACK]    |::|                                 |
-| [o FAULT]  Ready - standing by    |::|          o                      |
-|-----------------------------------|::|      o       o---o              |
-| peer-a:  message text             |::|        \    /                   |
-|                  you: reply  ACK  |::|         o--o                    |
-|                                   |::|                                 |
-| [ composer .................. ]   |  |                                 |
-+-----------------------------------+--+---------------------------------+
-  messages pane                splitter            map pane
-  (drag, Left/Right arrows, Home/End, Enter or double-click restores)
-```
-
-Signal Rail cells and the state labels defined in chat-signals.js.
-
-```text
-Rail cells:  LINK  RX  TX  ACK  FAULT
-
-  state          label shown
-  -------------  ---------------------------------------
-  offline        Radio disconnected
-  syncing        Synchronizing radio
-  standby        Ready - standing by
-  receive        Incoming message
-  queued         Queued - waiting for radio
-  sending        Sending to radio
-  retrying       Retrying transmission
-  awaiting       Awaiting recipient ACK
-  acknowledged   Recipient acknowledged
-  broadcast      Broadcast accepted by radio
-  unconfirmed    No recipient ACK - delivery unconfirmed
-  error          Send error - delivery unconfirmed
-  not-sent       Not sent - radio rejected request
-  cancelled      Cancelled - delivery unconfirmed
-  interrupted    Interrupted - delivery unconfirmed
-```
-
-Device Center flow, using the button labels in device-management-ui.js.
-
-```text
- Radio > Device Center
-   |
-   v
- [Inspect settings] ---> current values read from the target
-   |                     (remote: [Log in] first; USB: [Connect USB])
-   v
- Stage edits in the form   (or "Stage settings file"; a file from a
-   |                        different device shows a warning)
-   v
- [Review staged changes] ---> "Review changes": before -> after table
-   |                          [Back to editing] returns to the form
-   v
- [Apply reviewed changes] ---> pre-check: values unchanged since Inspect
-   |
-   v
- Readback per setting ---> verified | sent / unverified | not sent
-```
-
-Radio contact removal: single and bulk, each verified by exact public key.
-
-```text
- Single contact
-   Contact card > More > [Remove from radio]
-     -> confirm -> radio removes full key
-     -> exact-key lookup must return "not found"
-     -> removed; saved messages and personal details kept
-
- Bulk (Nodes or Radio Tools)
-   [Remove all except favorites]
-     -> preview:  "Review contacts to remove" | "Favorites to keep"
-     -> tick acknowledgement -> [Remove non-favorites]
-     -> for each contact, one at a time:
-          remove -> exact-key verify -> next
-     -> [Stop after current contact] stops cleanly
-     -> favorites, saved messages and cards stay on this computer
-```
-
-The mesh drawing and sample messages are illustrative. Source labels with middle dots are shown with hyphens. Diagram source: [docs/readme-ascii.md](docs/readme-ascii.md).
-
-## Features
-
-- Channel and direct messaging with local history.
-- Direct-message ACK tracking, bounded retries, flood fallback, cancellation, and delivery details.
-- Contact nicknames, photos, notes, local favorites and independent full-key comparison records.
-- Direct-message windows and configurable notification sound.
-- Channel mention autocomplete using the MeshCore @[name] convention.
-- Street maps with advertised node locations and observed message paths.
-- Compact layout, connection diagnostics, and retained-message synchronization.
-- Passive RF trend summaries with sample counts and last-link limitations.
-- Private Radio map points with local notes and backup merge support.
-- An #echo-only Chat / Map / Split view, a resizable Overview message/map split, independent Show CoreScope / Show MeshMapper settings, automatic local-map fallback and configurable MeshMapper region/PC centering.
-- Device Center for companion configuration, authenticated repeater/room administration and direct USB text-CLI setup, with reviewed changes and readback.
-- Contact card removal from the radio and Remove all except favorites bulk removal, each verified by an exact-key lookup; saved messages, cards and favorites stay on this computer.
-- Signal Rail activity indicators, activity inbox and Outbox, live delivery details, reading-position memory and a local support report.
-- #echo command buttons for !test, !spam, !echo and !yolo.
-- Default dark black surfaces, an alternative console scheme and four independent display accents.
-- Optional startup password/authenticator lock with recovery codes; existing history remains unencrypted.
-- Bounded webpage/image previews and session-only radio CLI tools.
-- Radio workbench: Trace Path, offline geometric Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI.
-- Copy public ID, exact-name mention highlighting/chime, and animated located message paths.
-
-Current public stable release: **0.8.26** ([Windows installer](https://github.com/njsnowman/nightlink/releases/download/v0.8.26/Nightlink-Setup-0.8.26.exe), [portable build](https://github.com/njsnowman/nightlink/releases/download/v0.8.26/Nightlink-Portable-0.8.26.exe), [checksums](https://github.com/njsnowman/nightlink/releases/download/v0.8.26/SHA256SUMS.txt), [release record](releases/0.8.26.md)). Use only executables attached to a published GitHub release. Both executables are unsigned; verify them against SHA256SUMS.txt. See the [documentation index](DOCUMENTATION.md), [user guide](USER_GUIDE.md), [Device Center](docs/device-management.md) and [local client tools](LOCAL_CLIENT_TOOLS.md).
-
-## Install or upgrade
-
-1. Export a backup: Settings → Data & updates → Backup and restore.
-2. Quit Nightlink through its tray Quit command. Closing the main window hides it to the tray by default.
-3. Download from the published GitHub release. Use Setup for the normal per-user Windows installation, or Portable to run without installing. Do not run both on the same profile or radio.
-4. Download SHA256SUMS.txt from the same release and compare it with the downloaded file in PowerShell:
-
+1. **Download** `Nightlink-Setup-<version>.exe` (installer) or `Nightlink-Portable-<version>.exe` (no install) from the [latest release](https://github.com/njsnowman/nightlink/releases/latest).
+2. **Verify** the file against `SHA256SUMS.txt` from the same release:
    ```powershell
    Get-FileHash .\Nightlink-Setup-<version>.exe -Algorithm SHA256
    ```
+   Don't run it if the hash differs. The executables are unsigned, so Windows SmartScreen may warn you: choose **More info → Run anyway** after checking the hash.
+3. **Start Nightlink.** On a new install, the **setup guide** walks you through connecting your radio and links to the matching help topics. You can reopen it any time from **Ctrl+P → Setup guide**.
+4. **Connect.** Choose **Connect radio**, pick **Bluetooth** or **USB**, and select your radio. Channels, contacts and retained messages synchronize automatically.
 
-   Do not run the file if the value differs.
-5. Run Setup over the existing installation. The executables are unsigned, so Windows SmartScreen may show a warning before it runs; check the hash first.
-6. Start Nightlink and confirm the version under Settings → Data & updates.
+<p align="center"><img src="docs/images/readme/terminal-setup-guide.png" alt="First-run setup guide" width="760"></p>
+
+**Upgrading:** export a backup first (**Settings → Data & updates → Backup and restore**), quit Nightlink from the tray icon, then run the new Setup over the old one.
+
+## Screenshots
+
+All screenshots use the real interface with fictional "DEMO" data. No radio or personal information is shown. They're regenerated with `node scripts/readme-screenshots.cjs`.
+
+### Terminal interface (default)
+
+| | |
+|---|---|
+| ![Overview and main menu](docs/images/readme/terminal-overview.png) **Overview:** ANSI logo, node summary, main menu, last callers and today's mesh. | ![Chat](docs/images/readme/terminal-chat.png) **Mesh Relay Chat:** hop and SNR badges, a pinned message, mentions and the status line. |
+| ![Split view](docs/images/readme/terminal-split.png) **F6 split view:** follow a second channel beside the active one. | ![Command palette](docs/images/readme/terminal-palette.png) **Ctrl+P Go to:** jump to any page, channel, contact or action. |
+| ![Nodes](docs/images/readme/terminal-nodes.png) **Nodes:** LAST SNR with signal bars and advert age for every saved contact. | ![More menu](docs/images/readme/terminal-more-menu.png) **More menu:** Contact Book, Mesh Planner, Backup, Propagation, RX Log and more. |
+
+### Cards interface (alternate)
+
+| | |
+|---|---|
+| ![Cards chat](docs/images/readme/cards-chat.png) **Messages:** channel tabs, mention highlights, hop badges and the Signal Rail. | ![Cards nodes](docs/images/readme/cards-nodes.png) **Contacts:** the same LAST SNR bars and advert ages. |
+| ![Report a bug](docs/images/readme/cards-report-bug.png) **Report a bug / Request a feature:** opens a pre-filled GitHub issue. | |
+
+Switch between them in **Settings → Interface**.
+
+## Features
+
+### Messaging
+- Channel and direct messages with local history: up to 3,000 messages per radio.
+- Direct-message ACK tracking, bounded retries, flood fallback, cancellation and delivery details.
+- Replies, reactions, `@[name]` mention autocomplete and highlighting, link and image previews.
+- **Pinned messages** (`/pin`, `/pins`, `/unpin`), **Find**, drafts that survive switching windows, and a remembered reading position.
+- Detached direct-message windows and configurable notification sounds, including **Modem** and **BBS bells** packs.
+- Add or remove channels from the radio (`/join`, `/part`, or the channel dialog).
+
+### Network and radio
+- **Nodes:** LAST SNR from direct adverts and the final hop of messages, shown with signal bars, plus advert age.
+- Message paths: numbered repeaters, signal per hop and an animated path map.
+- Radio workbench: Trace Path, offline Line of Sight, RX Log, Noise Floor, Discover Nodes and CLI.
+- **Device Center:** companion configuration, authenticated repeater and room administration, and USB text-CLI setup, all with reviewed changes and readback.
+- **Propagation Monitor:** passively compares current reception with your radio's own history.
+- CoreScope, MeshMapper and a local Radio map, each of which can be turned off separately.
+- Contact Book, Mesh Planner (operations, sites, RF studies) and offline map preparation.
+
+### Terminal interface
+- VGA 16-colour palette, monospace type, bordered frames, bracketed hotkeys and visible keyboard focus.
+- **Status line:** node, unread count, DMs, noise floor, battery, internet, inbox, update notice and the radio connection.
+- **F6 split view**, **nick colours by sender**, **custom colours** (refused below 4.5:1 contrast), and Daylight and High-contrast palettes.
+- Modem dial-up startup screen with ANSI art, and a NO CARRIER sign-off screen.
+
+### Everywhere
+- **Ctrl+P** command palette and **F1** offline help with 22 topics and screenshots.
+- **Setup guide** for new users, and **Report a bug / Request a feature** forms.
+- Local backup and restore, an optional startup lock with recovery codes, and Focus mode (Ctrl+B).
+
+## Keyboard shortcuts
+
+| Key | Action |
+|---|---|
+| `Ctrl+P` | Go to: pages, channels, contacts, actions |
+| `Ctrl+K` | Search messages |
+| `F1` | Help |
+| `F2` | Chat |
+| `F6` | Split view: next window, then off (Terminal chat) |
+| `F9` | Main menu (Terminal) |
+| `Alt+1`…`Alt+9` | Switch chat window (Terminal) |
+| `Ctrl+B` | Focus mode: hide the menus |
+| `Esc` | Back, or close a dialog |
+| `/help` | All chat commands (Terminal) |
+
+## Connections
+
+**Bluetooth:** use MeshCore BLE companion firmware and turn on Windows Bluetooth. Only one client can be connected to the radio at a time. Nightlink synchronizes channels, retrieves retained messages and refreshes contacts and telemetry.
+
+**USB:** use a data-capable cable. In **Connect radio**, choose **USB cable → Choose USB port** and select the radio's COM port (115200 baud, MeshCore companion framing). USB and Bluetooth share the same local history, keyed by the radio's public identity.
+
+If the link drops, Nightlink reconnects with backoff, and the status line shows the countdown.
+
+## What delivery means
+
+- A radio **accepting** a channel message doesn't confirm that anyone received it.
+- Direct messages track the **recipient radio's ACK**. A missing ACK stays "unconfirmed".
+- After reconnecting, Nightlink retrieves the messages your powered radio kept. That queue is finite: it can overflow, it may be cleared by a reboot, and another connected client can consume it.
+
+## Privacy and storage
+
+- Message history, contact cards and settings stay **on this computer**. History is not encrypted at rest. The optional startup lock protects opening the app; it doesn't encrypt your data.
+- Channel secrets and Bluetooth PINs are not stored in history.
+- CoreScope and MeshMapper need internet access and depend on those external services; you can turn either off.
+- Update checks read the public GitHub release feed. They need no account and send no personal data.
+- Bug reports open a GitHub issue in your browser. Nothing is sent until you press Submit there, and your radio name, keys and messages are not included.
+
+## Feedback
+
+- [Report a bug](https://github.com/njsnowman/nightlink/issues/new?labels=bug) or [request a feature](https://github.com/njsnowman/nightlink/issues/new?labels=enhancement), or use **More → Report a bug** inside the app, which fills in your version and platform.
+- Include your radio model and firmware, the connection type (Bluetooth or USB), and the exact steps. Don't attach message backups or authenticator secrets.
 
 ## Development
 
-Install Node.js and dependencies with `npm install` or the checked-in pnpm lockfile. Run `npm start` for Electron, `npm run preview` for the local browser preview, and `npm run dist` to build the Windows Setup and Portable executables. Browser preview uses http://127.0.0.1:4173 in Edge or Chrome.
+```bash
+npm install
+```
 
-Run `npm test` for protocol, transport, delivery, and recovery tests. `smoke.test.cjs` provides browser integration coverage with a simulated GATT radio; its Playwright and fixture paths currently require adjustment outside the original development environment. Tests do not transmit over RF.
+```bash
+npm start
+```
 
-## Bluetooth connection
+```bash
+npm test
+```
 
-Use MeshCore BLE companion firmware and enable Windows Bluetooth. Connect one client to the radio at a time. Nightlink synchronizes channels, retrieves retained messages, and refreshes contacts and telemetry. Transport failures during initial synchronization pause automatic reconnect and identify the failed command. Unexpected link loss after synchronization uses bounded reconnect backoff.
+```bash
+npm run test:browser
+```
 
-## USB connection
+```bash
+npm run dist
+```
 
-Connect the radio with a data-capable USB cable. In Connect radio, choose USB cable, then Choose USB port and select the radio’s COM port. Nightlink uses 115200 baud and MeshCore companion framing. The radio must expose the USB companion protocol; a charge-only cable or unrelated serial console cannot connect. Close other serial applications first. No firmware flashing is performed.
+- `npm start` runs the Electron app. `npm run preview` serves the local browser preview.
+- `npm test` runs the protocol, transport, delivery and UI logic tests (Node's test runner).
+- `npm run test:browser` runs about 100 Playwright suites, including a 146-screen accessibility audit. Set `NIGHTLINK_BROWSER` to a Chromium path if needed.
+- `npm run dist` builds `Nightlink-Setup-<version>.exe` and `Nightlink-Portable-<version>.exe`.
 
-Only one radio connection is active at a time. Disconnect or select the other connection type to switch. USB and Bluetooth use the radio’s public identity for the same local history. The selected USB port is remembered for reconnects during this app session. Unexpected link loss uses bounded retries; synchronization failures pause retries.
+Interface work follows [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md): Terminal is the default standard, and Cards is the alternate.
 
-## Message delivery and recovery
-
-A radio accepting a channel message does not confirm recipient delivery. Direct messages track the recipient radio's ACK; missing ACKs remain unconfirmed. Default DM budgets are four direct attempts followed by one flood fallback, or two flood attempts without a saved route. Settings provide bounded overrides. Flood fallback clears the recipient's saved route so a replacement can be learned. Pending sends are not replayed after restart or reconnect.
-
-After reconnecting, Nightlink retrieves messages received and retained by the powered companion radio. Its finite queue can overflow, may be cleared by a reboot, and can be consumed by another connected client such as the phone app. That app’s local archive is not automatically shared with Nightlink. Broadcasts missed while out of coverage cannot be recovered from channel history. See [retry implementation notes](SEND_RETRIES.md).
-
-## Storage and external services
-
-Contact cards, favorites, and message history are stored on the local computer. History retains up to 3,000 messages per radio and is not encrypted at rest. Channel secrets and Bluetooth PINs are not written to local history. Map tiles use OpenStreetMap; uncached tiles require internet. Unknown locations and unresolved route hops remain identified as unknown.
-
-## Validation and releases
-
-The Bluetooth reconnect regression is documented in [issue #1](https://github.com/njsnowman/nightlink/issues/1). The user reported more than four hours of continuous connection and successful retained-message recovery on the tested radio. Automated and simulated checks are recorded separately from this physical evidence. DM retry/flood behavior has not received additional physical two-radio verification.
-
-Every Nightlink release must have a linked tracking issue, changelog entry, validation record, source commit, and artifact checksum before publication. See [release process](RELEASE_PROCESS.md), [changelog](CHANGELOG.md), and [field test procedure](FIELD_TEST.md).
+Every release has a tracking issue, a changelog entry, a validation record (with physical-radio evidence kept separate from simulated tests), the source commit and the artifact checksums. See [RELEASE_PROCESS.md](RELEASE_PROCESS.md), [CHANGELOG.md](CHANGELOG.md), [releases/](releases/) and the [download history](releases/DOWNLOADS.md).
 
 ## References
 
 - [MeshCore firmware and companion protocol](https://github.com/meshcore-dev/MeshCore)
+- [MeshCore documentation](https://docs.meshcore.io/)
 - [Electron device access](https://www.electronjs.org/docs/latest/tutorial/devices)
-- Leaflet is distributed under its [BSD license](vendor/LEAFLET-LICENSE).
-
-## Local backup and restore
-
-Open Settings → Data & updates → Backup and restore to save a local JSON backup. On Windows, choose a destination in the Save dialog. Backups contain private messages and contact information and are not encrypted.
-
-Disconnect the radio before choosing a backup to restore. Review the counts before confirming. Existing contact cards and preferences are kept, favorites are combined, and duplicate messages are skipped. Messages beyond the per-radio retention limit are reported and skipped without removing current history. The app reloads when finished. If a restore is interrupted, use Recover previous data at startup or Recover interrupted restore in Settings.
-
-This feature upgrades contact storage to version 2; older Nightlink versions may not open upgraded contact cards. Backup and restore is available starting in 0.8.8.
-
-## Windows installer and update checks
-
-Build with npm run dist to produce Nightlink-Setup-<version>.exe and Nightlink-Portable-<version>.exe. The installer is per user with a Start menu shortcut and optional desktop shortcut. It keeps the existing %APPDATA%/Meshline data location and retains local data on normal uninstall. Close Nightlink before installing an update.
-
-Settings → Data & updates → Nightlink updates shows the running version, offers manual checks and optional checks while the app is open. The public GitHub stable feed requires no account or embedded credentials. Download opens the matching Setup or Portable asset in your browser; Nightlink does not install updates automatically. Export a backup and quit cleanly before upgrading. See [update behavior](UPDATES.md).
-
-Installer and update controls are available starting in 0.8.9.
-
-## Screenshots
-
-These screenshots predate the 0.8.26 interface redesign. [Download five Nightlink 0.8.22 screenshots](https://github.com/njsnowman/nightlink/releases/download/v0.8.22/Nightlink-Screenshots-0.8.22.zip): Overview, Messages, Network, Radio Tools and Message Path. These are actual application captures with labeled demonstration data and the ice-blue display accent, without private messages or contact details.
+- Leaflet is distributed under its [BSD license](vendor/LEAFLET-LICENSE). Third-party notices are listed in **Help → About**.
