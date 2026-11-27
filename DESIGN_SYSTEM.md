@@ -54,6 +54,10 @@ Terminal chat map: the right side of MRC contains a compact OKI Mesh CoreScope l
 
 Do not use `:has()` in stylesheets. Rules anchored on page ancestors made Chromium restyle the whole document on every DOM insertion. To express a parent-depends-on-child state, add a row to `has-state-rules.js` (class, anchor selector, condition) and use that class in the CSS, or set a class from the owning module. `has-state.js` keeps table classes current; `has-state.test.cjs` fails if a stylesheet contains `:has(`. `:has()` in JavaScript `querySelector` calls is unaffected. One exception is allowed: the terminal dialog button rule `button:not(:has(div,strong,small,time,p,.avatar))`, whose subject is the button itself. It costs nothing measurable and must apply as soon as a dialog opens, before has-state classes would update.
 
+## Terminal chrome (consolidation, 2026-11-27)
+
+Terminal pages use, top to bottom: the menu bar (with More), the blue page title, page content, and one bottom bar (global F-keys, page keys, status line). Do not add a second bar that repeats state already in the status line (link, node, battery, unread, internet, RF). New global actions go in the Ctrl+P palette or the More menu, not a new toolbar.
+
 ## Card interface (alternate)
 
 

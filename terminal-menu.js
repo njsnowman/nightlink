@@ -8,6 +8,8 @@
  const hhmm=t=>{const d=new Date(t*1000);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
  const unreadTotal=()=>{try{return typeof ensureAttention==='function'?ensureAttention().unread(live.messages).length:0;}catch{return 0;}};
  function openRxLog(){view('Radio');const tab=[...doc.querySelectorAll('.radio-workbench-tabs button')].find(b=>/rx/i.test(b.textContent));if(tab)tab.click();}
+ // Pages that the top menu bar lists under More (consolidation): the same actions as the Main Menu.
+ window.NightlinkMoreMenu=[['Contact Book','O',()=>view('Contact Book')],['Mesh Planner','E',()=>view('Operations')],['Backup','B',()=>openBackup()],['Propagation','P',()=>typeof showPropagationMonitor==='function'?showPropagationMonitor():view('Radio')],['RX Log','L',()=>openRxLog()]];
  function openBackup(){view('Settings');doc.querySelector('.backup-settings')?.scrollIntoView({block:'start'});}
  const ITEMS=[
   ['C','Chat',()=>'MRC · Mesh Relay Chat'+(unreadTotal()?' · '+unreadTotal()+' new':''),()=>view('Messages')],

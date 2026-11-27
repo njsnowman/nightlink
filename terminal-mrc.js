@@ -249,7 +249,6 @@
   box.append(list,el('p','mrc-dim mrc-legend','@ you  + repeater'));
   return box;
  }
- function rfLabel(){try{const s=window.NightlinkPropagationUI?.monitor?.summary?.();if(!s||s.state==='unavailable'||s.state==='disabled')return null;return {text:String(s.label||s.state).toUpperCase(),cls:s.state==='normal'?'mrc-ok':s.state==='insufficient-data'?'mrc-info':'mrc-pending'};}catch{return null;}}
 
  // Append fast path (#207): when the only change in the open window is new messages at the end and the reader is at
  // the bottom, add those rows to the existing scrollback instead of rebuilding ~300 rows and forcing a full layout.
@@ -275,7 +274,6 @@
   let prev=kept.at(-1)||null;
   for(const m of fresh){const d=new Date(m.timestamp*1000).toDateString();if(prev&&new Date(prev.timestamp*1000).toDateString()!==d){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));log.append(line);}log.append(messageLine(m));prev=m;}
   const count=log.querySelectorAll('.mrc-banner')[2]?.lastChild;if(count)count.textContent=rows.length+' stored message'+(rows.length===1?'':'s')+' · '+live.contacts.length+' nodes known';
-  const clock=doc.querySelector('#mrc .mrc-statusbar .mrc-field strong');if(clock)clock.textContent=hhmm(nowSeconds());
   state.restoring=true;log.scrollTop=log.scrollHeight;state.restoring=false;captureReading(log);updateJump(log,win);markRead(win,log);
   window.NightlinkReactionUI?.decorate(log,rows,live.messages,{selfName:live.identity?.name||'',terminal:true});
   renderSnapshot(win,rows,list);state.fastAppends=(state.fastAppends||0)+1;return true;
@@ -371,10 +369,9 @@
   // Status bar
   const status=el('div','mrc-statusbar');status.setAttribute('role','status');
   const field=(...parts)=>{const s=el('span','mrc-field');s.append('[',...parts,']');status.append(s,' ');};
-  field(el('strong',null,hhmm(nowSeconds())));field(el('strong',null,own()));field(String(index)+':',el('strong',null,win.label));
+  // Clock, node name and link state are in the menu bar and the bottom status line (consolidation).
+  field(String(index)+':',el('strong',null,win.label));
   const act=list.map((w,i)=>w.kind!=='status'&&w!==win&&unread(w.id)?String(i+1):null).filter(Boolean);field('Act: ',el('span','mrc-bar-pending',act.join(',')||'—'));
-  const link=live.sync==='ready'?['ok','mrc-bar-ok']:live.sync==='syncing'?['sync','mrc-bar-pending']:['off','mrc-bar-bad'];field((typeof ble==='object'&&ble.kind==='usb'?'USB ':'BLE ')+'',el('span',link[1],link[0]));
-  const rf=rfLabel();if(rf)field('RF ',el('span',rf.cls==='mrc-ok'?'mrc-bar-ok':'mrc-bar-pending',rf.text));
   const count=el('strong','mrc-bytes','0');field('bytes ',count,'/'+LIMIT);
   root.append(status);
   // Input line: one persistent form so drafts, focus and the text-art picker survive re-renders.

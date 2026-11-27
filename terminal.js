@@ -46,6 +46,22 @@
   const MENU=[['Overview','N','Nightlink',()=>view('Overview')],['Messages','C','Chat',()=>view('Messages')],['Nodes','O','Nodes',()=>view('Nodes')],['Network map','M','Map',()=>view('Network map')],['Activity','A','Activity',()=>view('Activity')],['Radio','R','Radio',()=>view('Radio')],['Device','D','Device',()=>typeof showDeviceCenter==='function'?showDeviceCenter():view('Radio')],['Settings','S','Settings',()=>view('Settings')],['Help','H','Help',()=>doc.querySelector('#open-help')?.click()]];
   const bar=doc.createElement('div');bar.id='term-menubar';bar.className='term-only term-menubar';bar.setAttribute('role','navigation');bar.setAttribute('aria-label','Terminal menu');
   for(const [name,key,label,run] of MENU){const b=doc.createElement('button');b.type='button';b.dataset.termView=name;const i=label.toUpperCase().indexOf(key),k=doc.createElement('span');k.className='term-key';k.textContent=label[i];b.append(label.slice(0,i),k,label.slice(i+1));b.setAttribute('aria-label',label);b.onclick=run;bar.append(b);}
+  // More (consolidation): every Main Menu page is reachable from the menu bar.
+  {const wrap=doc.createElement('span');wrap.className='term-more';const more=doc.createElement('button');more.type='button';more.id='term-more';more.setAttribute('aria-haspopup','menu');more.setAttribute('aria-expanded','false');more.setAttribute('aria-controls','term-more-menu');
+   const k=doc.createElement('span');k.className='term-key';k.textContent='e';more.append('Mor',k,' ▾');more.setAttribute('aria-label','More pages');
+   const menu=doc.createElement('div');menu.id='term-more-menu';menu.className='term-more-menu';menu.setAttribute('role','menu');menu.setAttribute('aria-label','More pages');menu.hidden=true;
+   const close=(refocus=true)=>{if(menu.hidden)return;menu.hidden=true;more.setAttribute('aria-expanded','false');if(refocus)more.focus();};
+   const open=()=>{menu.replaceChildren();for(const [label,key,run] of root.NightlinkMoreMenu||[]){const b=doc.createElement('button');b.type='button';b.setAttribute('role','menuitem');b.tabIndex=-1;const h=doc.createElement('span');h.className='term-fkey';h.textContent='['+key+']';b.append(h,' '+label);b.onclick=()=>{close(false);run();};menu.append(b);}
+    const r=more.getBoundingClientRect();menu.style.top=Math.round(r.bottom)+'px';menu.style.left=Math.round(r.left)+'px';
+    menu.hidden=false;more.setAttribute('aria-expanded','true');menu.querySelector('button')?.focus({preventScroll:true});};
+   more.onclick=()=>menu.hidden?open():close();
+   menu.addEventListener('keydown',e=>{const items=[...menu.querySelectorAll('[role=menuitem]')],i=items.indexOf(doc.activeElement);
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();items[(i+(e.key==='ArrowDown'?1:-1)+items.length)%items.length]?.focus();}
+    else if(e.key==='Home'||e.key==='End'){e.preventDefault();(e.key==='Home'?items[0]:items.at(-1))?.focus();}
+    else if(e.key==='Escape'||e.key==='Tab'){e.preventDefault();e.stopPropagation();close();}});
+   more.addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();open();}});
+   doc.addEventListener('pointerdown',e=>{if(!wrap.contains(e.target)&&!menu.contains(e.target))close(false);});
+   wrap.append(more);bar.append(wrap);doc.body.append(menu);}
   const clock=doc.createElement('span');clock.className='term-menubar-clock';bar.append(clock);
   const keys=doc.createElement('div');keys.id='term-fkeys';keys.className='term-only term-fkeys';
   for(const [k,label,run] of [['F1','Help',()=>doc.querySelector('#open-help')?.click()],['F2','Chat',()=>view('Messages')],['F9','Menu',()=>view('Overview')],['^P','Go to',()=>root.NightlinkPalette?.open()],['Esc','Back',()=>view('Overview')]]){const b=doc.createElement('button');b.type='button';const s=doc.createElement('span');s.className='term-fkey';s.textContent=k;b.append(s,' '+label);b.onclick=run;keys.append(b);}
@@ -55,13 +71,19 @@
   const node=field('term-status-node'),unreadBtn=doc.createElement('button'),batt=field('term-status-battery'),noise=field('term-status-noise'),dmBtn=doc.createElement('button');
   dmBtn.type='button';dmBtn.className='term-status-field term-status-dm';dmBtn.onclick=()=>view('Direct Messages');
   unreadBtn.type='button';unreadBtn.className='term-status-field term-status-unread';unreadBtn.onclick=()=>view('Messages');
-  const link=doc.createElement('span');link.className='term-fkeys-link';status.append(node,dmBtn,unreadBtn,noise,batt,link);keys.append(status);
+  // The top strip is hidden in the terminal interface (consolidation); its unique states move here.
+  const net=field('term-status-net'),rf=field('term-status-rf');
+  const link=doc.createElement('button');link.type='button';link.className='term-fkeys-link';link.title='Radio connection';link.onclick=()=>{if(typeof showBluetooth==='function')showBluetooth();else doc.querySelector('#connection')?.click();};
+  status.append(node,dmBtn,unreadBtn,noise,batt,net,rf,link);keys.append(status);
   doc.body.prepend(bar);doc.body.append(keys);
   function tick(){const now=new Date();clock.textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
    const state=typeof live==='object'?live.sync:'disconnected',kind=typeof ble==='object'&&ble.kind==='usb'?'USB':'BLE';link.textContent='● '+kind+' '+(state==='ready'?'ok':state==='syncing'?'sync':'off');link.dataset.state=state==='ready'?'ok':state==='syncing'?'pending':'off';
    // Auto-reconnect progress (recovery.js), shown instead of 'off' while a retry is pending.
    const rec=root.NightlinkStatusLine?.recovery;if(state!=='ready'&&state!=='syncing'&&rec){if(rec.state==='waiting'&&rec.until){const left=Math.max(0,Math.ceil((rec.until-Date.now())/1000));link.textContent='● '+kind+' retry '+rec.attempt+' in '+left+'s';link.dataset.state='pending';}
     else if(rec.state==='retrying'){link.textContent='● '+kind+' reconnecting';link.dataset.state='pending';}else if(rec.state==='exhausted'||rec.state==='paused'){link.textContent='● '+kind+' off · retry stopped';}}
+   link.setAttribute('aria-label','Radio link: '+link.textContent.replace('● ','')+'. Open radio connection');
+   const ns=doc.querySelector('#internet-status')?.dataset.state;net.textContent=ns==='online'?'NET ok':ns==='offline'?'NET off':'';net.hidden=!net.textContent;net.dataset.state=ns||'';
+   const rfText=(doc.querySelector('#propagation-indicator')?.textContent||'').replace(/^\s*RF\s*/,'').trim();rf.textContent=rfText&&!/unavailable/i.test(rfText)?'RF '+rfText:'';rf.hidden=!rf.textContent;
    const L=typeof live==='object'?live:null,ready=state==='ready';
    node.textContent=ready&&L?.identity?.name?L.identity.name:'';node.hidden=!node.textContent;
    let unread=0,dms=0;try{if(ready&&typeof ensureAttention==='function'){const u=ensureAttention().unread(L.messages);unread=u.length;dms=u.filter(m=>m.target?.kind==='direct'||m.kind==='direct').length;}}catch{}
@@ -70,11 +92,13 @@
    unreadBtn.textContent='✉ '+unread+' unread';unreadBtn.hidden=!ready;unreadBtn.dataset.unread=unread?'yes':'no';unreadBtn.setAttribute('aria-label',unread+' unread message'+(unread===1?'':'s')+', open chat');
    const mv=L?.battery?.millivolts;batt.textContent=ready&&mv?'BAT '+(mv/1000).toFixed(2)+' V'+(mv<3500?' LOW':''):'';batt.hidden=!batt.textContent;batt.dataset.low=mv&&mv<3500?'yes':'no';}
   tick();setInterval(tick,15000);
+  {const h=doc.querySelector('.header-actions');if(h)new MutationObserver(()=>soonTick()).observe(h,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['data-state']});}
   root.NightlinkStatusLine={refresh:tick,recovery:null};
   let countdown=null;const onRecovery=d=>{root.NightlinkStatusLine.recovery=d?{...d,until:d.state==='waiting'&&d.delay?Date.now()+d.delay:null}:null;clearInterval(countdown);countdown=null;
    if(d?.state==='waiting')countdown=setInterval(()=>{tick();if(root.NightlinkStatusLine.recovery?.until<Date.now()){clearInterval(countdown);countdown=null;}},1000);tick();};
   root.NightlinkStatusLine.onRecovery=onRecovery;
   if(typeof recovery==='object'&&recovery?.addEventListener)recovery.addEventListener('recovery',e=>onRecovery(e.detail));
+  function soonTick(){soon();}
   let queued=false;const soon=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;tick();});};
   if(typeof radioSession==='object')for(const ev of ['sync','battery','identity','message','messages','stats'])radioSession.addEventListener(ev,soon);
   if(typeof ble==='object')ble.addEventListener('state',soon);

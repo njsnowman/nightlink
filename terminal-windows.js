@@ -40,7 +40,11 @@
   {const motif=PAGE_ART[help?'Help':current];if(motif){const a=el('span','term-window-art',motif);a.setAttribute('aria-hidden','true');bar.append(a);}}
   bar.dataset.page=current;
   if(bar.parentNode!==content||content.firstChild!==bar)content.prepend(bar);
-  doc.querySelector('#term-page-keys')?.remove();const keys=keyLine(page.keys);keys.id='term-page-keys';content.append(keys);
+  doc.querySelector('#term-page-keys')?.remove();
+  // One key bar (consolidation): page-specific keys join the global F-key bar; keys it already shows are dropped.
+  const fbar=doc.querySelector('#term-fkeys'),shown=new Set([...(fbar?.querySelectorAll(':scope>button .term-fkey')||[])].map(k=>k.textContent));
+  const keys=keyLine(page.keys.filter(([k])=>!shown.has(k)));keys.id='term-page-keys';keys.classList.add('term-fkeys-page');
+  const anchor=fbar?.querySelector('.term-statusline');if(fbar&&anchor)fbar.insertBefore(keys,anchor);else content.append(keys);
  }
 
  // Dialog windows: the single shared #dialog takes a window name from its title and a key line at the bottom.
