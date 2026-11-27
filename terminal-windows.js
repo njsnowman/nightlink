@@ -147,11 +147,12 @@
   setTimeout(()=>{try{if(typeof messageMap==='object'&&messageMap){messageMap.invalidateSize();}}catch{}},60);
   autoReplay();
  }
- // Replays the known route segments every 6 s while the dialog is open, unless the operator prefers reduced motion.
+ // Replays the known route segments every 6 s, three times, while the dialog is open (then stops, so an open map does
+ // not keep repainting), unless the operator prefers reduced motion. Replay path stays available.
  function autoReplay(){
   clearInterval(replayTimer);replayTimer=null;
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
-  replayTimer=setInterval(()=>{const d=doc.querySelector('#dialog'),b=doc.querySelector('#replay-route');if(!d?.open||!b||!on()){clearInterval(replayTimer);replayTimer=null;return;}if(!b.disabled)b.click();},6000);
+  let runs=0;replayTimer=setInterval(()=>{const d=doc.querySelector('#dialog'),b=doc.querySelector('#replay-route');if(!d?.open||!b||!on()||++runs>3){clearInterval(replayTimer);replayTimer=null;return;}if(!b.disabled)b.click();},6000);
  }
 
  if(typeof showMessageRoute==='function'){const previous=showMessageRoute;showMessageRoute=function(m){const r=previous.apply(this,arguments);try{pathView(m);}catch{}return r;};}
