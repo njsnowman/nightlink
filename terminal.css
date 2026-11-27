@@ -653,8 +653,9 @@ html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>.term-fk
 html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>.term-fkeys-page .term-fkey{color:#000;font-weight:700;text-decoration:underline}
 @media (max-width:900px){html:root:root:root:root:root[data-interface=terminal] body #term-fkeys>.term-fkeys-page{display:none}}
 html:root:root:root:root:root[data-interface=terminal] body .term-more{position:relative;display:inline-flex}
-html:root:root:root:root:root[data-interface=terminal] body .term-more-menu{position:fixed;z-index:1000;min-width:200px;display:flex;flex-direction:column;background:var(--t-grey);border:1px solid #000;box-shadow:8px 8px 0 #000a;padding:2px 0}
+html:root:root:root:root:root[data-interface=terminal] body .term-more-menu{position:absolute;top:100%;left:0;z-index:1000;min-width:200px;display:flex;flex-direction:column;background:var(--t-grey);border:1px solid #000;box-shadow:8px 8px 0 #000a;padding:2px 0}
 html:root:root:root:root:root[data-interface=terminal] body .term-more-menu[hidden]{display:none}
 html:root:root:root:root:root[data-interface=terminal] body .term-more-menu button{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:0;padding:2px 12px;color:#000;font:inherit;cursor:pointer;min-height:0;white-space:nowrap}
 html:root:root:root:root:root[data-interface=terminal] body .term-more-menu button:hover,html:root:root:root:root:root[data-interface=terminal] body .term-more-menu button:focus-visible{background:var(--t-blue);color:#fff;outline:none}
 html:root:root:root:root:root[data-interface=terminal] body .term-more-menu button .term-fkey{color:inherit;font-weight:700}
+html:root:root:root:root:root[data-interface=terminal] body .term-menubar{overflow:visible}

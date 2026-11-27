@@ -52,7 +52,6 @@
    const menu=doc.createElement('div');menu.id='term-more-menu';menu.className='term-more-menu';menu.setAttribute('role','menu');menu.setAttribute('aria-label','More pages');menu.hidden=true;
    const close=(refocus=true)=>{if(menu.hidden)return;menu.hidden=true;more.setAttribute('aria-expanded','false');if(refocus)more.focus();};
    const open=()=>{menu.replaceChildren();for(const [label,key,run] of root.NightlinkMoreMenu||[]){const b=doc.createElement('button');b.type='button';b.setAttribute('role','menuitem');b.tabIndex=-1;const h=doc.createElement('span');h.className='term-fkey';h.textContent='['+key+']';b.append(h,' '+label);b.onclick=()=>{close(false);run();};menu.append(b);}
-    const r=more.getBoundingClientRect();menu.style.top=Math.round(r.bottom)+'px';menu.style.left=Math.round(r.left)+'px';
     menu.hidden=false;more.setAttribute('aria-expanded','true');menu.querySelector('button')?.focus({preventScroll:true});};
    more.onclick=()=>menu.hidden?open():close();
    menu.addEventListener('keydown',e=>{const items=[...menu.querySelectorAll('[role=menuitem]')],i=items.indexOf(doc.activeElement);
@@ -61,7 +60,7 @@
     else if(e.key==='Escape'||e.key==='Tab'){e.preventDefault();e.stopPropagation();close();}});
    more.addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();open();}});
    doc.addEventListener('pointerdown',e=>{if(!wrap.contains(e.target)&&!menu.contains(e.target))close(false);});
-   wrap.append(more);bar.append(wrap);doc.body.append(menu);}
+   wrap.append(more,menu);bar.append(wrap);}
   const clock=doc.createElement('span');clock.className='term-menubar-clock';bar.append(clock);
   const keys=doc.createElement('div');keys.id='term-fkeys';keys.className='term-only term-fkeys';
   for(const [k,label,run] of [['F1','Help',()=>doc.querySelector('#open-help')?.click()],['F2','Chat',()=>view('Messages')],['F9','Menu',()=>view('Overview')],['^P','Go to',()=>root.NightlinkPalette?.open()],['Esc','Back',()=>view('Overview')]]){const b=doc.createElement('button');b.type='button';const s=doc.createElement('span');s.className='term-fkey';s.textContent=k;b.append(s,' '+label);b.onclick=run;keys.append(b);}
