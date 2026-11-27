@@ -280,6 +280,9 @@
   window.NightlinkReactionUI?.decorate(log,rows,live.messages,{selfName:live.identity?.name||'',terminal:true});
   renderSnapshot(win,rows,list);state.fastAppends=(state.fastAppends||0)+1;return true;
  }
+ function cycleSplit(){const list=windows().filter(w=>w.kind!=='status'),cur=activeWindow(windows());const others=list.filter(w=>w.id!==cur.id);if(!others.length)return;
+  const i=others.findIndex(w=>w.id===state.split);state.split=i<0?others[0].id:i+1<others.length?others[i+1].id:null;render();}
+ doc.addEventListener('keydown',e=>{if(e.key!=='F6'||e.defaultPrevented||!doc.querySelector('#mrc')||doc.querySelector('dialog[open]'))return;e.preventDefault();cycleSplit();});
  function render(){
   const host=doc.querySelector('#alternate');
   if(!host)return;
@@ -348,6 +351,16 @@
   }
   for(const l of state.local.get(win.id)||[]){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(l.t)),el('span',l.cls,l.text));scroll.append(line);}
   body.append(side,scroll);root.append(body);
+  // Split view (F6): a read-only pane with the latest lines of a second window, IRC style. Plain text lines keep
+  // message ids unique to the main log, so reply, reaction and reading logic are unaffected.
+  const splitWin=state.split&&state.split!==win.id?list.find(w=>w.id===state.split&&w.kind!=='status'):null;if(state.split&&!splitWin)state.split=null;
+  body.classList.toggle('mrc-split-on',!!splitWin);
+  if(splitWin){const pane=el('section','mrc-split');pane.setAttribute('aria-label','Split view: '+splitWin.label);
+   const head=el('div','mrc-pane-title mrc-split-title');head.append(el('span','',splitWin.label));const close=el('button','mrc-split-close','×');close.type='button';close.setAttribute('aria-label','Close split view');close.onclick=()=>{state.split=null;render();};head.append(close);
+   const lines=el('div','mrc-split-log');lines.setAttribute('role','log');lines.tabIndex=0;
+   for(const m of live.messages.filter(m=>m.conversation===splitWin.id).slice(-60)){const line=el('div','mrc-line mrc-split-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-nick '+(m.own?'mrc-nick-own':'mrc-nick-peer '+nickColor(m.sender||'')),'<'+(m.own?(live.identity?.name||'me'):(m.sender||'?'))+'>'),' ',el('span','mrc-text',String(m.text??'')));lines.append(line);}
+   if(!lines.childElementCount)lines.append(el('div','mrc-line mrc-split-empty','No messages in this window yet.'));
+   pane.append(head,lines);body.append(pane);requestAnimationFrame(()=>{lines.scrollTop=lines.scrollHeight;});}
   if(win.kind!=='status'){const jump=el('button','mrc-jump-latest','Jump to latest ↓');jump.type='button';jump.hidden=true;jump.onclick=()=>jumpLatest(win);body.append(jump);scroll.addEventListener('scroll',()=>{if(state.restoring||!scroll.isConnected)return;cancelAnimationFrame(state.readFrame);state.readFrame=requestAnimationFrame(()=>{if(!scroll.isConnected)return;captureReading(scroll,false);markRead(win,scroll);updateJump(scroll,win);clearTimeout(state.positionTimer);state.positionTimer=setTimeout(()=>{if(scroll.isConnected&&state.readingWin===win.id)captureReading(scroll);},180);});},{passive:true});}
   // Status bar
   const status=el('div','mrc-statusbar');status.setAttribute('role','status');
@@ -454,5 +467,5 @@
  doc.addEventListener('keydown',e=>{if(!terminal()||current!=='Messages'||doc.querySelector('dialog[open]'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='f'){e.preventDefault();e.stopPropagation();openFind();}else if(e.key==='Escape'&&state.find.open){e.preventDefault();e.stopPropagation();closeFind();}},true);
  function resumeReading(){if(!terminal()||current!=='Messages'||doc.hidden||!doc.hasFocus()||doc.querySelector('dialog[open]'))return;const win=activeWindow(windows()),session=readingSession(win.id);if(win.kind!=='status'&&unread(win.id)&&!session.position.manual){try{session.boundary=session.boundary||ensureAttention().unread(live.messages,win.id)[0]?.id;}catch{}if(session.boundary){session.focus=session.boundary;session.position={anchor:session.boundary,offset:24,manual:true,bottom:false};state.restoring=true;render();state.restoring=false;return;}}const log=doc.querySelector('#mrc-log');if(log){markRead(win,log);updateJump(log,win);}}
  window.addEventListener('focus',resumeReading);window.addEventListener('blur',()=>{saveTerminalDraft();captureReading();});window.addEventListener('beforeunload',()=>{saveTerminalDraft();captureReading();});doc.addEventListener('visibilitychange',()=>{if(doc.hidden){saveTerminalDraft();captureReading();}else resumeReading();});
- window.NightlinkMRC={render,windows,jumpTo:jumpMessage,submit:value=>{const list=windows();return submit(value,activeWindow(list),doc.querySelector('#mrc-input')||{value:''});},switchTo:n=>switchTo(windows()[n-1])};
+ window.NightlinkMRC={render,windows,split:cycleSplit,jumpTo:jumpMessage,submit:value=>{const list=windows();return submit(value,activeWindow(list),doc.querySelector('#mrc-input')||{value:''});},switchTo:n=>switchTo(windows()[n-1])};
 })();

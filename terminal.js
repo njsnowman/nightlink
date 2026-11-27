@@ -88,7 +88,7 @@
     const text=make('term-text','Text size',TEXT_KEY,[['normal','Normal'],['large','Large (115%)'],['xlarge','Extra large (130%)']],d.text,'Scales the whole terminal interface, including menus, chat and dialogs.');
     const palette=make('term-palette','Colour palette',PALETTE_KEY,[['night','Night (default)'],['daylight','Daylight'],['contrast','High contrast']],d.palette,'Daylight uses a light background for bright rooms and outdoors. High contrast shows body text in white.');
     const nicks=make('term-nicks','Nick colours',NICK_KEY,[['single','Single colour (default)'],['sender','By sender']],d.nicks,'By sender gives each chat nickname one of eight VGA colours, chosen from its name, so the same person keeps the same colour.');
-    label.after(text,palette,nicks);}};
+    label.after(text,palette,nicks);root.NightlinkTerminalTheme?.mount(nicks);}};
   // Function keys and Escape. Escape only acts when no dialog, menu or text field owns it.
   doc.addEventListener('keydown',e=>{if(!root.NightlinkInterface.isTerminal()||e.defaultPrevented)return;
    const typing=e.target.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]');

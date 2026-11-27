@@ -7,6 +7,9 @@
 
 ## Unreleased
 
+- Terminal chat split view: F6 opens a read-only pane with the latest 60 lines of another window beside the active one. Press F6 again for the next window, then off; the pane also has a close button. Below 1000 px the window list hides to make room.
+- Settings > Custom colours (terminal): change body text, accent, highlight and bar colours. A colour is applied only if text keeps at least 4.5:1 contrast (text on black; white title text on the bar). Stored locally; Reset returns to VGA colours.
+- Terminal page title bars show a one-line ANSI motif per page (decorative, hidden from screen readers, hidden below 900 px).
 - Settings > Nick colours (terminal): Single colour (default; the owner-approved cyan) or By sender, which gives each chat nickname one of eight VGA colours chosen from its name. All eight are at least 4.5:1 on black.
 - Settings > Sound pack adds Modem (FSK warble, 1070/1270 and 2025/2225 Hz) and BBS bells (triangle chimes) alongside Standard and Retro (PC speaker). Every sound is 0.6 s or shorter. Existing sound switches and quiet hours still apply.
 - Terminal status line: `DM n` when direct messages are unread (a button that opens Direct Messages) and `NF x dBm`, the noise floor reported by the radio (hidden below 900 px).

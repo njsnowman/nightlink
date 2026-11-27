@@ -55,6 +55,7 @@
     "has-state.js",
     "command-palette.js",
     "node-signal.js",
+    "terminal-theme.js",
     "startup-modem.wav",
     "terminal-sound.js",
     "corescope-chat-desktop.cjs",
