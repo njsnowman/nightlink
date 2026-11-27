@@ -699,3 +699,16 @@ html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #u
 html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available::after{content:attr(data-version) ' ↗';font-size:13px}
 html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available[data-verified=no]::after{content:attr(data-version) ' !'}
 html:root:root:root:root:root[data-interface=terminal] body .term-status-dock #update-available{flex:none !important;max-width:none}
+html:root:root:root:root:root[data-interface=terminal] body dialog.first-run,html:root:root:root:root:root[data-interface=terminal] body dialog.feedback-dialog{background:var(--t-blue);color:var(--t-white);font-family:var(--t-font,monospace);border-radius:0}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-progress span{border-radius:0;background:var(--t-dark-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-progress span.on{background:var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-title,html:root:root:root:root:root[data-interface=terminal] body .feedback-dialog h2{color:var(--t-yellow);font-size:18px}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-body p{color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-radio{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-radio[data-state=ok]{color:var(--t-bright-green)}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-help-label,html:root:root:root:root:root[data-interface=terminal] body :is(.feedback-intro,.feedback-note,.feedback-status,.feedback-field){color:#ffffff}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-nav{border-top:1px solid var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .feedback-dialog :is(input,textarea){background:#000;color:var(--t-yellow);border:1px solid var(--t-bright-cyan);border-radius:0;font:inherit}
+html:root:root:root:root:root[data-interface=terminal] body .feedback-dialog :is(input,textarea):focus-visible{outline:2px solid var(--t-white);outline-offset:1px}
+html:root:root:root:root:root[data-interface=terminal] body :is(.feedback-actions,.first-run-nav,.first-run-connect,.first-run-help,.first-run-feedback)>button{width:auto !important;flex:none;margin:0}
+html:root:root:root:root:root[data-interface=terminal] body .first-run-nav>.first-run-skip{margin-right:auto !important}

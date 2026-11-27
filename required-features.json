@@ -57,6 +57,8 @@
     "node-signal.js",
     "terminal-theme.js",
     "pins.js",
+    "feedback.js",
+    "first-run.js",
     "startup-modem.wav",
     "terminal-sound.js",
     "corescope-chat-desktop.cjs",

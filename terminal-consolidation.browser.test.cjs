@@ -22,7 +22,7 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  await page.evaluate(()=>view('Messages'));const bar=await page.textContent('.mrc-statusbar');assert.doesNotMatch(bar,/SN0WMAN|BLE|\d\d:\d\d/,bar);assert.match(bar,/#Public/);
  // More menu: keyboard open, arrows, Escape returns focus, item runs.
  await page.focus('#term-more');await page.keyboard.press('ArrowDown');assert.equal(await page.getAttribute('#term-more','aria-expanded'),'true');
- assert.equal(await page.evaluate(()=>document.activeElement.textContent),'[O] Contact Book');await page.keyboard.press('ArrowUp');assert.match(await page.evaluate(()=>document.activeElement.textContent),/RX Log/);
+ assert.equal(await page.evaluate(()=>document.activeElement.textContent),'[O] Contact Book');await page.keyboard.press('ArrowUp');assert.match(await page.evaluate(()=>document.activeElement.textContent),/Request a feature/);
  await page.keyboard.press('Escape');assert.equal(await page.evaluate(()=>document.activeElement.id),'term-more');assert.ok(await page.isHidden('#term-more-menu'));
  await page.click('#term-more');await page.click('#term-more-menu >> text=Contact Book');await page.waitForFunction(()=>current==='Contact Book');
  // Propagation lives under More (owner, 2026-11-27); the RF indicator is not in the bottom bar.

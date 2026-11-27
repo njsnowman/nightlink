@@ -9,7 +9,7 @@
  const unreadTotal=()=>{try{return typeof ensureAttention==='function'?ensureAttention().unread(live.messages).length:0;}catch{return 0;}};
  function openRxLog(){view('Radio');const tab=[...doc.querySelectorAll('.radio-workbench-tabs button')].find(b=>/rx/i.test(b.textContent));if(tab)tab.click();}
  // Pages that the top menu bar lists under More (consolidation): the same actions as the Main Menu.
- window.NightlinkMoreMenu=[['Contact Book','O',()=>view('Contact Book')],['Mesh Planner','E',()=>view('Operations')],['Backup','B',()=>openBackup()],['Propagation','P',()=>typeof showPropagationMonitor==='function'?showPropagationMonitor():view('Radio')],['RX Log','L',()=>openRxLog()]];
+ window.NightlinkMoreMenu=[['Contact Book','O',()=>view('Contact Book')],['Mesh Planner','E',()=>view('Operations')],['Backup','B',()=>openBackup()],['Propagation','P',()=>typeof showPropagationMonitor==='function'?showPropagationMonitor():view('Radio')],['RX Log','L',()=>openRxLog()],['Setup guide','G',()=>window.NightlinkFirstRun?.open(0)],['Report a bug','!',()=>window.NightlinkFeedback?.open('bug')],['Request a feature','+',()=>window.NightlinkFeedback?.open('feature')]];
  function openBackup(){view('Settings');doc.querySelector('.backup-settings')?.scrollIntoView({block:'start'});}
  const ITEMS=[
   ['C','Chat',()=>'MRC · Mesh Relay Chat'+(unreadTotal()?' · '+unreadTotal()+' new':''),()=>view('Messages')],

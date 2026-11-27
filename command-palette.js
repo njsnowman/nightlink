@@ -25,6 +25,8 @@
   const clickIf=(sel,label,kw)=>{if(doc.querySelector(sel))out.push({group:'Action',label,keywords:kw,run:()=>doc.querySelector(sel)?.click()});};
   out.push({group:'Action',label:'Radio connection',keywords:'connect bluetooth usb serial pair',run:()=>{if(typeof showBluetooth==='function')showBluetooth();else doc.querySelector('#connection')?.click();}});
   clickIf('#focus-mode-toggle','Focus mode (hide menus)','ctrl+b sidebar');clickIf('#compact-toggle','Compact or expand layout','density');clickIf('#open-activity-inbox','Activity inbox','alerts notifications');
+  if(root.NightlinkFeedback){out.push({group:'Action',label:'Report a bug',keywords:'issue problem github feedback',run:()=>root.NightlinkFeedback.open('bug')});out.push({group:'Action',label:'Request a feature',keywords:'idea suggestion github feedback',run:()=>root.NightlinkFeedback.open('feature')});}
+  if(root.NightlinkFirstRun)out.push({group:'Action',label:'Setup guide',keywords:'first run welcome connect radio getting started',run:()=>root.NightlinkFirstRun.open(0)});
   if(doc.querySelector('#open-help'))out.push({group:'Action',label:'Help',keywords:'guide handbook f1',run:()=>doc.querySelector('#open-help').click()});
   if(root.NightlinkInterface?.set)out.push({group:'Action',label:'Switch interface ('+(root.NightlinkInterface.isTerminal()?'Cards':'Terminal')+')',keywords:'theme cards terminal',run:()=>root.NightlinkInterface.set(root.NightlinkInterface.isTerminal()?'cards':'terminal')});
   return out;

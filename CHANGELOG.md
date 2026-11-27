@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+- First-run setup guide (new installs only: no saved radio profile): four steps (welcome, connect your radio with live sync status, first messages, finding your way around), each linking to the matching Help topics. Skip or finish once; reopen from Ctrl+P, More or Help > About > Setup guide. Not shown automatically to existing users.
+- Report a bug / Request a feature: a short form that opens a pre-filled GitHub issue (labels bug or enhancement; version, platform and interface added; radio name, keys and messages not included). Nothing is sent from Nightlink and no webhook or secret ships in the app. Available from Ctrl+P, More, Help > About and the last setup step.
 - Terminal: the RF indicator is no longer in the bottom bar (owner request); the Propagation monitor stays under More in the menu bar.
 - Update notice no longer covers the message box (owner report, 2026-11-27). Terminal: it appears in the bottom status line as `UPD 0.8.28 ↗` (click to open the download; full text in the tooltip). Cards: it moved from the bottom right to the top right, under the header.
 - Terminal consolidation (owner choice): the top strip (Focus, breadcrumb, Internet, sync, RF, Inbox, Search, Compact) is hidden. Internet and RF state appear in the status line; the link field opens the radio connection; Focus mode, Compact, Activity inbox and Radio connection are Ctrl+P entries. Each page's keys join the bottom F-key bar without repeats. The chat status bar no longer repeats the clock, node name, link or RF. A More menu in the menu bar lists Contact Book, Mesh Planner, Backup, Propagation and RX Log.
