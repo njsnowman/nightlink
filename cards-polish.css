@@ -41,13 +41,10 @@ html:root:root:root:root:root[data-interface=cards] body .avatar.av-5{background
 html:root:root:root:root:root[data-interface=cards] body .avatar.av-6{background:#3d4a1d !important;color:#e5f3c0 !important;border-color:transparent !important}
 html:root:root:root:root:root[data-interface=cards] body .avatar.av-7{background:#3a3a44 !important;color:#e6e6ee !important;border-color:transparent !important}
 html:root:root:root:root:root[data-interface=cards] body .avatar.av-fav{box-shadow:0 0 0 2px var(--nl-accent)}
-/* 11. Message grouping and own-message alignment. */
+/* 11. Message grouping. */
 html:root:root:root:root:root[data-interface=cards] body #chat-log .message.message-grouped{padding-top:2px;border-top-color:transparent}
 html:root:root:root:root:root[data-interface=cards] body #chat-log .message.message-grouped>.avatar{visibility:hidden;height:0}
 html:root:root:root:root:root[data-interface=cards] body #chat-log .message.message-grouped .sender{display:none}
-html:root:root:root:root:root[data-interface=cards] body #chat-log .message.own{flex-direction:row-reverse;text-align:right}
-html:root:root:root:root:root[data-interface=cards] body #chat-log .message.own>div{margin-left:auto}
-html:root:root:root:root:root[data-interface=cards] body #chat-log .message.own .sender{justify-content:flex-end}
 /* 7. Stat tile context. */
 html:root:root:root:root:root[data-interface=cards] body .stat-quality{display:inline-flex;align-items:center;gap:5px;margin-left:10px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle}
 html:root:root:root:root:root[data-interface=cards] body .stat-quality::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
