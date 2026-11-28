@@ -27,7 +27,7 @@
    const logs=[...doc.querySelectorAll('#mrc-log,#chat-log,#dm-log')].map(l=>[l,l.scrollHeight-l.scrollTop-l.clientHeight<4]);
    prev?.remove();form.before(bar(()=>form.querySelector(inputSel)||doc.querySelector(inputSel)));
    for(const [l,atEnd] of logs)if(atEnd)l.scrollTop=l.scrollHeight;}}
- function settings(){if(doc.querySelector('#quick-replies-setting'))return;const grid=doc.querySelector('.settings-grid');if(!grid)return;
+ function settings(){if(doc.querySelector('#quick-replies-setting'))return;const grid=doc.querySelector('#settings-page-appearance')||doc.querySelector('.settings-grid');if(!grid)return;
   const l=doc.createElement('label');l.className='accent-setting interface-setting';l.id='quick-replies-setting';l.append('Quick replies');
   const show=doc.createElement('input');show.type='checkbox';show.id='quick-replies-show';show.checked=shown();show.setAttribute('aria-label','Show quick replies above the message box');
   const area=doc.createElement('textarea');area.id='quick-replies-text';area.rows=5;area.setAttribute('aria-label','Quick reply phrases, one per line');area.value=read().join('\n');

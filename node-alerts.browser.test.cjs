@@ -7,7 +7,7 @@ const serve=async r=>{const u=new URL(r.request().url());if(u.origin!=='http://1
  await page.evaluate(()=>{const now=Math.floor(Date.now()/1000);live.identity={key:'cd'.repeat(32),name:'DEMO HQ',frequency:910.525,txPower:22};live.sync='ready';live.battery={millivolts:3900};
   live.contacts=[{key:'ab'.repeat(32),name:'DEMO Ridge',type:2,lastAdvert:now-3*3600},{key:'ac'.repeat(32),name:'DEMO Fresh',type:2,lastAdvert:now-60},{key:'ad'.repeat(32),name:'Not watched',type:1,lastAdvert:now-9*3600}];favoriteKeys=new Set(['ab'.repeat(32),'ac'.repeat(32)]);});
  assert.deepEqual(await page.evaluate(()=>NightlinkNodeAlerts.check()),[],'off by default');
- await page.evaluate(()=>view('Settings'));await page.locator('#node-alerts-enabled').waitFor();assert.equal(await page.locator('#node-alerts-enabled').isChecked(),false);
+ await page.evaluate(()=>{view('Settings');NightlinkSettings.open('notifications');});await page.locator('#node-alerts-enabled').waitFor();assert.equal(await page.locator('#node-alerts-enabled').isChecked(),false);
  await page.locator('#node-alerts-enabled').check();await page.locator('#node-alerts-minutes').selectOption('120');
  const first=await page.evaluate(()=>NightlinkNodeAlerts.check());assert.deepEqual(first.map(e=>[e.type,e.name]),[['quiet','DEMO Ridge']],'only the quiet favourite');
  assert.match(await page.locator('#toast').textContent(),/DEMO Ridge has not been heard for 3 h/);assert.equal(await page.evaluate(()=>activity[0].includes('Alert · DEMO Ridge has not been heard')),true);

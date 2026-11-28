@@ -31,8 +31,8 @@
  function check(){const c=read(),data=L();if(!c.enabled||!data||data.sync!=='ready')return [];const now=Date.now()/1000,fav=favourites(),sources={heard:root.NightlinkHeardAdverts,relayed:root.NightlinkRelayedAdverts,messages:messageHeard(data)};
   const nodes=(data.contacts||[]).filter(n=>fav.has(n.key)).map(n=>({key:n.key,name:typeof cardName==='function'?cardName(n.key,n.name):n.name,heard:lastHeard(n,sources)}));
   const events=evaluate(nodes,now,c.minutes,quiet);if(c.battery){const b=battery(data.battery?.millivolts,low);low=b.low;if(b.event)events.push(b.event);}for(const e of events)notify(e);return events;}
- function settings(){if(doc.querySelector('#node-alerts-setting'))return;const grid=doc.querySelector('.settings-grid');if(!grid)return;const c=read();
-  const box=doc.createElement('div');box.className='accent-setting interface-setting node-alerts-setting';box.id='node-alerts-setting';const title=doc.createElement('strong');title.textContent='Node alerts';
+ function settings(){if(doc.querySelector('#node-alerts-setting'))return;const grid=doc.querySelector('#settings-page-notifications')||doc.querySelector('.settings-grid');if(!grid)return;const c=read();
+  const box=doc.createElement('div');box.className='interface-setting node-alerts-setting';box.id='node-alerts-setting';const title=doc.createElement('strong');title.textContent='Node alerts';
   const mk=(id,label,checked)=>{const l=doc.createElement('label');l.className='setting-toggle';const i=doc.createElement('input');i.type='checkbox';i.id=id;i.checked=checked;const s=doc.createElement('span');s.className='setting-title';s.textContent=label;l.append(i,s);return [l,i];};
   const [onRow,on]=mk('node-alerts-enabled','Alert me when a favourite node goes quiet',c.enabled);
   const sel=doc.createElement('select');sel.id='node-alerts-minutes';sel.setAttribute('aria-label','Quiet for longer than');for(const m of MINUTES){const o=doc.createElement('option');o.value=String(m);o.textContent='Quiet for more than '+duration(m);sel.append(o);}sel.value=String(c.minutes);

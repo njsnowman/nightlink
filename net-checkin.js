@@ -68,7 +68,7 @@
   render();if(!dialog.open)dialog.showModal();clearInterval(tick);tick=setInterval(render,5000);}
  root.NightlinkNet={...core,open,state:load};
  doc.addEventListener('DOMContentLoaded',()=>{
-  if(Array.isArray(root.NightlinkMoreMenu))root.NightlinkMoreMenu.push(['Net check-in','N',open]);
+  if(Array.isArray(root.NightlinkMoreMenu)){const m=root.NightlinkMoreMenu,i=m.findIndex(([l])=>l==='Setup guide');m.splice(i<0?m.length:i,0,['Net check-in','N',open]);}
   const tools=doc.querySelector('#workspace-sidebar nav details.sidebar-group');if(tools&&!tools.querySelector('#open-net-checkin')){const b=btn('Net check-in',open,'nl-menu-action');b.id='open-net-checkin';tools.append(b);}
   try{if(typeof radioSession==='object')radioSession.addEventListener('message',()=>{if(dialog?.open)setTimeout(render,50);});}catch{}});
 })(typeof window==='object'?window:globalThis);
