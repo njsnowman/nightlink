@@ -139,6 +139,9 @@ Settings > Interface > Skin offers five looks for the Cards interface: Standard 
 - Every skin keeps chat and heading text at 4.5:1 or above; `cards-skins.browser.test.cjs` measures this.
 - Red light turns all text, avatars, status lights, maps and frames red on black to protect night vision. Its base text colour is `#ff3b30`, which passes on every surface.
 - School / District takes a district name, shown at the top of the sidebar, and a district colour. A colour is refused when white text on it would fall below 4.5:1.
+- Tactical map overlay (`tactical-map.js`): crosshair markers are CSS-only `divIcon`s styled under the Tactical skin; the base circle markers are hidden there. Bearing is degrees true from your radio; grid is 6-character Maidenhead.
+- School extras live in `cards-skins.js`: Plain wording replaces only exact labels (signal rail, hop badges, delivery badges, outgoing route note) and keeps the radio term in `title`; Simple menu hides sidebar items by `data-view`; the admin PIN is a deterrent stored as a salted hash.
+- Shared additions styled in `cards-polish.css` for both interfaces: Nodes SNR sparkline (`.node-spark`, `currentColor`), quick replies (`.quick-replies`), net check-in dialog (reuses `.feedback-dialog`) and the Coverage control and legend.
 - Extend these blocks when adding a component. Do not add a separate skin system.
 
 ## Optional local planning tools (rc.46)

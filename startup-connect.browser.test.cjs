@@ -1,4 +1,4 @@
-const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright')),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});try{
  for(const mode of ['success','failure','cancel','sync-error','disabled']){
   const page=await browser.newPage({viewport:{width:1000,height:700}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -9,7 +9,7 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
   if(mode==='failure'){await page.locator('#startup-connect-retry').waitFor({state:'visible'});assert.equal(await page.evaluate(()=>testAttempts),3);}
   if(mode==='cancel'){await page.locator('#startup-connect-cancel').click();const count=await page.evaluate(()=>testAttempts);await page.waitForTimeout(80);assert.equal(await page.evaluate(()=>testAttempts),count);assert.equal(await page.locator('#startup-connect-retry').isVisible(),false);}
   if(mode==='sync-error'){await page.locator('#startup-connect-retry').waitFor({state:'visible'});assert.equal(await page.evaluate(()=>testAttempts),1);}
-  if(mode==='disabled'){await page.evaluate(()=>view('Settings'));assert.equal(await page.locator('#startup-auto-connect').isChecked(),false);assert.equal(await page.evaluate(()=>testAttempts),0);await page.locator('#startup-auto-connect').check();await page.waitForTimeout(20);assert.equal(await page.evaluate(()=>testAttempts),0);}
+  if(mode==='disabled'){await page.evaluate(()=>view('Settings'));await page.locator('#settings-tab-connection').click();assert.equal(await page.locator('#startup-auto-connect').isChecked(),false);assert.equal(await page.evaluate(()=>testAttempts),0);await page.locator('#startup-auto-connect').check();await page.waitForTimeout(20);assert.equal(await page.evaluate(()=>testAttempts),0);}
   assert.deepEqual(errors,[]);await page.close();
  }
  console.log('PASS: startup success/sync, three attempts, cancellation, sync-error pause, opt-in Settings and no immediate connect on enabling. Synthetic transport only.');

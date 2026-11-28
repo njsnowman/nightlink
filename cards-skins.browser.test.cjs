@@ -30,9 +30,31 @@ const audit=()=>{const lum=c=>{const m=c.match(/[\d.]+/g).map(Number);return [m[
  assert.equal(await page.locator('#workspace-sidebar').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(122, 0, 25)');
  await page.reload();assert.equal(await page.evaluate(()=>document.documentElement.dataset.cardsSkin),'school','skin persists');assert.equal(await page.locator('#workspace-sidebar .school-banner').textContent(),'Lincoln County Schools');
  await sel.selectOption('standard').catch(()=>{});await page.evaluate(()=>view('Settings'));await page.locator('#cards-skin').selectOption('standard');assert.equal(await page.locator('#workspace-sidebar .school-banner').count(),0);assert.deepEqual(errors,[]);await page.close();
+
+ // School extras: plain wording, simple menu and admin PIN.
+ ({page,errors}=await open({'nightlink.interface':'cards','nightlink.cards-skin':'school'}));await fill(page);await page.waitForTimeout(250);
+ assert.deepEqual(await page.locator('.chat-signal-cell').allTextContents().then(t=>t.map(x=>x.trim())),['Connected','Receiving','Sending','Confirmed','Problem']);
+ assert.equal((await page.locator('#chat-log .message-route').first().textContent()).trim(),'via 1 relay');
+ assert.equal((await page.locator('#chat-log .delivery-badge').first().textContent()).trim(),'Sent');
+ assert.equal(await page.locator('#chat-log .delivery-badge').first().getAttribute('title'),'Broadcast accepted by radio');
+ await page.evaluate(()=>view('Settings'));await page.locator('#school-plain').waitFor();await page.locator('#school-plain').uncheck();await page.evaluate(()=>view('Messages'));await page.waitForTimeout(150);
+ assert.equal((await page.locator('.chat-signal-cell').first().textContent()).trim(),'LINK','plain wording off restores radio terms');
+ await page.evaluate(()=>view('Settings'));await page.locator('#school-simple').check();
+ for(const v of ['Radio','Diagnostics','Contact Book','Operations'])assert.equal(await page.locator(`#workspace-sidebar [data-view="${v}"]`).isVisible(),false,v+' hidden by simple menu');
+ assert.equal(await page.locator('#workspace-sidebar [data-view="Messages"]').isVisible(),true);
+ await page.locator('#school-pin').fill('12');await page.getByRole('button',{name:'Set PIN'}).click();assert.match(await page.locator('#school-pin-state').textContent(),/4 to 12 digits/);
+ await page.locator('#school-pin').fill('2468');await page.getByRole('button',{name:'Set PIN'}).click();await page.waitForFunction(()=>/Admin PIN set/.test(document.querySelector('#school-pin-state').textContent));
+ assert.match(await page.evaluate(()=>localStorage.getItem('nightlink.school-pin')),/^[0-9a-f]{32}:[0-9a-f]{64}$/);assert.equal(await page.evaluate(()=>localStorage.getItem('nightlink.school-pin').includes('2468')),false,'PIN is not stored in clear');
+ assert.equal(await page.locator('#cards-skin').isDisabled(),false,'unlocked for the session that set it');
+ await page.evaluate(()=>sessionStorage.removeItem('nightlink.school-unlocked'));await page.evaluate(()=>view('Settings'));await page.waitForTimeout(50);
+ for(const id of ['#interface-mode','#cards-skin','#school-name','#school-color','#school-plain','#school-simple'])assert.equal(await page.locator(id).isDisabled(),true,id+' locked');
+ await page.locator('#school-pin').fill('1111');await page.getByRole('button',{name:'Unlock'}).click();await page.waitForFunction(()=>/Wrong PIN/.test(document.querySelector('#school-pin-state').textContent));assert.equal(await page.locator('#cards-skin').isDisabled(),true);
+ await page.locator('#school-pin').fill('2468');await page.getByRole('button',{name:'Unlock'}).click();await page.waitForFunction(()=>!document.querySelector('#cards-skin').disabled);
+ await page.getByRole('button',{name:'Remove PIN'}).click();await page.waitForFunction(()=>!localStorage.getItem('nightlink.school-pin'));
+ assert.deepEqual(errors,[]);await page.close();
  // Terminal ignores the skin; detached DM and startup lock carry the attribute.
  ({page,errors}=await open({'nightlink.interface':'terminal','nightlink.cards-skin':'red'}));await page.evaluate(()=>view('Settings'));assert.equal(await page.locator('#cards-skin').count(),0,'no skin setting in Terminal');
  assert.equal(await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(e=>e.getClientRects().length&&getComputedStyle(e).color==='rgb(255, 59, 48)').length),0,'Terminal keeps its palette');await page.close();
  for(const f of ['dm.html','security-lock.html']){({page,errors}=await open({'nightlink.interface':'cards','nightlink.cards-skin':'red'},f));assert.equal(await page.evaluate(()=>document.documentElement.dataset.cardsSkin),'red',f);await page.close();}
- console.log('PASS Cards skins: four skins in Cards only, 4.5:1 chat and heading contrast, glass off, red-light avatars, School name and colour with refusal, persistence, Terminal isolation, detached DM and startup lock. Synthetic only.');
+ console.log('PASS Cards skins: four skins in Cards only, 4.5:1 chat and heading contrast, glass off, red-light avatars, School name and colour with refusal, plain wording, simple menu, admin PIN, persistence, Terminal isolation, detached DM and startup lock. Synthetic only.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

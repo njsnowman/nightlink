@@ -70,10 +70,10 @@
    const t=doc.createElementNS(SVG,'svg');t.setAttribute('class','stat-trend');t.setAttribute('viewBox','0 0 48 14');t.setAttribute('role','img');t.setAttribute('aria-label','Battery this session: '+(battery[0].mv/1000).toFixed(2)+' V to '+(battery.at(-1).mv/1000).toFixed(2)+' V');
    const pl=doc.createElementNS(SVG,'polyline');pl.setAttribute('points',pts);t.append(pl);bat.append(t);}}
  // 5. Overview map: a clear message instead of a blank frame when the internet is not available.
- function mapState(){const pane=doc.querySelector('.overview-corescope');if(!pane)return;const net=doc.querySelector('#internet-status')?.dataset.state;const offline=net==='offline'||net==='unavailable';
+ function mapState(){for(const n of doc.querySelectorAll('.map-offline'))if(!n.closest('.overview-corescope'))n.remove();const pane=doc.querySelector('.overview-corescope');if(!pane)return;const net=doc.querySelector('#internet-status')?.dataset.state;const offline=net==='offline'||net==='unavailable';
   let note=pane.querySelector('.map-offline');if(!offline){note?.remove();return;}if(note)return;
   note=el('div','map-offline');note.setAttribute('role','status');note.append(el('strong',null,'Live map needs the internet'),el('span',null,'CoreScope and MeshMapper load from the web. Your radio and chat keep working offline.'));
-  const b=el('button',null,'Use Radio map');b.type='button';b.onclick=()=>{[...pane.querySelectorAll('button')].find(x=>/radio map/i.test(x.textContent))?.click();};note.append(b);pane.append(note);}
+  const b=el('button',null,'Use Radio map');b.type='button';b.onclick=()=>{[...pane.querySelectorAll('button')].find(x=>x!==b&&!x.closest('.map-offline')&&/radio map/i.test(x.textContent))?.click();mapState();};note.append(b);pane.append(note);}
  // 12. Empty states: icon and a next step.
  function empty(){const p=doc.querySelector('#chat-log .empty-chat');if(p&&!p.dataset.polished){p.dataset.polished='1';p.classList.add('empty-state');const ic=el('span','empty-icon');ic.append(icon(ICONS.message));p.prepend(ic);
   if(typeof live==='object'&&live.sync!=='ready'){const b=el('button','primary','Connect radio');b.type='button';b.onclick=()=>{if(typeof showBluetooth==='function')showBluetooth();};p.append(b);}}}
@@ -100,7 +100,7 @@
  doc.addEventListener('DOMContentLoaded',()=>{
   applyGlass(glassValue());root.addEventListener('storage',e=>{if(e.key===GLASS_KEY)applyGlass(glassValue());});
   const wrap=(name,after)=>{if(typeof root[name]!=='function'&&typeof globalThis[name]!=='function')return;const prev=globalThis[name];globalThis[name]=function(){const r=prev.apply(this,arguments);if(cards())try{after(...arguments);}catch(e){console.warn(e);}return r;};};
-  wrap('view',name=>{all();if(name==='Activity')activityPage();});wrap('renderMessages',()=>{messages();empty();});wrap('renderStats',()=>{sampleBattery();stats();header();});wrap('renderNodes',pageEmpty);
+  wrap('view',name=>{all();if(name==='Activity')activityPage();});wrap('renderMessages',()=>{messages();empty();});wrap('renderStats',()=>{sampleBattery();stats();header();});wrap('renderNodes',pageEmpty);wrap('renderMap',mapState);
   if(typeof logLive==='function'){const prev=logLive;globalThis.logLive=function(){const r=prev.apply(this,arguments);if(cards()&&typeof current==='string'&&current==='Activity')activityPage();return r;};}
   const net=doc.querySelector('#internet-status');if(net)new MutationObserver(mapState).observe(net,{attributes:true,attributeFilter:['data-state']});
   root.addEventListener('nightlink-interface',all);all();});

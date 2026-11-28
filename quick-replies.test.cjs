@@ -1,0 +1,3 @@
+const test=require('node:test'),assert=require('node:assert/strict'),Q=require('./quick-replies.js');
+test('phrase lists are cleaned and capped',()=>{assert.deepEqual(Q.parse(' Copy \n\nCopy\n  All   clear '),['Copy','All clear']);assert.equal(Q.parse(Array.from({length:12},(_,i)=>'P'+i).join('\n')).length,Q.MAX);assert.equal(Q.clean(['x'.repeat(90)])[0].length,Q.LEN);assert.deepEqual(Q.clean(null),[]);});
+test('insert puts the phrase in the box without sending',()=>{assert.equal(Q.insert('','Copy'),'Copy');assert.equal(Q.insert('Unit 4','Copy'),'Unit 4 Copy');assert.equal(Q.insert('Unit 4   ','Copy'),'Unit 4 Copy');assert.equal(Q.insert('x'.repeat(130),'Copy',133).length,133);});

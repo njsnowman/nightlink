@@ -1,5 +1,5 @@
 // Synthetic conversations only: never opens a radio or a production profile.
-const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright');
+const {chromium}=require('./test-cards-interface.cjs')(require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'));
 const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
 (async()=>{
  const browser=await chromium.launch({headless:true,...(process.env.NIGHTLINK_BROWSER?{executablePath:process.env.NIGHTLINK_BROWSER}:{})});
@@ -20,7 +20,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
   assert.equal(await page.locator('nav summary .sidebar-unread').count(),0,'Tools does not duplicate DM attention');
   assert.equal(await page.locator('.dm-floating').count(),0,'Recovered records do not open notification windows');
   await page.locator('nav > [data-view="Messages"]').click();
-  const channel=page.getByRole('combobox',{name:'Choose channel',exact:true});await channel.selectOption('1');
+  await page.locator('.switchboard-channel-tabs').getByRole('button',{name:'# echo',exact:true}).click();
   await page.waitForFunction(()=>ensureAttention().unread(live.messages).length===1);
   assert.equal(await page.locator('#chat-log').getByText('Synthetic channel record',{exact:true}).count(),1);
   assert.equal(await page.locator('nav > [data-view="Messages"] .unread-badge').textContent(),'1');
@@ -38,11 +38,11 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
   await page.locator('.dm-inbox-contact').click();assert.equal(await page.locator('.dm-floating').count(),1,'Repeated opens reuse one popup');
   await page.locator('.dm-floating .dm-close').click();
   await page.locator('.dm-inbox .workspace-message-tabs').getByRole('button',{name:'Channels',exact:true}).click();
-  assert.equal(await channel.inputValue(),'1','Returning to Channels retains selected channel');
-  await channel.selectOption('0');assert.equal(await page.locator('#chat-log').getByText('Synthetic channel record',{exact:true}).count(),0);
-  await channel.selectOption('1');assert.equal(await page.locator('#chat-log').getByText('Synthetic channel record',{exact:true}).count(),1);
-  const focusedPicker=await channel.elementHandle();await channel.focus();await page.evaluate(()=>renderMessages());
-  assert.equal(await focusedPicker.evaluate(e=>e.isConnected&&document.activeElement===e),true,'Incoming render retains picker DOM and focus');
+  assert.equal(await page.locator('.switchboard-channel-tabs').getByRole('button',{name:'# echo',exact:true}).getAttribute('aria-pressed'),'true','Returning to Channels retains selected channel');
+  await page.locator('.switchboard-channel-tabs').getByRole('button',{name:'# general',exact:true}).click();assert.equal(await page.locator('#chat-log').getByText('Synthetic channel record',{exact:true}).count(),0);
+  await page.locator('.switchboard-channel-tabs').getByRole('button',{name:'# echo',exact:true}).click();assert.equal(await page.locator('#chat-log').getByText('Synthetic channel record',{exact:true}).count(),1);
+  const channel=page.locator('.switchboard-channel-tabs').getByRole('button',{name:'# echo',exact:true});const focusedPicker=await channel.elementHandle();await channel.focus();await page.evaluate(()=>renderMessages());
+  assert.equal(await focusedPicker.evaluate(e=>e.isConnected&&document.activeElement===e),true,'Incoming render retains channel tab DOM and focus');
   const tools=page.locator('aside nav .sidebar-group');
   if(!await tools.evaluate(e=>e.open))await tools.locator('summary').click();
   await page.evaluate(()=>renderMessages());assert.equal(await tools.evaluate(e=>e.open),true,'Rendering retains manually expanded Tools');

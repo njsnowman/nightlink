@@ -1,0 +1,82 @@
+name: Publish release
+# Publishes a verified draft candidate as the stable release vX.Y.Z (RELEASE_PROCESS.md step 7).
+# Refuses unless: the version matches package.json on main, the candidate's files match the SHA-256 values
+# recorded in releases/X.Y.Z.md, and no release-blocking checkbox in that record is still open.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to publish, without v (for example 0.8.31)
+        required: true
+        type: string
+      candidate:
+        description: Draft candidate tag (for example candidate-0.8.31-5f6bc85)
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Check version, record and candidate files
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          CANDIDATE: ${{ inputs.candidate }}
+        run: |
+          set -euo pipefail
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Version must look like 0.8.31"; exit 1; }
+          [[ "$CANDIDATE" =~ ^candidate-${VERSION//./\\.}-[0-9a-f]{7}$ ]] || { echo "::error::Candidate tag must be candidate-${VERSION}-<7-char commit>"; exit 1; }
+          [ "$(node -p "require('./package.json').version")" = "$VERSION" ] || { echo "::error::package.json on main is not $VERSION"; exit 1; }
+          record="releases/${VERSION}.md"
+          [ -f "$record" ] || { echo "::error::$record is missing"; exit 1; }
+          if grep -nE '^\s*- \[ \]' "$record"; then echo "::error::$record has open checklist items (listed above)"; exit 1; fi
+          if gh release view "v${VERSION}" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then echo "::error::v${VERSION} already exists"; exit 1; fi
+          [ "$(gh release view "$CANDIDATE" --repo "$GITHUB_REPOSITORY" --json isDraft -q .isDraft)" = "true" ] || { echo "::error::$CANDIDATE is not a draft release"; exit 1; }
+          mkdir candidate
+          gh release download "$CANDIDATE" --repo "$GITHUB_REPOSITORY" --dir candidate
+          (cd candidate && sha256sum --check SHA256SUMS.txt)
+          for kind in Setup Portable; do
+            file="candidate/Nightlink-${kind}-${VERSION}.exe"
+            sum=$(sha256sum "$file" | cut -d' ' -f1)
+            grep -q "\`${sum}\`" "$record" || { echo "::error::$(basename "$file") SHA-256 $sum is not in $record"; exit 1; }
+            echo "$(basename "$file") $sum matches $record"
+          done
+          source=$(node -p "require('./candidate/release-manifest.json').sourceCommit")
+          [[ "$CANDIDATE" == *"-${source:0:7}" ]] || { echo "::error::Manifest source commit $source does not match $CANDIDATE"; exit 1; }
+          grep -q "${source:0:7}" "$record" || { echo "::error::Source commit ${source:0:7} is not in $record"; exit 1; }
+          # Release notes: the fenced block under "## Draft release notes".
+          awk '/^## Draft release notes/{f=1;next} f&&/^```/{if(open){exit}open=1;next} f&&open' "$record" > notes.md
+          [ -s notes.md ] || { echo "::error::No release notes block in $record"; exit 1; }
+          echo "source=$source" >> "$GITHUB_OUTPUT"
+      - name: Publish v${{ inputs.version }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          CANDIDATE: ${{ inputs.candidate }}
+          SOURCE: ${{ steps.check.outputs.source }}
+        run: |
+          set -euo pipefail
+          gh release edit "$CANDIDATE" --repo "$GITHUB_REPOSITORY" \
+            --tag "v${VERSION}" --target "$SOURCE" --title "Nightlink ${VERSION}" --notes-file notes.md \
+            --draft=false --prerelease=false --latest
+      - name: Verify the in-app updater accepts the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v${VERSION}" > release.json
+          node -e '
+            const U=require("./updates.cjs"),data=require("./release.json");
+            for(const mode of ["installer","portable"]){const r=U.selectRelease(data,"0.0.1",mode);
+              if(r.status!=="available"||!r.download||!r.digest)throw Error(mode+": updater rejected the release "+JSON.stringify(r));
+              console.log(mode,r.latest,r.name,r.digest);}'
