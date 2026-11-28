@@ -57,8 +57,8 @@ html:root:root:root:root:root[data-interface=cards] body .stat-bad{color:#ff8a80
 html:root:root:root:root:root[data-interface=cards] body .stats article{position:relative}
 html:root:root:root:root:root[data-interface=cards] body .stat-spark{position:absolute;right:16px;bottom:14px;width:72px;height:22px;fill:var(--nl-accent);opacity:.85}
 /* 10. Signal Rail: readable lights. */
-html:root:root:root:root:root[data-interface=cards] body .chat-signal-rail{gap:10px;padding:8px 14px}
-html:root:root:root:root:root[data-interface=cards] body .chat-signal-cell{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border:1px solid var(--nl-edge);border-radius:999px;font-size:11px;letter-spacing:.06em}
+html:root:root:root:root:root[data-interface=cards] body .chat-signal-rail{gap:10px;padding-inline:14px}
+html:root:root:root:root:root[data-interface=cards] body .chat-signal-cell{display:inline-flex;align-items:center;gap:6px;padding:0 9px;box-shadow:inset 0 0 0 1px var(--nl-edge);border-radius:999px;font-size:11px;letter-spacing:.06em}
 html:root:root:root:root:root[data-interface=cards] body .chat-signal-cell i{width:8px;height:8px}
 /* 5. Offline map message. */
 html:root:root:root:root:root[data-interface=cards] body .overview-corescope{position:relative}
