@@ -1,0 +1,72 @@
+/* Cards design pass (0.8.30). Scoped to the Cards interface; tokens from nightlink-design.css. */
+html:root:root:root:root:root[data-interface=cards] body .local-time{font-family:Consolas,"Cascadia Mono",ui-monospace,"SFMono-Regular",Menlo,monospace}
+/* 9. Header: the clock duplicates the OS clock; Search stays as an icon with its label on wide windows. */
+html:root:root:root:root:root[data-interface=cards] body main>header .local-time{display:none}
+@media (max-width:1400px){html:root:root:root:root:root[data-interface=cards] body #open-message-search .header-control-label{display:none}}
+/* 3. Sidebar secondary items match the main items. */
+html:root:root:root:root:root[data-interface=cards] body nav>button[data-view="Contact Book"],html:root:root:root:root:root[data-interface=cards] body nav>button[data-view="Operations"]{display:flex;align-items:center;gap:12px;font-size:15px}
+html:root:root:root:root:root[data-interface=cards] body nav>button[data-view="Contact Book"] svg,html:root:root:root:root:root[data-interface=cards] body nav>button[data-view="Operations"] svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* 2. Settings toggle rows: checkbox, title, then hint underneath. */
+html:root:root:root:root:root[data-interface=cards] body label.setting-toggle{display:grid !important;grid-template-columns:auto 1fr;column-gap:12px;row-gap:4px;align-items:center;text-align:left}
+html:root:root:root:root:root[data-interface=cards] body label.setting-toggle>input[type=checkbox]{grid-row:1;width:18px;height:18px;margin:0;accent-color:var(--nl-accent)}
+html:root:root:root:root:root[data-interface=cards] body label.setting-toggle>.setting-title{grid-row:1;grid-column:2;color:var(--nl-copy);font-weight:600;text-align:left}
+html:root:root:root:root:root[data-interface=cards] body label.setting-toggle>small{grid-column:2;grid-row:2;text-align:left;margin:0;max-width:none}
+/* 8. Activity timeline. */
+html:root:root:root:root:root[data-interface=cards] body .activity-timeline{padding:18px 20px}
+html:root:root:root:root:root[data-interface=cards] body .activity-head{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+html:root:root:root:root:root[data-interface=cards] body .activity-head h2{margin:0;font-size:16px}
+html:root:root:root:root:root[data-interface=cards] body .activity-head small{color:var(--nl-muted)}
+html:root:root:root:root:root[data-interface=cards] body .activity-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+html:root:root:root:root:root[data-interface=cards] body .activity-chip{min-height:32px !important;padding:6px 12px !important;border-radius:999px !important;border:1px solid var(--nl-edge) !important;background:var(--nl-surface) !important;color:var(--nl-copy) !important}
+html:root:root:root:root:root[data-interface=cards] body .activity-chip.on{border-color:var(--nl-accent) !important;color:var(--nl-accent) !important}
+html:root:root:root:root:root[data-interface=cards] body .activity-list{list-style:none;margin:0;padding:0;position:relative}
+html:root:root:root:root:root[data-interface=cards] body .activity-list::before{content:'';position:absolute;left:15px;top:6px;bottom:6px;width:1px;background:var(--nl-edge)}
+html:root:root:root:root:root[data-interface=cards] body .activity-item{position:relative;display:grid;grid-template-columns:32px 92px 1fr;align-items:center;gap:10px;padding:9px 0}
+html:root:root:root:root:root[data-interface=cards] body .activity-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--nl-surface);border:1px solid var(--nl-edge);z-index:1}
+html:root:root:root:root:root[data-interface=cards] body .activity-icon svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html:root:root:root:root:root[data-interface=cards] body .activity-time{color:var(--nl-muted);font-variant-numeric:tabular-nums;font-size:13px}
+html:root:root:root:root:root[data-interface=cards] body .activity-link .activity-icon{color:#7bb8ff}
+html:root:root:root:root:root[data-interface=cards] body .activity-radio .activity-icon{color:var(--nl-accent)}
+html:root:root:root:root:root[data-interface=cards] body .activity-message .activity-icon{color:#7bd88f}
+html:root:root:root:root:root[data-interface=cards] body .activity-error .activity-icon{color:#ff8a80;border-color:#ff8a8066}
+html:root:root:root:root:root[data-interface=cards] body .activity-error .activity-text{color:#ffb4ab}
+html:root:root:root:root:root[data-interface=cards] body .activity-empty{color:var(--nl-muted);padding:14px 0 14px 44px}
+/* 6. Coloured avatars and a favourite badge. */
+html:root:root:root:root:root[data-interface=cards] body .avatar.av-0{background:#2b3f63 !important;color:#cfe0ff !important;border-color:transparent !important}
+html:root:root:root:root:root[data-interface=cards] body .avatar.av-1{background:#1f4d3a !important;color:#c6f2da !important;border-color:transparent !important}
+html:root:root:root:root:root[data-interface=cards] body .avatar.av-2{background:#4b2d5c !important;color:#ecd3ff !important;border-color:transparent !important}
+html:root:root:root:root:root[data-interface=cards] body .avatar.av-3{background:#5a3a1c !important;color:#ffe0bf !important;border-color:transparent !important}
+html:root:root:root:root:root[data-interface=cards] body .avatar.av-4{background:#5c2a2a !important;color:#ffd1cc !important;border-color:transparent !important}
+html:root:root:root:root:root[data-interface=cards] body .avatar.av-5{background:#1d4a52 !important;color:#c8f1f7 !important;border-color:transparent !important}
+html:root:root:root:root:root[data-interface=cards] body .avatar.av-6{background:#3d4a1d !important;color:#e5f3c0 !important;border-color:transparent !important}
+html:root:root:root:root:root[data-interface=cards] body .avatar.av-7{background:#3a3a44 !important;color:#e6e6ee !important;border-color:transparent !important}
+html:root:root:root:root:root[data-interface=cards] body .avatar.av-fav{box-shadow:0 0 0 2px var(--nl-accent)}
+/* 11. Message grouping and own-message alignment. */
+html:root:root:root:root:root[data-interface=cards] body #chat-log .message.message-grouped{padding-top:2px;border-top-color:transparent}
+html:root:root:root:root:root[data-interface=cards] body #chat-log .message.message-grouped>.avatar{visibility:hidden;height:0}
+html:root:root:root:root:root[data-interface=cards] body #chat-log .message.message-grouped .sender{display:none}
+html:root:root:root:root:root[data-interface=cards] body #chat-log .message.own{flex-direction:row-reverse;text-align:right}
+html:root:root:root:root:root[data-interface=cards] body #chat-log .message.own>div{margin-left:auto}
+html:root:root:root:root:root[data-interface=cards] body #chat-log .message.own .sender{justify-content:flex-end}
+/* 7. Stat tile context. */
+html:root:root:root:root:root[data-interface=cards] body .stat-quality{display:inline-flex;align-items:center;gap:5px;margin-left:10px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle}
+html:root:root:root:root:root[data-interface=cards] body .stat-quality::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
+html:root:root:root:root:root[data-interface=cards] body .stat-ok{color:#7bd88f}
+html:root:root:root:root:root[data-interface=cards] body .stat-warn{color:#ffd27a}
+html:root:root:root:root:root[data-interface=cards] body .stat-bad{color:#ff8a80}
+html:root:root:root:root:root[data-interface=cards] body .stats article{position:relative}
+html:root:root:root:root:root[data-interface=cards] body .stat-spark{position:absolute;right:16px;bottom:14px;width:72px;height:22px;fill:var(--nl-accent);opacity:.85}
+/* 10. Signal Rail: readable lights. */
+html:root:root:root:root:root[data-interface=cards] body .chat-signal-rail{gap:10px;padding:8px 14px}
+html:root:root:root:root:root[data-interface=cards] body .chat-signal-cell{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border:1px solid var(--nl-edge);border-radius:999px;font-size:11px;letter-spacing:.06em}
+html:root:root:root:root:root[data-interface=cards] body .chat-signal-cell i{width:8px;height:8px}
+/* 5. Offline map message. */
+html:root:root:root:root:root[data-interface=cards] body .overview-corescope{position:relative}
+html:root:root:root:root:root[data-interface=cards] body .map-offline{position:absolute;inset:48px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;background:var(--nl-surface);z-index:5}
+html:root:root:root:root:root[data-interface=cards] body .map-offline strong{font-size:16px}
+html:root:root:root:root:root[data-interface=cards] body .map-offline span{color:var(--nl-muted);max-width:34ch}
+/* 12. Empty states. */
+html:root:root:root:root:root[data-interface=cards] body .empty-state{display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px 16px;text-align:center;color:var(--nl-muted)}
+html:root:root:root:root:root[data-interface=cards] body .empty-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;border:1px solid var(--nl-edge);color:var(--nl-accent)}
+html:root:root:root:root:root[data-interface=cards] body .empty-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+html:root:root:root:root:root[data-interface=cards] body .map-offline button{min-height:38px;padding:9px 16px;border:1px solid var(--nl-accent);border-radius:var(--nl-radius-control,10px);background:transparent;color:var(--nl-accent);font:inherit;font-weight:600;cursor:pointer}

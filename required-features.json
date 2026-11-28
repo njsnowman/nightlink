@@ -59,6 +59,8 @@
     "pins.js",
     "feedback.js",
     "first-run.js",
+    "cards-polish.js",
+    "cards-polish.css",
     "startup-modem.wav",
     "terminal-sound.js",
     "corescope-chat-desktop.cjs",
