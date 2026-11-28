@@ -7,6 +7,10 @@
 
 ## Unreleased
 
+- Cards skins (owner request): Settings > Interface > Skin offers Standard (default, with Glass), Tactical (grey-green field look with corner brackets), Red light (all red on black for night vision, including avatars, status lights and maps), Radio panel (brushed-metal panels with an amber display window) and School / District (light and plain, with a district name in the sidebar and a district colour; colours too light for white text are refused). Applies in the main window, detached DM and startup lock. Glass applies to Standard only. Terminal is unchanged.
+
+## 0.8.30 — 2026-11-28
+
 - Terminal style pass: Settings > Chat density (Normal, Compact, Roomy); Settings > Signal symbols adds ▲ ◆ ▼ to SNR badges and Nodes bars so quality is readable without colour; Settings > Retro animation (off by default; reduced motion always turns it off) blinks the Overview command cursor; Settings > Title bar banner replaces the page art with up to 24 characters; the Overview node box shows the last node heard directly (heard: name, SNR, age); shortened names show the full name on hover; the selected or hovered Nodes row is highlighted; page action buttons share one size.
 - Cards glass (owner request): Settings > Interface > Glass offers Frosted (default), Liquid and Off. Frosted shows see-through, blurred panels with light edges over a soft colour glow; Liquid also bends what is behind each panel and uses more graphics power. The Windows transparency-effects setting (prefers-reduced-transparency) shows solid panels. Terminal is unchanged.
 - Cards: a Reply, Copy and Path bar appears on message hover or focus; the battery tile shows a trend line for this session; the page subtitle that repeated the sync pill is hidden; Contacts shows an empty state with a Connect radio button; the Search button's tooltip names Ctrl+K and Ctrl+P.

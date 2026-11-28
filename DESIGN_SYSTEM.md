@@ -129,6 +129,18 @@ Location result summary (rc.44, issue #195): keep the map visible beside one scr
 
 Planning map selection (rc.45, issue #197): Operations reuses the same Leaflet map while a compact Map & layers popover changes its fixed public display source. Use shared quiet surfaces in Cards and VGA frames/focus in Terminal; bound the popover to the available space and support Escape. Keep imagery colors natural. Distinguish source heatmap/path/site/candidate visibility and heatmap opacity from calculation inputs; preserve independent scenario/evidence controls and their prominence. Show attribution for the actual displayed source, explicit offline-pack identity, provider coverage/detail limitations and unchanged RF elevation source. Map scales remain miles and app-owned heights feet; raster provider labels retain their units. Check source switching, viewport/data retention, failures/offline/retry/disposal, expanded controls and compact/enlarged layouts.
 
+## Cards skins (0.8.31)
+
+Settings > Interface > Skin offers five looks for the Cards interface: Standard (default, with Glass), Tactical, Red light, Radio panel and School / District. The Terminal interface ignores this setting.
+
+- `cards-skins.js` sets `data-cards-skin` on the root element. It is loaded after `terminal.js` in the main window, the detached DM window and the startup-lock document.
+- `cards-skins.css` scopes each rule to `[data-interface=cards][data-cards-skin=…]`, so Standard is unchanged.
+- Glass applies to Standard only, and the Glass selector is disabled for other skins.
+- Every skin keeps chat and heading text at 4.5:1 or above; `cards-skins.browser.test.cjs` measures this.
+- Red light turns all text, avatars, status lights, maps and frames red on black to protect night vision. Its base text colour is `#ff3b30`, which passes on every surface.
+- School / District takes a district name, shown at the top of the sidebar, and a district colour. A colour is refused when white text on it would fall below 4.5:1.
+- Extend these blocks when adding a component. Do not add a separate skin system.
+
 ## Optional local planning tools (rc.46)
 
 Saved ideas/projects can open a separate study workspace. Six named tools share one map and a scrollable right panel; smaller windows stack the map above the controls. Source snapshots and experimental inputs remain separate from source projects and field records. Terminal uses shared frame/control tokens; Cards uses existing Operations components. Map distances are miles and entered antenna/obstacle/terrain heights are feet. Explicit previews use stored geometry. Area screening retains separate cached-only/online consent and requires a separate Keep candidate action.
