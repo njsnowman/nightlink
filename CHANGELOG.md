@@ -7,6 +7,8 @@
 
 ## Unreleased
 
+## 0.8.31 — 2026-11-28
+
 - Cards skins (owner request): Settings > Interface > Skin offers Standard (default, with Glass), Tactical (grey-green field look with corner brackets), Red light (all red on black for night vision, including avatars, status lights and maps), Radio panel (brushed-metal panels with an amber display window) and School / District (light and plain, with a district name in the sidebar and a district colour; colours too light for white text are refused). Applies in the main window, detached DM and startup lock. Glass applies to Standard only. Terminal is unchanged.
 
 ## 0.8.30 — 2026-11-28
