@@ -14,7 +14,8 @@ Update: at each publication (RELEASE_PROCESS.md step 7), add a dated row for eve
 
 | Release | Published | Setup | Portable | SHA256SUMS |
 | --- | --- | ---: | ---: | ---: |
-| [v0.8.29](https://github.com/njsnowman/nightlink/releases/tag/v0.8.29) (stable) | 2026-11-28 | 2 | 0 | 0 |
+| [v0.8.30](https://github.com/njsnowman/nightlink/releases/tag/v0.8.30) (stable) | 2026-11-28 | 0 | 0 | 0 |
+| [v0.8.29](https://github.com/njsnowman/nightlink/releases/tag/v0.8.29) (stable) | 2026-11-28 | 3 | 1 | 1 |
 
 ## 2026-11-27
 
