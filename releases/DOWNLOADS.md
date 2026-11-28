@@ -10,6 +10,12 @@ How to read them:
 
 Update: at each publication (RELEASE_PROCESS.md step 7), add a dated row for every published release.
 
+## 2026-11-28
+
+| Release | Published | Setup | Portable | SHA256SUMS |
+| --- | --- | ---: | ---: | ---: |
+| [v0.8.29](https://github.com/njsnowman/nightlink/releases/tag/v0.8.29) (stable) | 2026-11-28 | 2 | 0 | 0 |
+
 ## 2026-11-27
 
 | Release | Published | Setup | Portable | SHA256SUMS |
