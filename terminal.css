@@ -713,3 +713,6 @@ html:root:root:root:root:root[data-interface=terminal] body .feedback-dialog :is
 html:root:root:root:root:root[data-interface=terminal] body :is(.feedback-actions,.first-run-nav,.first-run-connect,.first-run-help,.first-run-feedback)>button{width:auto !important;flex:none;margin:0}
 html:root:root:root:root:root[data-interface=terminal] body .first-run-nav>.first-run-skip{margin-right:auto !important}
 html:root:root:root:root:root[data-interface=terminal] body td.signal.node-relayed{color:var(--t-grey)}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-dayline{display:flex;justify-content:center;margin:8px 0 4px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-dayline .mrc-daychange{color:var(--t-bright-cyan);letter-spacing:1px}
+html:root:root:root:root:root[data-interface=terminal] body .mrc-fav{color:var(--t-yellow);margin-right:4px}

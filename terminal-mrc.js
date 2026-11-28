@@ -82,6 +82,11 @@
  const hhmm=t=>{const d=new Date((t||0)*1000);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
  const stamp=t=>hhmm(t)+' ';
  // Message lines older than today carry the date (MM/DD) before the time; today's lines keep HH:MM only.
+ // Day separator text: Today / Yesterday / short date (0.8.30 style pass).
+ function dayLabel(t){const d=new Date((t||0)*1000),now=new Date(),y=new Date(now);y.setDate(now.getDate()-1);
+  if(d.toDateString()===now.toDateString())return 'Today';if(d.toDateString()===y.toDateString())return 'Yesterday';
+  return d.toLocaleDateString([], {weekday:'short',month:'short',day:'numeric',year:d.getFullYear()===now.getFullYear()?undefined:'numeric'});}
+ function daySeparator(t){const line=el('div','mrc-line mrc-dayline');line.setAttribute('role','separator');line.append(el('span','mrc-daychange','─── '+dayLabel(t)+' ───'));return line;}
  function messageStamp(t){const d=new Date((t||0)*1000),today=new Date();const s=el('span','mrc-time');
   if(d.toDateString()!==today.toDateString()){s.append(el('span','mrc-date',String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '));s.title=d.toLocaleString();}
   s.append(stamp(t));return s;}
@@ -128,6 +133,7 @@
  // Per-nick colors, as in IRC clients: a stable hash of the name picks one of eight VGA colors that meet 4.5:1 on black.
  const NICK_COLORS=8;
  function nickColor(name){let h=0;for(const ch of String(name))h=(h*31+ch.codePointAt(0))>>>0;return 'mrc-nc-'+(h%NICK_COLORS);}
+ function isFavoriteSender(m){try{if(m.own||typeof favoriteKeys==='undefined'||!favoriteKeys.size)return false;const c=typeof messageContact==='function'?messageContact(m):null;return !!(c?.key&&favoriteKeys.has(c.key));}catch{return false;}}
  function nick(name,cls,message){
   const wrap=el('span','mrc-nick-wrap');
   const label=el(message?'button':'span','mrc-nick '+cls+(cls==='mrc-nick-peer'?' '+nickColor(name):''),name);
@@ -136,6 +142,8 @@
    label.setAttribute('aria-label','Open contact card for '+name);
    label.onclick=event=>{event.stopPropagation();openContactCard(messageContact(message));};
   }
+  // Favourite contacts (★ on the Nodes page) get a star before the name (owner request, 0.8.30).
+  if(message&&isFavoriteSender(message)){const star=el('span','mrc-fav','★');star.setAttribute('aria-label','Favourite contact');star.title='Favourite contact';wrap.append(star);}
   wrap.append(el('span','mrc-nick-bracket','<'),label,el('span','mrc-nick-bracket','>'),' ');
   return wrap;
  }
@@ -272,7 +280,7 @@
   // Remove rows that scrolled out of the 300-row window, then append the new ones (with a day-change line when needed).
   for(const id of last.ids.slice(0,last.ids.length-keptIds.length))log.querySelectorAll('[data-message-id="'+CSS.escape(id)+'"],[data-reaction-delivery-for="'+CSS.escape(id)+'"]').forEach(e=>e.remove());
   let prev=kept.at(-1)||null;
-  for(const m of fresh){const d=new Date(m.timestamp*1000).toDateString();if(prev&&new Date(prev.timestamp*1000).toDateString()!==d){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));log.append(line);}log.append(messageLine(m));prev=m;}
+  for(const m of fresh){const d=new Date(m.timestamp*1000).toDateString();if(prev&&new Date(prev.timestamp*1000).toDateString()!==d){log.append(daySeparator(m.timestamp));}log.append(messageLine(m));prev=m;}
   const count=log.querySelectorAll('.mrc-banner')[2]?.lastChild;if(count)count.textContent=rows.length+' stored message'+(rows.length===1?'':'s')+' · '+live.contacts.length+' nodes known';
   state.restoring=true;log.scrollTop=log.scrollHeight;state.restoring=false;captureReading(log);updateJump(log,win);markRead(win,log);
   window.NightlinkReactionUI?.decorate(log,rows,live.messages,{selfName:live.identity?.name||'',terminal:true});
@@ -350,7 +358,7 @@
    else banner('Direct messages with '+win.label.slice(1)+'');
    banner(rows.length+' stored message'+(rows.length===1?'':'s')+' · '+live.contacts.length+' nodes known');
    let day='',previous=null;
-   for(const m of rows){const d=new Date(m.timestamp*1000).toDateString();if(day&&d!==day){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(m.timestamp)),el('span','mrc-daychange','─── Day changed to '+d+' ───'));scroll.append(line);}const sameDay=day===d;day=d;if(m.id===session.boundary){const divider=el('div','mrc-new-messages','── New messages ──');divider.setAttribute('role','separator');divider.setAttribute('aria-label','New messages');scroll.append(divider);}const fragment=messageLine(m);if(previous&&sameDay&&m.id!==session.boundary&&!m.localReply&&!isMention(m)&&!!m.own===!!previous.own&&(m.own||String(m.sender||m.target?.name)===String(previous.sender||previous.target?.name))&&Number.isFinite(m.timestamp)&&m.timestamp>=previous.timestamp&&m.timestamp-previous.timestamp<=120&&!String(m.text).startsWith('* ')&&!String(previous.text).startsWith('* '))fragment.querySelector('[data-message-id]')?.classList.add('mrc-continuation');scroll.append(fragment);previous=m;}
+   for(const m of rows){const d=new Date(m.timestamp*1000).toDateString();if((day&&d!==day)||(!day&&d!==new Date().toDateString())){scroll.append(daySeparator(m.timestamp));}const sameDay=day===d;day=d;if(m.id===session.boundary){const divider=el('div','mrc-new-messages','── New messages ──');divider.setAttribute('role','separator');divider.setAttribute('aria-label','New messages');scroll.append(divider);}const fragment=messageLine(m);if(previous&&sameDay&&m.id!==session.boundary&&!m.localReply&&!isMention(m)&&!!m.own===!!previous.own&&(m.own||String(m.sender||m.target?.name)===String(previous.sender||previous.target?.name))&&Number.isFinite(m.timestamp)&&m.timestamp>=previous.timestamp&&m.timestamp-previous.timestamp<=120&&!String(m.text).startsWith('* ')&&!String(previous.text).startsWith('* '))fragment.querySelector('[data-message-id]')?.classList.add('mrc-continuation');scroll.append(fragment);previous=m;}
   }
   for(const l of state.local.get(win.id)||[]){const line=el('div','mrc-line');line.append(el('span','mrc-time',stamp(l.t)),el('span',l.cls,l.text));scroll.append(line);}
   if(pinsBar)scroll.prepend(pinsBar);

@@ -256,3 +256,4 @@ html:root:root:root:root body dialog:is(.first-run,.feedback-dialog){max-height:
 html:root:root:root:root body .feedback-dialog textarea{min-height:64px;resize:vertical}
 html:root:root:root:root body .first-run-nav>.first-run-skip{margin-right:auto !important}
 html:root:root:root:root body td.signal.node-relayed{color:var(--nl-muted)}
+html:root:root:root:root body .message-fav{color:var(--nl-accent);margin-right:5px}
