@@ -50,12 +50,24 @@
    if(av){for(let i=0;i<8;i++)av.classList.remove('av-'+i);av.classList.add('av-'+hue(row.classList.contains('own')?'you':name));
     av.classList.toggle('av-fav',!!row.querySelector('.message-fav'));}
    const t=Number(row.dataset.messageTime)||0;const same=prev&&prev.name===name&&prev.own===row.classList.contains('own');row.classList.toggle('message-grouped',!!same);
-   prev={name,own:row.classList.contains('own')};}}
+   prev={name,own:row.classList.contains('own')};
+   // 11. Hover / focus action bar: shortcuts to the existing reply and path gestures, plus copy.
+   if(!row.querySelector('.message-hover-actions')){const body=row.querySelector('p.message-reply-target, p');const bar=el('div','message-hover-actions');bar.setAttribute('role','group');bar.setAttribute('aria-label','Message actions');
+    const add=(label,fn)=>{const b=el('button','message-hover-action',label);b.type='button';b.onclick=e=>{e.stopPropagation();fn();};bar.append(b);};
+    if(body?.classList.contains('message-reply-target'))add('Reply',()=>body.click());
+    add('Copy',()=>{const t=body?.textContent||'';try{root.navigator.clipboard?.writeText(t);}catch{}if(typeof toast==='function')toast('Message copied');});
+    const route=row.querySelector('.message-route');if(route)add('Path',()=>route.click());
+    row.querySelector(':scope > div')?.append(bar);}}}
  // 7. Stat tiles: SNR quality word and a 12-hour message sparkline.
+ // Battery samples this session (radio 'battery' events), for a trend line on the battery tile.
+ const battery=[];function sampleBattery(){const mv=typeof live==='object'?live.battery?.millivolts:null;if(Number.isFinite(mv)&&(!battery.length||battery.at(-1).mv!==mv||Date.now()-battery.at(-1).t>300000)){battery.push({t:Date.now(),mv});if(battery.length>48)battery.shift();}}
  function stats(){const tiles=doc.querySelectorAll('.stats article');if(tiles.length<4||typeof live!=='object')return;
   const snr=live.stats?.snr,w=snrWord(snr),sig=tiles[2];sig.querySelector('.stat-quality')?.remove();if(w){const q=el('span','stat-quality stat-'+w[1],w[0]);sig.querySelector('strong')?.append(q);}
   const msg=tiles[1];msg.querySelector('.stat-spark')?.remove();const h=hourly(live.messages),max=Math.max(1,...h),s=doc.createElementNS(SVG,'svg');s.setAttribute('class','stat-spark');s.setAttribute('viewBox','0 0 48 14');s.setAttribute('role','img');
-  s.setAttribute('aria-label','Messages per hour, last 12 hours: '+h.join(', '));h.forEach((v,i)=>{const r=doc.createElementNS(SVG,'rect');const height=v?Math.max(1.5,12*v/max):0.8;r.setAttribute('x',String(i*4));r.setAttribute('y',String(14-height));r.setAttribute('width','3');r.setAttribute('height',String(height));r.setAttribute('rx','0.6');s.append(r);});msg.append(s);}
+  s.setAttribute('aria-label','Messages per hour, last 12 hours: '+h.join(', '));h.forEach((v,i)=>{const r=doc.createElementNS(SVG,'rect');const height=v?Math.max(1.5,12*v/max):0.8;r.setAttribute('x',String(i*4));r.setAttribute('y',String(14-height));r.setAttribute('width','3');r.setAttribute('height',String(height));r.setAttribute('rx','0.6');s.append(r);});msg.append(s);
+  const bat=tiles[3];bat.querySelector('.stat-trend')?.remove();if(battery.length>=2){const lo=Math.min(...battery.map(b=>b.mv)),hi=Math.max(...battery.map(b=>b.mv)),span=Math.max(20,hi-lo),pts=battery.map((b,i)=>(i*48/(battery.length-1)).toFixed(1)+','+(13-11*(b.mv-lo)/span).toFixed(1)).join(' ');
+   const t=doc.createElementNS(SVG,'svg');t.setAttribute('class','stat-trend');t.setAttribute('viewBox','0 0 48 14');t.setAttribute('role','img');t.setAttribute('aria-label','Battery this session: '+(battery[0].mv/1000).toFixed(2)+' V to '+(battery.at(-1).mv/1000).toFixed(2)+' V');
+   const pl=doc.createElementNS(SVG,'polyline');pl.setAttribute('points',pts);t.append(pl);bat.append(t);}}
  // 5. Overview map: a clear message instead of a blank frame when the internet is not available.
  function mapState(){const pane=doc.querySelector('.overview-corescope');if(!pane)return;const net=doc.querySelector('#internet-status')?.dataset.state;const offline=net==='offline'||net==='unavailable';
   let note=pane.querySelector('.map-offline');if(!offline){note?.remove();return;}if(note)return;
@@ -64,11 +76,17 @@
  // 12. Empty states: icon and a next step.
  function empty(){const p=doc.querySelector('#chat-log .empty-chat');if(p&&!p.dataset.polished){p.dataset.polished='1';p.classList.add('empty-state');const ic=el('span','empty-icon');ic.append(icon(ICONS.message));p.prepend(ic);
   if(typeof live==='object'&&live.sync!=='ready'){const b=el('button','primary','Connect radio');b.type='button';b.onclick=()=>{if(typeof showBluetooth==='function')showBluetooth();};p.append(b);}}}
- function all(){if(!cards())return;try{sidebar();settings();messages();stats();mapState();empty();}catch(e){console.warn('cards polish',e);}}
+ // 9. Header: the sync pill already shows the radio state; the page subtitle repeats it, so it is hidden in Cards.
+ function header(){const sub=doc.querySelector('#subtitle');if(sub)sub.classList.toggle('subtitle-duplicate',/^(Connected to|Not connected|Connect your)/.test(sub.textContent.trim()));
+  const s=doc.querySelector('#open-message-search');if(s&&!s.dataset.polished){s.dataset.polished='1';s.title='Search messages (Ctrl+K) · Go to anything (Ctrl+P)';s.setAttribute('aria-keyshortcuts','Control+K');}}
+ // 12. Empty states on Contacts (no nodes) and Radio (not connected).
+ function pageEmpty(){const cell=doc.querySelector('#node-table .empty-cell');if(cell&&!cell.dataset.polished){cell.dataset.polished='1';cell.classList.add('empty-state');const ic=el('span','empty-icon');ic.append(icon(['M7 8a3 3 0 1 0 6 0 3 3 0 0 0-6 0','M3 17a7 7 0 0 1 14 0']));cell.prepend(ic);
+   if(typeof live==='object'&&live.sync!=='ready'){const b=el('button','primary','Connect radio');b.type='button';b.onclick=()=>{if(typeof showBluetooth==='function')showBluetooth();};cell.append(b);}}}
+ function all(){if(!cards())return;try{sidebar();header();pageEmpty();sampleBattery();settings();messages();stats();mapState();empty();}catch(e){console.warn('cards polish',e);}}
  root.NightlinkCardsPolish={...core,refresh:all};
  doc.addEventListener('DOMContentLoaded',()=>{
   const wrap=(name,after)=>{if(typeof root[name]!=='function'&&typeof globalThis[name]!=='function')return;const prev=globalThis[name];globalThis[name]=function(){const r=prev.apply(this,arguments);if(cards())try{after(...arguments);}catch(e){console.warn(e);}return r;};};
-  wrap('view',name=>{all();if(name==='Activity')activityPage();});wrap('renderMessages',()=>{messages();empty();});wrap('renderStats',stats);
+  wrap('view',name=>{all();if(name==='Activity')activityPage();});wrap('renderMessages',()=>{messages();empty();});wrap('renderStats',()=>{sampleBattery();stats();header();});wrap('renderNodes',pageEmpty);
   if(typeof logLive==='function'){const prev=logLive;globalThis.logLive=function(){const r=prev.apply(this,arguments);if(cards()&&typeof current==='string'&&current==='Activity')activityPage();return r;};}
   const net=doc.querySelector('#internet-status');if(net)new MutationObserver(mapState).observe(net,{attributes:true,attributeFilter:['data-state']});
   root.addEventListener('nightlink-interface',all);all();});

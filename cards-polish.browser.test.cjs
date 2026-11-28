@@ -15,10 +15,22 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
  // Messages: coloured avatars, grouping
  const msg=await page.evaluate(()=>{view('Messages');renderMessages();const rows=[...document.querySelectorAll('#chat-log .message')];return rows.map(r=>({av:[...r.querySelector('.avatar')?.classList||[]].find(c=>/^av-\d$/.test(c))||null,grouped:r.classList.contains('message-grouped'),bg:getComputedStyle(r.querySelector('.avatar')).backgroundColor}));});
  assert.equal(msg.length,3);assert.ok(msg.every(m=>m.av),'avatar colour slots');assert.deepEqual(msg.map(m=>m.grouped),[false,true,false],'consecutive messages from one sender grouped');assert.notEqual(msg[0].bg,'rgb(21, 21, 22)','avatar coloured');
+ // Hover action bar: Reply and Copy on every message; Reply triggers the existing reply gesture.
+ const acts=await page.evaluate(()=>[...document.querySelectorAll('#chat-log .message .message-hover-actions')].map(b=>[...b.querySelectorAll('button')].map(x=>x.textContent)));
+ assert.equal(acts.length,3);assert.ok(acts.every(a=>a.includes('Copy')&&a.includes('Reply')),JSON.stringify(acts));
+ await page.hover('#chat-log .message >> nth=2');await page.click('#chat-log .message >> nth=2 >> .message-hover-action >> text=Reply');
+ assert.ok(await page.evaluate(()=>/Sam|three/.test(document.querySelector('#message-input').value+document.body.textContent)),'reply context');
+ // Subtitle duplicate of the sync pill is hidden.
+ assert.ok(await page.evaluate(()=>{const s=document.querySelector('#subtitle');return !s||!/^Connected to/.test(s.textContent)||getComputedStyle(s).display==='none';}),'subtitle hidden');
+ // Battery trend after two samples.
+ await page.evaluate(()=>{live.battery={millivolts:4010};renderStats();live.battery={millivolts:3990};renderStats();});assert.equal(await page.locator('.stats svg.stat-trend polyline').count(),1);
  // Overview: SNR word and sparkline; offline map note
  await page.evaluate(()=>{view('Overview');renderStats();document.querySelector('#internet-status').dataset.state='offline';});
  assert.equal(await page.locator('.stats .stat-quality').textContent(),'good');assert.equal(await page.locator('.stats svg.stat-spark rect').count(),12);
  await page.waitForSelector('.map-offline');assert.match(await page.locator('.map-offline').textContent(),/needs the internet/);
+ // Contacts empty state.
+ await page.evaluate(()=>{live.contacts=[];live.sync='disconnected';view('Nodes');renderNodes(true);});assert.equal(await page.locator('#node-table .empty-state .empty-icon').count(),1);assert.equal(await page.locator('#node-table .empty-state button').textContent(),'Connect radio');
+ await page.evaluate(()=>{live.sync='ready';});
  // Activity: icons, filters
  await page.evaluate(()=>view('Activity'));assert.equal(await page.locator('.activity-item').count(),3);await page.click('.activity-chip >> text=Problems');
  assert.equal(await page.locator('.activity-item').count(),1);assert.match(await page.locator('.activity-item').textContent(),/Sync failed/);assert.equal(await page.locator('.activity-chip.on').textContent(),'Problems');

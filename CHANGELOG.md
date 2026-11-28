@@ -7,6 +7,7 @@
 
 ## Unreleased
 
+- Cards: a Reply, Copy and Path bar appears on message hover or focus; the battery tile shows a trend line for this session; the page subtitle that repeated the sync pill is hidden; Contacts shows an empty state with a Connect radio button; the Search button's tooltip names Ctrl+K and Ctrl+P.
 - Cards design pass (owner request): sidebar Contact Book and Operations items get icons and match the main items; Settings checkbox rows use an aligned toggle layout; Activity becomes a timeline with event icons, a time column and filters (All, Connection, Radio, Messages, Problems); chat avatars are coloured per sender, with a ring for favourites, and consecutive messages from one sender are grouped; your own messages align right; the Overview signal tile shows good, fair or weak, and the messages tile a 12-hour sparkline; the Overview map shows a short explanation and a Radio map button when the internet is unavailable; the Signal Rail lights are larger and labelled; empty chats show an icon and a Connect radio button; the header clock is removed in Cards and the Search label hides on narrow windows.
 - Terminal chat: day separators read Today, Yesterday or the date; favourite contacts (★ on Nodes) are marked with a star before their name, in both interfaces.
 - Nodes LAST SNR: nodes your radio does not hear directly show `relayed · N hops` (from the latest relayed advert this session) or `route · N hops` (known outbound route) instead of a bare dash. Owner feedback: only the three directly heard nodes had values.

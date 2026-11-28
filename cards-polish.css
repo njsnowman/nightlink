@@ -70,3 +70,13 @@ html:root:root:root:root:root[data-interface=cards] body .empty-state{display:fl
 html:root:root:root:root:root[data-interface=cards] body .empty-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;border:1px solid var(--nl-edge);color:var(--nl-accent)}
 html:root:root:root:root:root[data-interface=cards] body .empty-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
 html:root:root:root:root:root[data-interface=cards] body .map-offline button{min-height:38px;padding:9px 16px;border:1px solid var(--nl-accent);border-radius:var(--nl-radius-control,10px);background:transparent;color:var(--nl-accent);font:inherit;font-weight:600;cursor:pointer}
+html:root:root:root:root:root[data-interface=cards] body #subtitle.subtitle-duplicate{display:none}
+html:root:root:root:root:root[data-interface=cards] body .stat-trend{position:absolute;right:16px;bottom:14px;width:72px;height:22px;fill:none;stroke:var(--nl-ready,#7bd88f);stroke-width:1.4;stroke-linejoin:round}
+html:root:root:root:root:root[data-interface=cards] body #chat-log .message>div{position:relative}
+html:root:root:root:root:root[data-interface=cards] body .message-hover-actions{position:absolute;bottom:-10px;right:0;z-index:2;display:flex;gap:4px;padding:3px;border:1px solid var(--nl-edge);border-radius:10px;background:var(--nl-surface);box-shadow:0 6px 18px #0008;opacity:0;pointer-events:none;transition:opacity .12s}
+html:root:root:root:root:root[data-interface=cards] body #chat-log .message:hover .message-hover-actions,html:root:root:root:root:root[data-interface=cards] body #chat-log .message:focus-within .message-hover-actions{opacity:1;pointer-events:auto}
+html:root:root:root:root:root[data-interface=cards] body .message-hover-action{min-height:26px !important;padding:3px 9px !important;border:0 !important;border-radius:7px !important;background:transparent !important;color:var(--nl-copy) !important;font-size:12px !important}
+html:root:root:root:root:root[data-interface=cards] body .message-hover-action:hover,html:root:root:root:root:root[data-interface=cards] body .message-hover-action:focus-visible{background:var(--nl-hover) !important;color:var(--nl-accent) !important}
+@media (prefers-reduced-motion:reduce){html:root:root:root:root:root[data-interface=cards] body .message-hover-actions{transition:none}}
+html:root:root:root:root:root[data-interface=cards] body #node-table .empty-state{display:table-cell}
+html:root:root:root:root:root[data-interface=cards] body #node-table .empty-state>*{display:block;margin:0 auto 10px}
