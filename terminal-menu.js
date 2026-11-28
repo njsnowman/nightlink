@@ -52,7 +52,7 @@
   const rf=rfState(),rfv=el('span');if(rf)rfv.append(el('span',rf.state==='normal'?'term-ok':'term-pending',String(rf.label).toUpperCase()));else rfv.append(el('span','term-dim','not monitored'));
   if(live.stats.snr!=null)rfv.append(' · SNR '+live.stats.snr+' dB');
   const batt=live.battery?(live.battery.millivolts/1000).toFixed(2)+' V':'—';
-  kv(dl,[['call',id?.name||'—','term-strong'],['radio',radio],['freq',id?.frequency?id.frequency.toFixed(3)+' MHz'+(id.sf?' SF'+id.sf:''):'—'],['rf',rfv],['batt',batt],['time',new Date().toLocaleString([],{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',hour12:false})]]);
+  kv(dl,[['call',id?.name||'—','term-strong'],['radio',radio],['freq',id?.frequency?id.frequency.toFixed(3)+' MHz'+(id.sf?' SF'+id.sf:''):'—'],['rf',rfv],['batt',batt],['heard',(()=>{const adv=[...(window.NightlinkHeardAdverts||new Map())].sort((a,b)=>b[1].at-a[1].at)[0];if(!adv)return el('span','term-dim','no direct advert yet');const c=live.contacts.find(c=>c.key===adv[0]);const v=el('span');const name=c?(typeof cardName==='function'?cardName(c.key,c.name):c.name):adv[0].slice(0,8);v.append(el('span','term-strong',name),' · ',el('span',adv[1].snr>=5?'term-ok':adv[1].snr>=0?'term-pending':'term-bad','SNR '+adv[1].snr),el('span','term-dim',' · '+(window.NightlinkNodeSignal?.age?.(adv[1].at)||'')));v.title='Last node your radio heard directly (zero-hop advert)';return v;})()],['time',new Date().toLocaleString([],{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',hour12:false})]]);
   node.append(dl);top.append(brand,node);root.append(top);
   // The logo carries its own speed lines; no separate band under it.
   // Main menu
