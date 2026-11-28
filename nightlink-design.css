@@ -255,3 +255,4 @@ html:root:root:root:root body :is(.feedback-actions,.first-run-nav,.first-run-co
 html:root:root:root:root body dialog:is(.first-run,.feedback-dialog){max-height:calc(100dvh - 32px);overflow:auto}
 html:root:root:root:root body .feedback-dialog textarea{min-height:64px;resize:vertical}
 html:root:root:root:root body .first-run-nav>.first-run-skip{margin-right:auto !important}
+html:root:root:root:root body td.signal.node-relayed{color:var(--nl-muted)}

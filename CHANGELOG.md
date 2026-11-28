@@ -7,6 +7,7 @@
 
 ## Unreleased
 
+- Nodes LAST SNR: nodes your radio does not hear directly show `relayed · N hops` (from the latest relayed advert this session) or `route · N hops` (known outbound route) instead of a bare dash. Owner feedback: only the three directly heard nodes had values.
 - Fix (owner report on the 0.8.29 build): Nodes LAST SNR could be missing or appear on the wrong node. Rows were matched to contacts by position, but the favourites view, search and filters remove or hide rows, and only the first four rows were decorated outside View all. Rows now match by their contact index, and the column shows whenever the Nodes page is open.
 - Overview last callers (owner report): the list refreshes as messages and adverts arrive while the Overview is open, and is ordered by when your radio heard each caller, not by the sender's clock. Incoming messages now store a local receive time. Nodes with clocks set in the future show `--:--` instead of staying pinned at the top. The name column is wider (up to 26 characters).
 - Nodes LAST SNR also uses repeater and companion adverts your radio hears directly (zero hops, matched by full public key), so every node in direct radio range gets a reading, not only the final hop of messages. The newest reading wins; the tooltip says whether it came from an advert, a message's final hop or a direct packet. Owner report, 2026-11-27: only the owner's own nearby nodes showed values.

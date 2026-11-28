@@ -33,6 +33,11 @@ const {chromium}=require(process.env.NIGHTLINK_PLAYWRIGHT||'playwright'),fs=requ
    const k=Array.from({length:32},()=>0x55),frame=Uint8Array.from([0x88,-6*4&255,-100&255,(4<<2)|1,0,...k,1,0,0,0,...Array(64).fill(0),0x81]);
    ble.dispatchEvent(new CustomEvent('packet',{detail:frame}));renderNodes(true);});
   assert.equal(await page.evaluate(()=>[...document.querySelectorAll('#node-table tr')].at(-1).querySelector('td.signal').getAttribute('aria-label')),'SNR -6 dB, 1 of 4 bars','advert-derived repeater SNR');
+  // A node heard only through repeaters shows how far away it is instead of a bare dash.
+  const relayed=await page.evaluate(()=>{const key='66'.repeat(32);live.contacts.push({key,name:'Distant RPT',type:2,snr:null,lastAdvert:Math.floor(Date.now()/1000),pathLength:null});
+   const k=Array.from({length:32},()=>0x66),frame=Uint8Array.from([0x88,8,-100&255,(4<<2)|1,2,0x11,0x22,...k,1,0,0,0,...Array(64).fill(0),0x81]);ble.dispatchEvent(new CustomEvent('packet',{detail:frame}));renderNodes(true);
+   const row=[...document.querySelectorAll('#node-table tr')].find(r=>/Distant RPT/.test(r.textContent));return [row.querySelector('td.signal').textContent.trim(),row.querySelector('td.signal').getAttribute('aria-label')];});
+  assert.match(relayed[0],/relayed · 2 hops$/);assert.equal(relayed[1],'No direct signal, relayed 2 hops');
   // Rows are matched by contact, not position: the favourites view removes non-favourite rows before readings are applied.
   const fav=await page.evaluate(()=>{favoriteKeys=new Set(['55'.repeat(32)]);renderNodes(false);return [...document.querySelectorAll('#node-table tr')].filter(r=>r.querySelector('[data-node]')).map(r=>[r.querySelector('.node-name')?.textContent.replace(/\s+/g,' ').trim(),r.querySelector('td.signal')?.getAttribute('aria-label')]);});
   assert.equal(fav.length,1,'only the favourite row: '+JSON.stringify(fav));assert.match(fav[0][0],/Far RPT/);assert.equal(fav[0][1],'SNR -6 dB, 1 of 4 bars','reading stays on its own node');
