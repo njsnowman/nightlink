@@ -44,7 +44,8 @@
   const head=el('div','activity-head');head.append(el('h2',null,'Today'),el('small',null,activity.length+' event'+(activity.length===1?'':'s')+' this session'));
   wrap.append(head,chips,ul);list.replaceChildren(wrap);}
  // 6 and 11. Messages: coloured avatars, favourite badge, grouped consecutive messages from one sender.
- function messages(){const log=doc.querySelector('#chat-log');if(!log)return;let prev=null;
+ function messages(){const log=doc.querySelector('#chat-log');if(!log)return;const top=log.getBoundingClientRect().top;const anchor=[...log.querySelectorAll('.message')].find(r=>r.getBoundingClientRect().bottom>top);const before=anchor?anchor.getBoundingClientRect().top:0;groupRows(log);if(anchor&&anchor.isConnected){const shift=anchor.getBoundingClientRect().top-before;if(Math.abs(shift)>=1)log.scrollTop+=shift;}}
+ function groupRows(log){let prev=null;
   const rows=[...log.querySelectorAll('.message')];
   for(const row of rows){const name=row.querySelector('.sender span')?.textContent||'',av=row.querySelector('.avatar');
    if(av){for(let i=0;i<8;i++)av.classList.remove('av-'+i);av.classList.add('av-'+hue(row.classList.contains('own')?'you':name));
