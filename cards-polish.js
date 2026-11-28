@@ -83,9 +83,22 @@
  // 12. Empty states on Contacts (no nodes) and Radio (not connected).
  function pageEmpty(){const cell=doc.querySelector('#node-table .empty-cell');if(cell&&!cell.dataset.polished){cell.dataset.polished='1';cell.classList.add('empty-state');const ic=el('span','empty-icon');ic.append(icon(['M7 8a3 3 0 1 0 6 0 3 3 0 0 0-6 0','M3 17a7 7 0 0 1 14 0']));cell.prepend(ic);
    if(typeof live==='object'&&live.sync!=='ready'){const b=el('button','primary','Connect radio');b.type='button';b.onclick=()=>{if(typeof showBluetooth==='function')showBluetooth();};cell.append(b);}}}
- function all(){if(!cards())return;try{sidebar();header();pageEmpty();sampleBattery();settings();messages();stats();mapState();empty();}catch(e){console.warn('cards polish',e);}}
+
+ // 13. Glass: Off / Frosted (default) / Liquid, stored per profile; the Liquid refraction filter is a hidden SVG.
+ const GLASS_KEY='nightlink.cards-glass',GLASS=['frosted','liquid','off'];
+ function glassValue(){try{const v=root.localStorage.getItem(GLASS_KEY);return GLASS.includes(v)?v:'frosted';}catch{return 'frosted';}}
+ function applyGlass(v){doc.documentElement.dataset.cardsGlass=v;if(v==='liquid'&&!doc.getElementById('nl-liquid-defs')){const ns='http://www.w3.org/2000/svg',mk=(n,a)=>{const e=doc.createElementNS(ns,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const svg=mk('svg',{id:'nl-liquid-defs',width:0,height:0,'aria-hidden':'true',focusable:'false',class:'cards-glass-defs'}),f=mk('filter',{id:'nl-liquid',x:0,y:0,width:'100%',height:'100%'});
+  f.append(mk('feTurbulence',{type:'fractalNoise',baseFrequency:'0.008 0.012',numOctaves:2,seed:4,result:'t'}),mk('feDisplacementMap',{in:'SourceGraphic',in2:'t',scale:38,xChannelSelector:'R',yChannelSelector:'G'}));svg.append(f);doc.body.append(svg);}}
+ function glassSetting(){if(doc.querySelector('#cards-glass')||root.NightlinkInterface?.isTerminal?.())return;const anchor=doc.querySelector('#interface-mode')?.closest('label');if(!anchor)return;
+  const l=el('label','accent-setting interface-setting');l.id='cards-glass-setting';l.append('Glass');const sel=doc.createElement('select');sel.id='cards-glass';sel.setAttribute('aria-label','Glass');
+  for(const [v,t] of [['frosted','Frosted (default)'],['liquid','Liquid'],['off','Off']]){const o=doc.createElement('option');o.value=v;o.textContent=t;sel.append(o);}sel.value=glassValue();
+  sel.onchange=()=>{try{root.localStorage.setItem(GLASS_KEY,sel.value);}catch{}applyGlass(sel.value);};const h=el('small','',"Frosted see-through panels over a soft colour glow. Liquid also bends what is behind each panel and uses more graphics power. Windows' transparency-effects setting turns glass off.");l.append(sel,h);anchor.after(l);}
+ function all(){if(!cards())return;try{sidebar();header();pageEmpty();sampleBattery();settings();glassSetting();messages();stats();mapState();empty();}catch(e){console.warn('cards polish',e);}}
  root.NightlinkCardsPolish={...core,refresh:all};
+ if(doc?.documentElement)doc.documentElement.dataset.cardsGlass=glassValue();
  doc.addEventListener('DOMContentLoaded',()=>{
+  applyGlass(glassValue());root.addEventListener('storage',e=>{if(e.key===GLASS_KEY)applyGlass(glassValue());});
   const wrap=(name,after)=>{if(typeof root[name]!=='function'&&typeof globalThis[name]!=='function')return;const prev=globalThis[name];globalThis[name]=function(){const r=prev.apply(this,arguments);if(cards())try{after(...arguments);}catch(e){console.warn(e);}return r;};};
   wrap('view',name=>{all();if(name==='Activity')activityPage();});wrap('renderMessages',()=>{messages();empty();});wrap('renderStats',()=>{sampleBattery();stats();header();});wrap('renderNodes',pageEmpty);
   if(typeof logLive==='function'){const prev=logLive;globalThis.logLive=function(){const r=prev.apply(this,arguments);if(cards()&&typeof current==='string'&&current==='Activity')activityPage();return r;};}
