@@ -716,3 +716,16 @@ html:root:root:root:root:root[data-interface=terminal] body td.signal.node-relay
 html:root:root:root:root:root[data-interface=terminal] body .mrc-dayline{display:flex;justify-content:center;margin:8px 0 4px}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-dayline .mrc-daychange{color:var(--t-bright-cyan);letter-spacing:1px}
 html:root:root:root:root:root[data-interface=terminal] body .mrc-fav{color:var(--t-yellow);margin-right:4px}
+/* 0.8.30 terminal style pass */
+html:root:root:root:root:root[data-interface=terminal][data-term-density=compact] body #mrc-log .mrc-line{margin-top:0 !important;margin-bottom:0 !important;padding-top:0 !important;padding-bottom:0 !important}
+html:root:root:root:root:root[data-interface=terminal][data-term-density=roomy] body #mrc-log .mrc-line[data-message-id]{margin-top:10px !important;margin-bottom:6px !important}
+html:root:root:root:root:root[data-interface=terminal][data-term-symbols=on] body .mrc-snr-good::before{content:'▲ '}
+html:root:root:root:root:root[data-interface=terminal][data-term-symbols=on] body .mrc-snr-fair::before{content:'◆ '}
+html:root:root:root:root:root[data-interface=terminal][data-term-symbols=on] body .mrc-snr-poor::before{content:'▼ '}
+html:root:root:root:root:root[data-interface=terminal][data-term-symbols=on] body .node-bars[data-level="4"]::after,html:root:root:root:root:root[data-interface=terminal][data-term-symbols=on] body .node-bars[data-level="3"]::after{content:' ▲';color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal][data-term-symbols=on] body .node-bars[data-level="2"]::after{content:' ◆';color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal][data-term-symbols=on] body .node-bars[data-level="1"]::after,html:root:root:root:root:root[data-interface=terminal][data-term-symbols=on] body .node-bars[data-level="0"]::after{content:' ▼';color:var(--t-white)}
+html:root:root:root:root:root[data-interface=terminal] body #bbs-command.term-blink-off{caret-color:transparent;border-bottom-color:transparent !important}
+html:root:root:root:root:root[data-interface=terminal] body #node-table tr:hover>td,html:root:root:root:root:root[data-interface=terminal] body #node-table tr:focus-within>td{background:var(--t-blue) !important}
+html:root:root:root:root:root[data-interface=terminal] body #node-table tr:focus-within>td:first-child{box-shadow:inset 3px 0 0 var(--t-bright-cyan)}
+html:root:root:root:root:root[data-interface=terminal] body .panel-heading button,html:root:root:root:root:root[data-interface=terminal] body .book-actions button{font-size:13px !important;line-height:1.3 !important;min-height:34px !important;padding:6px 12px !important}

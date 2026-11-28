@@ -10,9 +10,9 @@
  const validChatSize=value=>CHAT_SIZES.includes(value)?value:'medium';
  function readChatSize(storage){try{return validChatSize(storage?.getItem(CHAT_KEY));}catch{return 'medium';}}
  // Terminal display: whole-app text size and colour palette (night default, daylight, high contrast).
- const TEXT_KEY='nightlink.term-text',TEXT_SIZES=['normal','large','xlarge'],PALETTE_KEY='nightlink.term-palette',PALETTES=['night','daylight','contrast'],NICK_KEY='nightlink.term-nicks',NICKS=['single','sender'];
+ const TEXT_KEY='nightlink.term-text',TEXT_SIZES=['normal','large','xlarge'],PALETTE_KEY='nightlink.term-palette',PALETTES=['night','daylight','contrast'],NICK_KEY='nightlink.term-nicks',NICKS=['single','sender'],DENSITY_KEY='nightlink.term-density',DENSITIES=['normal','compact','roomy'],SYMBOL_KEY='nightlink.term-symbols',MOTION_KEY='nightlink.term-motion',BANNER_KEY='nightlink.term-banner',ONOFF=['off','on'];
  const pick=(list,v)=>list.includes(v)?v:list[0];
- function readDisplay(storage){try{return {text:pick(TEXT_SIZES,storage?.getItem(TEXT_KEY)),palette:pick(PALETTES,storage?.getItem(PALETTE_KEY)),nicks:pick(NICKS,storage?.getItem(NICK_KEY))};}catch{return {text:'normal',palette:'night',nicks:'single'};}}
+ function readDisplay(storage){try{return {text:pick(TEXT_SIZES,storage?.getItem(TEXT_KEY)),palette:pick(PALETTES,storage?.getItem(PALETTE_KEY)),nicks:pick(NICKS,storage?.getItem(NICK_KEY)),density:pick(DENSITIES,storage?.getItem(DENSITY_KEY)),symbols:pick(ONOFF,storage?.getItem(SYMBOL_KEY)),motion:pick(ONOFF,storage?.getItem(MOTION_KEY))};}catch{return {text:'normal',palette:'night',nicks:'single',density:'normal',symbols:'off',motion:'off'};}}
  const core={KEY,DEFAULT,VALUES,valid,read,write,CHAT_KEY,CHAT_SIZES,validChatSize,readChatSize,TEXT_KEY,TEXT_SIZES,PALETTE_KEY,PALETTES,readDisplay};
  if(typeof module==='object'&&module.exports){module.exports=core;return;}
  const doc=root.document;
@@ -21,7 +21,7 @@
  const active=()=>valid(doc.documentElement.dataset.interface);
  root.NightlinkInterface={...core,apply,set,current:active,isTerminal:()=>active()==='terminal'};
  apply(read(root.localStorage));
- function applyDisplay(d){doc.documentElement.dataset.termText=d.text;doc.documentElement.dataset.termPalette=d.palette;doc.documentElement.dataset.termNicks=d.nicks||'single';}
+ function applyDisplay(d){doc.documentElement.dataset.termText=d.text;doc.documentElement.dataset.termPalette=d.palette;doc.documentElement.dataset.termNicks=d.nicks||'single';const r=doc.documentElement.dataset;r.termDensity=d.density||'normal';r.termSymbols=d.symbols||'off';r.termMotion=d.motion||'off';}
  applyDisplay(readDisplay(root.localStorage));
  root.addEventListener('storage',e=>{if(e.key===TEXT_KEY||e.key===PALETTE_KEY)applyDisplay(readDisplay(root.localStorage));});
  function applyChatSize(value){value=validChatSize(value);doc.documentElement.dataset.chatSize=value;for(const select of doc.querySelectorAll('[data-chat-text-size]'))select.value=value;return value;}
@@ -115,7 +115,12 @@
     const text=make('term-text','Text size',TEXT_KEY,[['normal','Normal'],['large','Large (115%)'],['xlarge','Extra large (130%)']],d.text,'Scales the whole terminal interface, including menus, chat and dialogs.');
     const palette=make('term-palette','Colour palette',PALETTE_KEY,[['night','Night (default)'],['daylight','Daylight'],['contrast','High contrast']],d.palette,'Daylight uses a light background for bright rooms and outdoors. High contrast shows body text in white.');
     const nicks=make('term-nicks','Nick colours',NICK_KEY,[['single','Single colour (default)'],['sender','By sender']],d.nicks,'By sender gives each chat nickname one of eight VGA colours, chosen from its name, so the same person keeps the same colour.');
-    label.after(text,palette,nicks);root.NightlinkTerminalTheme?.mount(nicks);}};
+    const density=make('term-density','Chat density',DENSITY_KEY,[['normal','Normal'],['compact','Compact'],['roomy','Roomy']],d.density,'Spacing between chat messages, separate from text size.');
+    const symbols=make('term-symbols','Signal symbols',SYMBOL_KEY,[['off','Colour only (default)'],['on','Colour and symbols']],d.symbols,'Adds ▲ ◆ ▼ to SNR and hop badges so quality is readable without colour.');
+    const motion=make('term-motion','Retro animation',MOTION_KEY,[['off','Off (default)'],['on','On']],d.motion,'Blinking command cursor on the Overview prompt. Reduced-motion settings always turn it off.');
+    const banner=doc.createElement('label');banner.className='accent-setting interface-setting';banner.id='term-banner-setting';banner.append('Title bar banner');const bi=doc.createElement('input');bi.type='text';bi.id='term-banner';bi.maxLength=24;bi.placeholder='Page art (default)';bi.setAttribute('aria-label','Title bar banner');try{bi.value=root.localStorage.getItem(BANNER_KEY)||'';}catch{}
+    bi.oninput=()=>{try{if(bi.value.trim())root.localStorage.setItem(BANNER_KEY,bi.value.slice(0,24));else root.localStorage.removeItem(BANNER_KEY);}catch{}root.dispatchEvent(new CustomEvent('nightlink-banner'));};const bh=doc.createElement('small');bh.textContent='Up to 24 characters shown at the right of every page title bar, e.g. your call sign or ░▒▓ NIGHTLINK ▓▒░. Leave empty for the built-in page art.';banner.append(bi,bh);
+    label.after(text,palette,nicks,density,symbols,motion,banner);root.NightlinkTerminalTheme?.mount(nicks);}};
   // Function keys and Escape. Escape only acts when no dialog, menu or text field owns it.
   doc.addEventListener('keydown',e=>{if(!root.NightlinkInterface.isTerminal()||e.defaultPrevented)return;
    const typing=e.target.closest?.('input,textarea,select,[contenteditable=""],[contenteditable=true]');
