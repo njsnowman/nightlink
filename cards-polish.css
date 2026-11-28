@@ -94,7 +94,9 @@ html:root:root:root:root:root[data-interface=cards]:is([data-cards-glass=frosted
 .node-spark{display:inline-block;width:56px;height:14px;margin-left:8px;vertical-align:middle;fill:currentColor;opacity:.8}
 .node-spark rect.weak{opacity:.45}
 /* Quick replies (quick-replies.js): a wrapping row of small buttons above the message box, both interfaces. */
-.quick-replies{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.quick-replies{display:flex;flex-wrap:nowrap;gap:6px;margin:0 0 6px;overflow-x:auto;scrollbar-width:thin}
+.quick-replies .quick-reply{flex:0 0 auto;white-space:nowrap}
+@media (max-height:640px){.quick-replies{display:none}}
 .quick-replies .quick-reply{min-height:28px;padding:3px 10px;font-size:.85em;line-height:1.2}
 html[data-interface=cards] .quick-replies .quick-reply{border-radius:999px}
 .quick-replies-show{display:flex;align-items:center;gap:8px;margin:6px 0}
