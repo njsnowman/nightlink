@@ -7,6 +7,17 @@
 
 ## Unreleased
 
+- Tactical map (Cards > Skin: Tactical): crosshair markers on the local Radio map for your radio (red), contacts (cyan) and repeaters (yellow), each titled with bearing, distance (km and mi) and Maidenhead grid from your radio; a north arrow; and a readout of the grid, bearing and distance under the pointer.
+- School / District extras: Plain wording (on by default) shows "Sent", "via 3 relays" and Connected / Receiving / Sending / Confirmed / Problem in place of radio terms, with the radio term in the tooltip. Simple menu hides Radio, Diagnostics, Contact Book and Operations. An admin PIN (4–12 digits, stored as a salted SHA-256 hash) locks Interface, Glass, Skin and the School settings until it is entered; it deters changes on shared PCs and does not protect saved data.
+- Nodes: SNR history for the last 24 hours as a small sparkline beside LAST SNR, with the reading count, low, average and high in the tooltip. Readings below -10 dB are dimmed. Stored on this computer per radio, up to 48 readings per node.
+- Coverage layer on the local Radio map: a Coverage button colours each located node by its average SNR over 24 hours (strong, good, fair, weak, poor) with a legend. Off by default; the choice is remembered.
+- Quick replies: a row of short phrases above the message box in Cards chat, Terminal chat and DM windows. Clicking one puts the phrase in the box; nothing is sent until you press Enter or Send. Edit the list (up to 8) or hide it in Settings.
+- Net check-in (Ctrl+P, Terminal More, Cards Tools): start a roll call on a channel from your favourites, all contacts or anyone who posts. People who post on that channel after the start are checked in; mark or undo by hand; copy the log or download CSV. The net survives a restart. Nothing is transmitted by the tool.
+- Node alerts (Settings, off by default): a notice, an Activity entry and, when allowed, a desktop notification when a favourite node has not been heard for 30 min to 12 h, once per quiet spell with a recovery notice, and when your radio battery drops below 3.5 V.
+- Fix: the "Live map needs the internet" note no longer stays over the local Radio map after choosing Radio map.
+- Publish release workflow (`.github/workflows/publish-release.yml`, manual): publishes a draft candidate as `vX.Y.Z` latest with the title and notes from `releases/X.Y.Z.md`, only when package.json matches, the candidate's SHA-256 values and source commit are in the record and no checklist item is open; then checks that the in-app updater accepts the release.
+- Tests: `navigation-flows` and `startup-connect` updated for channel tabs and the Settings Connection page, and added to the browser suite.
+
 ## 0.8.31 — 2026-11-28
 
 - Cards skins (owner request): Settings > Interface > Skin offers Standard (default, with Glass), Tactical (grey-green field look with corner brackets), Red light (all red on black for night vision, including avatars, status lights and maps), Radio panel (brushed-metal panels with an amber display window) and School / District (light and plain, with a district name in the sidebar and a district colour; colours too light for white text are refused). Applies in the main window, detached DM and startup lock. Glass applies to Standard only. Terminal is unchanged.

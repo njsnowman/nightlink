@@ -115,3 +115,25 @@ html:root:root:root:root:root[data-interface=cards][data-cards-skin=school] body
 
 .school-banner{display:none}
 html[data-interface=cards][data-cards-skin=school] .school-banner{display:block}
+/* tactical map overlay (tactical-map.js) */
+.tac-marker,.tac-overlay{display:none}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-marker{display:block;background:none !important;border:0 !important}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-marker::before,html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-marker::after{content:"";position:absolute;background:var(--tac,#4fd1c5)}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-marker::before{left:12px;top:0;width:2px;height:26px}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-marker::after{top:12px;left:0;height:2px;width:26px}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-marker{--tac:#4fd1c5;box-sizing:border-box;outline:2px solid var(--tac);outline-offset:-8px;border-radius:50%}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-marker.tac-repeater{--tac:#f2c744;border-radius:0}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-marker.tac-self{--tac:#ff6b6b;outline-width:3px}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .leaflet-overlay-pane path.leaflet-interactive{stroke-opacity:0 !important;fill-opacity:0 !important}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-tooltip{background:#0f1411 !important;border:1px solid #4fd1c5 !important;border-radius:2px !important;color:#e1ebe3 !important;font:12px/1.35 ui-monospace,Consolas,monospace !important;box-shadow:none !important}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-tooltip::before{display:none}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-label{display:grid;gap:2px}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-label strong{color:#4fd1c5;text-transform:uppercase;letter-spacing:.06em}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-overlay{display:block;position:absolute;inset:0;pointer-events:none;z-index:500}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-north{position:absolute;top:12px;right:58px;width:34px;height:46px;display:grid;justify-items:center;align-content:start;gap:2px;padding-top:2px;background:rgba(15,20,17,.85);border:1px solid #3d4f43}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-north-arrow{width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:18px solid #4fd1c5}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-north-label{color:#4fd1c5;font:700 12px ui-monospace,Consolas,monospace}
+html:root:root:root:root:root[data-interface=cards][data-cards-skin=tactical] body .tac-readout{position:absolute;left:10px;bottom:52px;padding:4px 8px;background:rgba(15,20,17,.9);border:1px solid #3d4f43;color:#f2c744;font:12px ui-monospace,Consolas,monospace;letter-spacing:.04em}
+/* school extras: simple menu and admin PIN row */
+html[data-interface=cards][data-cards-skin=school][data-school-simple=on] #workspace-sidebar :is([data-view=Radio],[data-view=Diagnostics],[data-view="Contact Book"],[data-view=Operations]){display:none !important}
+.school-pin-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}

@@ -90,3 +90,29 @@ html:root:root:root:root:root[data-interface=cards][data-cards-glass=liquid]:not
 html:root:root:root:root:root[data-interface=cards]:is([data-cards-glass=frosted],[data-cards-glass=liquid]):not([data-cards-skin=tactical],[data-cards-skin=red],[data-cards-skin=radio],[data-cards-skin=school]) body #workspace-sidebar,html:root:root:root:root:root[data-interface=cards]:is([data-cards-glass=frosted],[data-cards-glass=liquid]):not([data-cards-skin=tactical],[data-cards-skin=red],[data-cards-skin=radio],[data-cards-skin=school]) body main>header{background:transparent !important;border-color:transparent !important;box-shadow:none !important;backdrop-filter:none !important}
 html:root:root:root:root:root[data-interface=cards]:is([data-cards-glass=frosted],[data-cards-glass=liquid]):not([data-cards-skin=tactical],[data-cards-skin=red],[data-cards-skin=radio],[data-cards-skin=school]) body #workspace-sidebar::before,html:root:root:root:root:root[data-interface=cards]:is([data-cards-glass=frosted],[data-cards-glass=liquid]):not([data-cards-skin=tactical],[data-cards-skin=red],[data-cards-skin=radio],[data-cards-skin=school]) body main>header::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none}
 html:root:root:root:root:root[data-interface=cards]:is([data-cards-glass=frosted],[data-cards-glass=liquid]):not([data-cards-skin=tactical],[data-cards-skin=red],[data-cards-skin=radio],[data-cards-skin=school]) body #workspace-sidebar,html:root:root:root:root:root[data-interface=cards]:is([data-cards-glass=frosted],[data-cards-glass=liquid]):not([data-cards-skin=tactical],[data-cards-skin=red],[data-cards-skin=radio],[data-cards-skin=school]) body main>header{isolation:isolate}
+/* Nodes SNR history sparkline (node-history.js), both interfaces read currentColor */
+.node-spark{display:inline-block;width:56px;height:14px;margin-left:8px;vertical-align:middle;fill:currentColor;opacity:.8}
+.node-spark rect.weak{opacity:.45}
+/* Quick replies (quick-replies.js): a wrapping row of small buttons above the message box, both interfaces. */
+.quick-replies{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.quick-replies .quick-reply{min-height:28px;padding:3px 10px;font-size:.85em;line-height:1.2}
+html[data-interface=cards] .quick-replies .quick-reply{border-radius:999px}
+.quick-replies-show{display:flex;align-items:center;gap:8px;margin:6px 0}
+#quick-replies-text{width:100%;min-height:96px;resize:vertical}
+/* Net check-in dialog (net-checkin.js), both interfaces; dialog frame comes from .feedback-dialog. */
+.net-dialog .net-field{display:grid;gap:4px;margin:8px 0}
+.net-dialog .net-list{list-style:none;margin:10px 0;padding:0;max-height:46vh;overflow:auto}
+.net-dialog .net-row{display:grid;grid-template-columns:1.5em 1fr auto auto;gap:10px;align-items:center;padding:6px 4px;border-bottom:1px solid color-mix(in srgb,currentColor 18%,transparent)}
+.net-dialog .net-row.net-in .net-mark{color:#3fb950;font-weight:700}
+.net-dialog .net-row.net-empty{display:block;opacity:.85}
+.net-dialog .net-time{font-family:ui-monospace,Consolas,monospace}
+.net-dialog .net-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.net-dialog .net-close{margin-top:12px}
+/* Coverage layer (coverage-map.js) on the local Radio map, both interfaces. */
+.coverage-control .coverage-toggle{min-height:30px;padding:4px 10px;font:600 12px/1 system-ui,sans-serif;background:#fff;color:#1c2433;border:0;cursor:pointer}
+.coverage-control .coverage-toggle[aria-pressed=true]{background:#2ea043 !important;color:#fff !important;border-color:#2ea043 !important}
+.coverage-legend{display:grid;gap:2px;padding:6px 8px;border-radius:6px;background:rgba(10,14,20,.86);color:#e6edf3;font:11px/1.35 system-ui,sans-serif}
+.coverage-legend.coverage-hidden{display:none}
+.coverage-swatch{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px}
+.coverage-swatch.coverage-strong{background:#2ea043}.coverage-swatch.coverage-good{background:#8bc34a}.coverage-swatch.coverage-fair{background:#f2c744}.coverage-swatch.coverage-weak{background:#f08c2e}.coverage-swatch.coverage-poor{background:#e5534b}
+.coverage-count{margin-top:3px;opacity:.85}

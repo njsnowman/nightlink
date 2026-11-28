@@ -45,6 +45,9 @@ const seed=()=>{const now=Math.floor(Date.now()/1000),key=c=>c.repeat(64);
    await shot('more-menu',()=>{view('Radio');document.querySelector('#term-more').click();});await page.keyboard.press('Escape');
   }else{
    await shot('report-bug',()=>NightlinkFeedback.open('bug'));await close();
+   await shot('net-checkin',()=>{NightlinkNet.open();});await page.evaluate(()=>document.querySelector('#net-dialog .net-primary')?.click());await page.waitForTimeout(150);await page.screenshot({path:path.join(OUT,'cards-net-checkin.png')});shots.push('docs/images/readme/cards-net-checkin.png');await close();await page.evaluate(()=>localStorage.removeItem('nightlink.net-session'));
+   for(const skin of ['tactical','red','radio','school']){await page.evaluate(k=>{localStorage.setItem('nightlink.cards-skin',k);localStorage.setItem('nightlink.school-name','Lincoln County Schools · DEMO');NightlinkCardsSkins.apply();},skin);await shot('skin-'+skin,()=>{view('Messages');renderMessages();});}
+   await page.evaluate(()=>{localStorage.setItem('nightlink.cards-skin','standard');NightlinkCardsSkins.apply();});
   }
   await page.close();}
  }finally{await browser.close();}console.log(shots.join('\n'));})().catch(e=>{console.error(e);process.exit(1);});

@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),H=require('./node-history.js');
+test('adds only newer readings and keeps 24 hours',()=>{const h={},now=1e6;assert.equal(H.add(h,'k',{snr:5,at:now-100},now),true);assert.equal(H.add(h,'k',{snr:6,at:now-100},now),false,'same reading');assert.equal(H.add(h,'k',{snr:-3.3,at:now-50},now),true);
+ assert.deepEqual(h.k,[[now-100,5],[now-50,-3.25]]);assert.equal(H.add(h,'k',{snr:1,at:now+10},now+H.DAY-60),true);assert.deepEqual(h.k.map(x=>x[1]),[-3.25,1],'older than 24 h dropped');assert.equal(H.add(h,'k',{snr:NaN,at:now},now),false);});
+test('caps readings per node and number of nodes',()=>{const h={},now=2e6;for(let i=0;i<60;i++)H.add(h,'k',{snr:i%10,at:now-1000+i},now);assert.equal(h.k.length,H.PER_NODE);
+ for(let i=0;i<H.MAX_NODES+5;i++)h['n'+i]=[[now-i,0]];H.prune(h,now);assert.equal(Object.keys(h).length,H.MAX_NODES);assert.equal('n'+(H.MAX_NODES+4) in h,false,'oldest nodes dropped');});
+test('summary and bar height',()=>{assert.deepEqual(H.summary([[1,-10],[2,0],[3,5]]),{count:3,min:-10,max:5,avg:-1.7,last:5});assert.equal(H.summary([]),null);assert.equal(H.height(-30),1);assert.equal(H.height(10),12);assert.equal(H.height(40),12);});

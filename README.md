@@ -73,9 +73,18 @@ All screenshots use the real interface with fictional "DEMO" data. No radio or p
 | | |
 |---|---|
 | ![Cards chat](docs/images/readme/cards-chat.png) **Messages:** channel tabs, mention highlights, hop badges and the Signal Rail. | ![Cards nodes](docs/images/readme/cards-nodes.png) **Contacts:** the same LAST SNR bars and advert ages. |
-| ![Report a bug](docs/images/readme/cards-report-bug.png) **Report a bug / Request a feature:** opens a pre-filled GitHub issue. | |
+| ![Report a bug](docs/images/readme/cards-report-bug.png) **Report a bug / Request a feature:** opens a pre-filled GitHub issue. | ![Net check-in](docs/images/readme/cards-net-checkin.png) **Net check-in:** roll call for a channel; people who post are checked in. |
 
-Switch between them in **Settings → Interface**.
+Switch between them in **Settings → Interface**. Cards uses frosted **Glass** by default (Frosted, Liquid or Off).
+
+### Cards skins
+
+**Settings → Interface → Skin** changes the Cards look. Every skin keeps text at 4.5:1 contrast or better.
+
+| | |
+|---|---|
+| ![Tactical skin](docs/images/readme/cards-skin-tactical.png) **Tactical:** field look; the Radio map shows crosshairs, bearing, distance and Maidenhead grid. | ![Red light skin](docs/images/readme/cards-skin-red.png) **Red light:** everything red on black to protect night vision. |
+| ![Radio panel skin](docs/images/readme/cards-skin-radio.png) **Radio panel:** metal panels and an amber display window. | ![School / District skin](docs/images/readme/cards-skin-school.png) **School / District:** light and plain, with your district name and colour, plain wording, a simple menu and an admin PIN. |
 
 ## Features
 
@@ -85,6 +94,8 @@ Switch between them in **Settings → Interface**.
 - Replies, reactions, `@[name]` mention autocomplete and highlighting, link and image previews.
 - **Pinned messages** (`/pin`, `/pins`, `/unpin`), **Find**, drafts that survive switching windows, and a remembered reading position.
 - Detached direct-message windows and configurable notification sounds, including **Modem** and **BBS bells** packs.
+- **Quick replies** above the message box ("Copy", "On my way", "All clear" or your own); they fill the box and are not sent until you press Enter.
+- **Net check-in** (Ctrl+P): roll call for scheduled nets with automatic check-in, manual marks, copy and CSV export.
 - Add or remove channels from the radio (`/join`, `/part`, or the channel dialog).
 
 ### Network and radio
@@ -95,6 +106,8 @@ Switch between them in **Settings → Interface**.
 - **Propagation Monitor:** passively compares current reception with your radio's own history.
 - CoreScope, MeshMapper and a local Radio map, each of which can be turned off separately.
 - Contact Book, Mesh Planner (operations, sites, RF studies) and offline map preparation.
+- **SNR history:** a 24-hour sparkline per node on the Nodes page, and a **Coverage** layer on the Radio map coloured by average SNR.
+- **Node alerts** (off by default): a notice when a ★ favourite has not been heard for a chosen time, or your radio battery is low.
 
 ### Terminal interface
 - VGA 16-colour palette, monospace type, bordered frames, bracketed hotkeys and visible keyboard focus.
@@ -173,7 +186,7 @@ npm run dist
 
 - `npm start` runs the Electron app. `npm run preview` serves the local browser preview.
 - `npm test` runs the protocol, transport, delivery and UI logic tests (Node's test runner).
-- `npm run test:browser` runs about 100 Playwright suites, including a 146-screen accessibility audit. Set `NIGHTLINK_BROWSER` to a Chromium path if needed.
+- `npm run test:browser` runs about 115 Playwright suites, including a 146-screen terminal audit and an accessibility scan of both interfaces and every Cards skin. Set `NIGHTLINK_BROWSER` to a Chromium path if needed.
 - `npm run dist` builds `Nightlink-Setup-<version>.exe` and `Nightlink-Portable-<version>.exe`.
 
 Interface work follows [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md): Terminal is the default standard, and Cards is the alternate.
